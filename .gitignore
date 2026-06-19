@@ -1,0 +1,30 @@
+# dependencies
+node_modules/
+
+# Expo
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# Native
+ios/
+android/
+
+# Metro
+.metro-health-check*
+
+# macOS
+.DS_Store
+
+# Env
+.env*.local
+
+# Logs
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# Legacy native Xcode scaffold (superseded by the Expo project)
+# Skull-King/
+# Skull-King.xcodeproj/

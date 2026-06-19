@@ -1,0 +1,27 @@
+{
+  "expo": {
+    "name": "Skull King Scorekeeper",
+    "slug": "skull-king-scorekeeper",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "scheme": "skullking",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.gabrielcretin.skullking"
+    },
+    "android": {
+      "package": "com.gabrielcretin.skullking",
+      "edgeToEdgeEnabled": true
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "f7a67ac9-2430-4901-86b7-262bc897ddb5"
+      }
+    }
+  }
+}

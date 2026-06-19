@@ -1,0 +1,255 @@
+import React, { useState } from "react";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { Player } from "../types";
+import { createGame } from "../scoring";
+import { Game } from "../types";
+import Stepper from "../components/Stepper";
+import { colors, radius, spacing } from "../theme";
+
+interface Props {
+  onStart: (game: Game) => void;
+  onBack: () => void;
+}
+
+let idCounter = 0;
+const newId = () => `p_${Date.now()}_${idCounter++}`;
+
+export default function SetupScreen({ onStart, onBack }: Props) {
+  const [players, setPlayers] = useState<Player[]>([
+    { id: newId(), name: "" },
+    { id: newId(), name: "" },
+  ]);
+  const [rounds, setRounds] = useState(10);
+  const [advanced, setAdvanced] = useState(true);
+
+  const setName = (id: string, name: string) =>
+    setPlayers((prev) => prev.map((p) => (p.id === id ? { ...p, name } : p)));
+
+  const addPlayer = () =>
+    setPlayers((prev) => [...prev, { id: newId(), name: "" }]);
+
+  const removePlayer = (id: string) =>
+    setPlayers((prev) => prev.filter((p) => p.id !== id));
+
+  const named = players
+    .map((p) => ({ ...p, name: p.name.trim() }))
+    .filter((p) => p.name.length > 0);
+
+  const canStart = named.length >= 2;
+
+  const start = () => {
+    if (!canStart) return;
+    onStart(createGame(named, rounds, advanced));
+  };
+
+  return (
+    <SafeAreaView style={styles.safe}>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+      >
+        <View style={styles.header}>
+          <TouchableOpacity onPress={onBack}>
+            <Text style={styles.back}>‹ Back</Text>
+          </TouchableOpacity>
+          <Text style={styles.title}>New Game</Text>
+          <View style={{ width: 50 }} />
+        </View>
+
+        <ScrollView
+          contentContainerStyle={styles.scroll}
+          keyboardShouldPersistTaps="handled"
+        >
+          <Text style={styles.section}>Players</Text>
+          {players.map((p, i) => (
+            <View key={p.id} style={styles.playerRow}>
+              <Text style={styles.playerNum}>{i + 1}</Text>
+              <TextInput
+                style={styles.input}
+                placeholder={`Player ${i + 1}`}
+                placeholderTextColor={colors.textDim}
+                value={p.name}
+                onChangeText={(t) => setName(p.id, t)}
+                returnKeyType="done"
+                maxLength={20}
+              />
+              <TouchableOpacity
+                onPress={() => removePlayer(p.id)}
+                disabled={players.length <= 2}
+                style={[
+                  styles.removeBtn,
+                  players.length <= 2 && styles.removeBtnDisabled,
+                ]}
+              >
+                <Text style={styles.removeText}>✕</Text>
+              </TouchableOpacity>
+            </View>
+          ))}
+
+          <TouchableOpacity style={styles.addBtn} onPress={addPlayer}>
+            <Text style={styles.addText}>+ Add player</Text>
+          </TouchableOpacity>
+
+          <Text style={[styles.section, { marginTop: spacing.lg }]}>Rounds</Text>
+          <View style={styles.roundsCard}>
+            <Stepper value={rounds} onChange={setRounds} min={1} max={10} />
+            <Text style={styles.roundsHint}>
+              Standard Skull King is 10 rounds.
+            </Text>
+          </View>
+
+          <Text style={[styles.section, { marginTop: spacing.lg }]}>
+            Expansion cards
+          </Text>
+          <TouchableOpacity
+            style={styles.advancedRow}
+            onPress={() => setAdvanced((a) => !a)}
+            activeOpacity={0.8}
+          >
+            <View style={{ flex: 1, marginRight: spacing.md }}>
+              <Text style={styles.advancedTitle}>Loot &amp; Rascal wager</Text>
+              <Text style={styles.advancedHint}>
+                Adds Loot/Butin alliances and the Rascal pirate side-bet to the
+                bonus editor. Kraken, White Whale &amp; the 14/capture bonuses
+                are always available.
+              </Text>
+            </View>
+            <View style={[styles.switch, advanced && styles.switchOn]}>
+              <Text style={[styles.switchText, advanced && styles.switchTextOn]}>
+                {advanced ? "On" : "Off"}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </ScrollView>
+
+        <View style={styles.footer}>
+          <TouchableOpacity
+            style={[styles.startBtn, !canStart && styles.startBtnDisabled]}
+            onPress={start}
+            disabled={!canStart}
+          >
+            <Text style={styles.startText}>
+              {canStart ? "Start game ☠️" : "Add at least 2 players"}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  safe: { flex: 1, backgroundColor: colors.bg },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+  },
+  back: { color: colors.gold, fontSize: 17 },
+  title: { color: colors.text, fontSize: 20, fontWeight: "700" },
+  scroll: { padding: spacing.md, paddingBottom: spacing.xl },
+  section: {
+    color: colors.gold,
+    fontSize: 14,
+    fontWeight: "700",
+    textTransform: "uppercase",
+    letterSpacing: 1,
+    marginBottom: spacing.sm,
+  },
+  playerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: spacing.sm,
+  },
+  playerNum: {
+    width: 24,
+    color: colors.textDim,
+    fontSize: 16,
+    textAlign: "center",
+  },
+  input: {
+    flex: 1,
+    backgroundColor: colors.card,
+    borderColor: colors.cardBorder,
+    borderWidth: 1,
+    borderRadius: radius.md,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    color: colors.text,
+    fontSize: 16,
+    marginHorizontal: spacing.sm,
+  },
+  removeBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: radius.sm,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  removeBtnDisabled: { opacity: 0.25 },
+  removeText: { color: colors.negative, fontSize: 18 },
+  addBtn: {
+    borderColor: colors.cardBorder,
+    borderWidth: 1,
+    borderStyle: "dashed",
+    borderRadius: radius.md,
+    paddingVertical: spacing.md,
+    alignItems: "center",
+    marginTop: spacing.xs,
+  },
+  addText: { color: colors.gold, fontSize: 16, fontWeight: "600" },
+  roundsCard: {
+    backgroundColor: colors.card,
+    borderColor: colors.cardBorder,
+    borderWidth: 1,
+    borderRadius: radius.md,
+    padding: spacing.md,
+    alignItems: "center",
+  },
+  roundsHint: { color: colors.textDim, fontSize: 12, marginTop: spacing.sm },
+  advancedRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: colors.card,
+    borderColor: colors.cardBorder,
+    borderWidth: 1,
+    borderRadius: radius.md,
+    padding: spacing.md,
+  },
+  advancedTitle: { color: colors.text, fontSize: 16, fontWeight: "700" },
+  advancedHint: { color: colors.textDim, fontSize: 12, marginTop: 4, lineHeight: 16 },
+  switch: {
+    minWidth: 52,
+    paddingVertical: 6,
+    paddingHorizontal: spacing.sm,
+    borderRadius: radius.sm,
+    borderWidth: 1,
+    borderColor: colors.cardBorder,
+    backgroundColor: colors.bgElevated,
+    alignItems: "center",
+  },
+  switchOn: { backgroundColor: colors.gold, borderColor: colors.gold },
+  switchText: { color: colors.textDim, fontWeight: "700" },
+  switchTextOn: { color: colors.bg },
+  footer: { padding: spacing.md },
+  startBtn: {
+    backgroundColor: colors.gold,
+    borderRadius: radius.lg,
+    paddingVertical: spacing.md,
+    alignItems: "center",
+  },
+  startBtnDisabled: { backgroundColor: colors.goldDim },
+  startText: { color: colors.bg, fontSize: 18, fontWeight: "800" },
+});
