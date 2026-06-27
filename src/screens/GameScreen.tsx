@@ -11,6 +11,7 @@ import { BonusInput, Game, RoundEntries, RoundEntry } from "../types";
 import {
   cardsForRound,
   emptyEntry,
+  ghostTricks,
   isRoundComplete,
   playerTotal,
   scoreRound,
@@ -93,7 +94,13 @@ export default function GameScreen({
     (sum, id) => sum + (draft[id]?.tricks ?? 0),
     0
   );
-  const tricksMatch = tricksTotal === cards;
+  // In the 2-player variant the Greybeard ghost steals the leftover tricks, so
+  // the players' total may be below the cards dealt; only an impossible total
+  // above the cards dealt is a problem.
+  const ghost = ghostTricks(game, tricksTotal, cards);
+  const tricksOk = game.twoPlayerGhost
+    ? tricksTotal <= cards
+    : tricksTotal === cards;
   const alreadyRecorded = isRoundComplete(game, displayRound);
 
   const commitRound = () => {
@@ -235,10 +242,16 @@ export default function GameScreen({
         })}
 
         <Text
-          style={[styles.tricksHint, tricksMatch ? styles.hintOk : styles.hintWarn]}
+          style={[styles.tricksHint, tricksOk ? styles.hintOk : styles.hintWarn]}
         >
           Tricks recorded: {tricksTotal} / {cards}
-          {tricksMatch ? "  ✓" : "  (should equal cards dealt, unless a Kraken voided a trick)"}
+          {game.twoPlayerGhost
+            ? tricksOk
+              ? `  ·  Greybeard 👻 took ${ghost}`
+              : "  (more than the cards dealt — check your counts)"
+            : tricksOk
+              ? "  ✓"
+              : "  (should equal cards dealt, unless a Kraken voided a trick)"}
         </Text>
       </ScrollView>
 

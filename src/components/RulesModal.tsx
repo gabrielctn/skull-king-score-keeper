@@ -47,6 +47,12 @@ const SPECIAL: Entry[] = [
   { title: "Rascal pirate wager (0/10/20)", body: "A side bet: gain the wager if you hit your bid, lose it if you miss." },
 ];
 
+const TWO_PLAYER: Entry[] = [
+  { title: "Greybeard the ghost 👻", body: "The official 2-player variant deals a third hand for the Greybeard ghost. On each trick he plays second, ignoring the led suit, and his Tigress always counts as an escape." },
+  { title: "He plays but never scores", body: "Greybeard does not bid and earns no points. He only steals tricks (and any bonus cards in them are simply lost). When he wins a trick he leads the next one; otherwise he is always second." },
+  { title: "Your trick totals can be short", body: "Because Greybeard wins some tricks, your two trick counts can add up to LESS than the cards dealt. The app shows how many tricks the ghost took instead of warning you." },
+];
+
 function Section({ heading, entries }: { heading: string; entries: Entry[] }) {
   return (
     <View style={{ marginBottom: spacing.lg }}>
@@ -85,6 +91,7 @@ export default function RulesModal({ visible, onClose }: Props) {
             <Section heading="Scoring" entries={SCORING} />
             <Section heading="Bonus points" entries={BONUSES} />
             <Section heading="Special cards" entries={SPECIAL} />
+            <Section heading="Two-player variant" entries={TWO_PLAYER} />
           </ScrollView>
         </View>
       </View>

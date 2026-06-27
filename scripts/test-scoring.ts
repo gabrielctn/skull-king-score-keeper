@@ -10,6 +10,7 @@ import {
   captureBonus,
   createGame,
   emptyBonus,
+  ghostTricks,
   madeBid,
   playerTotal,
   scoreRound,
@@ -114,6 +115,40 @@ g.rounds[8] = { a: E(0, 0), b: E(0, 1) }; // r9 (8 cards): Anne +80, Black -80
 g.rounds[2] = { a: E(3, 3, {}, false), b: E(3, 3, {}, false) }; // not recorded -> ignored
 eq("Anne total", playerTotal(g, "a"), 20 - 20 + 80);
 eq("Blackbeard total", playerTotal(g, "b"), 10 + 60 - 80);
+
+console.log("\n2-player variant: Greybeard ghost takes the missing tricks");
+const solo = createGame(
+  [
+    { id: "p1", name: "One" },
+    { id: "p2", name: "Two" },
+  ],
+  10,
+  true,
+  true // twoPlayerGhost
+);
+const duo = createGame(
+  [
+    { id: "p1", name: "One" },
+    { id: "p2", name: "Two" },
+  ],
+  10,
+  true,
+  false // normal mode
+);
+// 5 cards dealt, the two players together won 3 tricks -> ghost took 2.
+eq("ghost takes remainder when on", ghostTricks(solo, 3, 5), 2);
+// All tricks went to the two players -> ghost took none.
+eq("ghost takes 0 when players took all", ghostTricks(solo, 5, 5), 0);
+// > cards is impossible; clamp at 0 rather than reporting negative tricks.
+eq("ghost never negative", ghostTricks(solo, 6, 5), 0);
+// Outside 2-player mode the ghost does not exist.
+eq("no ghost in normal mode", ghostTricks(duo, 3, 5), 0);
+// The flag must NOT change any point math for the real players.
+eq(
+  "ghost flag leaves scoreRound untouched",
+  scoreRound(5, E(2, 2, { black14: true })),
+  40 + 20
+);
 
 console.log("\nStandings + tie ranks");
 const g2 = createGame(

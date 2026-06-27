@@ -53,6 +53,9 @@ function normalizeGame(raw: any): Game | null {
     rounds,
     cardsDealt,
     advancedCards: raw.advancedCards ?? true,
+    // v2 saves predate the 2-player ghost; default off to keep their strict
+    // "tricks must equal cards dealt" behaviour.
+    twoPlayerGhost: raw.twoPlayerGhost ?? false,
     status: raw.status === "finished" ? "finished" : "in_progress",
     createdAt: raw.createdAt ?? Date.now(),
     updatedAt: raw.updatedAt ?? Date.now(),

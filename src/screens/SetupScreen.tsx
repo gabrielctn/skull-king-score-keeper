@@ -33,6 +33,7 @@ export default function SetupScreen({ onStart, onBack }: Props) {
   ]);
   const [rounds, setRounds] = useState(10);
   const [advanced, setAdvanced] = useState(true);
+  const [twoPlayerGhost, setTwoPlayerGhost] = useState(true);
 
   const setName = (id: string, name: string) =>
     setPlayers((prev) => prev.map((p) => (p.id === id ? { ...p, name } : p)));
@@ -48,10 +49,13 @@ export default function SetupScreen({ onStart, onBack }: Props) {
     .filter((p) => p.name.length > 0);
 
   const canStart = named.length >= 2;
+  // The Greybeard ghost is the official 2-player variant; only offer it (and
+  // only apply it) when there are exactly two real players.
+  const isTwoPlayer = named.length === 2;
 
   const start = () => {
     if (!canStart) return;
-    onStart(createGame(named, rounds, advanced));
+    onStart(createGame(named, rounds, advanced, isTwoPlayer && twoPlayerGhost));
   };
 
   return (
@@ -110,6 +114,39 @@ export default function SetupScreen({ onStart, onBack }: Props) {
           <TouchableOpacity style={styles.addBtn} onPress={addPlayer}>
             <Text style={styles.addText}>+ Add player</Text>
           </TouchableOpacity>
+
+          {isTwoPlayer ? (
+            <>
+              <Text style={[styles.section, { marginTop: spacing.lg }]}>
+                Two players
+              </Text>
+              <TouchableOpacity
+                style={styles.advancedRow}
+                onPress={() => setTwoPlayerGhost((g) => !g)}
+                activeOpacity={0.8}
+              >
+                <View style={{ flex: 1, marginRight: spacing.md }}>
+                  <Text style={styles.advancedTitle}>Greybeard ghost 👻</Text>
+                  <Text style={styles.advancedHint}>
+                    The official 2-player variant: deal a third hand for the
+                    Greybeard ghost. He plays but never bids or scores, so he
+                    steals some tricks — your two trick counts can total less
+                    than the cards dealt.
+                  </Text>
+                </View>
+                <View style={[styles.switch, twoPlayerGhost && styles.switchOn]}>
+                  <Text
+                    style={[
+                      styles.switchText,
+                      twoPlayerGhost && styles.switchTextOn,
+                    ]}
+                  >
+                    {twoPlayerGhost ? "On" : "Off"}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            </>
+          ) : null}
 
           <Text style={[styles.section, { marginTop: spacing.lg }]}>Rounds</Text>
           <View style={styles.roundsCard}>

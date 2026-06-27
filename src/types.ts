@@ -54,10 +54,16 @@ export interface Game {
   cardsDealt: number[];
   /** Show Loot & Rascal-wager fields in the bonus editor. */
   advancedCards: boolean;
+  /**
+   * Official 2-player variant: a non-scoring "Greybeard" ghost plays a third
+   * hand and wins some tricks, so the two real players' tricks may sum to less
+   * than the cards dealt. Only meaningful when there are exactly 2 players.
+   */
+  twoPlayerGhost: boolean;
   status: "in_progress" | "finished";
   createdAt: number;
   updatedAt: number;
 }
 
 /** Current persisted-game schema version (for save migrations). */
-export const GAME_SCHEMA_VERSION = 2;
+export const GAME_SCHEMA_VERSION = 3;

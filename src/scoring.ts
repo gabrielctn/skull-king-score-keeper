@@ -87,6 +87,23 @@ export function cardsForRound(game: Game, roundNumber: number): number {
   return game.cardsDealt[roundNumber - 1] ?? roundNumber;
 }
 
+/**
+ * Tricks captured by the non-scoring "Greybeard" ghost in the 2-player variant.
+ *
+ * Greybeard plays a third hand and wins some tricks without scoring, so the two
+ * real players' tricks may sum to fewer than the cards dealt — the ghost took
+ * the rest. Returns 0 outside 2-player mode, and clamps at 0 (a player total
+ * above the cards dealt is impossible, so the ghost never owes tricks).
+ */
+export function ghostTricks(
+  game: Game,
+  playerTricksTotal: number,
+  cards: number
+): number {
+  if (!game.twoPlayerGhost) return 0;
+  return Math.max(0, cards - playerTricksTotal);
+}
+
 /** Running total for a player up to and including `uptoRound` (1-based). */
 export function playerTotal(
   game: Game,
@@ -169,7 +186,8 @@ function emptyRound(players: Player[]): RoundEntries {
 export function createGame(
   players: Player[],
   totalRounds = 10,
-  advancedCards = true
+  advancedCards = true,
+  twoPlayerGhost = false
 ): Game {
   const now = Date.now();
   return {
@@ -180,6 +198,7 @@ export function createGame(
     rounds: Array.from({ length: totalRounds }, () => emptyRound(players)),
     cardsDealt: Array.from({ length: totalRounds }, (_, i) => i + 1),
     advancedCards,
+    twoPlayerGhost,
     status: "in_progress",
     createdAt: now,
     updatedAt: now,
