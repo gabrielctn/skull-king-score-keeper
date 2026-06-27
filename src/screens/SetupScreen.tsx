@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {
+  Image,
   KeyboardAvoidingView,
   Platform,
   SafeAreaView,
@@ -15,6 +16,7 @@ import { createGame } from "../scoring";
 import { Game } from "../types";
 import Stepper from "../components/Stepper";
 import { colors, radius, spacing } from "../theme";
+import { illustrations } from "../assets/illustrations";
 
 interface Props {
   onStart: (game: Game) => void;
@@ -70,6 +72,15 @@ export default function SetupScreen({ onStart, onBack }: Props) {
           contentContainerStyle={styles.scroll}
           keyboardShouldPersistTaps="handled"
         >
+          <View style={styles.greeter}>
+            <Image
+              source={illustrations.parrot}
+              style={styles.parrot}
+              resizeMode="contain"
+            />
+            <Text style={styles.greeterText}>Gather your crew</Text>
+          </View>
+
           <Text style={styles.section}>Players</Text>
           {players.map((p, i) => (
             <View key={p.id} style={styles.playerRow}>
@@ -160,6 +171,14 @@ const styles = StyleSheet.create({
   back: { color: colors.gold, fontSize: 17 },
   title: { color: colors.text, fontSize: 20, fontWeight: "700" },
   scroll: { padding: spacing.md, paddingBottom: spacing.xl },
+  greeter: { alignItems: "center", marginBottom: spacing.md },
+  parrot: { width: 104, height: 118 },
+  greeterText: {
+    color: colors.textDim,
+    fontSize: 13,
+    marginTop: spacing.xs,
+    fontStyle: "italic",
+  },
   section: {
     color: colors.gold,
     fontSize: 14,

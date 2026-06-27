@@ -7,16 +7,30 @@
     "userInterfaceStyle": "dark",
     "scheme": "skullking",
     "newArchEnabled": true,
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0b1722"
+    },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.gabrielcretin.skullking"
+      "bundleIdentifier": "com.gabrielcretin.skullking",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "package": "com.gabrielcretin.skullking",
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0b1722"
+      }
     },
     "web": {
-      "bundler": "metro"
+      "bundler": "metro",
+      "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {

@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  Image,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -10,6 +11,7 @@ import {
 import { Game } from "../types";
 import { standings } from "../scoring";
 import { colors, radius, spacing } from "../theme";
+import { illustrations } from "../assets/illustrations";
 
 interface Props {
   game: Game;
@@ -33,7 +35,13 @@ export default function ResultsScreen({
   return (
     <SafeAreaView style={styles.safe}>
       <ScrollView contentContainerStyle={styles.scroll}>
-        <Text style={styles.crown}>👑</Text>
+        <View style={styles.chest}>
+          <Image
+            source={illustrations.treasureChest}
+            style={styles.treasureChest}
+            resizeMode="contain"
+          />
+        </View>
         <Text style={styles.title}>Game Over</Text>
         {winner ? (
           <Text style={styles.winner}>
@@ -79,7 +87,8 @@ export default function ResultsScreen({
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
   scroll: { padding: spacing.lg, alignItems: "center" },
-  crown: { fontSize: 64, marginTop: spacing.md },
+  chest: { marginTop: spacing.md, marginBottom: spacing.xs },
+  treasureChest: { width: 190, height: 165 },
   title: { color: colors.gold, fontSize: 34, fontWeight: "800" },
   winner: {
     color: colors.text,

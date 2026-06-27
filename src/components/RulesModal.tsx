@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  Image,
   Modal,
   ScrollView,
   StyleSheet,
@@ -8,6 +9,7 @@ import {
   View,
 } from "react-native";
 import { colors, radius, spacing } from "../theme";
+import { illustrations } from "../assets/illustrations";
 
 interface Props {
   visible: boolean;
@@ -65,7 +67,16 @@ export default function RulesModal({ visible, onClose }: Props) {
       <View style={styles.backdrop}>
         <View style={styles.sheet}>
           <View style={styles.header}>
-            <Text style={styles.title}>Scoring &amp; Cards</Text>
+            <View style={styles.titleRow}>
+              <View style={styles.mermaidCrop}>
+                <Image
+                  source={illustrations.mermaid}
+                  style={styles.mermaid}
+                  resizeMode="contain"
+                />
+              </View>
+              <Text style={styles.title}>Scoring &amp; Cards</Text>
+            </View>
             <TouchableOpacity onPress={onClose} style={styles.close}>
               <Text style={styles.closeText}>Done</Text>
             </TouchableOpacity>
@@ -98,6 +109,19 @@ const styles = StyleSheet.create({
     padding: spacing.md,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: colors.cardBorder,
+  },
+  titleRow: { flexDirection: "row", alignItems: "center", gap: spacing.sm },
+  mermaidCrop: {
+    width: 42,
+    height: 48,
+    overflow: "hidden",
+    alignItems: "center",
+  },
+  mermaid: {
+    position: "absolute",
+    top: -3,
+    width: 82,
+    height: 102,
   },
   title: { color: colors.gold, fontSize: 20, fontWeight: "800" },
   close: { paddingHorizontal: spacing.sm, paddingVertical: spacing.xs },

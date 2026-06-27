@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  Image,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -9,6 +10,7 @@ import {
 import { Game } from "../types";
 import { standings } from "../scoring";
 import { colors, radius, spacing } from "../theme";
+import { illustrations } from "../assets/illustrations";
 
 interface Props {
   savedGame: Game | null;
@@ -26,7 +28,20 @@ export default function HomeScreen({ savedGame, onNewGame, onResume }: Props) {
     <SafeAreaView style={styles.safe}>
       <View style={styles.container}>
         <View style={styles.hero}>
-          <Text style={styles.skull}>☠️</Text>
+          <View style={styles.emblemWrap}>
+            <View style={styles.emblemBg} pointerEvents="none">
+              <Image
+                source={illustrations.compass}
+                style={styles.compass}
+                resizeMode="contain"
+              />
+            </View>
+            <Image
+              source={illustrations.skullKing}
+              style={styles.skullKing}
+              resizeMode="contain"
+            />
+          </View>
           <Text style={styles.title}>Skull King</Text>
           <Text style={styles.subtitle}>Scorekeeper</Text>
         </View>
@@ -63,7 +78,20 @@ const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
   container: { flex: 1, padding: spacing.lg, justifyContent: "center" },
   hero: { alignItems: "center", marginBottom: spacing.xl },
-  skull: { fontSize: 72, marginBottom: spacing.sm },
+  emblemWrap: {
+    width: 230,
+    height: 210,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: spacing.xs,
+  },
+  emblemBg: {
+    ...StyleSheet.absoluteFillObject,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  compass: { width: 230, height: 230, opacity: 0.16 },
+  skullKing: { width: 170, height: 190 },
   title: { color: colors.gold, fontSize: 42, fontWeight: "800", letterSpacing: 1 },
   subtitle: { color: colors.textDim, fontSize: 18, marginTop: spacing.xs },
   resumeCard: {
