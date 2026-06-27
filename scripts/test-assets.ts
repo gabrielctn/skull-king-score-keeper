@@ -69,11 +69,21 @@ for (const [path, width, height, requireAlpha] of brandAssets) {
 const appConfig = JSON.parse(readFileSync("app.json", "utf8")).expo;
 check("Expo icon reference", appConfig.icon === "./assets/icon.png");
 check("Expo splash reference", appConfig.splash.image === "./assets/splash-icon.png");
-check(
-  "Expo adaptive icon reference",
-  appConfig.android.adaptiveIcon.foregroundImage === "./assets/adaptive-icon.png"
-);
 check("Expo favicon reference", appConfig.web.favicon === "./assets/favicon.png");
+
+// PWA: every icon declared in the manifest must exist on disk under web/ at the
+// right size, and the apple-touch icon must be present.
+const baseUrl = (appConfig.experiments?.baseUrl ?? "").replace(/\/$/, "");
+const manifest = JSON.parse(readFileSync("web/manifest.webmanifest", "utf8"));
+for (const icon of manifest.icons as { src: string; sizes: string; purpose: string }[]) {
+  const rel = icon.src.replace(`${baseUrl}/`, "web/");
+  check(`manifest icon ${icon.sizes} (${icon.purpose}) exists`, existsSync(rel), rel);
+  if (!existsSync(rel)) continue;
+  const info = pngInfo(rel);
+  const size = Number(icon.sizes.split("x")[0]);
+  check(`manifest icon ${icon.sizes} dimensions`, info.width === size && info.height === size);
+}
+check("apple-touch icon exists", existsSync("web/icons/apple-touch-icon.png"));
 
 const sourceFiles = walk("src").filter((path) =>
   [".ts", ".tsx"].includes(extname(path))

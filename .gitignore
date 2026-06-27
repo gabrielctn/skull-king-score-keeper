@@ -25,6 +25,9 @@ npm-debug.*
 yarn-debug.*
 yarn-error.*
 
+# Tooling
+.superpowers/
+
 # Legacy native Xcode scaffold (superseded by the Expo project)
 # Skull-King/
 # Skull-King.xcodeproj/

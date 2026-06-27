@@ -1,7 +1,11 @@
 # ☠️ Skull King Scorekeeper
 
-A cross-platform (iOS + Android) score-keeping app for the **Skull King** card game,
-built with **React Native + Expo + TypeScript**. One codebase runs on both phones.
+An installable, **offline-first PWA** for keeping score in the **Skull King** card game,
+built with **React Native + Expo (web) + TypeScript** and deployed as a static site to
+**GitHub Pages**. Add it to your home screen and it runs without any network — perfect
+for a table with no wifi.
+
+**Live:** https://gabrielctn.github.io/skull-king-score-keeper/
 
 ## What it does
 
@@ -55,47 +59,55 @@ including the rulebook's worked examples and edge cases.
 
 ---
 
-## Run it on your phone (fastest way)
-
-You don't need Xcode to start — just the **Expo Go** app.
-
-1. Install **Expo Go** on your phone (App Store / Google Play).
-2. In a terminal, from this folder:
-
-   ```bash
-   npm install
-   npx expo install --fix   # aligns dependency versions to the Expo SDK
-   npx expo start
-   ```
-
-3. A QR code appears in the terminal.
-   - **iPhone:** open the Camera app, point it at the QR code, tap the banner.
-   - **Android:** open Expo Go → "Scan QR code".
-
-The app loads on your phone and hot-reloads as the code changes.
-
-## Run in a simulator (optional, needs the SDKs)
-
-- **iOS Simulator** (Mac + Xcode): press `i` in the `expo start` terminal.
-- **Android Emulator** (Android Studio): press `a`.
-
----
-
-## Building for the App Store / Play Store (later)
-
-Use **EAS Build** — Expo's cloud build service. It can build the **iOS** app even
-without a Mac.
+## Run it locally
 
 ```bash
-npm install -g eas-cli
-eas login                     # create a free Expo account if needed
-eas build:configure
-eas build --platform ios      # or: android, or: all
-eas submit --platform ios     # uploads to App Store Connect / Play Console
+npm install
+npm run web        # Expo dev server (opens the app in your browser)
 ```
 
-App Store submission still requires a paid **Apple Developer Program** membership
-($99/yr); Google Play requires a one-time $25 developer account.
+To exercise the **production PWA** (service worker + offline) locally:
+
+```bash
+npm run build:web  # expo export -p web  +  scripts/build-pwa.mjs
+```
+
+The service worker and manifest only exist in this production export, not in the
+dev server. The export is served under the `/skull-king-score-keeper/` sub-path
+(set by `experiments.baseUrl` in `app.json`), so to test it the way GitHub Pages
+serves it, expose `dist/` at that path — e.g. symlink it into a folder named
+`skull-king-score-keeper/` and serve the parent.
+
+## How it becomes a PWA
+
+`expo export -p web` produces a plain static SPA with no PWA shell. The
+`scripts/build-pwa.mjs` post-step turns it into an installable, offline app:
+
+- copies `web/manifest.webmanifest` and `web/icons/` into `dist/`
+- generates `dist/service-worker.js` from `web/service-worker.js`, injecting a
+  **precache list of every built file** (app shell, JS bundle, illustrations) and a
+  content-hash cache version (so each deploy gets a fresh cache, old ones are purged)
+- injects the manifest link + apple-touch / web-app meta tags into `index.html`
+- writes `.nojekyll` so GitHub Pages serves the `_expo/` directory
+
+The worker is registered from `src/registerServiceWorker.ts` (web + production only).
+The app shell and assets are precached, so the whole app works with no network.
+
+> **Note (iOS):** Safari may evict a PWA's stored data after ~7 days of no use, so
+> an in-progress game saved on iOS isn't guaranteed to survive a long break. This is
+> an iOS PWA limitation, accepted as part of the move off the native app.
+
+## Deploying to GitHub Pages
+
+Deployment is automatic via **GitHub Actions** (`.github/workflows/deploy.yml`):
+every push to `main` builds the PWA and publishes `dist/` to Pages.
+
+**One-time setup:** in the repo, go to **Settings → Pages → Build and deployment**
+and set **Source** to **"GitHub Actions"**. The site then lives at
+https://gabrielctn.github.io/skull-king-score-keeper/.
+
+If you fork/rename the repo, update `experiments.baseUrl` in `app.json` and the
+`start_url`/`scope`/icon paths in `web/manifest.webmanifest` to the new sub-path.
 
 ---
 
@@ -103,40 +115,40 @@ App Store submission still requires a paid **Apple Developer Program** membershi
 
 ```
 Skull-King/
-├── App.tsx                 # Root: screen routing + load/save game
-├── index.ts                # Expo entry point
-├── app.json                # Expo app config (name, bundle ids, etc.)
+├── App.tsx                       # Root: screen routing + load/save game
+├── index.ts                      # Expo entry point
+├── app.json                      # Expo config (web + experiments.baseUrl)
 ├── package.json
 ├── tsconfig.json
 ├── babel.config.js
+├── .github/workflows/deploy.yml  # CI: build + deploy to GitHub Pages
+├── web/                          # PWA shell (source, committed)
+│   ├── manifest.webmanifest
+│   ├── service-worker.js         # template; precache list filled at build
+│   └── icons/                    # 192 / 512 / 512-maskable / apple-touch
 ├── src/
-│   ├── types.ts            # Shared types (Player, Game, RoundEntry)
-│   ├── scoring.ts          # Pure scoring engine (fully unit-tested)
-│   ├── storage.ts          # AsyncStorage save/load/clear
-│   ├── theme.ts            # Colors + spacing tokens
+│   ├── types.ts                  # Shared types (Player, Game, RoundEntry)
+│   ├── scoring.ts                # Pure scoring engine (fully unit-tested)
+│   ├── storage.ts                # AsyncStorage (→ localStorage on web)
+│   ├── registerServiceWorker.ts  # Registers the SW (web + prod only)
+│   ├── theme.ts                  # Colors + spacing tokens
 │   ├── components/
-│   │   └── Stepper.tsx     # Reusable +/- number input
+│   │   └── Stepper.tsx           # Reusable +/- number input
 │   └── screens/
 │       ├── HomeScreen.tsx
 │       ├── SetupScreen.tsx
-│       ├── GameScreen.tsx  # Round entry + live scoreboard
+│       ├── GameScreen.tsx        # Round entry + live scoreboard
 │       └── ResultsScreen.tsx
 └── scripts/
-    └── test-scoring.ts     # Scoring engine tests
+    ├── build-pwa.mjs             # Post-export PWA build step
+    └── test-scoring.ts           # Scoring engine tests
 ```
 
 ## Developer scripts
 
 ```bash
-npm run test:scoring   # run the scoring engine tests (19 checks)
+npm run web            # Expo web dev server
+npm run build:web      # production PWA build → dist/
+npm run test:scoring   # run the scoring engine tests (29 checks)
 npm run typecheck      # tsc --noEmit
 ```
-
----
-
-## Note on the old Swift files
-
-This folder previously held an empty native Xcode template (`Skull-King.xcodeproj`
-and the Swift files in `Skull-King/`). The cross-platform Expo project replaces it.
-You can safely delete `Skull-King.xcodeproj/` and the `Skull-King/` Swift folder
-once you've confirmed the Expo app runs.

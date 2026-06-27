@@ -67,7 +67,7 @@ export default function HomeScreen({ savedGame, onNewGame, onResume }: Props) {
         </TouchableOpacity>
 
         <Text style={styles.footer}>
-          Cross-platform · made for iOS &amp; Android
+          Works offline · install from your browser
         </Text>
       </View>
     </SafeAreaView>

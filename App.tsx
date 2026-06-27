@@ -7,6 +7,7 @@ import HomeScreen from "./src/screens/HomeScreen";
 import SetupScreen from "./src/screens/SetupScreen";
 import GameScreen from "./src/screens/GameScreen";
 import ResultsScreen from "./src/screens/ResultsScreen";
+import { registerServiceWorker } from "./src/registerServiceWorker";
 
 type Screen = "home" | "setup" | "game" | "results";
 
@@ -15,8 +16,9 @@ export default function App() {
   const [game, setGame] = useState<Game | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Restore any saved game on launch.
+  // Restore any saved game on launch, and register the PWA service worker (web only).
   useEffect(() => {
+    registerServiceWorker();
     (async () => {
       const saved = await loadGame();
       if (saved) setGame(saved);

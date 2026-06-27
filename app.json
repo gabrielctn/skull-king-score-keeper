@@ -5,7 +5,6 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
-    "scheme": "skullking",
     "newArchEnabled": true,
     "icon": "./assets/icon.png",
     "splash": {
@@ -13,24 +12,19 @@
       "resizeMode": "contain",
       "backgroundColor": "#0b1722"
     },
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.gabrielcretin.skullking",
-      "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
-      }
-    },
-    "android": {
-      "package": "com.gabrielcretin.skullking",
-      "edgeToEdgeEnabled": true,
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#0b1722"
-      }
-    },
     "web": {
       "bundler": "metro",
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "name": "Skull King Scorekeeper",
+      "shortName": "Skull King",
+      "description": "Score-keeper for the Skull King card game — works offline.",
+      "themeColor": "#0b1722",
+      "backgroundColor": "#0b1722",
+      "display": "standalone",
+      "orientation": "portrait"
+    },
+    "experiments": {
+      "baseUrl": "/skull-king-score-keeper"
     },
     "extra": {
       "eas": {
