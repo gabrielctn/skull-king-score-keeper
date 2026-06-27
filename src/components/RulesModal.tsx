@@ -7,11 +7,13 @@ import {
   Text,
   TouchableOpacity,
   View,
+  useWindowDimensions,
 } from "react-native";
 import { colors, radius, spacing } from "../theme";
 import { illustrations } from "../assets/illustrations";
 import { useI18n } from "../i18n/context";
 import { Entry } from "../i18n/types";
+import { getResponsiveLayout } from "../responsive";
 
 interface Props {
   visible: boolean;
@@ -34,10 +36,12 @@ function Section({ heading, entries }: { heading: string; entries: Entry[] }) {
 
 export default function RulesModal({ visible, onClose }: Props) {
   const { t } = useI18n();
+  const { width } = useWindowDimensions();
+  const layout = getResponsiveLayout(width);
   return (
     <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
-      <View style={styles.backdrop}>
-        <View style={styles.sheet}>
+      <View style={[styles.backdrop, layout.isTablet && styles.backdropWide]}>
+        <View style={[styles.sheet, layout.isTablet && styles.sheetWide]}>
           <View style={styles.header}>
             <View style={styles.titleRow}>
               <View style={styles.mermaidCrop}>
@@ -67,6 +71,11 @@ export default function RulesModal({ visible, onClose }: Props) {
 
 const styles = StyleSheet.create({
   backdrop: { flex: 1, backgroundColor: colors.overlay, justifyContent: "flex-end" },
+  backdropWide: {
+    alignItems: "center",
+    justifyContent: "center",
+    padding: spacing.lg,
+  },
   sheet: {
     backgroundColor: colors.bg,
     borderTopLeftRadius: radius.lg,
@@ -74,6 +83,12 @@ const styles = StyleSheet.create({
     maxHeight: "88%",
     borderWidth: 1,
     borderColor: colors.cardBorder,
+  },
+  sheetWide: {
+    width: "100%",
+    maxWidth: 760,
+    maxHeight: "86%",
+    borderRadius: radius.lg,
   },
   header: {
     flexDirection: "row",

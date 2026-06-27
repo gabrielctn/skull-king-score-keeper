@@ -9,6 +9,7 @@
     "serve:web": "npx serve dist -l 8080",
     "typecheck": "tsc --noEmit",
     "test:scoring": "node --import tsx scripts/test-scoring.ts",
+    "test:responsive": "node --import tsx scripts/test-responsive-layout.ts",
     "test:assets": "node --import tsx scripts/test-assets.ts"
   },
   "dependencies": {

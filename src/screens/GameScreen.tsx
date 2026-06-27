@@ -6,6 +6,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  useWindowDimensions,
 } from "react-native";
 import { BonusInput, Game, RoundEntries, RoundEntry } from "../types";
 import {
@@ -23,6 +24,7 @@ import Stepper from "../components/Stepper";
 import BonusEditor from "../components/BonusEditor";
 import RulesModal from "../components/RulesModal";
 import { colors, radius, spacing } from "../theme";
+import { getResponsiveLayout } from "../responsive";
 
 interface Props {
   game: Game;
@@ -49,6 +51,8 @@ export default function GameScreen({
   onExit,
 }: Props) {
   const { t } = useI18n();
+  const { width } = useWindowDimensions();
+  const layout = getResponsiveLayout(width);
   const playerIds = useMemo(() => game.players.map((p) => p.id), [game.players]);
   const [displayRound, setDisplayRound] = useState(
     Math.min(game.currentRound, game.totalRounds)
@@ -138,7 +142,15 @@ export default function GameScreen({
 
   return (
     <SafeAreaView style={styles.safe}>
-      <View style={styles.header}>
+      <View
+        style={[
+          styles.header,
+          {
+            maxWidth: layout.gameContentMaxWidth,
+            paddingHorizontal: layout.screenPadding,
+          },
+        ]}
+      >
         <TouchableOpacity onPress={onExit} style={styles.sideBtn}>
           <Text style={styles.headerBtn}>‹ {t.common.home}</Text>
         </TouchableOpacity>
@@ -180,7 +192,15 @@ export default function GameScreen({
         </TouchableOpacity>
       </View>
 
-      <View style={styles.turnBanner}>
+      <View
+        style={[
+          styles.turnBanner,
+          {
+            maxWidth: layout.gameContentMaxWidth,
+            paddingHorizontal: layout.screenPadding,
+          },
+        ]}
+      >
         <Text style={styles.turnDealer}>
           🃏 <Text style={styles.turnDealerName}>{dealer.name}</Text>{" "}
           {t.game.dealsVerb}
@@ -214,7 +234,16 @@ export default function GameScreen({
         <Text style={styles.turnHint}>{t.game.playOrderHint}</Text>
       </View>
 
-      <ScrollView contentContainerStyle={styles.scroll}>
+      <ScrollView
+        contentContainerStyle={[
+          styles.scroll,
+          {
+            maxWidth: layout.gameContentMaxWidth,
+            paddingHorizontal: layout.screenPadding,
+          },
+          layout.gameColumns === 2 && styles.scrollDesktop,
+        ]}
+      >
         {game.players.map((p) => {
           const entry = draft[p.id] ?? emptyEntry();
           const roundScore = scoreRound(cards, entry);
@@ -232,7 +261,13 @@ export default function GameScreen({
             b.loot > 0 ||
             b.rascalWager > 0;
           return (
-            <View key={p.id} style={styles.playerCard}>
+            <View
+              key={p.id}
+              style={[
+                styles.playerCard,
+                layout.gameColumns === 2 && styles.playerCardDesktop,
+              ]}
+            >
               <View style={styles.playerHeader}>
                 <Text style={styles.playerName} numberOfLines={1}>
                   {p.name}
@@ -300,7 +335,11 @@ export default function GameScreen({
         })}
 
         <Text
-          style={[styles.tricksHint, tricksOk ? styles.hintOk : styles.hintWarn]}
+          style={[
+            styles.tricksHint,
+            layout.gameColumns === 2 && styles.fullWidth,
+            tricksOk ? styles.hintOk : styles.hintWarn,
+          ]}
         >
           {t.game.tricksRecorded(tricksTotal, cards)}
           {game.twoPlayerGhost
@@ -313,7 +352,15 @@ export default function GameScreen({
         </Text>
       </ScrollView>
 
-      <View style={styles.boardStrip}>
+      <View
+        style={[
+          styles.boardStrip,
+          {
+            maxWidth: layout.gameContentMaxWidth,
+            paddingHorizontal: layout.screenPadding,
+          },
+        ]}
+      >
         {board.map((row) => (
           <View key={row.player.id} style={styles.boardItem}>
             <Text style={styles.boardName} numberOfLines={1}>
@@ -324,8 +371,19 @@ export default function GameScreen({
         ))}
       </View>
 
-      <View style={styles.footer}>
-        <TouchableOpacity style={styles.scoreBtn} onPress={commitRound}>
+      <View
+        style={[
+          styles.footer,
+          {
+            maxWidth: layout.gameContentMaxWidth,
+            paddingHorizontal: layout.screenPadding,
+          },
+        ]}
+      >
+        <TouchableOpacity
+          style={[styles.scoreBtn, layout.isTablet && styles.scoreBtnWide]}
+          onPress={commitRound}
+        >
           <Text style={styles.scoreBtnText}>
             {displayRound === game.totalRounds && !alreadyRecorded
               ? t.game.finish
@@ -344,6 +402,8 @@ export default function GameScreen({
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
   header: {
+    width: "100%",
+    alignSelf: "center",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -377,6 +437,8 @@ const styles = StyleSheet.create({
   roundTitle: { color: colors.text, fontSize: 20, fontWeight: "800" },
   roundCards: { color: colors.textDim, fontSize: 11, marginBottom: 2 },
   turnBanner: {
+    width: "100%",
+    alignSelf: "center",
     alignItems: "center",
     paddingHorizontal: spacing.md,
     paddingTop: spacing.sm,
@@ -412,7 +474,18 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontStyle: "italic",
   },
-  scroll: { padding: spacing.md, paddingBottom: spacing.sm },
+  scroll: {
+    width: "100%",
+    alignSelf: "center",
+    padding: spacing.md,
+    paddingBottom: spacing.sm,
+  },
+  scrollDesktop: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    columnGap: spacing.md,
+  },
   playerCard: {
     backgroundColor: colors.card,
     borderColor: colors.cardBorder,
@@ -420,6 +493,10 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     padding: spacing.md,
     marginBottom: spacing.sm,
+  },
+  playerCardDesktop: {
+    flexBasis: "48%",
+    marginBottom: spacing.md,
   },
   playerHeader: {
     flexDirection: "row",
@@ -461,9 +538,12 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
     paddingHorizontal: spacing.md,
   },
+  fullWidth: { width: "100%" },
   hintOk: { color: colors.positive },
   hintWarn: { color: colors.textDim },
   boardStrip: {
+    width: "100%",
+    alignSelf: "center",
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "center",
@@ -486,12 +566,13 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     marginLeft: spacing.xs,
   },
-  footer: { padding: spacing.md },
+  footer: { width: "100%", alignSelf: "center", padding: spacing.md },
   scoreBtn: {
     backgroundColor: colors.gold,
     borderRadius: radius.lg,
     paddingVertical: spacing.md,
     alignItems: "center",
   },
+  scoreBtnWide: { alignSelf: "center", width: "100%", maxWidth: 440 },
   scoreBtnText: { color: colors.bg, fontSize: 18, fontWeight: "800" },
 });

@@ -7,12 +7,14 @@ import {
   Text,
   TouchableOpacity,
   View,
+  useWindowDimensions,
 } from "react-native";
 import { Game } from "../types";
 import { standings } from "../scoring";
 import { colors, radius, spacing } from "../theme";
 import { illustrations } from "../assets/illustrations";
 import { useI18n } from "../i18n/context";
+import { getResponsiveLayout } from "../responsive";
 
 interface Props {
   game: Game;
@@ -31,12 +33,22 @@ export default function ResultsScreen({
   onReview,
 }: Props) {
   const { t } = useI18n();
+  const { width } = useWindowDimensions();
+  const layout = getResponsiveLayout(width);
   const rows = standings(game);
   const winner = rows[0];
 
   return (
     <SafeAreaView style={styles.safe}>
-      <ScrollView contentContainerStyle={styles.scroll}>
+      <ScrollView
+        contentContainerStyle={[
+          styles.scroll,
+          {
+            maxWidth: layout.formMaxWidth,
+            padding: layout.screenPadding,
+          },
+        ]}
+      >
         <View style={styles.chest}>
           <Image
             source={illustrations.treasureChest}
@@ -88,7 +100,12 @@ export default function ResultsScreen({
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
-  scroll: { padding: spacing.lg, alignItems: "center" },
+  scroll: {
+    width: "100%",
+    alignSelf: "center",
+    padding: spacing.lg,
+    alignItems: "center",
+  },
   chest: { marginTop: spacing.md, marginBottom: spacing.xs },
   treasureChest: { width: 190, height: 165 },
   title: { color: colors.gold, fontSize: 34, fontWeight: "800" },

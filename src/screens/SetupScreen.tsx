@@ -10,6 +10,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  useWindowDimensions,
 } from "react-native";
 import { Player } from "../types";
 import { createGame } from "../scoring";
@@ -18,6 +19,7 @@ import Stepper from "../components/Stepper";
 import { colors, radius, spacing } from "../theme";
 import { illustrations } from "../assets/illustrations";
 import { useI18n } from "../i18n/context";
+import { getResponsiveLayout } from "../responsive";
 
 interface Props {
   onStart: (game: Game) => void;
@@ -29,6 +31,8 @@ const newId = () => `p_${Date.now()}_${idCounter++}`;
 
 export default function SetupScreen({ onStart, onBack }: Props) {
   const { t } = useI18n();
+  const { width } = useWindowDimensions();
+  const layout = getResponsiveLayout(width);
   const [players, setPlayers] = useState<Player[]>([
     { id: newId(), name: "" },
     { id: newId(), name: "" },
@@ -77,7 +81,15 @@ export default function SetupScreen({ onStart, onBack }: Props) {
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
-        <View style={styles.header}>
+        <View
+          style={[
+            styles.header,
+            {
+              maxWidth: layout.formMaxWidth,
+              paddingHorizontal: layout.screenPadding,
+            },
+          ]}
+        >
           <TouchableOpacity onPress={onBack}>
             <Text style={styles.back}>‹ {t.common.back}</Text>
           </TouchableOpacity>
@@ -86,7 +98,13 @@ export default function SetupScreen({ onStart, onBack }: Props) {
         </View>
 
         <ScrollView
-          contentContainerStyle={styles.scroll}
+          contentContainerStyle={[
+            styles.scroll,
+            {
+              maxWidth: layout.formMaxWidth,
+              padding: layout.screenPadding,
+            },
+          ]}
           keyboardShouldPersistTaps="handled"
         >
           <View style={styles.greeter}>
@@ -204,7 +222,15 @@ export default function SetupScreen({ onStart, onBack }: Props) {
           </TouchableOpacity>
         </ScrollView>
 
-        <View style={styles.footer}>
+        <View
+          style={[
+            styles.footer,
+            {
+              maxWidth: layout.formMaxWidth,
+              paddingHorizontal: layout.screenPadding,
+            },
+          ]}
+        >
           <TouchableOpacity
             style={[styles.startBtn, !canStart && styles.startBtnDisabled]}
             onPress={start}
@@ -223,6 +249,8 @@ export default function SetupScreen({ onStart, onBack }: Props) {
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
   header: {
+    width: "100%",
+    alignSelf: "center",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -231,7 +259,12 @@ const styles = StyleSheet.create({
   },
   back: { color: colors.gold, fontSize: 17 },
   title: { color: colors.text, fontSize: 20, fontWeight: "700" },
-  scroll: { padding: spacing.md, paddingBottom: spacing.xl },
+  scroll: {
+    width: "100%",
+    alignSelf: "center",
+    padding: spacing.md,
+    paddingBottom: spacing.xl,
+  },
   greeter: { alignItems: "center", marginBottom: spacing.md },
   parrot: { width: 104, height: 118 },
   greeterText: {
@@ -338,7 +371,7 @@ const styles = StyleSheet.create({
   switchOn: { backgroundColor: colors.gold, borderColor: colors.gold },
   switchText: { color: colors.textDim, fontWeight: "700" },
   switchTextOn: { color: colors.bg },
-  footer: { padding: spacing.md },
+  footer: { width: "100%", alignSelf: "center", padding: spacing.md },
   startBtn: {
     backgroundColor: colors.gold,
     borderRadius: radius.lg,

@@ -6,6 +6,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  useWindowDimensions,
 } from "react-native";
 import { Game } from "../types";
 import { standings } from "../scoring";
@@ -13,6 +14,7 @@ import { colors, radius, spacing } from "../theme";
 import { illustrations } from "../assets/illustrations";
 import { useI18n } from "../i18n/context";
 import { Lang } from "../i18n/types";
+import { getResponsiveLayout } from "../responsive";
 
 interface Props {
   savedGame: Game | null;
@@ -22,6 +24,8 @@ interface Props {
 
 export default function HomeScreen({ savedGame, onNewGame, onResume }: Props) {
   const { t, lang, setLang } = useI18n();
+  const { width } = useWindowDimensions();
+  const layout = getResponsiveLayout(width);
   const leader =
     savedGame && savedGame.players.length
       ? standings(savedGame)[0]
@@ -43,10 +47,19 @@ export default function HomeScreen({ savedGame, onNewGame, onResume }: Props) {
           </TouchableOpacity>
         ))}
       </View>
-      <View style={styles.container}>
-        <View style={styles.hero}>
+      <View
+        style={[
+          styles.container,
+          {
+            maxWidth: layout.contentMaxWidth,
+            padding: layout.screenPadding,
+          },
+          layout.isDesktop && styles.containerDesktop,
+        ]}
+      >
+        <View style={[styles.hero, layout.isDesktop && styles.heroDesktop]}>
           <View style={styles.emblemWrap}>
-            <View style={styles.emblemBg} pointerEvents="none">
+            <View style={styles.emblemBg}>
               <Image
                 source={illustrations.compass}
                 style={styles.compass}
@@ -63,29 +76,31 @@ export default function HomeScreen({ savedGame, onNewGame, onResume }: Props) {
           <Text style={styles.subtitle}>{t.home.subtitle}</Text>
         </View>
 
-        {savedGame ? (
-          <TouchableOpacity style={styles.resumeCard} onPress={onResume}>
-            <Text style={styles.resumeLabel}>{t.home.resume}</Text>
-            <Text style={styles.resumeMeta}>
-              {t.home.playersRound(
-                savedGame.players.length,
-                Math.min(savedGame.currentRound, savedGame.totalRounds),
-                savedGame.totalRounds
-              )}
-            </Text>
-            {leader ? (
-              <Text style={styles.resumeLeader}>
-                {t.home.leading(leader.player.name, leader.total)}
+        <View style={[styles.actions, layout.isDesktop && styles.actionsDesktop]}>
+          {savedGame ? (
+            <TouchableOpacity style={styles.resumeCard} onPress={onResume}>
+              <Text style={styles.resumeLabel}>{t.home.resume}</Text>
+              <Text style={styles.resumeMeta}>
+                {t.home.playersRound(
+                  savedGame.players.length,
+                  Math.min(savedGame.currentRound, savedGame.totalRounds),
+                  savedGame.totalRounds
+                )}
               </Text>
-            ) : null}
+              {leader ? (
+                <Text style={styles.resumeLeader}>
+                  {t.home.leading(leader.player.name, leader.total)}
+                </Text>
+              ) : null}
+            </TouchableOpacity>
+          ) : null}
+
+          <TouchableOpacity style={styles.primaryBtn} onPress={onNewGame}>
+            <Text style={styles.primaryBtnText}>{t.common.newGame}</Text>
           </TouchableOpacity>
-        ) : null}
 
-        <TouchableOpacity style={styles.primaryBtn} onPress={onNewGame}>
-          <Text style={styles.primaryBtnText}>{t.common.newGame}</Text>
-        </TouchableOpacity>
-
-        <Text style={styles.footer}>{t.home.offline}</Text>
+          <Text style={styles.footer}>{t.home.offline}</Text>
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -114,8 +129,19 @@ const styles = StyleSheet.create({
   langBtnOn: { backgroundColor: colors.gold },
   langText: { color: colors.textDim, fontSize: 13, fontWeight: "800" },
   langTextOn: { color: colors.bg },
-  container: { flex: 1, padding: spacing.lg, justifyContent: "center" },
+  container: {
+    flex: 1,
+    width: "100%",
+    alignSelf: "center",
+    justifyContent: "center",
+  },
+  containerDesktop: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
   hero: { alignItems: "center", marginBottom: spacing.xl },
+  heroDesktop: { flex: 1, marginBottom: 0 },
   emblemWrap: {
     width: 230,
     height: 210,
@@ -127,11 +153,14 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     alignItems: "center",
     justifyContent: "center",
+    pointerEvents: "none",
   },
   compass: { width: 230, height: 230, opacity: 0.16 },
   skullKing: { width: 170, height: 190 },
   title: { color: colors.gold, fontSize: 42, fontWeight: "800", letterSpacing: 1 },
   subtitle: { color: colors.textDim, fontSize: 18, marginTop: spacing.xs },
+  actions: { width: "100%", alignSelf: "center" },
+  actionsDesktop: { flex: 1, maxWidth: 380 },
   resumeCard: {
     backgroundColor: colors.card,
     borderColor: colors.cardBorder,
