@@ -219,6 +219,18 @@ export default function GameScreen({
           const entry = draft[p.id] ?? emptyEntry();
           const roundScore = scoreRound(cards, entry);
           const open = !!expanded[p.id];
+          const b = entry.bonus;
+          const entryTouched =
+            entry.recorded ||
+            entry.bid > 0 ||
+            entry.tricks > 0 ||
+            b.colored14 > 0 ||
+            b.black14 ||
+            b.mermaidByPirate > 0 ||
+            b.pirateBySkullKing > 0 ||
+            b.mermaidCapturesSkullKing ||
+            b.loot > 0 ||
+            b.rascalWager > 0;
           return (
             <View key={p.id} style={styles.playerCard}>
               <View style={styles.playerHeader}>
@@ -226,15 +238,21 @@ export default function GameScreen({
                   {p.name}
                 </Text>
                 <View style={styles.playerScores}>
-                  <Text
-                    style={[
-                      styles.roundScore,
-                      roundScore >= 0 ? styles.pos : styles.neg,
-                    ]}
-                  >
-                    {roundScore >= 0 ? "+" : ""}
-                    {roundScore}
-                  </Text>
+                  {entryTouched ? (
+                    <Text
+                      style={[
+                        styles.roundScore,
+                        roundScore >= 0 ? styles.pos : styles.neg,
+                      ]}
+                    >
+                      {roundScore >= 0 ? "+" : ""}
+                      {roundScore}
+                    </Text>
+                  ) : (
+                    <Text style={[styles.roundScore, styles.scorePlaceholder]}>
+                      —
+                    </Text>
+                  )}
                   <Text style={styles.totalScore}>
                     {t.game.total(playerTotal(game, p.id))}
                   </Text>
@@ -421,6 +439,7 @@ const styles = StyleSheet.create({
   totalScore: { color: colors.textDim, fontSize: 12 },
   pos: { color: colors.positive },
   neg: { color: colors.negative },
+  scorePlaceholder: { color: colors.textDim },
   steppers: {
     flexDirection: "row",
     justifyContent: "space-between",
