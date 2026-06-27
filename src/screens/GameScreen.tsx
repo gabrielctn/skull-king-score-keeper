@@ -17,6 +17,8 @@ import {
   scoreRound,
   standings,
 } from "../scoring";
+import { dealerIndex, playOrder } from "../turnOrder";
+import { useI18n } from "../i18n/context";
 import Stepper from "../components/Stepper";
 import BonusEditor from "../components/BonusEditor";
 import RulesModal from "../components/RulesModal";
@@ -46,6 +48,7 @@ export default function GameScreen({
   onFinish,
   onExit,
 }: Props) {
+  const { t } = useI18n();
   const playerIds = useMemo(() => game.players.map((p) => p.id), [game.players]);
   const [displayRound, setDisplayRound] = useState(
     Math.min(game.currentRound, game.totalRounds)
@@ -57,6 +60,9 @@ export default function GameScreen({
   const [rulesOpen, setRulesOpen] = useState(false);
 
   const cards = cardsForRound(game, displayRound);
+  // Indicative dealer / first-trick order for the round being shown.
+  const dealer = game.players[dealerIndex(game, displayRound)];
+  const order = playOrder(game, displayRound);
 
   // Reseed the draft whenever the visible round changes.
   useEffect(() => {
@@ -134,7 +140,7 @@ export default function GameScreen({
     <SafeAreaView style={styles.safe}>
       <View style={styles.header}>
         <TouchableOpacity onPress={onExit} style={styles.sideBtn}>
-          <Text style={styles.headerBtn}>‹ Home</Text>
+          <Text style={styles.headerBtn}>‹ {t.common.home}</Text>
         </TouchableOpacity>
         <View style={styles.roundNav}>
           <TouchableOpacity
@@ -146,8 +152,8 @@ export default function GameScreen({
             </Text>
           </TouchableOpacity>
           <View style={styles.roundInfo}>
-            <Text style={styles.roundTitle}>Round {displayRound}</Text>
-            <Text style={styles.roundCards}>cards dealt</Text>
+            <Text style={styles.roundTitle}>{t.game.round(displayRound)}</Text>
+            <Text style={styles.roundCards}>{t.game.cardsDealt}</Text>
             <Stepper value={cards} onChange={setCards} min={1} max={20} compact />
           </View>
           <TouchableOpacity
@@ -174,6 +180,40 @@ export default function GameScreen({
         </TouchableOpacity>
       </View>
 
+      <View style={styles.turnBanner}>
+        <Text style={styles.turnDealer}>
+          🃏 <Text style={styles.turnDealerName}>{dealer.name}</Text>{" "}
+          {t.game.dealsVerb}
+        </Text>
+        <View style={styles.turnOrderRow}>
+          {order.map((slot, i) => (
+            <React.Fragment key={i}>
+              {i > 0 ? <Text style={styles.turnArrow}>›</Text> : null}
+              <View
+                style={[
+                  styles.turnChip,
+                  slot.kind === "ghost" && styles.turnChipGhost,
+                  i === 0 && styles.turnChipLead,
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.turnChipText,
+                    i === 0 && styles.turnChipLeadText,
+                  ]}
+                  numberOfLines={1}
+                >
+                  {slot.kind === "ghost"
+                    ? `👻 ${t.game.ghostName}`
+                    : slot.player.name}
+                </Text>
+              </View>
+            </React.Fragment>
+          ))}
+        </View>
+        <Text style={styles.turnHint}>{t.game.playOrderHint}</Text>
+      </View>
+
       <ScrollView contentContainerStyle={styles.scroll}>
         {game.players.map((p) => {
           const entry = draft[p.id] ?? emptyEntry();
@@ -196,14 +236,14 @@ export default function GameScreen({
                     {roundScore}
                   </Text>
                   <Text style={styles.totalScore}>
-                    {playerTotal(game, p.id)} total
+                    {t.game.total(playerTotal(game, p.id))}
                   </Text>
                 </View>
               </View>
 
               <View style={styles.steppers}>
                 <Stepper
-                  label="Bid"
+                  label={t.game.bid}
                   value={Math.min(entry.bid, cards)}
                   min={0}
                   max={cards}
@@ -211,7 +251,7 @@ export default function GameScreen({
                   compact
                 />
                 <Stepper
-                  label="Won"
+                  label={t.game.won}
                   value={Math.min(entry.tricks, cards)}
                   min={0}
                   max={cards}
@@ -225,7 +265,7 @@ export default function GameScreen({
                   }
                 >
                   <Text style={styles.bonusToggleText}>
-                    Bonus {open ? "▾" : "▸"}
+                    {t.game.bonus} {open ? "▾" : "▸"}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -244,14 +284,14 @@ export default function GameScreen({
         <Text
           style={[styles.tricksHint, tricksOk ? styles.hintOk : styles.hintWarn]}
         >
-          Tricks recorded: {tricksTotal} / {cards}
+          {t.game.tricksRecorded(tricksTotal, cards)}
           {game.twoPlayerGhost
             ? tricksOk
-              ? `  ·  Greybeard 👻 took ${ghost}`
-              : "  (more than the cards dealt — check your counts)"
+              ? t.game.ghostTook(ghost)
+              : t.game.tricksWarnOver
             : tricksOk
-              ? "  ✓"
-              : "  (should equal cards dealt, unless a Kraken voided a trick)"}
+              ? t.game.tricksOk
+              : t.game.tricksWarnNormal}
         </Text>
       </ScrollView>
 
@@ -270,10 +310,10 @@ export default function GameScreen({
         <TouchableOpacity style={styles.scoreBtn} onPress={commitRound}>
           <Text style={styles.scoreBtnText}>
             {displayRound === game.totalRounds && !alreadyRecorded
-              ? "Finish game 🏁"
+              ? t.game.finish
               : alreadyRecorded
-                ? "Update round"
-                : "Score round →"}
+                ? t.game.updateRound
+                : t.game.scoreRound}
           </Text>
         </TouchableOpacity>
       </View>
@@ -318,6 +358,42 @@ const styles = StyleSheet.create({
   roundInfo: { alignItems: "center", minWidth: 120 },
   roundTitle: { color: colors.text, fontSize: 20, fontWeight: "800" },
   roundCards: { color: colors.textDim, fontSize: 11, marginBottom: 2 },
+  turnBanner: {
+    alignItems: "center",
+    paddingHorizontal: spacing.md,
+    paddingTop: spacing.sm,
+    paddingBottom: spacing.xs,
+  },
+  turnDealer: { color: colors.textDim, fontSize: 13 },
+  turnDealerName: { color: colors.text, fontWeight: "800" },
+  turnOrderRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: spacing.xs,
+  },
+  turnArrow: { color: colors.textDim, fontSize: 16, marginHorizontal: 4 },
+  turnChip: {
+    backgroundColor: colors.bgElevated,
+    borderWidth: 1,
+    borderColor: colors.cardBorder,
+    borderRadius: radius.sm,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 4,
+    margin: 2,
+    maxWidth: 130,
+  },
+  turnChipLead: { backgroundColor: colors.gold, borderColor: colors.gold },
+  turnChipGhost: { borderColor: colors.accent, borderStyle: "dashed" },
+  turnChipText: { color: colors.text, fontSize: 12, fontWeight: "700" },
+  turnChipLeadText: { color: colors.bg },
+  turnHint: {
+    color: colors.textDim,
+    fontSize: 10,
+    marginTop: 4,
+    fontStyle: "italic",
+  },
   scroll: { padding: spacing.md, paddingBottom: spacing.sm },
   playerCard: {
     backgroundColor: colors.card,

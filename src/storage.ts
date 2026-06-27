@@ -1,8 +1,10 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { BonusInput, Game, RoundEntries } from "./types";
 import { emptyBonus } from "./scoring";
+import { Lang } from "./i18n/types";
 
 const CURRENT_GAME_KEY = "skullking:currentGame";
+const LANG_KEY = "skullking:lang";
 
 /**
  * Bring a loaded game up to the current schema. Older saves stored `bonus`
@@ -88,5 +90,25 @@ export async function clearGame(): Promise<void> {
     await AsyncStorage.removeItem(CURRENT_GAME_KEY);
   } catch (e) {
     console.warn("Failed to clear game", e);
+  }
+}
+
+/** Load the saved UI language, or null if none was chosen yet. */
+export async function loadLang(): Promise<Lang | null> {
+  try {
+    const value = await AsyncStorage.getItem(LANG_KEY);
+    return value === "en" || value === "fr" ? value : null;
+  } catch (e) {
+    console.warn("Failed to load language", e);
+    return null;
+  }
+}
+
+/** Persist the chosen UI language. */
+export async function saveLang(lang: Lang): Promise<void> {
+  try {
+    await AsyncStorage.setItem(LANG_KEY, lang);
+  } catch (e) {
+    console.warn("Failed to save language", e);
   }
 }

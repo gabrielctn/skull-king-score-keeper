@@ -17,6 +17,7 @@ import { Game } from "../types";
 import Stepper from "../components/Stepper";
 import { colors, radius, spacing } from "../theme";
 import { illustrations } from "../assets/illustrations";
+import { useI18n } from "../i18n/context";
 
 interface Props {
   onStart: (game: Game) => void;
@@ -27,6 +28,7 @@ let idCounter = 0;
 const newId = () => `p_${Date.now()}_${idCounter++}`;
 
 export default function SetupScreen({ onStart, onBack }: Props) {
+  const { t } = useI18n();
   const [players, setPlayers] = useState<Player[]>([
     { id: newId(), name: "" },
     { id: newId(), name: "" },
@@ -43,6 +45,17 @@ export default function SetupScreen({ onStart, onBack }: Props) {
 
   const removePlayer = (id: string) =>
     setPlayers((prev) => prev.filter((p) => p.id !== id));
+
+  // Seating order = clockwise table order, which drives the dealer / play-order
+  // indicator in-game; let players reorder without retyping.
+  const movePlayer = (index: number, dir: -1 | 1) =>
+    setPlayers((prev) => {
+      const j = index + dir;
+      if (j < 0 || j >= prev.length) return prev;
+      const next = [...prev];
+      [next[index], next[j]] = [next[j], next[index]];
+      return next;
+    });
 
   const named = players
     .map((p) => ({ ...p, name: p.name.trim() }))
@@ -66,9 +79,9 @@ export default function SetupScreen({ onStart, onBack }: Props) {
       >
         <View style={styles.header}>
           <TouchableOpacity onPress={onBack}>
-            <Text style={styles.back}>‹ Back</Text>
+            <Text style={styles.back}>‹ {t.common.back}</Text>
           </TouchableOpacity>
-          <Text style={styles.title}>New Game</Text>
+          <Text style={styles.title}>{t.setup.title}</Text>
           <View style={{ width: 50 }} />
         </View>
 
@@ -82,22 +95,42 @@ export default function SetupScreen({ onStart, onBack }: Props) {
               style={styles.parrot}
               resizeMode="contain"
             />
-            <Text style={styles.greeterText}>Gather your crew</Text>
+            <Text style={styles.greeterText}>{t.setup.crew}</Text>
           </View>
 
-          <Text style={styles.section}>Players</Text>
+          <Text style={styles.section}>{t.setup.players}</Text>
+          <Text style={styles.seatingHint}>{t.setup.seatingHint}</Text>
           {players.map((p, i) => (
             <View key={p.id} style={styles.playerRow}>
               <Text style={styles.playerNum}>{i + 1}</Text>
               <TextInput
                 style={styles.input}
-                placeholder={`Player ${i + 1}`}
+                placeholder={t.setup.playerPlaceholder(i + 1)}
                 placeholderTextColor={colors.textDim}
                 value={p.name}
                 onChangeText={(t) => setName(p.id, t)}
                 returnKeyType="done"
                 maxLength={20}
               />
+              <View style={styles.reorder}>
+                <TouchableOpacity
+                  onPress={() => movePlayer(i, -1)}
+                  disabled={i === 0}
+                  style={[styles.reorderBtn, i === 0 && styles.reorderBtnDisabled]}
+                >
+                  <Text style={styles.reorderText}>▲</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => movePlayer(i, 1)}
+                  disabled={i === players.length - 1}
+                  style={[
+                    styles.reorderBtn,
+                    i === players.length - 1 && styles.reorderBtnDisabled,
+                  ]}
+                >
+                  <Text style={styles.reorderText}>▼</Text>
+                </TouchableOpacity>
+              </View>
               <TouchableOpacity
                 onPress={() => removePlayer(p.id)}
                 disabled={players.length <= 2}
@@ -112,13 +145,13 @@ export default function SetupScreen({ onStart, onBack }: Props) {
           ))}
 
           <TouchableOpacity style={styles.addBtn} onPress={addPlayer}>
-            <Text style={styles.addText}>+ Add player</Text>
+            <Text style={styles.addText}>{t.setup.addPlayer}</Text>
           </TouchableOpacity>
 
           {isTwoPlayer ? (
             <>
               <Text style={[styles.section, { marginTop: spacing.lg }]}>
-                Two players
+                {t.setup.twoPlayers}
               </Text>
               <TouchableOpacity
                 style={styles.advancedRow}
@@ -126,13 +159,8 @@ export default function SetupScreen({ onStart, onBack }: Props) {
                 activeOpacity={0.8}
               >
                 <View style={{ flex: 1, marginRight: spacing.md }}>
-                  <Text style={styles.advancedTitle}>Greybeard ghost 👻</Text>
-                  <Text style={styles.advancedHint}>
-                    The official 2-player variant: deal a third hand for the
-                    Greybeard ghost. He plays but never bids or scores, so he
-                    steals some tricks — your two trick counts can total less
-                    than the cards dealt.
-                  </Text>
+                  <Text style={styles.advancedTitle}>{t.setup.ghostTitle}</Text>
+                  <Text style={styles.advancedHint}>{t.setup.ghostHint}</Text>
                 </View>
                 <View style={[styles.switch, twoPlayerGhost && styles.switchOn]}>
                   <Text
@@ -141,23 +169,23 @@ export default function SetupScreen({ onStart, onBack }: Props) {
                       twoPlayerGhost && styles.switchTextOn,
                     ]}
                   >
-                    {twoPlayerGhost ? "On" : "Off"}
+                    {twoPlayerGhost ? t.common.on : t.common.off}
                   </Text>
                 </View>
               </TouchableOpacity>
             </>
           ) : null}
 
-          <Text style={[styles.section, { marginTop: spacing.lg }]}>Rounds</Text>
+          <Text style={[styles.section, { marginTop: spacing.lg }]}>
+            {t.setup.rounds}
+          </Text>
           <View style={styles.roundsCard}>
             <Stepper value={rounds} onChange={setRounds} min={1} max={10} />
-            <Text style={styles.roundsHint}>
-              Standard Skull King is 10 rounds.
-            </Text>
+            <Text style={styles.roundsHint}>{t.setup.roundsHint}</Text>
           </View>
 
           <Text style={[styles.section, { marginTop: spacing.lg }]}>
-            Expansion cards
+            {t.setup.expansion}
           </Text>
           <TouchableOpacity
             style={styles.advancedRow}
@@ -165,16 +193,12 @@ export default function SetupScreen({ onStart, onBack }: Props) {
             activeOpacity={0.8}
           >
             <View style={{ flex: 1, marginRight: spacing.md }}>
-              <Text style={styles.advancedTitle}>Loot &amp; Rascal wager</Text>
-              <Text style={styles.advancedHint}>
-                Adds Loot/Butin alliances and the Rascal pirate side-bet to the
-                bonus editor. Kraken, White Whale &amp; the 14/capture bonuses
-                are always available.
-              </Text>
+              <Text style={styles.advancedTitle}>{t.setup.advancedTitle}</Text>
+              <Text style={styles.advancedHint}>{t.setup.advancedHint}</Text>
             </View>
             <View style={[styles.switch, advanced && styles.switchOn]}>
               <Text style={[styles.switchText, advanced && styles.switchTextOn]}>
-                {advanced ? "On" : "Off"}
+                {advanced ? t.common.on : t.common.off}
               </Text>
             </View>
           </TouchableOpacity>
@@ -187,7 +211,7 @@ export default function SetupScreen({ onStart, onBack }: Props) {
             disabled={!canStart}
           >
             <Text style={styles.startText}>
-              {canStart ? "Start game ☠️" : "Add at least 2 players"}
+              {canStart ? t.setup.start : t.setup.needPlayers}
             </Text>
           </TouchableOpacity>
         </View>
@@ -247,6 +271,21 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginHorizontal: spacing.sm,
   },
+  seatingHint: {
+    color: colors.textDim,
+    fontSize: 12,
+    lineHeight: 16,
+    marginBottom: spacing.sm,
+  },
+  reorder: { marginRight: spacing.xs },
+  reorderBtn: {
+    width: 26,
+    height: 18,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  reorderBtnDisabled: { opacity: 0.2 },
+  reorderText: { color: colors.gold, fontSize: 12 },
   removeBtn: {
     width: 36,
     height: 36,

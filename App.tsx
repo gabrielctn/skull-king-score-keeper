@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, StatusBar, StyleSheet, View } from "react-native";
 import { Game } from "./src/types";
-import { clearGame, loadGame, saveGame } from "./src/storage";
+import { clearGame, loadGame, loadLang, saveGame } from "./src/storage";
 import { colors } from "./src/theme";
+import { I18nProvider, detectLang } from "./src/i18n/context";
+import { Lang } from "./src/i18n/types";
 import HomeScreen from "./src/screens/HomeScreen";
 import SetupScreen from "./src/screens/SetupScreen";
 import GameScreen from "./src/screens/GameScreen";
@@ -14,14 +16,18 @@ type Screen = "home" | "setup" | "game" | "results";
 export default function App() {
   const [screen, setScreen] = useState<Screen>("home");
   const [game, setGame] = useState<Game | null>(null);
+  const [lang, setLang] = useState<Lang | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Restore any saved game on launch, and register the PWA service worker (web only).
+  // Restore the saved game and language on launch, and register the PWA
+  // service worker (web only). Loading the language here (before first paint)
+  // avoids a flash of the wrong language.
   useEffect(() => {
     registerServiceWorker();
     (async () => {
-      const saved = await loadGame();
+      const [saved, savedLang] = await Promise.all([loadGame(), loadLang()]);
       if (saved) setGame(saved);
+      setLang(savedLang ?? detectLang());
       setLoading(false);
     })();
   }, []);
@@ -56,7 +62,7 @@ export default function App() {
     setScreen("setup");
   };
 
-  if (loading) {
+  if (loading || lang === null) {
     return (
       <View style={styles.loader}>
         <StatusBar barStyle="light-content" />
@@ -66,35 +72,37 @@ export default function App() {
   }
 
   return (
-    <View style={styles.root}>
-      <StatusBar barStyle="light-content" backgroundColor={colors.bg} />
-      {screen === "home" && (
-        <HomeScreen
-          savedGame={game}
-          onNewGame={handleNewGame}
-          onResume={handleResume}
-        />
-      )}
-      {screen === "setup" && (
-        <SetupScreen onStart={handleStart} onBack={handleHome} />
-      )}
-      {screen === "game" && game && (
-        <GameScreen
-          game={game}
-          onUpdateGame={persist}
-          onFinish={handleFinish}
-          onExit={handleHome}
-        />
-      )}
-      {screen === "results" && game && (
-        <ResultsScreen
-          game={game}
-          onNewGame={handleNewFromResults}
-          onHome={handleHome}
-          onReview={() => setScreen("game")}
-        />
-      )}
-    </View>
+    <I18nProvider initialLang={lang}>
+      <View style={styles.root}>
+        <StatusBar barStyle="light-content" backgroundColor={colors.bg} />
+        {screen === "home" && (
+          <HomeScreen
+            savedGame={game}
+            onNewGame={handleNewGame}
+            onResume={handleResume}
+          />
+        )}
+        {screen === "setup" && (
+          <SetupScreen onStart={handleStart} onBack={handleHome} />
+        )}
+        {screen === "game" && game && (
+          <GameScreen
+            game={game}
+            onUpdateGame={persist}
+            onFinish={handleFinish}
+            onExit={handleHome}
+          />
+        )}
+        {screen === "results" && game && (
+          <ResultsScreen
+            game={game}
+            onNewGame={handleNewFromResults}
+            onHome={handleHome}
+            onReview={() => setScreen("game")}
+          />
+        )}
+      </View>
+    </I18nProvider>
   );
 }
 

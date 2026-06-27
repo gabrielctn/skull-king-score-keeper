@@ -11,6 +11,8 @@ import { Game } from "../types";
 import { standings } from "../scoring";
 import { colors, radius, spacing } from "../theme";
 import { illustrations } from "../assets/illustrations";
+import { useI18n } from "../i18n/context";
+import { Lang } from "../i18n/types";
 
 interface Props {
   savedGame: Game | null;
@@ -19,6 +21,7 @@ interface Props {
 }
 
 export default function HomeScreen({ savedGame, onNewGame, onResume }: Props) {
+  const { t, lang, setLang } = useI18n();
   const leader =
     savedGame && savedGame.players.length
       ? standings(savedGame)[0]
@@ -26,6 +29,20 @@ export default function HomeScreen({ savedGame, onNewGame, onResume }: Props) {
 
   return (
     <SafeAreaView style={styles.safe}>
+      <View style={styles.langSwitch}>
+        {(["fr", "en"] as Lang[]).map((l) => (
+          <TouchableOpacity
+            key={l}
+            onPress={() => setLang(l)}
+            style={[styles.langBtn, lang === l && styles.langBtnOn]}
+            accessibilityRole="button"
+          >
+            <Text style={[styles.langText, lang === l && styles.langTextOn]}>
+              {l.toUpperCase()}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
       <View style={styles.container}>
         <View style={styles.hero}>
           <View style={styles.emblemWrap}>
@@ -43,32 +60,32 @@ export default function HomeScreen({ savedGame, onNewGame, onResume }: Props) {
             />
           </View>
           <Text style={styles.title}>Skull King</Text>
-          <Text style={styles.subtitle}>Scorekeeper</Text>
+          <Text style={styles.subtitle}>{t.home.subtitle}</Text>
         </View>
 
         {savedGame ? (
           <TouchableOpacity style={styles.resumeCard} onPress={onResume}>
-            <Text style={styles.resumeLabel}>Resume game</Text>
+            <Text style={styles.resumeLabel}>{t.home.resume}</Text>
             <Text style={styles.resumeMeta}>
-              {savedGame.players.length} players · round{" "}
-              {Math.min(savedGame.currentRound, savedGame.totalRounds)} of{" "}
-              {savedGame.totalRounds}
+              {t.home.playersRound(
+                savedGame.players.length,
+                Math.min(savedGame.currentRound, savedGame.totalRounds),
+                savedGame.totalRounds
+              )}
             </Text>
             {leader ? (
               <Text style={styles.resumeLeader}>
-                Leading: {leader.player.name} ({leader.total})
+                {t.home.leading(leader.player.name, leader.total)}
               </Text>
             ) : null}
           </TouchableOpacity>
         ) : null}
 
         <TouchableOpacity style={styles.primaryBtn} onPress={onNewGame}>
-          <Text style={styles.primaryBtnText}>New game</Text>
+          <Text style={styles.primaryBtnText}>{t.common.newGame}</Text>
         </TouchableOpacity>
 
-        <Text style={styles.footer}>
-          Works offline · install from your browser
-        </Text>
+        <Text style={styles.footer}>{t.home.offline}</Text>
       </View>
     </SafeAreaView>
   );
@@ -76,6 +93,27 @@ export default function HomeScreen({ savedGame, onNewGame, onResume }: Props) {
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
+  langSwitch: {
+    position: "absolute",
+    top: spacing.md,
+    right: spacing.md,
+    zIndex: 1,
+    flexDirection: "row",
+    borderWidth: 1,
+    borderColor: colors.cardBorder,
+    borderRadius: radius.sm,
+    overflow: "hidden",
+  },
+  langBtn: {
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 6,
+    backgroundColor: colors.bgElevated,
+    minWidth: 38,
+    alignItems: "center",
+  },
+  langBtnOn: { backgroundColor: colors.gold },
+  langText: { color: colors.textDim, fontSize: 13, fontWeight: "800" },
+  langTextOn: { color: colors.bg },
   container: { flex: 1, padding: spacing.lg, justifyContent: "center" },
   hero: { alignItems: "center", marginBottom: spacing.xl },
   emblemWrap: {

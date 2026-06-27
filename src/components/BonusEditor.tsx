@@ -4,6 +4,7 @@ import { BonusInput } from "../types";
 import { BONUS_VALUES, captureBonus } from "../scoring";
 import Stepper from "./Stepper";
 import { colors, radius, spacing } from "../theme";
+import { useI18n } from "../i18n/context";
 
 interface Props {
   bonus: BonusInput;
@@ -22,6 +23,7 @@ function Toggle({
   label: string;
   points: number;
 }) {
+  const { t } = useI18n();
   return (
     <View style={styles.row}>
       <Text style={styles.label}>
@@ -34,7 +36,7 @@ function Toggle({
         accessibilityState={{ checked: on }}
       >
         <Text style={[styles.toggleText, on && styles.toggleTextOn]}>
-          {on ? "Yes" : "No"}
+          {on ? t.common.yes : t.common.no}
         </Text>
       </TouchableOpacity>
     </View>
@@ -54,10 +56,11 @@ function CountRow({
   max: number;
   onChange: (v: number) => void;
 }) {
+  const { t } = useI18n();
   return (
     <View style={styles.row}>
       <Text style={styles.label}>
-        {label} <Text style={styles.pts}>+{points} ea.</Text>
+        {label} <Text style={styles.pts}>+{points} {t.bonus.each}</Text>
       </Text>
       <Stepper value={value} onChange={onChange} min={0} max={max} compact />
     </View>
@@ -65,40 +68,41 @@ function CountRow({
 }
 
 export default function BonusEditor({ bonus, advanced, onChange }: Props) {
+  const { t } = useI18n();
   const set = <K extends keyof BonusInput>(key: K, value: BonusInput[K]) =>
     onChange({ ...bonus, [key]: value });
 
   return (
     <View style={styles.wrap}>
       <CountRow
-        label="Colored 14s"
+        label={t.bonus.colored14}
         points={BONUS_VALUES.colored14}
         value={bonus.colored14}
         max={3}
         onChange={(v) => set("colored14", v)}
       />
       <Toggle
-        label="Black 14 (Jolly Roger)"
+        label={t.bonus.black14}
         points={BONUS_VALUES.black14}
         on={bonus.black14}
         onToggle={() => set("black14", !bonus.black14)}
       />
       <CountRow
-        label="Mermaid taken by a pirate"
+        label={t.bonus.mermaidByPirate}
         points={BONUS_VALUES.mermaidByPirate}
         value={bonus.mermaidByPirate}
         max={2}
         onChange={(v) => set("mermaidByPirate", v)}
       />
       <CountRow
-        label="Pirate taken by Skull King"
+        label={t.bonus.pirateBySkullKing}
         points={BONUS_VALUES.pirateBySkullKing}
         value={bonus.pirateBySkullKing}
         max={6}
         onChange={(v) => set("pirateBySkullKing", v)}
       />
       <Toggle
-        label="Mermaid captures Skull King"
+        label={t.bonus.mermaidCapturesSkullKing}
         points={BONUS_VALUES.mermaidCapturesSkullKing}
         on={bonus.mermaidCapturesSkullKing}
         onToggle={() =>
@@ -110,14 +114,14 @@ export default function BonusEditor({ bonus, advanced, onChange }: Props) {
         <>
           <View style={styles.divider} />
           <CountRow
-            label="Loot alliance (both hit bid)"
+            label={t.bonus.loot}
             points={BONUS_VALUES.loot}
             value={bonus.loot}
             max={2}
             onChange={(v) => set("loot", v)}
           />
           <View style={styles.row}>
-            <Text style={styles.label}>Rascal wager</Text>
+            <Text style={styles.label}>{t.bonus.rascal}</Text>
             <View style={styles.segment}>
               {([0, 10, 20] as const).map((w) => (
                 <TouchableOpacity
@@ -143,7 +147,7 @@ export default function BonusEditor({ bonus, advanced, onChange }: Props) {
         </>
       ) : null}
 
-      <Text style={styles.sum}>Capture bonus: +{captureBonus(bonus)}</Text>
+      <Text style={styles.sum}>{t.bonus.captureBonus(captureBonus(bonus))}</Text>
     </View>
   );
 }

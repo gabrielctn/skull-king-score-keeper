@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { colors, radius } from "../theme";
+import { useI18n } from "../i18n/context";
 
 interface Props {
   value: number;
@@ -21,8 +22,10 @@ export default function Stepper({
   label,
   compact,
 }: Props) {
+  const { t } = useI18n();
   const dec = () => onChange(Math.max(min, value - step));
   const inc = () => onChange(Math.min(max, value + step));
+  const a11y = label ?? "";
 
   return (
     <View style={styles.wrap}>
@@ -32,7 +35,7 @@ export default function Stepper({
           style={[styles.btn, value <= min && styles.btnDisabled]}
           onPress={dec}
           disabled={value <= min}
-          accessibilityLabel={`Decrease ${label ?? "value"}`}
+          accessibilityLabel={t.stepper.decrease(a11y)}
         >
           <Text style={styles.btnText}>−</Text>
         </TouchableOpacity>
@@ -41,7 +44,7 @@ export default function Stepper({
           style={[styles.btn, value >= max && styles.btnDisabled]}
           onPress={inc}
           disabled={value >= max}
-          accessibilityLabel={`Increase ${label ?? "value"}`}
+          accessibilityLabel={t.stepper.increase(a11y)}
         >
           <Text style={styles.btnText}>+</Text>
         </TouchableOpacity>

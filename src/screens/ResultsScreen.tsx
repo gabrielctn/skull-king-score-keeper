@@ -12,6 +12,7 @@ import { Game } from "../types";
 import { standings } from "../scoring";
 import { colors, radius, spacing } from "../theme";
 import { illustrations } from "../assets/illustrations";
+import { useI18n } from "../i18n/context";
 
 interface Props {
   game: Game;
@@ -29,6 +30,7 @@ export default function ResultsScreen({
   onHome,
   onReview,
 }: Props) {
+  const { t } = useI18n();
   const rows = standings(game);
   const winner = rows[0];
 
@@ -42,10 +44,10 @@ export default function ResultsScreen({
             resizeMode="contain"
           />
         </View>
-        <Text style={styles.title}>Game Over</Text>
+        <Text style={styles.title}>{t.results.gameOver}</Text>
         {winner ? (
           <Text style={styles.winner}>
-            {winner.player.name} wins with {winner.total}!
+            {t.results.winner(winner.player.name, winner.total)}
           </Text>
         ) : null}
 
@@ -71,13 +73,13 @@ export default function ResultsScreen({
         </View>
 
         <TouchableOpacity style={styles.secondaryBtn} onPress={onReview}>
-          <Text style={styles.secondaryText}>Review round-by-round</Text>
+          <Text style={styles.secondaryText}>{t.results.review}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.primaryBtn} onPress={onNewGame}>
-          <Text style={styles.primaryText}>New game</Text>
+          <Text style={styles.primaryText}>{t.common.newGame}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.linkBtn} onPress={onHome}>
-          <Text style={styles.linkText}>Back to home</Text>
+          <Text style={styles.linkText}>{t.results.backHome}</Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>

@@ -16,12 +16,25 @@ import {
   scoreRound,
   standings,
 } from "../src/scoring";
+import { dealerIndex, leaderIndex, playOrder } from "../src/turnOrder";
+import { en } from "../src/i18n/en";
+import { fr } from "../src/i18n/fr";
 import { BonusInput, RoundEntry } from "../src/types";
 
 let passed = 0;
 let failed = 0;
 
 function eq(label: string, actual: number, expected: number) {
+  if (actual === expected) {
+    passed++;
+    console.log(`  ✓ ${label} = ${actual}`);
+  } else {
+    failed++;
+    console.error(`  ✗ ${label}: expected ${expected}, got ${actual}`);
+  }
+}
+
+function eqs(label: string, actual: string, expected: string) {
   if (actual === expected) {
     passed++;
     console.log(`  ✓ ${label} = ${actual}`);
@@ -150,6 +163,51 @@ eq(
   40 + 20
 );
 
+console.log("\nTurn order: dealer rotates clockwise, leader follows");
+const seat3 = createGame(
+  [
+    { id: "a", name: "A" },
+    { id: "b", name: "B" },
+    { id: "c", name: "C" },
+  ],
+  10
+);
+const order = (g: typeof seat3, r: number) =>
+  playOrder(g, r)
+    .map((s) => (s.kind === "ghost" ? "👻" : s.player.name))
+    .join(",");
+// Round 1: A deals, B leads, order ends on the dealer.
+eq("N=3 r1 dealer index", dealerIndex(seat3, 1), 0);
+eq("N=3 r1 leader index", leaderIndex(seat3, 1), 1);
+eqs("N=3 r1 play order", order(seat3, 1), "B,C,A");
+// Round 2: dealer moves clockwise to B.
+eqs("N=3 r2 play order", order(seat3, 2), "C,A,B");
+// Round 4 wraps back to A dealing.
+eq("N=3 r4 dealer wraps", dealerIndex(seat3, 4), 0);
+
+console.log("\nTurn order: 2-player ghost is always slot 2, leader alternates");
+const seat2 = createGame(
+  [
+    { id: "p1", name: "One" },
+    { id: "p2", name: "Two" },
+  ],
+  10,
+  true,
+  true // twoPlayerGhost
+);
+const seat2NoGhost = createGame(
+  [
+    { id: "p1", name: "One" },
+    { id: "p2", name: "Two" },
+  ],
+  10,
+  true,
+  false
+);
+eqs("ghost r1: Two leads, ghost 2nd", order(seat2, 1), "Two,👻,One");
+eqs("ghost r2: One leads (alternation)", order(seat2, 2), "One,👻,Two");
+eqs("no ghost: plain 2-player order", order(seat2NoGhost, 1), "Two,One");
+
 console.log("\nStandings + tie ranks");
 const g2 = createGame(
   [
@@ -164,6 +222,12 @@ const b2 = standings(g2);
 eq("tie: leader total", b2[0].total, 20);
 eq("tie: both rank 1", b2[0].rank + b2[1].rank, 2);
 eq("tie: third ranked 3", b2[2].rank, 3);
+
+console.log("\ni18n: EN and FR rules lists stay in sync");
+eq("scoring entries match", fr.rules.scoring.length, en.rules.scoring.length);
+eq("bonus entries match", fr.rules.bonusEntries.length, en.rules.bonusEntries.length);
+eq("special entries match", fr.rules.special.length, en.rules.special.length);
+eq("two-player entries match", fr.rules.twoPlayer.length, en.rules.twoPlayer.length);
 
 console.log(`\n${passed} passed, ${failed} failed`);
 if (failed > 0) process.exit(1);
