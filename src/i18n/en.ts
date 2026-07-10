@@ -71,6 +71,66 @@ export const en: Strings = {
     backHome: "Back to home",
   },
 
+  scoreBreakdown: {
+    title: "Score details",
+    close: "Close",
+    openFor: (name, total) => `Show ${name}'s score details: ${total}`,
+    openRankedFor: (rank, name, total) =>
+      `Rank ${rank}, ${name}, ${total} points. Show score details`,
+    currentScore: "Current score",
+    earned: "Earned",
+    lost: "Lost",
+    recordedHint: "Only scored rounds are included.",
+    noRounds: "No rounds have been scored yet.",
+    historyTitle: "Scored rounds",
+    round: (n) => `Round ${n}`,
+    roundSummary: (bid, tricks) => `Bid ${bid} · won ${tricks}`,
+    exact: "Bid hit",
+    missed: "Bid missed",
+    runningTotal: "Total after round",
+    expandRound: (n) => `Show round ${n} details`,
+    collapseRound: (n) => `Hide round ${n} details`,
+    bidSuccess: (bid) => `Bid ${bid} hit exactly`,
+    bidMissed: (bid, difference) =>
+      `Bid ${bid} missed · ${difference} ${
+        difference === 1 ? "trick" : "tricks"
+      } off`,
+    zeroBidSuccess: (cards) =>
+      `Zero bid hit · ${cards} ${cards === 1 ? "card" : "cards"}`,
+    zeroBidMissed: (cards) =>
+      `Zero bid missed · ${cards} ${cards === 1 ? "card" : "cards"}`,
+    ignored: "Not counted",
+    items: {
+      colored14: (count) =>
+        `${count} colored ${count === 1 ? "14" : "14s"} captured`,
+      black14: "Black 14 captured",
+      mermaidByPirate: (count) =>
+        `${count} ${count === 1 ? "mermaid" : "mermaids"} taken by a pirate`,
+      pirateBySkullKing: (count) =>
+        `${count} ${count === 1 ? "pirate" : "pirates"} taken by Skull King`,
+      mermaidCapturesSkullKing: "Mermaid captures Skull King",
+      rascalWon: "Rascal wager won",
+      rascalLost: "Rascal wager lost",
+      expansion7: (count) =>
+        `${count} special ${count === 1 ? "7" : "7s"} captured`,
+      expansion8: (count) =>
+        `${count} special ${count === 1 ? "8" : "8s"} captured`,
+      davyJonesLeviathans: (count) =>
+        `${count} ${count === 1 ? "leviathan" : "leviathans"} destroyed by Davy Jones`,
+      secondCaptured: "The Second captured",
+      legacyLoot: (count) =>
+        `${count} legacy Loot ${count === 1 ? "bonus" : "bonuses"}`,
+      loot: (count) =>
+        `${count} Loot ${count === 1 ? "alliance" : "alliances"} succeeded`,
+      lootMissed: (count) =>
+        `${count} Loot ${count === 1 ? "alliance" : "alliances"} · at least one bid missed`,
+      lootSelfWin: (count) =>
+        `${count} Loot ${count === 1 ? "card" : "cards"} won back by ${
+          count === 1 ? "its" : "their"
+        } player · no alliance`,
+    },
+  },
+
   bonus: {
     colored14: "Colored 14s",
     black14: "Black 14 (Jolly Roger)",

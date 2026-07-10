@@ -71,6 +71,67 @@ export const fr: Strings = {
     backHome: "Retour à l'accueil",
   },
 
+  scoreBreakdown: {
+    title: "Détail du score",
+    close: "Fermer",
+    openFor: (name, total) => `Afficher le détail du score de ${name} : ${total}`,
+    openRankedFor: (rank, name, total) =>
+      `Rang ${rank}, ${name}, ${total} points. Afficher le détail du score`,
+    currentScore: "Score actuel",
+    earned: "Gagnés",
+    lost: "Perdus",
+    recordedHint: "Seules les manches validées sont comptabilisées.",
+    noRounds: "Aucune manche validée pour le moment.",
+    historyTitle: "Manches comptabilisées",
+    round: (n) => `Manche ${n}`,
+    roundSummary: (bid, tricks) =>
+      `${bid} ${bid === 1 ? "pli misé" : "plis misés"} · ${tricks} ${
+        tricks === 1 ? "pli remporté" : "plis remportés"
+      }`,
+    exact: "Mise réussie",
+    missed: "Mise ratée",
+    runningTotal: "Cumul après la manche",
+    expandRound: (n) => `Afficher le détail de la manche ${n}`,
+    collapseRound: (n) => `Masquer le détail de la manche ${n}`,
+    bidSuccess: (bid) => `Mise de ${bid} réussie exactement`,
+    bidMissed: (bid, difference) =>
+      `Mise de ${bid} ratée · ${difference} ${
+        difference > 1 ? "plis d’écart" : "pli d’écart"
+      }`,
+    zeroBidSuccess: (cards) =>
+      `Mise à zéro réussie · ${cards} ${cards === 1 ? "carte" : "cartes"}`,
+    zeroBidMissed: (cards) =>
+      `Mise à zéro ratée · ${cards} ${cards === 1 ? "carte" : "cartes"}`,
+    ignored: "Non compté",
+    items: {
+      colored14: (count) =>
+        `${count} ${count === 1 ? "14 de couleur capturé" : "14 de couleur capturés"}`,
+      black14: "14 noir capturé",
+      mermaidByPirate: (count) =>
+        `${count} ${count === 1 ? "sirène prise" : "sirènes prises"} par un pirate`,
+      pirateBySkullKing: (count) =>
+        `${count} ${count === 1 ? "pirate pris" : "pirates pris"} par le Skull King`,
+      mermaidCapturesSkullKing: "Sirène capture le Skull King",
+      rascalWon: "Pari Rascal réussi",
+      rascalLost: "Pari Rascal perdu",
+      expansion7: (count) =>
+        `${count} ${count === 1 ? "7 spécial capturé" : "7 spéciaux capturés"}`,
+      expansion8: (count) =>
+        `${count} ${count === 1 ? "8 spécial capturé" : "8 spéciaux capturés"}`,
+      davyJonesLeviathans: (count) =>
+        `${count} ${count === 1 ? "léviathan détruit" : "léviathans détruits"} par Davy Jones`,
+      secondCaptured: "Second capturé",
+      legacyLoot: (count) =>
+        `${count} ${count === 1 ? "ancien bonus Butin" : "anciens bonus Butin"}`,
+      loot: (count) =>
+        `${count} ${count === 1 ? "alliance Butin réussie" : "alliances Butin réussies"}`,
+      lootMissed: (count) =>
+        `${count} ${count === 1 ? "alliance Butin" : "alliances Butin"} · au moins une mise ratée`,
+      lootSelfWin: (count) =>
+        `${count} ${count === 1 ? "Butin repris par son joueur" : "Butins repris par leur joueur"} · aucune alliance`,
+    },
+  },
+
   bonus: {
     colored14: "14 de couleur",
     black14: "14 noir (Drapeau pirate)",

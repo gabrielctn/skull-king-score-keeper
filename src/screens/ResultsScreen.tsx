@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Image,
   SafeAreaView,
@@ -15,6 +15,7 @@ import { colors, radius, spacing } from "../theme";
 import { illustrations } from "../assets/illustrations";
 import { useI18n } from "../i18n/context";
 import { getResponsiveLayout } from "../responsive";
+import ScoreBreakdownModal from "../components/ScoreBreakdownModal";
 
 interface Props {
   game: Game;
@@ -37,6 +38,7 @@ export default function ResultsScreen({
   const layout = getResponsiveLayout(width);
   const rows = standings(game);
   const winner = rows[0];
+  const [scorePlayerId, setScorePlayerId] = useState<string | null>(null);
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -65,7 +67,18 @@ export default function ResultsScreen({
 
         <View style={styles.card}>
           {rows.map((row) => (
-            <View key={row.player.id} style={styles.row}>
+            <TouchableOpacity
+              key={row.player.id}
+              style={styles.row}
+              activeOpacity={0.7}
+              onPress={() => setScorePlayerId(row.player.id)}
+              accessibilityRole="button"
+              accessibilityLabel={t.scoreBreakdown.openRankedFor(
+                row.rank,
+                row.player.name,
+                row.total
+              )}
+            >
               <Text style={styles.rank}>
                 {medal(row.rank) || row.rank}
               </Text>
@@ -80,7 +93,8 @@ export default function ResultsScreen({
               >
                 {row.total}
               </Text>
-            </View>
+              <Text style={styles.scoreInfo}>ⓘ</Text>
+            </TouchableOpacity>
           ))}
         </View>
 
@@ -94,6 +108,12 @@ export default function ResultsScreen({
           <Text style={styles.linkText}>{t.results.backHome}</Text>
         </TouchableOpacity>
       </ScrollView>
+      <ScoreBreakdownModal
+        visible={scorePlayerId !== null}
+        game={game}
+        playerId={scorePlayerId}
+        onClose={() => setScorePlayerId(null)}
+      />
     </SafeAreaView>
   );
 }
@@ -136,6 +156,7 @@ const styles = StyleSheet.create({
   rank: { width: 40, fontSize: 20, color: colors.text, textAlign: "center" },
   name: { flex: 1, color: colors.text, fontSize: 18, marginLeft: spacing.sm },
   total: { fontSize: 20, fontWeight: "800" },
+  scoreInfo: { color: colors.gold, fontSize: 13, marginLeft: spacing.sm },
   pos: { color: colors.positive },
   neg: { color: colors.negative },
   primaryBtn: {

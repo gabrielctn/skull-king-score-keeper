@@ -26,6 +26,7 @@ import Stepper from "../components/Stepper";
 import BonusEditor from "../components/BonusEditor";
 import LootTracker from "../components/LootTracker";
 import RulesModal from "../components/RulesModal";
+import ScoreBreakdownModal from "../components/ScoreBreakdownModal";
 import { colors, radius, spacing } from "../theme";
 import { getResponsiveLayout } from "../responsive";
 
@@ -65,6 +66,7 @@ export default function GameScreen({
   );
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [rulesOpen, setRulesOpen] = useState(false);
+  const [scorePlayerId, setScorePlayerId] = useState<string | null>(null);
 
   const cards = cardsForRound(game, displayRound);
   // Indicative dealer / first-trick order for the round being shown.
@@ -284,6 +286,7 @@ export default function GameScreen({
 
         {game.players.map((p) => {
           const entry = draft[p.id] ?? emptyEntry();
+          const totalScore = playerTotal(game, p.id);
           const roundScore = scoreRound(
             cards,
             entry,
@@ -333,9 +336,22 @@ export default function GameScreen({
                       —
                     </Text>
                   )}
-                  <Text style={styles.totalScore}>
-                    {t.game.total(playerTotal(game, p.id))}
-                  </Text>
+                  <TouchableOpacity
+                    style={styles.totalScoreButton}
+                    activeOpacity={0.68}
+                    hitSlop={4}
+                    onPress={() => setScorePlayerId(p.id)}
+                    accessibilityRole="button"
+                    accessibilityLabel={t.scoreBreakdown.openFor(
+                      p.name,
+                      totalScore
+                    )}
+                  >
+                    <Text style={styles.totalScore}>
+                      {t.game.total(totalScore)}
+                    </Text>
+                    <Text style={styles.totalInfo}>ⓘ</Text>
+                  </TouchableOpacity>
                 </View>
               </View>
 
@@ -409,12 +425,24 @@ export default function GameScreen({
         ]}
       >
         {board.map((row) => (
-          <View key={row.player.id} style={styles.boardItem}>
+          <TouchableOpacity
+            key={row.player.id}
+            style={styles.boardItem}
+            activeOpacity={0.7}
+            onPress={() => setScorePlayerId(row.player.id)}
+            accessibilityRole="button"
+            accessibilityLabel={t.scoreBreakdown.openRankedFor(
+              row.rank,
+              row.player.name,
+              row.total
+            )}
+          >
             <Text style={styles.boardName} numberOfLines={1}>
               {row.player.name}
             </Text>
             <Text style={styles.boardTotal}>{row.total}</Text>
-          </View>
+            <Text style={styles.boardInfo}>ⓘ</Text>
+          </TouchableOpacity>
         ))}
       </View>
 
@@ -450,6 +478,12 @@ export default function GameScreen({
       </View>
 
       <RulesModal visible={rulesOpen} onClose={() => setRulesOpen(false)} />
+      <ScoreBreakdownModal
+        visible={scorePlayerId !== null}
+        game={game}
+        playerId={scorePlayerId}
+        onClose={() => setScorePlayerId(null)}
+      />
     </SafeAreaView>
   );
 }
@@ -568,7 +602,18 @@ const styles = StyleSheet.create({
   },
   playerScores: { alignItems: "flex-end" },
   roundScore: { fontSize: 18, fontWeight: "800" },
+  totalScoreButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    minHeight: 36,
+    paddingLeft: spacing.xs,
+  },
   totalScore: { color: colors.textDim, fontSize: 12 },
+  totalInfo: {
+    color: colors.gold,
+    fontSize: 12,
+    marginLeft: 4,
+  },
   pos: { color: colors.positive },
   neg: { color: colors.negative },
   scorePlaceholder: { color: colors.textDim },
@@ -611,6 +656,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs,
     margin: 3,
+    minHeight: 44,
     flexDirection: "row",
     alignItems: "center",
   },
@@ -621,6 +667,7 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     marginLeft: spacing.xs,
   },
+  boardInfo: { color: colors.gold, fontSize: 12, marginLeft: 4 },
   footer: { width: "100%", alignSelf: "center", padding: spacing.md },
   scoreBtn: {
     backgroundColor: colors.gold,

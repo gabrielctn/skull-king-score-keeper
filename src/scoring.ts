@@ -48,6 +48,48 @@ export const BONUS_VALUES = {
   loot: 20,
 } as const;
 
+export type ScoreBreakdownKey =
+  | "bid"
+  | "colored14"
+  | "black14"
+  | "mermaidByPirate"
+  | "pirateBySkullKing"
+  | "mermaidCapturesSkullKing"
+  | "rascalWager"
+  | "expansion7"
+  | "expansion8"
+  | "davyJonesLeviathans"
+  | "secondCaptured"
+  | "legacyLoot"
+  | "loot"
+  | "lootSelfWin";
+
+/** One auditable contribution to a round score. */
+export interface ScoreBreakdownItem {
+  key: ScoreBreakdownKey;
+  /** Number of cards, alliances, or wagers represented by this line. */
+  count: number;
+  points: number;
+  /** False when the item was recorded but the scoring condition was not met. */
+  applied: boolean;
+}
+
+/** The exact inputs and score contributions for one player in one round. */
+export interface RoundScoreBreakdown {
+  cardsDealt: number;
+  bid: number;
+  tricks: number;
+  madeBid: boolean;
+  items: ScoreBreakdownItem[];
+  total: number;
+}
+
+/** A recorded round plus the player's running total after that round. */
+export interface PlayerRoundScoreBreakdown extends RoundScoreBreakdown {
+  roundNumber: number;
+  runningTotal: number;
+}
+
 /** A player makes their bid when tricks won equals the bid (works for 0 too). */
 export function madeBid(entry: RoundEntry): boolean {
   return entry.bid === entry.tricks;
@@ -138,18 +180,147 @@ export function lootBonusForPlayer(
   }, 0);
 }
 
+/**
+ * Recorded Loot events involving a player. Incomplete pairings cannot belong
+ * to a scored round, while self-wins are kept to explain why no bonus applied.
+ */
+function lootEventsForPlayer(
+  lootUses: LootUse[],
+  playerId: string
+): { alliances: number; selfWins: number } {
+  return lootUses.reduce(
+    (counts, lootUse) => {
+      const completeAlliance =
+        lootUse.playedById !== null &&
+        lootUse.boundToId !== null &&
+        lootUse.playedById !== lootUse.boundToId;
+      const isParticipant =
+        lootUse.playedById === playerId || lootUse.boundToId === playerId;
+      if (completeAlliance && isParticipant) counts.alliances += 1;
+      if (
+        lootUse.playedById === playerId &&
+        lootUse.boundToId === playerId
+      ) {
+        counts.selfWins += 1;
+      }
+      return counts;
+    },
+    { alliances: 0, selfWins: 0 }
+  );
+}
+
+/**
+ * Fully itemized score for one round.
+ *
+ * `lootAttempts` lets history views surface failed alliances as explicit
+ * zero-point lines. Callers that only have a verified Loot total can omit it.
+ */
+export function scoreRoundBreakdown(
+  cardsDealt: number,
+  entry: RoundEntry,
+  lootBonus = 0,
+  lootAttempts = Math.floor(lootBonus / BONUS_VALUES.loot),
+  lootSelfWins = 0
+): RoundScoreBreakdown {
+  const exact = madeBid(entry);
+  const items: ScoreBreakdownItem[] = [
+    {
+      key: "bid",
+      count: entry.bid,
+      points: bidScore(cardsDealt, entry),
+      applied: true,
+    },
+  ];
+
+  const add = (
+    key: ScoreBreakdownKey,
+    count: number,
+    points: number,
+    applied = true
+  ) => {
+    if (count <= 0) return;
+    items.push({ key, count, points, applied });
+  };
+
+  const b = entry.bonus;
+  add("colored14", b.colored14, b.colored14 * BONUS_VALUES.colored14);
+  add("black14", b.black14 ? 1 : 0, b.black14 ? BONUS_VALUES.black14 : 0);
+  add(
+    "mermaidByPirate",
+    b.mermaidByPirate,
+    b.mermaidByPirate * BONUS_VALUES.mermaidByPirate
+  );
+  add(
+    "pirateBySkullKing",
+    b.pirateBySkullKing,
+    b.pirateBySkullKing * BONUS_VALUES.pirateBySkullKing
+  );
+  add(
+    "mermaidCapturesSkullKing",
+    b.mermaidCapturesSkullKing ? 1 : 0,
+    b.mermaidCapturesSkullKing
+      ? BONUS_VALUES.mermaidCapturesSkullKing
+      : 0
+  );
+  add(
+    "davyJonesLeviathans",
+    b.davyJonesLeviathans,
+    b.davyJonesLeviathans * BONUS_VALUES.davyJonesLeviathan
+  );
+  add(
+    "secondCaptured",
+    b.secondCaptured ? 1 : 0,
+    b.secondCaptured ? BONUS_VALUES.secondCaptured : 0
+  );
+
+  if (b.rascalWager > 0) {
+    add(
+      "rascalWager",
+      1,
+      exact ? b.rascalWager : -b.rascalWager
+    );
+  }
+  add(
+    "expansion7",
+    b.expansion7,
+    exact ? b.expansion7 * BONUS_VALUES.expansion7 : 0,
+    exact
+  );
+  add(
+    "expansion8",
+    b.expansion8,
+    exact ? b.expansion8 * BONUS_VALUES.expansion8 : 0,
+    exact
+  );
+  add(
+    "legacyLoot",
+    entry.legacyLoot ?? 0,
+    exact ? (entry.legacyLoot ?? 0) * BONUS_VALUES.loot : 0,
+    exact
+  );
+
+  const successfulLoot = Math.floor(lootBonus / BONUS_VALUES.loot);
+  add("loot", successfulLoot, lootBonus);
+  add("loot", Math.max(0, lootAttempts - successfulLoot), 0, false);
+  add("lootSelfWin", lootSelfWins, 0, false);
+
+  return {
+    cardsDealt,
+    bid: entry.bid,
+    tricks: entry.tricks,
+    madeBid: exact,
+    items,
+    total: items.reduce((sum, item) => sum + item.points, 0),
+  };
+}
+
 /** Total points for a single player's round, including verified Loot points. */
 export function scoreRound(
   cardsDealt: number,
   entry: RoundEntry,
   lootBonus = 0
 ): number {
-  return (
-    bidScore(cardsDealt, entry) +
-    captureBonus(entry.bonus) +
-    conditionalBonus(entry) +
-    lootBonus
-  );
+  return scoreRoundBreakdown(cardsDealt, entry, lootBonus).total;
 }
 
 /** Cards dealt for a given 1-based round (defaults to the round number). */
@@ -174,28 +345,50 @@ export function ghostTricks(
   return Math.max(0, cards - playerTricksTotal);
 }
 
+/** Itemized history of every recorded round for one player. */
+export function playerScoreHistory(
+  game: Game,
+  playerId: string,
+  uptoRound: number = game.totalRounds
+): PlayerRoundScoreBreakdown[] {
+  const history: PlayerRoundScoreBreakdown[] = [];
+  let runningTotal = 0;
+  for (let r = 1; r <= uptoRound && r <= game.totalRounds; r++) {
+    const entry = game.rounds[r - 1]?.[playerId];
+    if (entry && entry.recorded) {
+      const round = game.rounds[r - 1];
+      const activeLootUses =
+        game.advancedCards && game.players.length > 2
+          ? (game.lootUses[r - 1] ?? [])
+          : [];
+      const loot = lootBonusForPlayer(
+        round,
+        activeLootUses,
+        playerId
+      );
+      const lootEvents = lootEventsForPlayer(activeLootUses, playerId);
+      const breakdown = scoreRoundBreakdown(
+        cardsForRound(game, r),
+        entry,
+        loot,
+        lootEvents.alliances,
+        lootEvents.selfWins
+      );
+      runningTotal += breakdown.total;
+      history.push({ ...breakdown, roundNumber: r, runningTotal });
+    }
+  }
+  return history;
+}
+
 /** Running total for a player up to and including `uptoRound` (1-based). */
 export function playerTotal(
   game: Game,
   playerId: string,
   uptoRound: number = game.totalRounds
 ): number {
-  let total = 0;
-  for (let r = 1; r <= uptoRound && r <= game.totalRounds; r++) {
-    const entry = game.rounds[r - 1]?.[playerId];
-    if (entry && entry.recorded) {
-      const round = game.rounds[r - 1];
-      const loot = lootBonusForPlayer(
-        round,
-        game.advancedCards && game.players.length > 2
-          ? (game.lootUses[r - 1] ?? [])
-          : [],
-        playerId
-      );
-      total += scoreRound(cardsForRound(game, r), entry, loot);
-    }
-  }
-  return total;
+  const history = playerScoreHistory(game, playerId, uptoRound);
+  return history.length > 0 ? history[history.length - 1].runningTotal : 0;
 }
 
 export interface Standing {

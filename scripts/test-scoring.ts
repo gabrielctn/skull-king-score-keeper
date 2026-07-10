@@ -15,8 +15,10 @@ import {
   lootAllianceSucceeded,
   lootBonusForPlayer,
   madeBid,
+  playerScoreHistory,
   playerTotal,
   scoreRound,
+  scoreRoundBreakdown,
   standings,
 } from "../src/scoring";
 import { dealerIndex, leaderIndex, playOrder } from "../src/turnOrder";
@@ -262,6 +264,46 @@ eq(
   60 + (20 + 20 + 20 + 30 + 40) + 20 + 20
 );
 
+console.log("\nAuditable round breakdown");
+const auditedRound = E(
+  2,
+  1,
+  { colored14: 1, rascalWager: 10, expansion7: 2 },
+  true,
+  1
+);
+const audited = scoreRoundBreakdown(5, auditedRound, 20, 2);
+eq(
+  "itemized total matches canonical score",
+  audited.total,
+  scoreRound(5, auditedRound, 20)
+);
+eq(
+  "breakdown items sum to total",
+  audited.items.reduce((sum, item) => sum + item.points, 0),
+  audited.total
+);
+eq(
+  "missed expansion 7 is shown with zero points",
+  audited.items.find((item) => item.key === "expansion7")?.points ?? 999,
+  0
+);
+eq(
+  "missed expansion 7 is marked not applied",
+  audited.items.find((item) => item.key === "expansion7")?.applied ? 1 : 0,
+  0
+);
+eq(
+  "one successful Loot alliance remains visible",
+  audited.items.find((item) => item.key === "loot" && item.applied)?.count ?? 0,
+  1
+);
+eq(
+  "one failed Loot alliance remains visible",
+  audited.items.find((item) => item.key === "loot" && !item.applied)?.count ?? 0,
+  1
+);
+
 console.log("\nmadeBid helper");
 eq("made: bid 0 won 0", madeBid(E(0, 0)) ? 1 : 0, 1);
 eq("not made: bid 0 won 1", madeBid(E(0, 1)) ? 1 : 0, 0);
@@ -287,6 +329,15 @@ g.rounds[8] = { a: E(0, 0), b: E(0, 1) }; // r9 (8 cards): Anne +80, Black -80
 g.rounds[2] = { a: E(3, 3, {}, false), b: E(3, 3, {}, false) }; // not recorded -> ignored
 eq("Anne total", playerTotal(g, "a"), 20 - 20 + 80);
 eq("Blackbeard total", playerTotal(g, "b"), 10 + 60 - 80);
+const anneHistory = playerScoreHistory(g, "a");
+eq("history only includes recorded rounds", anneHistory.length, 3);
+eq("history preserves original round number", anneHistory[2].roundNumber, 9);
+eq("history uses custom cards for zero bid", anneHistory[2].items[0].points, 80);
+eq(
+  "last running total equals player total",
+  anneHistory[anneHistory.length - 1].runningTotal,
+  playerTotal(g, "a")
+);
 
 console.log("\nRunning totals derive Loot from round-level bindings");
 const lootGame = createGame(
@@ -306,6 +357,44 @@ lootGame.lootUses[0] = [lootAB];
 eq("Loot player total includes linked +20", playerTotal(lootGame, "a"), 40);
 eq("Loot ally total includes linked +20", playerTotal(lootGame, "b"), 30);
 eq("unlinked total is unchanged", playerTotal(lootGame, "c"), -10);
+const lootHistory = playerScoreHistory(lootGame, "a");
+eq(
+  "history derives successful Loot from round bindings",
+  lootHistory[0].items.find((item) => item.key === "loot")?.points ?? 0,
+  20
+);
+
+const explainedLootGame = createGame(
+  [
+    { id: "a", name: "Anne" },
+    { id: "b", name: "Bonny" },
+    { id: "c", name: "Calico" },
+  ],
+  2
+);
+explainedLootGame.rounds[0] = lootRoundAllyMisses;
+explainedLootGame.lootUses[0] = [lootAB];
+explainedLootGame.rounds[1] = lootRoundHit;
+explainedLootGame.lootUses[1] = [selfWinLoot];
+const explainedLootHistory = playerScoreHistory(explainedLootGame, "a");
+eq(
+  "failed bound Loot remains visible with zero points",
+  explainedLootHistory[0].items.find(
+    (item) => item.key === "loot" && !item.applied
+  )?.count ?? 0,
+  1
+);
+eq(
+  "self-won Loot remains visible with zero points",
+  explainedLootHistory[1].items.find((item) => item.key === "lootSelfWin")
+    ?.count ?? 0,
+  1
+);
+eq(
+  "self-won Loot never changes the round total",
+  explainedLootHistory[1].total,
+  scoreRound(2, lootRoundHit.a)
+);
 
 const noTwoPlayerLoot = createGame(
   [

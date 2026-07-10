@@ -88,6 +88,50 @@ export interface Strings {
     backHome: string;
   };
 
+  scoreBreakdown: {
+    title: string;
+    close: string;
+    openFor: (name: string, total: number) => string;
+    openRankedFor: (rank: number, name: string, total: number) => string;
+    currentScore: string;
+    earned: string;
+    lost: string;
+    recordedHint: string;
+    noRounds: string;
+    historyTitle: string;
+    /** "Round {n}" */
+    round: (n: number) => string;
+    /** Compact bid/trick recap for a recorded round. */
+    roundSummary: (bid: number, tricks: number) => string;
+    exact: string;
+    missed: string;
+    runningTotal: string;
+    expandRound: (n: number) => string;
+    collapseRound: (n: number) => string;
+    bidSuccess: (bid: number) => string;
+    bidMissed: (bid: number, difference: number) => string;
+    zeroBidSuccess: (cards: number) => string;
+    zeroBidMissed: (cards: number) => string;
+    ignored: string;
+    items: {
+      colored14: (count: number) => string;
+      black14: string;
+      mermaidByPirate: (count: number) => string;
+      pirateBySkullKing: (count: number) => string;
+      mermaidCapturesSkullKing: string;
+      rascalWon: string;
+      rascalLost: string;
+      expansion7: (count: number) => string;
+      expansion8: (count: number) => string;
+      davyJonesLeviathans: (count: number) => string;
+      secondCaptured: string;
+      legacyLoot: (count: number) => string;
+      loot: (count: number) => string;
+      lootMissed: (count: number) => string;
+      lootSelfWin: (count: number) => string;
+    };
+  };
+
   bonus: {
     colored14: string;
     black14: string;
