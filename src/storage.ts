@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { BonusInput, Game, RoundEntries } from "./types";
+import { BonusInput, Game, LootUse, RoundEntries } from "./types";
 import { emptyBonus } from "./scoring";
 import { Lang } from "./i18n/types";
 
@@ -8,10 +8,11 @@ const LANG_KEY = "skullking:lang";
 
 /**
  * Bring a loaded game up to the current schema. Older saves stored `bonus`
- * as a single number and had no `cardsDealt` / `advancedCards`, so backfill
- * those rather than crashing.
+ * as a single number and had no `cardsDealt` / `advancedCards`. Saves created
+ * before schema v4 also stored Loot as a per-player count instead of binding
+ * the two allied players, so keep those historical points in `legacyLoot`.
  */
-function normalizeGame(raw: any): Game | null {
+export function normalizeGame(raw: any): Game | null {
   if (!raw || !Array.isArray(raw.players) || !Array.isArray(raw.rounds)) {
     return null;
   }
@@ -30,7 +31,8 @@ function normalizeGame(raw: any): Game | null {
       base.colored14 = b > 0 ? Math.round(b / 10) : 0;
       return base;
     }
-    return { ...emptyBonus(), ...(b ?? {}) };
+    const { loot: _legacyLoot, ...currentBonus } = b ?? {};
+    return { ...emptyBonus(), ...currentBonus };
   };
 
   const rounds: RoundEntries[] = raw.rounds.map((round: any) => {
@@ -41,11 +43,45 @@ function normalizeGame(raw: any): Game | null {
         bid: e?.bid ?? 0,
         tricks: e?.tricks ?? 0,
         bonus: normBonus(e?.bonus),
+        legacyLoot: Math.max(
+          0,
+          Number(e?.legacyLoot ?? e?.bonus?.loot ?? 0) || 0
+        ),
         recorded: !!e?.recorded,
       };
     }
     return out;
   });
+
+  const playerIds = new Set<string>(raw.players.map((p: any) => p.id));
+  const lootUses: LootUse[][] = Array.from(
+    { length: totalRounds },
+    (_, roundIndex) => {
+      const uses = Array.isArray(raw.lootUses?.[roundIndex])
+        ? raw.lootUses[roundIndex]
+        : [];
+      return uses
+        .filter(
+          (lootUse: any) =>
+            lootUse &&
+            (lootUse.playedById === null ||
+              (typeof lootUse.playedById === "string" &&
+                playerIds.has(lootUse.playedById))) &&
+            (lootUse.boundToId === null ||
+              (typeof lootUse.boundToId === "string" &&
+                playerIds.has(lootUse.boundToId)))
+        )
+        .slice(0, 2)
+        .map((lootUse: any, index: number) => ({
+          id:
+            typeof lootUse.id === "string"
+              ? lootUse.id
+              : `loot_${roundIndex + 1}_${index + 1}`,
+          playedById: lootUse.playedById,
+          boundToId: lootUse.boundToId,
+        }));
+    }
+  );
 
   return {
     id: raw.id ?? `game_${Date.now()}`,
@@ -53,6 +89,7 @@ function normalizeGame(raw: any): Game | null {
     totalRounds,
     currentRound: raw.currentRound ?? 1,
     rounds,
+    lootUses,
     cardsDealt,
     advancedCards: raw.advancedCards ?? true,
     // v2 saves predate the 2-player ghost; default off to keep their strict

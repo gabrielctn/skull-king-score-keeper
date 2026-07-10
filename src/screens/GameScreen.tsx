@@ -8,12 +8,13 @@ import {
   View,
   useWindowDimensions,
 } from "react-native";
-import { BonusInput, Game, RoundEntries, RoundEntry } from "../types";
+import { BonusInput, Game, LootUse, RoundEntries, RoundEntry } from "../types";
 import {
   cardsForRound,
   emptyEntry,
   ghostTricks,
   isRoundComplete,
+  lootBonusForPlayer,
   playerTotal,
   scoreRound,
   standings,
@@ -22,6 +23,7 @@ import { dealerIndex, playOrder } from "../turnOrder";
 import { useI18n } from "../i18n/context";
 import Stepper from "../components/Stepper";
 import BonusEditor from "../components/BonusEditor";
+import LootTracker from "../components/LootTracker";
 import RulesModal from "../components/RulesModal";
 import { colors, radius, spacing } from "../theme";
 import { getResponsiveLayout } from "../responsive";
@@ -112,8 +114,27 @@ export default function GameScreen({
     ? tricksTotal <= cards
     : tricksTotal === cards;
   const alreadyRecorded = isRoundComplete(game, displayRound);
+  const lootAvailable = game.advancedCards && game.players.length > 2;
+  const lootUses = lootAvailable
+    ? (game.lootUses[displayRound - 1] ?? [])
+    : [];
+  const lootIncomplete = lootUses.some(
+    (lootUse) => lootUse.playedById === null || lootUse.boundToId === null
+  );
+
+  const updateLootUses = (nextUses: LootUse[]) => {
+    const next: Game = {
+      ...game,
+      lootUses: game.lootUses.map((roundUses, index) =>
+        index === displayRound - 1 ? nextUses.slice(0, 2) : roundUses
+      ),
+      updatedAt: Date.now(),
+    };
+    onUpdateGame(next);
+  };
 
   const commitRound = () => {
+    if (lootIncomplete) return;
     const recordedRound: RoundEntries = {};
     for (const id of playerIds) {
       recordedRound[id] = { ...draft[id], recorded: true };
@@ -244,9 +265,29 @@ export default function GameScreen({
           layout.gameColumns === 2 && styles.scrollDesktop,
         ]}
       >
+        {lootAvailable ? (
+          <LootTracker
+            key={`${game.id}_${displayRound}`}
+            players={game.players}
+            entries={draft}
+            lootUses={lootUses}
+            roundRecorded={alreadyRecorded}
+            legacyLootCount={playerIds.reduce(
+              (total, id) => total + (draft[id]?.legacyLoot ?? 0),
+              0
+            )}
+            onChange={updateLootUses}
+            style={layout.gameColumns === 2 ? styles.fullWidth : undefined}
+          />
+        ) : null}
+
         {game.players.map((p) => {
           const entry = draft[p.id] ?? emptyEntry();
-          const roundScore = scoreRound(cards, entry);
+          const roundScore = scoreRound(
+            cards,
+            entry,
+            lootBonusForPlayer(draft, lootUses, p.id)
+          );
           const open = !!expanded[p.id];
           const b = entry.bonus;
           const entryTouched =
@@ -258,7 +299,6 @@ export default function GameScreen({
             b.mermaidByPirate > 0 ||
             b.pirateBySkullKing > 0 ||
             b.mermaidCapturesSkullKing ||
-            b.loot > 0 ||
             b.rascalWager > 0;
           return (
             <View
@@ -381,8 +421,16 @@ export default function GameScreen({
         ]}
       >
         <TouchableOpacity
-          style={[styles.scoreBtn, layout.isTablet && styles.scoreBtnWide]}
+          style={[
+            styles.scoreBtn,
+            layout.isTablet && styles.scoreBtnWide,
+            lootIncomplete && styles.scoreBtnDisabled,
+          ]}
           onPress={commitRound}
+          disabled={lootIncomplete}
+          accessibilityRole="button"
+          accessibilityState={{ disabled: lootIncomplete }}
+          aria-disabled={lootIncomplete}
         >
           <Text style={styles.scoreBtnText}>
             {displayRound === game.totalRounds && !alreadyRecorded
@@ -574,5 +622,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   scoreBtnWide: { alignSelf: "center", width: "100%", maxWidth: 440 },
+  scoreBtnDisabled: { opacity: 0.45 },
   scoreBtnText: { color: colors.bg, fontSize: 18, fontWeight: "800" },
 });

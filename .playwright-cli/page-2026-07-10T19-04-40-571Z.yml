@@ -1,0 +1,37 @@
+- generic [ref=e22]:
+  - generic [ref=e23]:
+    - generic [ref=e24] [cursor=pointer]: ‹ Retour
+    - generic [ref=e26]: Nouvelle partie
+  - generic [ref=e28]:
+    - generic [ref=e29]: Rassemblez votre équipage
+    - generic [ref=e33]: Joueurs
+    - generic [ref=e34]: Saisissez les joueurs dans l'ordre des places, sens horaire — le joueur 1 distribue la 1re manche. Utilisez les flèches pour réorganiser la table.
+    - generic [ref=e35]:
+      - generic [ref=e36]: "1"
+      - textbox "Joueur 1" [ref=e37]
+      - generic [ref=e38]:
+        - generic: ▲
+        - generic [ref=e40] [cursor=pointer]: ▼
+      - generic: ✕
+    - generic [ref=e43]:
+      - generic [ref=e44]: "2"
+      - textbox "Joueur 2" [ref=e45]
+      - generic [ref=e46]:
+        - generic [ref=e47] [cursor=pointer]: ▲
+        - generic: ▼
+      - generic: ✕
+    - generic [ref=e51] [cursor=pointer]: + Ajouter un joueur
+    - generic [ref=e53]: Manches
+    - generic [ref=e54]:
+      - generic [ref=e56]:
+        - generic "Diminuer" [ref=e57] [cursor=pointer]: −
+        - generic [ref=e59]: "10"
+        - generic "Augmenter": +
+      - generic [ref=e61]: Une partie standard de Skull King compte 10 manches.
+    - generic [ref=e62]: Cartes d'extension
+    - generic [ref=e63]:
+      - generic [ref=e64]:
+        - generic [ref=e65]: Butin & pari Rascal
+        - generic [ref=e66]: Ajoute le suivi des alliances Butin par manche et le pari du pirate Rascal. Le Kraken, la Baleine blanche et les bonus de 14/capture sont toujours disponibles.
+      - switch "Butin & pari Rascal" [active] [ref=e67] [cursor=pointer]
+  - generic [ref=e70]: Ajoutez au moins 2 joueurs

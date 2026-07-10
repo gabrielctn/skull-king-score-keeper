@@ -1,0 +1,117 @@
+- generic [ref=f1e25]:
+  - generic [ref=f1e26]:
+    - generic [ref=f1e27] [cursor=pointer]: ‹ Accueil
+    - generic [ref=f1e29]:
+      - generic: ‹
+      - generic [ref=f1e31]:
+        - generic [ref=f1e32]: Manche 1
+        - generic [ref=f1e33]: cartes distribuées
+        - generic [ref=f1e35]:
+          - generic "Diminuer": −
+          - generic [ref=f1e37]: "1"
+          - generic "Augmenter" [ref=f1e38] [cursor=pointer]: +
+      - generic [ref=f1e40] [cursor=pointer]: ›
+    - generic [ref=f1e42] [cursor=pointer]: "?"
+  - generic [ref=f1e44]:
+    - generic [ref=f1e45]: 🃏 Anne distribue
+    - generic [ref=f1e46]:
+      - generic [ref=f1e47]: Bonny
+      - generic [ref=f1e49]: ›
+      - generic [ref=f1e50]: Calico
+      - generic [ref=f1e52]: ›
+      - generic [ref=f1e53]: Anne
+    - generic [ref=f1e55]: ordre de jeu · le meneur est à gauche
+  - generic [ref=f1e57]:
+    - generic [ref=f1e195]:
+      - generic [ref=f1e196]:
+        - generic [ref=f1e197]:
+          - generic [ref=f1e198]: ⚓ Alliances Butin
+          - generic [ref=f1e199]: Enregistrez chaque carte Butin dès qu’elle est jouée. L’app vérifie automatiquement les deux mises.
+        - button "+ Enregistrer un Butin" [ref=f1e200] [cursor=pointer]
+      - generic [ref=f1e202]:
+        - generic [ref=f1e203]:
+          - generic [ref=f1e204]: Butin 1
+          - button "Retirer le Butin 1" [ref=f1e205] [cursor=pointer]:
+            - generic [ref=f1e206]: Retirer
+        - generic [ref=f1e207]:
+          - generic [ref=f1e208]:
+            - generic [ref=f1e209]: Anne
+            - generic [ref=f1e210]: a joué Butin
+          - generic [ref=f1e211]: ↔
+          - generic [ref=f1e212]:
+            - generic [ref=f1e213]: Bonny
+            - generic [ref=f1e214]: a remporté le pli
+        - generic [ref=f1e215]: "Pas de bonus Butin · mise ratée : Anne"
+        - button "Modifier" [ref=f1e216] [cursor=pointer]
+    - generic [ref=f1e80]:
+      - generic [ref=f1e81]:
+        - generic [ref=f1e82]: Anne
+        - generic [ref=f1e83]:
+          - generic [ref=f1e84]: "-10"
+          - generic [ref=f1e85]: 30 au total
+      - generic [ref=f1e86]:
+        - generic [ref=f1e87]:
+          - generic [ref=f1e88]: Mise
+          - generic [ref=f1e89]:
+            - generic "Diminuer Mise" [ref=f1e218] [cursor=pointer]: −
+            - generic [ref=f1e91]: "1"
+            - generic "Augmenter Mise" [active]: +
+        - generic [ref=f1e94]:
+          - generic [ref=f1e95]: Plis
+          - generic [ref=f1e96]:
+            - generic "Diminuer Plis": −
+            - generic [ref=f1e98]: "0"
+            - generic "Augmenter Plis" [ref=f1e99] [cursor=pointer]: +
+        - generic [ref=f1e101] [cursor=pointer]: Bonus ▸
+    - generic [ref=f1e103]:
+      - generic [ref=f1e104]:
+        - generic [ref=f1e105]: Bonny
+        - generic [ref=f1e106]:
+          - generic [ref=f1e107]: "+10"
+          - generic [ref=f1e108]: 30 au total
+      - generic [ref=f1e109]:
+        - generic [ref=f1e110]:
+          - generic [ref=f1e111]: Mise
+          - generic [ref=f1e112]:
+            - generic "Diminuer Mise": −
+            - generic [ref=f1e114]: "0"
+            - generic "Augmenter Mise" [ref=f1e115] [cursor=pointer]: +
+        - generic [ref=f1e117]:
+          - generic [ref=f1e118]: Plis
+          - generic [ref=f1e119]:
+            - generic "Diminuer Plis": −
+            - generic [ref=f1e121]: "0"
+            - generic "Augmenter Plis" [ref=f1e122] [cursor=pointer]: +
+        - generic [ref=f1e124] [cursor=pointer]: Bonus ▸
+    - generic [ref=f1e126]:
+      - generic [ref=f1e127]:
+        - generic [ref=f1e128]: Calico
+        - generic [ref=f1e129]:
+          - generic [ref=f1e130]: "+20"
+          - generic [ref=f1e131]: 20 au total
+      - generic [ref=f1e132]:
+        - generic [ref=f1e133]:
+          - generic [ref=f1e134]: Mise
+          - generic [ref=f1e135]:
+            - generic "Diminuer Mise" [ref=f1e184] [cursor=pointer]: −
+            - generic [ref=f1e137]: "1"
+            - generic "Augmenter Mise": +
+        - generic [ref=f1e140]:
+          - generic [ref=f1e141]: Plis
+          - generic [ref=f1e142]:
+            - generic "Diminuer Plis" [ref=f1e185] [cursor=pointer]: −
+            - generic [ref=f1e144]: "1"
+            - generic "Augmenter Plis": +
+        - generic [ref=f1e147] [cursor=pointer]: Bonus ▸
+    - generic [ref=f1e149]: "Plis enregistrés : 1 / 1 ✓"
+  - generic [ref=f1e150]:
+    - generic [ref=f1e151]:
+      - generic [ref=f1e152]: Anne
+      - generic [ref=f1e153]: "30"
+    - generic [ref=f1e154]:
+      - generic [ref=f1e155]: Bonny
+      - generic [ref=f1e156]: "30"
+    - generic [ref=f1e157]:
+      - generic [ref=f1e158]: Calico
+      - generic [ref=f1e159]: "20"
+  - generic [ref=f1e160]: Modifier la manche

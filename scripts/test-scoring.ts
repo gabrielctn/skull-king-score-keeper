@@ -11,6 +11,8 @@ import {
   createGame,
   emptyBonus,
   ghostTricks,
+  lootAllianceSucceeded,
+  lootBonusForPlayer,
   madeBid,
   playerTotal,
   scoreRound,
@@ -19,7 +21,7 @@ import {
 import { dealerIndex, leaderIndex, playOrder } from "../src/turnOrder";
 import { en } from "../src/i18n/en";
 import { fr } from "../src/i18n/fr";
-import { BonusInput, RoundEntry } from "../src/types";
+import { BonusInput, LootUse, RoundEntries, RoundEntry } from "../src/types";
 
 let passed = 0;
 let failed = 0;
@@ -48,11 +50,13 @@ const E = (
   bid: number,
   tricks: number,
   bonus: Partial<BonusInput> = {},
-  recorded = true
+  recorded = true,
+  legacyLoot = 0
 ): RoundEntry => ({
   bid,
   tricks,
   bonus: { ...emptyBonus(), ...bonus },
+  legacyLoot,
   recorded,
 });
 
@@ -76,9 +80,120 @@ eq("pirate takes 2 mermaids (+40)", scoreRound(5, E(2, 2, { mermaidByPirate: 2 }
 // Rulebook p.16 example: Pippa's mermaid wins, capturing a yellow 14 and the Skull King.
 eq("rulebook p16 capture bonus = 50", captureBonus({ ...emptyBonus(), colored14: 1, mermaidCapturesSkullKing: true }), 50);
 
-console.log("\nLoot / Butin (only when bid is hit)");
-eq("loot counts when bid hit", scoreRound(5, E(2, 2, { loot: 1 })), 40 + 20);
-eq("loot ignored when bid missed", scoreRound(5, E(2, 1, { loot: 1 })), -10);
+console.log("\nLoot / Butin alliances (both linked bids must be exact)");
+const lootAB: LootUse = {
+  id: "loot_ab",
+  playedById: "a",
+  boundToId: "b",
+};
+const lootRoundHit: RoundEntries = {
+  a: E(2, 2),
+  b: E(0, 0),
+  c: E(1, 1),
+};
+eq(
+  "both hit: alliance succeeds",
+  lootAllianceSucceeded(lootRoundHit, lootAB) ? 1 : 0,
+  1
+);
+eq(
+  "both hit: Loot player gets +20",
+  lootBonusForPlayer(lootRoundHit, [lootAB], "a"),
+  20
+);
+eq(
+  "both hit: trick winner gets +20",
+  lootBonusForPlayer(lootRoundHit, [lootAB], "b"),
+  20
+);
+eq(
+  "uninvolved player gets no Loot",
+  lootBonusForPlayer(lootRoundHit, [lootAB], "c"),
+  0
+);
+eq(
+  "Loot is included in the final round score",
+  scoreRound(
+    5,
+    lootRoundHit.a,
+    lootBonusForPlayer(lootRoundHit, [lootAB], "a")
+  ),
+  60
+);
+
+const lootRoundAllyMisses: RoundEntries = {
+  a: E(2, 2),
+  b: E(1, 0),
+  c: E(1, 1),
+};
+eq(
+  "ally misses: Loot player also gets zero",
+  lootBonusForPlayer(lootRoundAllyMisses, [lootAB], "a"),
+  0
+);
+eq(
+  "ally misses: ally gets zero",
+  lootBonusForPlayer(lootRoundAllyMisses, [lootAB], "b"),
+  0
+);
+
+const lootRoundPlayerMisses: RoundEntries = {
+  a: E(2, 1),
+  b: E(1, 1),
+};
+eq(
+  "Loot player misses: both get zero",
+  lootBonusForPlayer(lootRoundPlayerMisses, [lootAB], "b"),
+  0
+);
+
+const incompleteLoot: LootUse = {
+  id: "loot_pending",
+  playedById: "a",
+  boundToId: null,
+};
+const selfWinLoot: LootUse = {
+  id: "loot_self",
+  playedById: "a",
+  boundToId: "a",
+};
+eq(
+  "incomplete Loot never scores",
+  lootBonusForPlayer(lootRoundHit, [incompleteLoot], "a"),
+  0
+);
+eq(
+  "winning your own Loot forms no alliance",
+  lootBonusForPlayer(lootRoundHit, [selfWinLoot], "a"),
+  0
+);
+
+const lootAC: LootUse = {
+  id: "loot_ac",
+  playedById: "a",
+  boundToId: "c",
+};
+eq(
+  "two successful Loot cards stack for shared player",
+  lootBonusForPlayer(lootRoundHit, [lootAB, lootAC], "a"),
+  40
+);
+eq(
+  "second alliance scores its own partner",
+  lootBonusForPlayer(lootRoundHit, [lootAB, lootAC], "c"),
+  20
+);
+
+eq(
+  "legacy Loot count still scores on exact bid",
+  scoreRound(5, E(2, 2, {}, true, 1)),
+  60
+);
+eq(
+  "legacy Loot count is gated by the player's bid",
+  scoreRound(5, E(2, 1, {}, true, 1)),
+  -10
+);
 
 console.log("\nRascal wager (+ if hit, - if missed)");
 eq("rascal +10 when hit", scoreRound(5, E(1, 1, { rascalWager: 10 })), 20 + 10);
@@ -96,9 +211,9 @@ eq(
       mermaidByPirate: 1,
       pirateBySkullKing: 1,
       mermaidCapturesSkullKing: true,
-      loot: 1,
       rascalWager: 20,
-    })
+    }),
+    20
   ),
   60 + (20 + 20 + 20 + 30 + 40) + 20 + 20
 );
@@ -128,6 +243,42 @@ g.rounds[8] = { a: E(0, 0), b: E(0, 1) }; // r9 (8 cards): Anne +80, Black -80
 g.rounds[2] = { a: E(3, 3, {}, false), b: E(3, 3, {}, false) }; // not recorded -> ignored
 eq("Anne total", playerTotal(g, "a"), 20 - 20 + 80);
 eq("Blackbeard total", playerTotal(g, "b"), 10 + 60 - 80);
+
+console.log("\nRunning totals derive Loot from round-level bindings");
+const lootGame = createGame(
+  [
+    { id: "a", name: "Anne" },
+    { id: "b", name: "Bonny" },
+    { id: "c", name: "Calico" },
+  ],
+  2
+);
+lootGame.rounds[0] = {
+  a: E(1, 1),
+  b: E(0, 0),
+  c: E(0, 1),
+};
+lootGame.lootUses[0] = [lootAB];
+eq("Loot player total includes linked +20", playerTotal(lootGame, "a"), 40);
+eq("Loot ally total includes linked +20", playerTotal(lootGame, "b"), 30);
+eq("unlinked total is unchanged", playerTotal(lootGame, "c"), -10);
+
+const noTwoPlayerLoot = createGame(
+  [
+    { id: "a", name: "Anne" },
+    { id: "b", name: "Bonny" },
+  ],
+  1,
+  true,
+  true
+);
+noTwoPlayerLoot.rounds[0] = { a: E(1, 1), b: E(0, 0) };
+noTwoPlayerLoot.lootUses[0] = [lootAB];
+eq(
+  "Loot is ignored in the official two-player game",
+  playerTotal(noTwoPlayerLoot, "a"),
+  20
+);
 
 console.log("\n2-player variant: Greybeard ghost takes the missing tricks");
 const solo = createGame(

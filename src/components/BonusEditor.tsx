@@ -3,6 +3,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { BonusInput } from "../types";
 import { BONUS_VALUES, captureBonus } from "../scoring";
 import Stepper from "./Stepper";
+import ToggleSwitch from "./ToggleSwitch";
 import { colors, radius, spacing } from "../theme";
 import { useI18n } from "../i18n/context";
 
@@ -12,33 +13,27 @@ interface Props {
   onChange: (next: BonusInput) => void;
 }
 
-function Toggle({
-  on,
-  onToggle,
+function BooleanRow({
+  value,
+  onValueChange,
   label,
   points,
 }: {
-  on: boolean;
-  onToggle: () => void;
+  value: boolean;
+  onValueChange: (value: boolean) => void;
   label: string;
   points: number;
 }) {
-  const { t } = useI18n();
   return (
     <View style={styles.row}>
       <Text style={styles.label}>
         {label} <Text style={styles.pts}>+{points}</Text>
       </Text>
-      <TouchableOpacity
-        style={[styles.toggle, on && styles.toggleOn]}
-        onPress={onToggle}
-        accessibilityRole="switch"
-        accessibilityState={{ checked: on }}
-      >
-        <Text style={[styles.toggleText, on && styles.toggleTextOn]}>
-          {on ? t.common.yes : t.common.no}
-        </Text>
-      </TouchableOpacity>
+      <ToggleSwitch
+        value={value}
+        onValueChange={onValueChange}
+        accessibilityLabel={`${label}, +${points}`}
+      />
     </View>
   );
 }
@@ -81,11 +76,11 @@ export default function BonusEditor({ bonus, advanced, onChange }: Props) {
         max={3}
         onChange={(v) => set("colored14", v)}
       />
-      <Toggle
+      <BooleanRow
         label={t.bonus.black14}
         points={BONUS_VALUES.black14}
-        on={bonus.black14}
-        onToggle={() => set("black14", !bonus.black14)}
+        value={bonus.black14}
+        onValueChange={(value) => set("black14", value)}
       />
       <CountRow
         label={t.bonus.mermaidByPirate}
@@ -101,25 +96,16 @@ export default function BonusEditor({ bonus, advanced, onChange }: Props) {
         max={6}
         onChange={(v) => set("pirateBySkullKing", v)}
       />
-      <Toggle
+      <BooleanRow
         label={t.bonus.mermaidCapturesSkullKing}
         points={BONUS_VALUES.mermaidCapturesSkullKing}
-        on={bonus.mermaidCapturesSkullKing}
-        onToggle={() =>
-          set("mermaidCapturesSkullKing", !bonus.mermaidCapturesSkullKing)
-        }
+        value={bonus.mermaidCapturesSkullKing}
+        onValueChange={(value) => set("mermaidCapturesSkullKing", value)}
       />
 
       {advanced ? (
         <>
           <View style={styles.divider} />
-          <CountRow
-            label={t.bonus.loot}
-            points={BONUS_VALUES.loot}
-            value={bonus.loot}
-            max={2}
-            onChange={(v) => set("loot", v)}
-          />
           <View style={styles.row}>
             <Text style={styles.label}>{t.bonus.rascal}</Text>
             <View style={styles.segment}>
@@ -167,19 +153,6 @@ const styles = StyleSheet.create({
   },
   label: { color: colors.text, fontSize: 14, flex: 1, marginRight: spacing.sm },
   pts: { color: colors.gold, fontSize: 12 },
-  toggle: {
-    minWidth: 56,
-    paddingVertical: 6,
-    paddingHorizontal: spacing.md,
-    borderRadius: radius.sm,
-    borderWidth: 1,
-    borderColor: colors.cardBorder,
-    backgroundColor: colors.bgElevated,
-    alignItems: "center",
-  },
-  toggleOn: { backgroundColor: colors.gold, borderColor: colors.gold },
-  toggleText: { color: colors.textDim, fontWeight: "700" },
-  toggleTextOn: { color: colors.bg },
   divider: {
     height: StyleSheet.hairlineWidth,
     backgroundColor: colors.cardBorder,

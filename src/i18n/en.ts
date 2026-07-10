@@ -4,10 +4,6 @@ export const en: Strings = {
   langLabel: "EN",
 
   common: {
-    on: "On",
-    off: "Off",
-    yes: "Yes",
-    no: "No",
     home: "Home",
     back: "Back",
     newGame: "New game",
@@ -39,7 +35,7 @@ export const en: Strings = {
     expansion: "Expansion cards",
     advancedTitle: "Loot & Rascal wager",
     advancedHint:
-      "Adds Loot/Butin alliances and the Rascal pirate side-bet to the bonus editor. Kraken, White Whale & the 14/capture bonuses are always available.",
+      "Adds round-level Loot/Butin tracking and the Rascal pirate side-bet. Kraken, White Whale & the 14/capture bonuses are always available.",
     start: "Start game ☠️",
     needPlayers: "Add at least 2 players",
   },
@@ -78,10 +74,33 @@ export const en: Strings = {
     mermaidByPirate: "Mermaid taken by a pirate",
     pirateBySkullKing: "Pirate taken by Skull King",
     mermaidCapturesSkullKing: "Mermaid captures Skull King",
-    loot: "Loot alliance (both hit bid)",
     rascal: "Rascal wager",
     each: "ea.",
     captureBonus: (n) => `Capture bonus: +${n}`,
+  },
+
+  loot: {
+    title: "Loot alliances",
+    hint:
+      "Record each Loot card as soon as it is played. Both bids are checked automatically.",
+    record: "+ Record Loot",
+    useNumber: (n) => `Loot ${n}`,
+    playedByPrompt: "Who played the Loot card?",
+    winnerPrompt: "Who won the trick?",
+    playedByRole: "played Loot",
+    winnerRole: "won the trick",
+    pendingPair: (playedBy, boundTo) =>
+      `${playedBy} and ${boundTo} must both hit their bids.`,
+    success: "Both hit their bids · +20 each",
+    failed: (names) => `No Loot bonus · missed bid: ${names}`,
+    selfWin: (name) => `${name} won their own Loot · no alliance formed`,
+    change: "Change",
+    remove: "Remove",
+    removeLabel: (n) => `Remove Loot ${n}`,
+    maxRecorded: "Both Loot cards are recorded.",
+    incomplete: "Choose the players for every Loot before scoring the round.",
+    legacyNotice:
+      "Older Loot points are preserved, but their original player links were not saved.",
   },
 
   rules: {
@@ -160,7 +179,7 @@ export const en: Strings = {
       },
       {
         title: "Loot / Butin  (+20 each ally)",
-        body: "Forms an alliance with whoever wins that trick. If BOTH allies hit their exact bid, each gets +20. Enter it only when the alliance succeeded.",
+        body: "Forms an alliance between the player who played it and whoever wins that trick. Record both players when it happens; if BOTH hit their exact bid, the app awards each +20.",
       },
       {
         title: "Rascal pirate wager (0/10/20)",
@@ -170,7 +189,7 @@ export const en: Strings = {
     twoPlayer: [
       {
         title: "Greybeard the ghost 👻",
-        body: "The official 2-player variant deals a third hand for the Greybeard ghost. On each trick he plays second, ignoring the led suit, and his Tigress always counts as an escape.",
+        body: "The official 2-player variant deals a third hand for the Greybeard ghost. On each trick he plays second, ignoring the led suit, and his Tigress always counts as an escape. Loot cards are not used.",
       },
       {
         title: "He plays but never scores",

@@ -1,0 +1,117 @@
+- generic [ref=e93]:
+  - generic [ref=e94]:
+    - generic [ref=e95] [cursor=pointer]: ‹ Accueil
+    - generic [ref=e97]:
+      - generic: ‹
+      - generic [ref=e99]:
+        - generic [ref=e100]: Manche 1
+        - generic [ref=e101]: cartes distribuées
+        - generic [ref=e103]:
+          - generic "Diminuer": −
+          - generic [ref=e105]: "1"
+          - generic "Augmenter" [ref=e106] [cursor=pointer]: +
+      - generic [ref=e108] [cursor=pointer]: ›
+    - generic [ref=e110] [cursor=pointer]: "?"
+  - generic [ref=e112]:
+    - generic [ref=e113]: 🃏 Anne distribue
+    - generic [ref=e114]:
+      - generic [ref=e115]: Bonny
+      - generic [ref=e117]: ›
+      - generic [ref=e118]: Calico
+      - generic [ref=e120]: ›
+      - generic [ref=e121]: Anne
+    - generic [ref=e123]: ordre de jeu · le meneur est à gauche
+  - generic [ref=e125]:
+    - generic [ref=e126]:
+      - generic [ref=e127]:
+        - generic [ref=e128]:
+          - generic [ref=e129]: ⚓ Alliances Butin
+          - generic [ref=e130]: Enregistrez chaque carte Butin dès qu’elle est jouée. L’app vérifie automatiquement les deux mises.
+        - button "+ Enregistrer un Butin" [active] [ref=e131] [cursor=pointer]
+      - generic [ref=e216]:
+        - generic [ref=e217]:
+          - generic [ref=e218]: Butin 1
+          - button "Retirer le Butin 1" [ref=e219] [cursor=pointer]:
+            - generic [ref=e220]: Retirer
+        - generic [ref=e221]:
+          - generic [ref=e222]: Qui a joué la carte Butin ?
+          - generic [ref=e223]:
+            - button "Qui a joué la carte Butin ? Anne" [ref=e224] [cursor=pointer]:
+              - generic [ref=e225]: Anne
+            - button "Qui a joué la carte Butin ? Bonny" [ref=e226] [cursor=pointer]:
+              - generic [ref=e227]: Bonny
+            - button "Qui a joué la carte Butin ? Calico" [ref=e228] [cursor=pointer]:
+              - generic [ref=e229]: Calico
+      - generic [ref=e230]: ⚠ Indiquez les joueurs de chaque Butin avant de valider la manche.
+    - generic [ref=e133]:
+      - generic [ref=e134]:
+        - generic [ref=e135]: Anne
+        - generic [ref=e136]:
+          - generic [ref=e137]: —
+          - generic [ref=e138]: 0 au total
+      - generic [ref=e139]:
+        - generic [ref=e140]:
+          - generic [ref=e141]: Mise
+          - generic [ref=e142]:
+            - generic "Diminuer Mise": −
+            - generic [ref=e144]: "0"
+            - generic "Augmenter Mise" [ref=e145] [cursor=pointer]: +
+        - generic [ref=e147]:
+          - generic [ref=e148]: Plis
+          - generic [ref=e149]:
+            - generic "Diminuer Plis": −
+            - generic [ref=e151]: "0"
+            - generic "Augmenter Plis" [ref=e152] [cursor=pointer]: +
+        - generic [ref=e154] [cursor=pointer]: Bonus ▸
+    - generic [ref=e156]:
+      - generic [ref=e157]:
+        - generic [ref=e158]: Bonny
+        - generic [ref=e159]:
+          - generic [ref=e160]: —
+          - generic [ref=e161]: 0 au total
+      - generic [ref=e162]:
+        - generic [ref=e163]:
+          - generic [ref=e164]: Mise
+          - generic [ref=e165]:
+            - generic "Diminuer Mise": −
+            - generic [ref=e167]: "0"
+            - generic "Augmenter Mise" [ref=e168] [cursor=pointer]: +
+        - generic [ref=e170]:
+          - generic [ref=e171]: Plis
+          - generic [ref=e172]:
+            - generic "Diminuer Plis": −
+            - generic [ref=e174]: "0"
+            - generic "Augmenter Plis" [ref=e175] [cursor=pointer]: +
+        - generic [ref=e177] [cursor=pointer]: Bonus ▸
+    - generic [ref=e179]:
+      - generic [ref=e180]:
+        - generic [ref=e181]: Calico
+        - generic [ref=e182]:
+          - generic [ref=e183]: —
+          - generic [ref=e184]: 0 au total
+      - generic [ref=e185]:
+        - generic [ref=e186]:
+          - generic [ref=e187]: Mise
+          - generic [ref=e188]:
+            - generic "Diminuer Mise": −
+            - generic [ref=e190]: "0"
+            - generic "Augmenter Mise" [ref=e191] [cursor=pointer]: +
+        - generic [ref=e193]:
+          - generic [ref=e194]: Plis
+          - generic [ref=e195]:
+            - generic "Diminuer Plis": −
+            - generic [ref=e197]: "0"
+            - generic "Augmenter Plis" [ref=e198] [cursor=pointer]: +
+        - generic [ref=e200] [cursor=pointer]: Bonus ▸
+    - generic [ref=e202]: "Plis enregistrés : 0 / 1 (devrait égaler les cartes distribuées, sauf si un Kraken a annulé un pli)"
+  - generic [ref=e203]:
+    - generic [ref=e204]:
+      - generic [ref=e205]: Anne
+      - generic [ref=e206]: "0"
+    - generic [ref=e207]:
+      - generic [ref=e208]: Bonny
+      - generic [ref=e209]: "0"
+    - generic [ref=e210]:
+      - generic [ref=e211]: Calico
+      - generic [ref=e212]: "0"
+  - generic [ref=e213]: Valider la manche →

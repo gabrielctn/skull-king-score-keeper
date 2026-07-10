@@ -12,6 +12,8 @@ for a table with no wifi.
 - Add 2+ players and choose the number of rounds (1–10, default 10).
 - For each round, enter every player's **bid** and **tricks won**, plus a
   structured **bonus editor** for captured special cards — no mental math.
+- Record each **Loot alliance** as it happens; the linked players stay visible
+  and both bids are checked before the +20 bonuses are applied.
 - Editable **cards-dealt** per round (for 7–8 players or custom round structures).
 - Live per-round and running totals, with a tricks-vs-cards sanity check.
 - A built-in **rules reference** (the "?" button) covering every special card.
@@ -41,10 +43,11 @@ and they go to whoever *captures* the card, no matter who played it:
 - Pirate captured by the Skull King: **+30** each
 - Mermaid captures the Skull King: **+40**
 
-Conditional extras (in the bonus editor when "Loot & Rascal wager" is on):
+Conditional extras (when "Loot & Rascal wager" is on):
 
 - **Loot / Butin alliance:** +20 to each ally, **only if both allies hit their
-  exact bid**. Enter it only when the alliance succeeded.
+  exact bid**. Record who played the card and who won its trick; the app keeps
+  the binding visible and applies both bonuses automatically.
 - **Rascal pirate wager (0/10/20):** gained if you hit your bid, lost if you miss.
 
 Special cards that affect *what you enter* (explained in the in-app "?" reference):
@@ -54,8 +57,9 @@ Special cards that affect *what you enter* (explained in the in-app "?" referenc
 - **White Whale:** specials are nullified and the highest *number* wins; no
   special-card capture bonuses happen in a whale trick.
 
-The scoring engine is covered by 29 unit tests (`npm run test:scoring`),
-including the rulebook's worked examples and edge cases.
+The scoring engine is covered by 62 checks (`npm run test:scoring`), with 11
+additional save-migration checks (`npm run test:storage`), including the
+rulebook's worked examples and Loot edge cases.
 
 ---
 

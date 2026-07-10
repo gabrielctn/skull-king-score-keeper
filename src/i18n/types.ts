@@ -17,10 +17,6 @@ export interface Strings {
   langLabel: string;
 
   common: {
-    on: string;
-    off: string;
-    yes: string;
-    no: string;
     home: string;
     back: string;
     newGame: string;
@@ -96,12 +92,36 @@ export interface Strings {
     mermaidByPirate: string;
     pirateBySkullKing: string;
     mermaidCapturesSkullKing: string;
-    loot: string;
     rascal: string;
     /** Suffix meaning "each", appended after "+{points}". */
     each: string;
     /** "Capture bonus: +{n}" */
     captureBonus: (n: number) => string;
+  };
+
+  loot: {
+    title: string;
+    hint: string;
+    record: string;
+    /** "Loot {n}" */
+    useNumber: (n: number) => string;
+    playedByPrompt: string;
+    winnerPrompt: string;
+    playedByRole: string;
+    winnerRole: string;
+    /** Reminder naming the two bound players. */
+    pendingPair: (playedBy: string, boundTo: string) => string;
+    success: string;
+    /** Names of players who missed, already joined for display. */
+    failed: (names: string) => string;
+    /** Loot player also won the trick, so no alliance exists. */
+    selfWin: (name: string) => string;
+    change: string;
+    remove: string;
+    removeLabel: (n: number) => string;
+    maxRecorded: string;
+    incomplete: string;
+    legacyNotice: string;
   };
 
   rules: {

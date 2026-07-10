@@ -1,4 +1,11 @@
-import { BonusInput, Game, Player, RoundEntries, RoundEntry } from "./types";
+import {
+  BonusInput,
+  Game,
+  LootUse,
+  Player,
+  RoundEntries,
+  RoundEntry,
+} from "./types";
 
 /**
  * Skull King scoring — Grandpa Beck's 2022 rules ("Les scores selon Skull King").
@@ -19,9 +26,9 @@ import { BonusInput, Game, Player, RoundEntries, RoundEntry } from "./types";
  * no matter who played it.
  *
  * Conditional extras:
- *   - Loot/Butin alliance: +20, only when the player makes their exact bid
- *     (and, per the rules, only when their ally also did — the user decides
- *     whether the alliance succeeded before entering it).
+ *   - Loot/Butin alliance: +20 to both linked players, but only when both make
+ *     their exact bids. Alliances are stored at round level so this is checked
+ *     rather than entered as a pre-calculated per-player count.
  *   - Rascal pirate wager (0/10/20): +wager if the bid is hit, -wager if missed.
  */
 
@@ -60,25 +67,67 @@ export function captureBonus(b: BonusInput): number {
   );
 }
 
-/** Loot + Rascal extras, which depend on bid accuracy. */
+/** Rascal and migrated Loot extras, which depend on bid accuracy. */
 export function conditionalBonus(entry: RoundEntry): number {
   const made = madeBid(entry);
-  const loot = made ? entry.bonus.loot * BONUS_VALUES.loot : 0;
+  const legacyLoot = made
+    ? (entry.legacyLoot ?? 0) * BONUS_VALUES.loot
+    : 0;
   const rascal =
     entry.bonus.rascalWager > 0
       ? made
         ? entry.bonus.rascalWager
         : -entry.bonus.rascalWager
       : 0;
-  return loot + rascal;
+  return legacyLoot + rascal;
 }
 
-/** Total points for a single player's round. */
-export function scoreRound(cardsDealt: number, entry: RoundEntry): number {
+/** Whether a recorded Loot alliance satisfies the exact-bid requirement. */
+export function lootAllianceSucceeded(
+  entries: RoundEntries,
+  lootUse: LootUse
+): boolean {
+  if (
+    lootUse.playedById === null ||
+    lootUse.boundToId === null ||
+    lootUse.playedById === lootUse.boundToId ||
+    !entries[lootUse.playedById] ||
+    !entries[lootUse.boundToId]
+  ) {
+    return false;
+  }
+  return (
+    madeBid(entries[lootUse.playedById]) &&
+    madeBid(entries[lootUse.boundToId])
+  );
+}
+
+/** Verified Loot points earned by one player from all alliances in a round. */
+export function lootBonusForPlayer(
+  entries: RoundEntries,
+  lootUses: LootUse[],
+  playerId: string
+): number {
+  return lootUses.reduce((points, lootUse) => {
+    const isParticipant =
+      lootUse.playedById === playerId || lootUse.boundToId === playerId;
+    return isParticipant && lootAllianceSucceeded(entries, lootUse)
+      ? points + BONUS_VALUES.loot
+      : points;
+  }, 0);
+}
+
+/** Total points for a single player's round, including verified Loot points. */
+export function scoreRound(
+  cardsDealt: number,
+  entry: RoundEntry,
+  lootBonus = 0
+): number {
   return (
     bidScore(cardsDealt, entry) +
     captureBonus(entry.bonus) +
-    conditionalBonus(entry)
+    conditionalBonus(entry) +
+    lootBonus
   );
 }
 
@@ -114,7 +163,15 @@ export function playerTotal(
   for (let r = 1; r <= uptoRound && r <= game.totalRounds; r++) {
     const entry = game.rounds[r - 1]?.[playerId];
     if (entry && entry.recorded) {
-      total += scoreRound(cardsForRound(game, r), entry);
+      const round = game.rounds[r - 1];
+      const loot = lootBonusForPlayer(
+        round,
+        game.advancedCards && game.players.length > 2
+          ? (game.lootUses[r - 1] ?? [])
+          : [],
+        playerId
+      );
+      total += scoreRound(cardsForRound(game, r), entry, loot);
     }
   }
   return total;
@@ -168,13 +225,18 @@ export function emptyBonus(): BonusInput {
     mermaidByPirate: 0,
     pirateBySkullKing: 0,
     mermaidCapturesSkullKing: false,
-    loot: 0,
     rascalWager: 0,
   };
 }
 
 export function emptyEntry(): RoundEntry {
-  return { bid: 0, tricks: 0, bonus: emptyBonus(), recorded: false };
+  return {
+    bid: 0,
+    tricks: 0,
+    bonus: emptyBonus(),
+    legacyLoot: 0,
+    recorded: false,
+  };
 }
 
 function emptyRound(players: Player[]): RoundEntries {
@@ -196,6 +258,7 @@ export function createGame(
     totalRounds,
     currentRound: 1,
     rounds: Array.from({ length: totalRounds }, () => emptyRound(players)),
+    lootUses: Array.from({ length: totalRounds }, () => []),
     cardsDealt: Array.from({ length: totalRounds }, (_, i) => i + 1),
     advancedCards,
     twoPlayerGhost,

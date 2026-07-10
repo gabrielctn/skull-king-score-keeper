@@ -19,10 +19,21 @@ export interface BonusInput {
   pirateBySkullKing: number;
   /** This player's mermaid captured the Skull King — +40. */
   mermaidCapturesSkullKing: boolean;
-  /** Successful Loot/Butin alliances — +20 each, only if THIS bid is made. */
-  loot: number;
   /** Rascal pirate side-wager: gained if bid made, lost if missed. */
   rascalWager: 0 | 10 | 20;
+}
+
+/**
+ * One Loot/Butin card used during a round.
+ *
+ * The null states let the app remember immediately that the card was used,
+ * before the table has identified its player and the trick winner.
+ */
+export interface LootUse {
+  id: string;
+  playedById: string | null;
+  /** Null while the trick is still in progress and its winner is not known. */
+  boundToId: string | null;
 }
 
 export interface RoundEntry {
@@ -31,6 +42,11 @@ export interface RoundEntry {
   /** Tricks the player actually won. */
   tricks: number;
   bonus: BonusInput;
+  /**
+   * Count imported from saves created before Loot pairings were tracked.
+   * New rounds always use `Game.lootUses` instead.
+   */
+  legacyLoot: number;
   /** True once the round result has been recorded for this player. */
   recorded: boolean;
 }
@@ -46,6 +62,8 @@ export interface Game {
   currentRound: number;
   /** rounds[r - 1] holds the entries for round number r. */
   rounds: RoundEntries[];
+  /** Loot cards used in each round, capped at the two cards in the deck. */
+  lootUses: LootUse[][];
   /**
    * Cards dealt per round. cardsDealt[r - 1] defaults to r, but can be fewer
    * in late rounds for 7-8 players, or anything for custom round structures.
@@ -66,4 +84,4 @@ export interface Game {
 }
 
 /** Current persisted-game schema version (for save migrations). */
-export const GAME_SCHEMA_VERSION = 3;
+export const GAME_SCHEMA_VERSION = 4;

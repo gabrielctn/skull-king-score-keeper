@@ -16,6 +16,7 @@ import { Player } from "../types";
 import { createGame } from "../scoring";
 import { Game } from "../types";
 import Stepper from "../components/Stepper";
+import ToggleSwitch from "../components/ToggleSwitch";
 import { colors, radius, spacing } from "../theme";
 import { illustrations } from "../assets/illustrations";
 import { useI18n } from "../i18n/context";
@@ -171,26 +172,17 @@ export default function SetupScreen({ onStart, onBack }: Props) {
               <Text style={[styles.section, { marginTop: spacing.lg }]}>
                 {t.setup.twoPlayers}
               </Text>
-              <TouchableOpacity
-                style={styles.advancedRow}
-                onPress={() => setTwoPlayerGhost((g) => !g)}
-                activeOpacity={0.8}
-              >
+              <View style={styles.advancedRow}>
                 <View style={{ flex: 1, marginRight: spacing.md }}>
                   <Text style={styles.advancedTitle}>{t.setup.ghostTitle}</Text>
                   <Text style={styles.advancedHint}>{t.setup.ghostHint}</Text>
                 </View>
-                <View style={[styles.switch, twoPlayerGhost && styles.switchOn]}>
-                  <Text
-                    style={[
-                      styles.switchText,
-                      twoPlayerGhost && styles.switchTextOn,
-                    ]}
-                  >
-                    {twoPlayerGhost ? t.common.on : t.common.off}
-                  </Text>
-                </View>
-              </TouchableOpacity>
+                <ToggleSwitch
+                  value={twoPlayerGhost}
+                  onValueChange={setTwoPlayerGhost}
+                  accessibilityLabel={t.setup.ghostTitle}
+                />
+              </View>
             </>
           ) : null}
 
@@ -205,21 +197,17 @@ export default function SetupScreen({ onStart, onBack }: Props) {
           <Text style={[styles.section, { marginTop: spacing.lg }]}>
             {t.setup.expansion}
           </Text>
-          <TouchableOpacity
-            style={styles.advancedRow}
-            onPress={() => setAdvanced((a) => !a)}
-            activeOpacity={0.8}
-          >
+          <View style={styles.advancedRow}>
             <View style={{ flex: 1, marginRight: spacing.md }}>
               <Text style={styles.advancedTitle}>{t.setup.advancedTitle}</Text>
               <Text style={styles.advancedHint}>{t.setup.advancedHint}</Text>
             </View>
-            <View style={[styles.switch, advanced && styles.switchOn]}>
-              <Text style={[styles.switchText, advanced && styles.switchTextOn]}>
-                {advanced ? t.common.on : t.common.off}
-              </Text>
-            </View>
-          </TouchableOpacity>
+            <ToggleSwitch
+              value={advanced}
+              onValueChange={setAdvanced}
+              accessibilityLabel={t.setup.advancedTitle}
+            />
+          </View>
         </ScrollView>
 
         <View
@@ -358,19 +346,6 @@ const styles = StyleSheet.create({
   },
   advancedTitle: { color: colors.text, fontSize: 16, fontWeight: "700" },
   advancedHint: { color: colors.textDim, fontSize: 12, marginTop: 4, lineHeight: 16 },
-  switch: {
-    minWidth: 52,
-    paddingVertical: 6,
-    paddingHorizontal: spacing.sm,
-    borderRadius: radius.sm,
-    borderWidth: 1,
-    borderColor: colors.cardBorder,
-    backgroundColor: colors.bgElevated,
-    alignItems: "center",
-  },
-  switchOn: { backgroundColor: colors.gold, borderColor: colors.gold },
-  switchText: { color: colors.textDim, fontWeight: "700" },
-  switchTextOn: { color: colors.bg },
   footer: { width: "100%", alignSelf: "center", padding: spacing.md },
   startBtn: {
     backgroundColor: colors.gold,

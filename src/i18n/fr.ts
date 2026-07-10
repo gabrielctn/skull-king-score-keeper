@@ -4,10 +4,6 @@ export const fr: Strings = {
   langLabel: "FR",
 
   common: {
-    on: "Oui",
-    off: "Non",
-    yes: "Oui",
-    no: "Non",
     home: "Accueil",
     back: "Retour",
     newGame: "Nouvelle partie",
@@ -39,7 +35,7 @@ export const fr: Strings = {
     expansion: "Cartes d'extension",
     advancedTitle: "Butin & pari Rascal",
     advancedHint:
-      "Ajoute les alliances Butin et le pari du pirate Rascal à l'éditeur de bonus. Le Kraken, la Baleine blanche et les bonus de 14/capture sont toujours disponibles.",
+      "Ajoute le suivi des alliances Butin par manche et le pari du pirate Rascal. Le Kraken, la Baleine blanche et les bonus de 14/capture sont toujours disponibles.",
     start: "Commencer ☠️",
     needPlayers: "Ajoutez au moins 2 joueurs",
   },
@@ -78,10 +74,35 @@ export const fr: Strings = {
     mermaidByPirate: "Sirène prise par un pirate",
     pirateBySkullKing: "Pirate pris par le Skull King",
     mermaidCapturesSkullKing: "Sirène capture le Skull King",
-    loot: "Alliance Butin (mises réussies)",
     rascal: "Pari Rascal",
     each: "ch.",
     captureBonus: (n) => `Bonus de capture : +${n}`,
+  },
+
+  loot: {
+    title: "Alliances Butin",
+    hint:
+      "Enregistrez chaque carte Butin dès qu’elle est jouée. L’app vérifie automatiquement les deux mises.",
+    record: "+ Enregistrer un Butin",
+    useNumber: (n) => `Butin ${n}`,
+    playedByPrompt: "Qui a joué la carte Butin ?",
+    winnerPrompt: "Qui a remporté le pli ?",
+    playedByRole: "a joué Butin",
+    winnerRole: "a remporté le pli",
+    pendingPair: (playedBy, boundTo) =>
+      `${playedBy} et ${boundTo} doivent tous les deux réussir leur mise.`,
+    success: "Les deux mises sont réussies · +20 chacun",
+    failed: (names) => `Pas de bonus Butin · mise ratée : ${names}`,
+    selfWin: (name) =>
+      `${name} a remporté son propre Butin · aucune alliance formée`,
+    change: "Modifier",
+    remove: "Retirer",
+    removeLabel: (n) => `Retirer le Butin ${n}`,
+    maxRecorded: "Les deux cartes Butin sont enregistrées.",
+    incomplete:
+      "Indiquez les joueurs de chaque Butin avant de valider la manche.",
+    legacyNotice:
+      "Les anciens points Butin sont conservés, mais les joueurs liés n’avaient pas été enregistrés.",
   },
 
   rules: {
@@ -160,7 +181,7 @@ export const fr: Strings = {
       },
       {
         title: "Butin  (+20 par allié)",
-        body: "Forme une alliance avec celui qui remporte ce pli. Si les DEUX alliés réussissent leur mise exacte, chacun gagne +20. Ne l'indiquez que si l'alliance a réussi.",
+        body: "Forme une alliance entre celui qui joue la carte et celui qui remporte le pli. Enregistrez les deux joueurs ; si TOUS DEUX réussissent leur mise exacte, l’app ajoute +20 à chacun.",
       },
       {
         title: "Pari du pirate Rascal (0/10/20)",
@@ -170,7 +191,7 @@ export const fr: Strings = {
     twoPlayer: [
       {
         title: "Barbe Grise, le fantôme 👻",
-        body: "La variante officielle à 2 joueurs distribue une troisième main pour le fantôme Barbe Grise. À chaque pli il joue en deuxième, sans suivre la couleur demandée, et sa Tigresse compte toujours comme une fuite.",
+        body: "La variante officielle à 2 joueurs distribue une troisième main pour le fantôme Barbe Grise. À chaque pli il joue en deuxième, sans suivre la couleur demandée, et sa Tigresse compte toujours comme une fuite. Les cartes Butin ne sont pas utilisées.",
       },
       {
         title: "Il joue mais ne marque jamais",
