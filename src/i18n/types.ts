@@ -48,6 +48,8 @@ export interface Strings {
     expansion: string;
     advancedTitle: string;
     advancedHint: string;
+    newExpansionTitle: string;
+    newExpansionHint: string;
     start: string;
     needPlayers: string;
   };
@@ -93,10 +95,16 @@ export interface Strings {
     pirateBySkullKing: string;
     mermaidCapturesSkullKing: string;
     rascal: string;
+    newExpansion: string;
+    expansion7: string;
+    expansion8: string;
+    expansionColorHint: string;
+    davyJonesLeviathans: string;
+    secondCaptured: string;
     /** Suffix meaning "each", appended after "+{points}". */
     each: string;
-    /** "Capture bonus: +{n}" */
-    captureBonus: (n: number) => string;
+    /** "Card bonus: +{n}" */
+    cardBonus: (n: number) => string;
   };
 
   loot: {
@@ -130,11 +138,13 @@ export interface Strings {
     headings: {
       scoring: string;
       bonus: string;
+      expansion: string;
       special: string;
       twoPlayer: string;
     };
     scoring: Entry[];
     bonusEntries: Entry[];
+    expansion: Entry[];
     special: Entry[];
     twoPlayer: Entry[];
   };

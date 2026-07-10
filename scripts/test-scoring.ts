@@ -10,6 +10,7 @@ import {
   captureBonus,
   createGame,
   emptyBonus,
+  expansionColorBonus,
   ghostTricks,
   lootAllianceSucceeded,
   lootBonusForPlayer,
@@ -200,6 +201,49 @@ eq("rascal +10 when hit", scoreRound(5, E(1, 1, { rascalWager: 10 })), 20 + 10);
 eq("rascal -10 when missed", scoreRound(5, E(1, 0, { rascalWager: 10 })), -10 - 10);
 eq("rascal +20 on a made zero-bid", scoreRound(5, E(0, 0, { rascalWager: 20 })), 50 + 20);
 
+console.log("\nNew expansion scoring");
+eq(
+  "captured new 7 costs 5 on exact bid",
+  scoreRound(5, E(2, 2, { expansion7: 1 })),
+  40 - 5
+);
+eq(
+  "captured new 8 earns 5 on exact bid",
+  scoreRound(5, E(2, 2, { expansion8: 1 })),
+  40 + 5
+);
+eq(
+  "new 7 and 8 are both ignored on missed bid",
+  scoreRound(5, E(2, 1, { expansion7: 2, expansion8: 3 })),
+  -10
+);
+eq(
+  "four 7s and four 8s cancel on exact bid",
+  expansionColorBonus(
+    { ...emptyBonus(), expansion7: 4, expansion8: 4 },
+    true
+  ),
+  0
+);
+eq(
+  "Davy Jones scores 20 per destroyed leviathan",
+  scoreRound(5, E(1, 1, { davyJonesLeviathans: 3 })),
+  20 + 60
+);
+eq(
+  "Second captured by Skull King or Mermaid scores 30",
+  scoreRound(5, E(1, 1, { secondCaptured: true })),
+  20 + 30
+);
+eq(
+  "Davy Jones and Second bonuses survive a missed bid",
+  scoreRound(
+    5,
+    E(2, 0, { davyJonesLeviathans: 1, secondCaptured: true })
+  ),
+  -20 + 20 + 30
+);
+
 console.log("\nEverything stacked");
 eq(
   "max combo, bid 3 cards 7",
@@ -377,6 +421,7 @@ eq("tie: third ranked 3", b2[2].rank, 3);
 console.log("\ni18n: EN and FR rules lists stay in sync");
 eq("scoring entries match", fr.rules.scoring.length, en.rules.scoring.length);
 eq("bonus entries match", fr.rules.bonusEntries.length, en.rules.bonusEntries.length);
+eq("expansion entries match", fr.rules.expansion.length, en.rules.expansion.length);
 eq("special entries match", fr.rules.special.length, en.rules.special.length);
 eq("two-player entries match", fr.rules.twoPlayer.length, en.rules.twoPlayer.length);
 

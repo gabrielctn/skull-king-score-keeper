@@ -36,6 +36,9 @@ export const fr: Strings = {
     advancedTitle: "Butin & pari Rascal",
     advancedHint:
       "Ajoute le suivi des alliances Butin par manche et le pari du pirate Rascal. Le Kraken, la Baleine blanche et les bonus de 14/capture sont toujours disponibles.",
+    newExpansionTitle: "Nouvelle extension",
+    newExpansionHint:
+      "Ajoute au décompte les 7 et 8 spéciaux, le Casier de Davy Jones et le Second. Les autres effets de l'extension sont détaillés dans l'aide en jeu.",
     start: "Commencer ☠️",
     needPlayers: "Ajoutez au moins 2 joueurs",
   },
@@ -75,8 +78,15 @@ export const fr: Strings = {
     pirateBySkullKing: "Pirate pris par le Skull King",
     mermaidCapturesSkullKing: "Sirène capture le Skull King",
     rascal: "Pari Rascal",
+    newExpansion: "Nouvelle extension",
+    expansion7: "Nouveau 7 remporté",
+    expansion8: "Nouveau 8 remporté",
+    expansionColorHint:
+      "Les nouveaux 7 et 8 ne comptent que si la mise est réussie exactement.",
+    davyJonesLeviathans: "Léviathan détruit par Davy Jones",
+    secondCaptured: "Second pris par Skull King / Sirène",
     each: "ch.",
-    captureBonus: (n) => `Bonus de capture : +${n}`,
+    cardBonus: (n) => `Bonus de cartes : ${n >= 0 ? "+" : ""}${n}`,
   },
 
   loot: {
@@ -111,6 +121,7 @@ export const fr: Strings = {
     headings: {
       scoring: "Décompte",
       bonus: "Points bonus",
+      expansion: "Nouvelle extension",
       special: "Cartes spéciales",
       twoPlayer: "Variante à 2 joueurs",
     },
@@ -148,6 +159,44 @@ export const fr: Strings = {
       {
         title: "Les bonus comptent quelle que soit votre mise",
         body: "Vous gardez les bonus de capture même si vous ratez votre mise. Ils vont à celui qui capture la carte, peu importe qui l'a jouée.",
+      },
+    ],
+    expansion: [
+      {
+        title: "Nouveaux 7 et 8  (-5 / +5 chacun)",
+        body: "Ils se jouent comme des cartes de couleur normales. Le joueur qui remporte un nouveau 7 perd 5 points et celui qui remporte un nouveau 8 gagne 5 points, seulement si sa mise est exacte. En cas d'égalité sur la valeur gagnante, la première carte jouée l'emporte.",
+      },
+      {
+        title: "Cartes 0/14",
+        body: "En jouant la carte, annoncez immédiatement si elle vaut 0 ou 14. Elle ne rapporte aucun bonus.",
+      },
+      {
+        title: "15 joker",
+        body: "Il vaut 15 jaune, violet ou vert. Si aucune couleur n'est définie, choisissez-la. Si une couleur non noire est déjà définie, il doit la suivre. Face au noir, aucune couleur ne doit être annoncée.",
+      },
+      {
+        title: "Mary Throne (Pirate)",
+        body: "Elle se joue comme un Pirate classique. Avec les pouvoirs avancés, choisissez au hasard et sans la regarder une carte de la main d'un adversaire : il devra la jouer au prochain pli, quelles que soient les cartes déjà jouées.",
+      },
+      {
+        title: "Dernière salve",
+        body: "Elle ne gagne jamais le pli et ne compte pas comme une Fuite. Après que tous ont joué, posez immédiatement une autre carte. Vous aurez ensuite une carte de moins et ne participerez pas au dernier pli de la manche.",
+      },
+      {
+        title: "Supplice de la planche",
+        body: "Cette carte ne gagne pas le pli. À la fin du pli, retirez un Pirate présent : il ne peut plus gagner le pli ni rapporter de points.",
+      },
+      {
+        title: "Raie tachetée",
+        body: "La carte la plus basse remporte le pli ; en cas d'égalité, la première jouée gagne. Si plusieurs léviathans sont présents (Kraken, Baleine blanche, Raie), le dernier joué détermine l'effet du pli.",
+      },
+      {
+        title: "Casier de Davy Jones  (+20 par léviathan)",
+        body: "À utiliser avec les léviathans. Il ne gagne pas le pli et détruit tous les léviathans présents ; la carte la plus forte gagne alors normalement. Le joueur du Casier marque 20 points par léviathan détruit, quel que soit l'ordre des cartes.",
+      },
+      {
+        title: "Second  (+30 s'il est capturé)",
+        body: "Il bat tout sauf le Skull King et les Sirènes. Il peut utiliser les pouvoirs des Pirates qu'il capture, mais ne gagne aucun bonus pour eux. Si le Skull King ou une Sirène le capture, leur joueur gagne 30 points.",
       },
     ],
     special: [

@@ -17,6 +17,8 @@ for a table with no wifi.
 - Editable **cards-dealt** per round (for 7–8 players or custom round structures).
 - Live per-round and running totals, with a tricks-vs-cards sanity check.
 - A built-in **rules reference** (the "?" button) covering every special card.
+- Full support for the **new Skull King expansion**: conditional 7/8 points,
+  Davy Jones' Locker, the Second, and a rules reference for every new card.
 - Final standings with ranks (ties handled) and a winner screen.
 - Games auto-save, so you can close the app mid-game and resume.
 
@@ -42,6 +44,13 @@ and they go to whoever *captures* the card, no matter who played it:
 - Mermaid captured by a pirate: **+20** each
 - Pirate captured by the Skull King: **+30** each
 - Mermaid captures the Skull King: **+40**
+- Leviathan destroyed by Davy Jones' Locker: **+20** each
+- The Second captured by Skull King or a Mermaid: **+30**
+
+New expansion color cards — **only applied when you hit your exact bid**:
+
+- Each new 7 captured: **-5**
+- Each new 8 captured: **+5**
 
 Conditional extras (when "Loot & Rascal wager" is on):
 
@@ -56,8 +65,14 @@ Special cards that affect *what you enter* (explained in the in-app "?" referenc
   round's tricks can total fewer than the cards dealt.)
 - **White Whale:** specials are nullified and the highest *number* wins; no
   special-card capture bonuses happen in a whale trick.
+- **0/14, wild 15, Mary Throne, Final Salvo, Walk the Plank and Spotted Ray:**
+  their complete trick-play rules are included in the in-app reference.
+- **Davy Jones' Locker:** destroys all leviathans in its trick; the app records
+  +20 per destroyed leviathan.
+- **The Second:** beats everything except Skull King and Mermaids; capturing it
+  with either awards +30.
 
-The scoring engine is covered by 62 checks (`npm run test:scoring`), with 11
+The scoring engine is covered by 70 checks (`npm run test:scoring`), with 14
 additional save-migration checks (`npm run test:storage`), including the
 rulebook's worked examples and Loot edge cases.
 

@@ -52,6 +52,14 @@ if (legacy) {
   );
   check("missing round bindings become empty", legacy.lootUses.length === 2);
   check("first round has no invented pair", legacy.lootUses[0].length === 0);
+  check("new expansion stays off for pre-v5 saves", !legacy.newExpansion);
+  check(
+    "new expansion bonus fields default safely",
+    legacy.rounds[0].a.bonus.expansion7 === 0 &&
+      legacy.rounds[0].a.bonus.expansion8 === 0 &&
+      legacy.rounds[0].a.bonus.davyJonesLeviathans === 0 &&
+      !legacy.rounds[0].a.bonus.secondCaptured
+  );
 }
 
 console.log("Loot-use validation and physical two-card cap");
@@ -92,11 +100,20 @@ const current = createGame(players, 2, true);
 current.lootUses[0] = [
   { id: "roundtrip", playedById: "a", boundToId: "c" },
 ];
+current.newExpansion = true;
+current.rounds[0].a.bonus.expansion7 = 2;
+current.rounds[0].a.bonus.davyJonesLeviathans = 1;
 const roundTripped = normalizeGame(JSON.parse(JSON.stringify(current)));
 check(
   "bound player IDs survive JSON persistence",
   roundTripped?.lootUses[0][0]?.playedById === "a" &&
     roundTripped?.lootUses[0][0]?.boundToId === "c"
+);
+check(
+  "new expansion settings survive JSON persistence",
+  roundTripped?.newExpansion === true &&
+    roundTripped.rounds[0].a.bonus.expansion7 === 2 &&
+    roundTripped.rounds[0].a.bonus.davyJonesLeviathans === 1
 );
 
 console.log(`\n${passed} passed, ${failed} failed`);

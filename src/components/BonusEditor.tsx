@@ -1,7 +1,11 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { BonusInput } from "../types";
-import { BONUS_VALUES, captureBonus } from "../scoring";
+import {
+  BONUS_VALUES,
+  captureBonus,
+  expansionColorBonus,
+} from "../scoring";
 import Stepper from "./Stepper";
 import ToggleSwitch from "./ToggleSwitch";
 import { colors, radius, spacing } from "../theme";
@@ -10,8 +14,12 @@ import { useI18n } from "../i18n/context";
 interface Props {
   bonus: BonusInput;
   advanced: boolean;
+  newExpansion: boolean;
+  bidMade: boolean;
   onChange: (next: BonusInput) => void;
 }
+
+const signedPoints = (points: number) => `${points >= 0 ? "+" : ""}${points}`;
 
 function BooleanRow({
   value,
@@ -27,12 +35,12 @@ function BooleanRow({
   return (
     <View style={styles.row}>
       <Text style={styles.label}>
-        {label} <Text style={styles.pts}>+{points}</Text>
+        {label} <Text style={styles.pts}>{signedPoints(points)}</Text>
       </Text>
       <ToggleSwitch
         value={value}
         onValueChange={onValueChange}
-        accessibilityLabel={`${label}, +${points}`}
+        accessibilityLabel={`${label}, ${signedPoints(points)}`}
       />
     </View>
   );
@@ -55,14 +63,23 @@ function CountRow({
   return (
     <View style={styles.row}>
       <Text style={styles.label}>
-        {label} <Text style={styles.pts}>+{points} {t.bonus.each}</Text>
+        {label}{" "}
+        <Text style={styles.pts}>
+          {signedPoints(points)} {t.bonus.each}
+        </Text>
       </Text>
       <Stepper value={value} onChange={onChange} min={0} max={max} compact />
     </View>
   );
 }
 
-export default function BonusEditor({ bonus, advanced, onChange }: Props) {
+export default function BonusEditor({
+  bonus,
+  advanced,
+  newExpansion,
+  bidMade,
+  onChange,
+}: Props) {
   const { t } = useI18n();
   const set = <K extends keyof BonusInput>(key: K, value: BonusInput[K]) =>
     onChange({ ...bonus, [key]: value });
@@ -93,7 +110,7 @@ export default function BonusEditor({ bonus, advanced, onChange }: Props) {
         label={t.bonus.pirateBySkullKing}
         points={BONUS_VALUES.pirateBySkullKing}
         value={bonus.pirateBySkullKing}
-        max={6}
+        max={newExpansion ? 7 : 6}
         onChange={(v) => set("pirateBySkullKing", v)}
       />
       <BooleanRow
@@ -102,6 +119,41 @@ export default function BonusEditor({ bonus, advanced, onChange }: Props) {
         value={bonus.mermaidCapturesSkullKing}
         onValueChange={(value) => set("mermaidCapturesSkullKing", value)}
       />
+
+      {newExpansion ? (
+        <>
+          <View style={styles.divider} />
+          <Text style={styles.subheading}>{t.bonus.newExpansion}</Text>
+          <CountRow
+            label={t.bonus.expansion7}
+            points={BONUS_VALUES.expansion7}
+            value={bonus.expansion7}
+            max={4}
+            onChange={(v) => set("expansion7", v)}
+          />
+          <CountRow
+            label={t.bonus.expansion8}
+            points={BONUS_VALUES.expansion8}
+            value={bonus.expansion8}
+            max={4}
+            onChange={(v) => set("expansion8", v)}
+          />
+          <Text style={styles.conditionalHint}>{t.bonus.expansionColorHint}</Text>
+          <CountRow
+            label={t.bonus.davyJonesLeviathans}
+            points={BONUS_VALUES.davyJonesLeviathan}
+            value={bonus.davyJonesLeviathans}
+            max={3}
+            onChange={(v) => set("davyJonesLeviathans", v)}
+          />
+          <BooleanRow
+            label={t.bonus.secondCaptured}
+            points={BONUS_VALUES.secondCaptured}
+            value={bonus.secondCaptured}
+            onValueChange={(value) => set("secondCaptured", value)}
+          />
+        </>
+      ) : null}
 
       {advanced ? (
         <>
@@ -133,7 +185,11 @@ export default function BonusEditor({ bonus, advanced, onChange }: Props) {
         </>
       ) : null}
 
-      <Text style={styles.sum}>{t.bonus.captureBonus(captureBonus(bonus))}</Text>
+      <Text style={styles.sum}>
+        {t.bonus.cardBonus(
+          captureBonus(bonus) + expansionColorBonus(bonus, bidMade)
+        )}
+      </Text>
     </View>
   );
 }
@@ -156,6 +212,21 @@ const styles = StyleSheet.create({
   divider: {
     height: StyleSheet.hairlineWidth,
     backgroundColor: colors.cardBorder,
+    marginBottom: spacing.sm,
+  },
+  subheading: {
+    color: colors.gold,
+    fontSize: 12,
+    fontWeight: "800",
+    marginBottom: spacing.sm,
+    textTransform: "uppercase",
+    letterSpacing: 0.8,
+  },
+  conditionalHint: {
+    color: colors.textDim,
+    fontSize: 11,
+    lineHeight: 15,
+    marginTop: -spacing.xs,
     marginBottom: spacing.sm,
   },
   segment: { flexDirection: "row" },

@@ -15,6 +15,7 @@ import {
   ghostTricks,
   isRoundComplete,
   lootBonusForPlayer,
+  madeBid,
   playerTotal,
   scoreRound,
   standings,
@@ -299,7 +300,11 @@ export default function GameScreen({
             b.mermaidByPirate > 0 ||
             b.pirateBySkullKing > 0 ||
             b.mermaidCapturesSkullKing ||
-            b.rascalWager > 0;
+            b.rascalWager > 0 ||
+            b.expansion7 > 0 ||
+            b.expansion8 > 0 ||
+            b.davyJonesLeviathans > 0 ||
+            b.secondCaptured;
           return (
             <View
               key={p.id}
@@ -367,6 +372,8 @@ export default function GameScreen({
                 <BonusEditor
                   bonus={entry.bonus}
                   advanced={game.advancedCards}
+                  newExpansion={game.newExpansion}
+                  bidMade={madeBid(entry)}
                   onChange={(b) => updateBonus(p.id, b)}
                 />
               ) : null}

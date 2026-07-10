@@ -21,6 +21,14 @@ export interface BonusInput {
   mermaidCapturesSkullKing: boolean;
   /** Rascal pirate side-wager: gained if bid made, lost if missed. */
   rascalWager: 0 | 10 | 20;
+  /** New expansion 7s captured — -5 each, only when the bid is exact (max 4). */
+  expansion7: number;
+  /** New expansion 8s captured — +5 each, only when the bid is exact (max 4). */
+  expansion8: number;
+  /** Leviathans destroyed with Davy Jones' Locker — +20 each (max 3). */
+  davyJonesLeviathans: number;
+  /** The Second captured by Skull King or a Mermaid — +30. */
+  secondCaptured: boolean;
 }
 
 /**
@@ -72,6 +80,8 @@ export interface Game {
   cardsDealt: number[];
   /** Show Loot & Rascal-wager fields in the bonus editor. */
   advancedCards: boolean;
+  /** Show and score the cards from the 2025 Skull King expansion. */
+  newExpansion: boolean;
   /**
    * Official 2-player variant: a non-scoring "Greybeard" ghost plays a third
    * hand and wins some tricks, so the two real players' tricks may sum to less
@@ -84,4 +94,4 @@ export interface Game {
 }
 
 /** Current persisted-game schema version (for save migrations). */
-export const GAME_SCHEMA_VERSION = 4;
+export const GAME_SCHEMA_VERSION = 5;

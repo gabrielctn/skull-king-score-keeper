@@ -40,6 +40,7 @@ export default function SetupScreen({ onStart, onBack }: Props) {
   ]);
   const [rounds, setRounds] = useState(10);
   const [advanced, setAdvanced] = useState(true);
+  const [newExpansion, setNewExpansion] = useState(true);
   const [twoPlayerGhost, setTwoPlayerGhost] = useState(true);
 
   const setName = (id: string, name: string) =>
@@ -73,7 +74,15 @@ export default function SetupScreen({ onStart, onBack }: Props) {
 
   const start = () => {
     if (!canStart) return;
-    onStart(createGame(named, rounds, advanced, isTwoPlayer && twoPlayerGhost));
+    onStart(
+      createGame(
+        named,
+        rounds,
+        advanced,
+        isTwoPlayer && twoPlayerGhost,
+        newExpansion
+      )
+    );
   };
 
   return (
@@ -206,6 +215,21 @@ export default function SetupScreen({ onStart, onBack }: Props) {
               value={advanced}
               onValueChange={setAdvanced}
               accessibilityLabel={t.setup.advancedTitle}
+            />
+          </View>
+          <View style={[styles.advancedRow, { marginTop: spacing.sm }]}>
+            <View style={{ flex: 1, marginRight: spacing.md }}>
+              <Text style={styles.advancedTitle}>
+                {t.setup.newExpansionTitle}
+              </Text>
+              <Text style={styles.advancedHint}>
+                {t.setup.newExpansionHint}
+              </Text>
+            </View>
+            <ToggleSwitch
+              value={newExpansion}
+              onValueChange={setNewExpansion}
+              accessibilityLabel={t.setup.newExpansionTitle}
             />
           </View>
         </ScrollView>

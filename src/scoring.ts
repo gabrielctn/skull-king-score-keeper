@@ -22,6 +22,8 @@ import {
  *   - mermaid captured by a pirate:     +20 each
  *   - pirate captured by Skull King:    +30 each
  *   - mermaid captures the Skull King:  +40
+ *   - leviathan destroyed by Davy Jones: +20 each
+ *   - Second captured by Skull King / Mermaid: +30
  * Bonuses go to whoever CAPTURES the card (wins the trick containing it),
  * no matter who played it.
  *
@@ -30,6 +32,7 @@ import {
  *     their exact bids. Alliances are stored at round level so this is checked
  *     rather than entered as a pre-calculated per-player count.
  *   - Rascal pirate wager (0/10/20): +wager if the bid is hit, -wager if missed.
+ *   - Expansion 7 / 8: -5 / +5 to their captor only when the bid is hit.
  */
 
 export const BONUS_VALUES = {
@@ -38,6 +41,10 @@ export const BONUS_VALUES = {
   mermaidByPirate: 20,
   pirateBySkullKing: 30,
   mermaidCapturesSkullKing: 40,
+  expansion7: -5,
+  expansion8: 5,
+  davyJonesLeviathan: 20,
+  secondCaptured: 30,
   loot: 20,
 } as const;
 
@@ -63,7 +70,21 @@ export function captureBonus(b: BonusInput): number {
     (b.black14 ? BONUS_VALUES.black14 : 0) +
     b.mermaidByPirate * BONUS_VALUES.mermaidByPirate +
     b.pirateBySkullKing * BONUS_VALUES.pirateBySkullKing +
-    (b.mermaidCapturesSkullKing ? BONUS_VALUES.mermaidCapturesSkullKing : 0)
+    (b.mermaidCapturesSkullKing ? BONUS_VALUES.mermaidCapturesSkullKing : 0) +
+    b.davyJonesLeviathans * BONUS_VALUES.davyJonesLeviathan +
+    (b.secondCaptured ? BONUS_VALUES.secondCaptured : 0)
+  );
+}
+
+/** Conditional points from the expansion's extra 7 and 8 cards. */
+export function expansionColorBonus(
+  bonus: BonusInput,
+  bidMade: boolean
+): number {
+  if (!bidMade) return 0;
+  return (
+    bonus.expansion7 * BONUS_VALUES.expansion7 +
+    bonus.expansion8 * BONUS_VALUES.expansion8
   );
 }
 
@@ -79,7 +100,7 @@ export function conditionalBonus(entry: RoundEntry): number {
         ? entry.bonus.rascalWager
         : -entry.bonus.rascalWager
       : 0;
-  return legacyLoot + rascal;
+  return legacyLoot + rascal + expansionColorBonus(entry.bonus, made);
 }
 
 /** Whether a recorded Loot alliance satisfies the exact-bid requirement. */
@@ -226,6 +247,10 @@ export function emptyBonus(): BonusInput {
     pirateBySkullKing: 0,
     mermaidCapturesSkullKing: false,
     rascalWager: 0,
+    expansion7: 0,
+    expansion8: 0,
+    davyJonesLeviathans: 0,
+    secondCaptured: false,
   };
 }
 
@@ -249,7 +274,8 @@ export function createGame(
   players: Player[],
   totalRounds = 10,
   advancedCards = true,
-  twoPlayerGhost = false
+  twoPlayerGhost = false,
+  newExpansion = true
 ): Game {
   const now = Date.now();
   return {
@@ -261,6 +287,7 @@ export function createGame(
     lootUses: Array.from({ length: totalRounds }, () => []),
     cardsDealt: Array.from({ length: totalRounds }, (_, i) => i + 1),
     advancedCards,
+    newExpansion,
     twoPlayerGhost,
     status: "in_progress",
     createdAt: now,

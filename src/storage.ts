@@ -11,6 +11,7 @@ const LANG_KEY = "skullking:lang";
  * as a single number and had no `cardsDealt` / `advancedCards`. Saves created
  * before schema v4 also stored Loot as a per-player count instead of binding
  * the two allied players, so keep those historical points in `legacyLoot`.
+ * Schema v5 adds the new expansion fields and toggle; old games keep it off.
  */
 export function normalizeGame(raw: any): Game | null {
   if (!raw || !Array.isArray(raw.players) || !Array.isArray(raw.rounds)) {
@@ -92,6 +93,7 @@ export function normalizeGame(raw: any): Game | null {
     lootUses,
     cardsDealt,
     advancedCards: raw.advancedCards ?? true,
+    newExpansion: raw.newExpansion ?? false,
     // v2 saves predate the 2-player ghost; default off to keep their strict
     // "tricks must equal cards dealt" behaviour.
     twoPlayerGhost: raw.twoPlayerGhost ?? false,

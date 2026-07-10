@@ -36,6 +36,9 @@ export const en: Strings = {
     advancedTitle: "Loot & Rascal wager",
     advancedHint:
       "Adds round-level Loot/Butin tracking and the Rascal pirate side-bet. Kraken, White Whale & the 14/capture bonuses are always available.",
+    newExpansionTitle: "New expansion",
+    newExpansionHint:
+      "Adds scoring for the special 7s and 8s, Davy Jones' Locker, and the Second. The other expansion effects are covered in the in-game rules.",
     start: "Start game ☠️",
     needPlayers: "Add at least 2 players",
   },
@@ -75,8 +78,15 @@ export const en: Strings = {
     pirateBySkullKing: "Pirate taken by Skull King",
     mermaidCapturesSkullKing: "Mermaid captures Skull King",
     rascal: "Rascal wager",
+    newExpansion: "New expansion",
+    expansion7: "New 7 captured",
+    expansion8: "New 8 captured",
+    expansionColorHint:
+      "The new 7s and 8s only score when the bid is hit exactly.",
+    davyJonesLeviathans: "Leviathan destroyed by Davy Jones",
+    secondCaptured: "Second taken by Skull King / Mermaid",
     each: "ea.",
-    captureBonus: (n) => `Capture bonus: +${n}`,
+    cardBonus: (n) => `Card bonus: ${n >= 0 ? "+" : ""}${n}`,
   },
 
   loot: {
@@ -109,6 +119,7 @@ export const en: Strings = {
     headings: {
       scoring: "Scoring",
       bonus: "Bonus points",
+      expansion: "New expansion",
       special: "Special cards",
       twoPlayer: "Two-player variant",
     },
@@ -146,6 +157,44 @@ export const en: Strings = {
       {
         title: "Bonuses count regardless of your bid",
         body: "You keep capture bonuses even if you missed your bid. They go to whoever captures the card, no matter who played it.",
+      },
+    ],
+    expansion: [
+      {
+        title: "New 7s and 8s  (-5 / +5 each)",
+        body: "They play like normal suited cards. The player who captures a new 7 loses 5 points and the player who captures a new 8 gains 5 points, only when their bid is exact. If the winning value is tied, the first card played wins.",
+      },
+      {
+        title: "0/14 cards",
+        body: "When you play the card, immediately declare whether it is worth 0 or 14. It awards no bonus.",
+      },
+      {
+        title: "Wild 15",
+        body: "It counts as a yellow, purple, or green 15. Choose its suit if none has been set. If a non-black suit is already set, it must follow that suit. When black is led, no suit needs to be declared.",
+      },
+      {
+        title: "Mary Throne (Pirate)",
+        body: "She plays as a normal Pirate. With advanced pirate powers, randomly choose a card from an opponent's hand without seeing it; they must play it on the next trick regardless of the cards already played.",
+      },
+      {
+        title: "Final Salvo",
+        body: "It cannot win a trick and is not an Escape. After everyone has played, immediately play another card. You then have one fewer card and sit out the round's final trick.",
+      },
+      {
+        title: "Walk the Plank",
+        body: "This card cannot win the trick. At the end of the trick, remove one Pirate in it; that Pirate can no longer win the trick or award points.",
+      },
+      {
+        title: "Spotted Ray",
+        body: "The lowest card wins; ties go to the first card played. If several leviathans appear (Kraken, White Whale, Spotted Ray), the last one played determines the trick's effect.",
+      },
+      {
+        title: "Davy Jones' Locker  (+20 per leviathan)",
+        body: "Use it with leviathans. It cannot win the trick and destroys every leviathan in it; the strongest remaining card then wins normally. The Locker's player scores 20 points per destroyed leviathan, regardless of card order.",
+      },
+      {
+        title: "The Second  (+30 when captured)",
+        body: "It beats every card except Skull King and Mermaids. It may use the powers of Pirates it captures but earns no capture bonus for them. If Skull King or a Mermaid captures it, their player scores 30 points.",
       },
     ],
     special: [

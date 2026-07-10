@@ -60,6 +60,7 @@ export default function RulesModal({ visible, onClose }: Props) {
           <ScrollView contentContainerStyle={styles.scroll}>
             <Section heading={t.rules.headings.scoring} entries={t.rules.scoring} />
             <Section heading={t.rules.headings.bonus} entries={t.rules.bonusEntries} />
+            <Section heading={t.rules.headings.expansion} entries={t.rules.expansion} />
             <Section heading={t.rules.headings.special} entries={t.rules.special} />
             <Section heading={t.rules.headings.twoPlayer} entries={t.rules.twoPlayer} />
           </ScrollView>
