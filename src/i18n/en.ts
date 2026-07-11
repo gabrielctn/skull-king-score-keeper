@@ -12,6 +12,16 @@ export const en: Strings = {
   home: {
     subtitle: "Scorekeeper",
     resume: "Resume game",
+    history: "Recent games",
+    historyHint: "Tap a game to resume it or view its standings.",
+    inProgress: "In progress",
+    finished: "Finished",
+    openGame: (date) => `Open game from ${date}`,
+    deleteGame: (date) => `Delete game from ${date}`,
+    deleteTitle: "Delete this game?",
+    deleteMessage: "Its score and round details will be permanently deleted.",
+    deleteCancel: "Cancel",
+    deleteConfirm: "Delete",
     playersRound: (players, round, total) =>
       `${players} players · round ${round} of ${total}`,
     leading: (name, total) => `Leading: ${name} (${total})`,

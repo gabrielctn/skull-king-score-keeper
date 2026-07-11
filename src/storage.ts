@@ -4,6 +4,7 @@ import { emptyBonus } from "./scoring";
 import { Lang } from "./i18n/types";
 
 const CURRENT_GAME_KEY = "skullking:currentGame";
+const GAME_HISTORY_KEY = "skullking:gameHistory";
 const LANG_KEY = "skullking:lang";
 
 /**
@@ -129,6 +130,34 @@ export async function clearGame(): Promise<void> {
     await AsyncStorage.removeItem(CURRENT_GAME_KEY);
   } catch (e) {
     console.warn("Failed to clear game", e);
+  }
+}
+
+/** Load every saved game, newest activity first. Invalid entries are skipped. */
+export async function loadGameHistory(): Promise<Game[]> {
+  try {
+    const stored = await AsyncStorage.getItem(GAME_HISTORY_KEY);
+    if (!stored) return [];
+
+    const parsed = JSON.parse(stored);
+    if (!Array.isArray(parsed)) return [];
+
+    return parsed
+      .map(normalizeGame)
+      .filter((game): game is Game => game !== null)
+      .sort((a, b) => b.updatedAt - a.updatedAt);
+  } catch (e) {
+    console.warn("Failed to load game history", e);
+    return [];
+  }
+}
+
+/** Replace the persisted history with the supplied games. */
+export async function saveGameHistory(games: Game[]): Promise<void> {
+  try {
+    await AsyncStorage.setItem(GAME_HISTORY_KEY, JSON.stringify(games));
+  } catch (e) {
+    console.warn("Failed to save game history", e);
   }
 }
 

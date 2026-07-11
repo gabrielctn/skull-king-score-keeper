@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, StatusBar, StyleSheet, View } from "react-native";
 import { Game } from "./src/types";
-import { clearGame, loadGame, loadLang, saveGame } from "./src/storage";
+import {
+  clearGame,
+  loadGame,
+  loadGameHistory,
+  loadLang,
+  saveGame,
+  saveGameHistory,
+} from "./src/storage";
 import { colors } from "./src/theme";
 import { I18nProvider, detectLang } from "./src/i18n/context";
 import { Lang } from "./src/i18n/types";
@@ -16,6 +23,7 @@ type Screen = "home" | "setup" | "game" | "results";
 export default function App() {
   const [screen, setScreen] = useState<Screen>("home");
   const [game, setGame] = useState<Game | null>(null);
+  const [gameHistory, setGameHistory] = useState<Game[]>([]);
   const [lang, setLang] = useState<Lang | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -25,8 +33,21 @@ export default function App() {
   useEffect(() => {
     registerServiceWorker();
     (async () => {
-      const [saved, savedLang] = await Promise.all([loadGame(), loadLang()]);
+      const [saved, history, savedLang] = await Promise.all([
+        loadGame(),
+        loadGameHistory(),
+        loadLang(),
+      ]);
       if (saved) setGame(saved);
+      const migratedHistory = saved
+        ? [saved, ...history.filter((item) => item.id !== saved.id)].sort(
+            (a, b) => b.updatedAt - a.updatedAt
+          )
+        : history;
+      setGameHistory(migratedHistory);
+      if (saved && history.every((item) => item.id !== saved.id)) {
+        void saveGameHistory(migratedHistory);
+      }
       setLang(savedLang ?? detectLang());
       setLoading(false);
     })();
@@ -35,6 +56,13 @@ export default function App() {
   const persist = (g: Game) => {
     setGame(g);
     void saveGame(g);
+    setGameHistory((previous) => {
+      const next = [g, ...previous.filter((item) => item.id !== g.id)].sort(
+        (a, b) => b.updatedAt - a.updatedAt
+      );
+      void saveGameHistory(next);
+      return next;
+    });
   };
 
   const handleNewGame = () => setScreen("setup");
@@ -44,9 +72,22 @@ export default function App() {
     setScreen("game");
   };
 
-  const handleResume = () => {
-    if (!game) return;
-    setScreen(game.status === "finished" ? "results" : "game");
+  const handleOpenHistory = (selectedGame: Game) => {
+    setGame(selectedGame);
+    void saveGame(selectedGame);
+    setScreen(selectedGame.status === "finished" ? "results" : "game");
+  };
+
+  const handleDeleteHistory = (gameId: string) => {
+    setGameHistory((previous) => {
+      const next = previous.filter((item) => item.id !== gameId);
+      void saveGameHistory(next);
+      return next;
+    });
+    if (game?.id === gameId) {
+      setGame(null);
+      void clearGame();
+    }
   };
 
   const handleFinish = (g: Game) => {
@@ -77,9 +118,10 @@ export default function App() {
         <StatusBar barStyle="light-content" backgroundColor={colors.bg} />
         {screen === "home" && (
           <HomeScreen
-            savedGame={game}
+            gameHistory={gameHistory}
             onNewGame={handleNewGame}
-            onResume={handleResume}
+            onOpenGame={handleOpenHistory}
+            onDeleteGame={handleDeleteHistory}
           />
         )}
         {screen === "setup" && (

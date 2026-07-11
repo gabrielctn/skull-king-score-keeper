@@ -25,6 +25,16 @@ export interface Strings {
   home: {
     subtitle: string;
     resume: string;
+    history: string;
+    historyHint: string;
+    inProgress: string;
+    finished: string;
+    openGame: (date: string) => string;
+    deleteGame: (date: string) => string;
+    deleteTitle: string;
+    deleteMessage: string;
+    deleteCancel: string;
+    deleteConfirm: string;
     /** "{players} players · round {round} of {total}" */
     playersRound: (players: number, round: number, total: number) => string;
     /** "Leading: {name} ({total})" */

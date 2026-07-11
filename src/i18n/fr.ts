@@ -12,6 +12,16 @@ export const fr: Strings = {
   home: {
     subtitle: "Compteur de points",
     resume: "Reprendre la partie",
+    history: "Parties récentes",
+    historyHint: "Touchez une partie pour la reprendre ou consulter son classement.",
+    inProgress: "En cours",
+    finished: "Terminée",
+    openGame: (date) => `Ouvrir la partie du ${date}`,
+    deleteGame: (date) => `Supprimer la partie du ${date}`,
+    deleteTitle: "Supprimer cette partie ?",
+    deleteMessage: "Son score et le détail de ses manches seront définitivement supprimés.",
+    deleteCancel: "Annuler",
+    deleteConfirm: "Supprimer",
     playersRound: (players, round, total) =>
       `${players} joueurs · manche ${round} sur ${total}`,
     leading: (name, total) => `En tête : ${name} (${total})`,
@@ -36,7 +46,7 @@ export const fr: Strings = {
     advancedTitle: "Butin & pari Rascal",
     advancedHint:
       "Ajoute le suivi des alliances Butin par manche et le pari du pirate Rascal. Le Kraken, la Baleine blanche et les bonus de 14/capture sont toujours disponibles.",
-    newExpansionTitle: "Nouvelle extension",
+    newExpansionTitle: "Extension",
     newExpansionHint:
       "Ajoute au décompte les 7 et 8 spéciaux, le Casier de Davy Jones et le Second. Les autres effets de l'extension sont détaillés dans l'aide en jeu.",
     start: "Commencer ☠️",
@@ -139,7 +149,7 @@ export const fr: Strings = {
     pirateBySkullKing: "Pirate pris par le Skull King",
     mermaidCapturesSkullKing: "Sirène capture le Skull King",
     rascal: "Pari Rascal",
-    newExpansion: "Nouvelle extension",
+    newExpansion: "Extension",
     expansion7: "Nouveau 7 remporté",
     expansion8: "Nouveau 8 remporté",
     expansionColorHint:
@@ -182,7 +192,7 @@ export const fr: Strings = {
     headings: {
       scoring: "Décompte",
       bonus: "Points bonus",
-      expansion: "Nouvelle extension",
+      expansion: "Extension",
       special: "Cartes spéciales",
       twoPlayer: "Variante à 2 joueurs",
     },
