@@ -62,13 +62,20 @@ export const en: Strings = {
     bid: "Bid",
     won: "Won",
     bonus: "Bonus",
+    roundPoints: "Round points",
     total: (n) => `${n} total`,
     tricksRecorded: (x, y) => `Tricks recorded: ${x} / ${y}`,
     tricksOk: "  ✓",
-    tricksWarnNormal:
-      "  (should equal cards dealt, unless a Kraken voided a trick)",
+    tricksWarnNormal: "  (must equal cards dealt)",
     ghostTook: (n) => `  ·  Greybeard 👻 took ${n}`,
     tricksWarnOver: "  (more than the cards dealt — check your counts)",
+    krakenRecord: "+ Trick discarded by Kraken",
+    krakenRecorded: "Kraken trick counted",
+    krakenUndo: "Undo",
+    totalScoreTitle: "Total score",
+    totalIncludesRound: "The displayed round is included in these totals.",
+    totalExcludesRound:
+      "The displayed round is not included in these totals yet.",
     finish: "Finish game 🏁",
     updateRound: "Update round",
     scoreRound: "Score round →",
@@ -162,7 +169,7 @@ export const en: Strings = {
   loot: {
     title: "Loot alliances",
     hint:
-      "Record each Loot card as soon as it is played. Both bids are checked automatically.",
+      "Record each Loot card as soon as it is played. Every involved bid must be confirmed at round end.",
     record: "+ Record Loot",
     useNumber: (n) => `Loot ${n}`,
     playedByPrompt: "Who played the Loot card?",
@@ -181,6 +188,18 @@ export const en: Strings = {
     incomplete: "Choose the players for every Loot before scoring the round.",
     legacyNotice:
       "Older Loot points are preserved, but their original player links were not saved.",
+  },
+
+  lootConfirmation: {
+    eyebrow: "Required check",
+    title: "Confirm Loot alliances",
+    intro: (players) =>
+      `${players} ${players === 1 ? "player is" : "players are"} involved in a Loot alliance. Review every bid before continuing.`,
+    madeBid: "Bid hit",
+    missedBid: "Bid missed",
+    allianceBonus: "Alliance succeeded · +20 points each",
+    noAllianceBonus: "Alliance failed · no Loot bonus",
+    confirm: "Confirm bids",
   },
 
   rules: {

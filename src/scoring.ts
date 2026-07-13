@@ -339,10 +339,11 @@ export function cardsForRound(game: Game, roundNumber: number): number {
 export function ghostTricks(
   game: Game,
   playerTricksTotal: number,
-  cards: number
+  cards: number,
+  discardedTricks = 0
 ): number {
   if (!game.twoPlayerGhost) return 0;
-  return Math.max(0, cards - playerTricksTotal);
+  return Math.max(0, cards - playerTricksTotal - discardedTricks);
 }
 
 /** Itemized history of every recorded round for one player. */
@@ -478,6 +479,7 @@ export function createGame(
     currentRound: 1,
     rounds: Array.from({ length: totalRounds }, () => emptyRound(players)),
     lootUses: Array.from({ length: totalRounds }, () => []),
+    discardedTricks: Array.from({ length: totalRounds }, () => 0),
     cardsDealt: Array.from({ length: totalRounds }, (_, i) => i + 1),
     advancedCards,
     newExpansion,

@@ -13,6 +13,7 @@ const LANG_KEY = "skullking:lang";
  * before schema v4 also stored Loot as a per-player count instead of binding
  * the two allied players, so keep those historical points in `legacyLoot`.
  * Schema v5 adds the new expansion fields and toggle; old games keep it off.
+ * Schema v6 records tricks destroyed by a Kraken; older saves default to 0.
  */
 export function normalizeGame(raw: any): Game | null {
   if (!raw || !Array.isArray(raw.players) || !Array.isArray(raw.rounds)) {
@@ -85,6 +86,12 @@ export function normalizeGame(raw: any): Game | null {
     }
   );
 
+  const discardedTricks: number[] = Array.from(
+    { length: totalRounds },
+    (_, roundIndex) =>
+      Math.max(0, Math.floor(Number(raw.discardedTricks?.[roundIndex]) || 0))
+  );
+
   return {
     id: raw.id ?? `game_${Date.now()}`,
     players: raw.players,
@@ -92,6 +99,7 @@ export function normalizeGame(raw: any): Game | null {
     currentRound: raw.currentRound ?? 1,
     rounds,
     lootUses,
+    discardedTricks,
     cardsDealt,
     advancedCards: raw.advancedCards ?? true,
     newExpansion: raw.newExpansion ?? false,

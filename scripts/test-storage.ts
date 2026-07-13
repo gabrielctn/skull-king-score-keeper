@@ -52,6 +52,11 @@ if (legacy) {
   );
   check("missing round bindings become empty", legacy.lootUses.length === 2);
   check("first round has no invented pair", legacy.lootUses[0].length === 0);
+  check(
+    "old saves default Kraken-discard counts to zero",
+    legacy.discardedTricks.length === 2 &&
+      legacy.discardedTricks.every((n) => n === 0)
+  );
   check("new expansion stays off for pre-v5 saves", !legacy.newExpansion);
   check(
     "new expansion bonus fields default safely",
@@ -103,6 +108,7 @@ current.lootUses[0] = [
 current.newExpansion = true;
 current.rounds[0].a.bonus.expansion7 = 2;
 current.rounds[0].a.bonus.davyJonesLeviathans = 1;
+current.discardedTricks[0] = 1;
 const roundTripped = normalizeGame(JSON.parse(JSON.stringify(current)));
 check(
   "bound player IDs survive JSON persistence",
@@ -114,6 +120,11 @@ check(
   roundTripped?.newExpansion === true &&
     roundTripped.rounds[0].a.bonus.expansion7 === 2 &&
     roundTripped.rounds[0].a.bonus.davyJonesLeviathans === 1
+);
+check(
+  "Kraken-discard count survives JSON persistence",
+  roundTripped?.discardedTricks[0] === 1 &&
+    roundTripped.discardedTricks[1] === 0
 );
 
 console.log(`\n${passed} passed, ${failed} failed`);

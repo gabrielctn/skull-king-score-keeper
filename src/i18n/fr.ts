@@ -62,13 +62,20 @@ export const fr: Strings = {
     bid: "Mise",
     won: "Plis",
     bonus: "Bonus",
+    roundPoints: "Points de la manche",
     total: (n) => `${n} au total`,
     tricksRecorded: (x, y) => `Plis enregistrés : ${x} / ${y}`,
     tricksOk: "  ✓",
-    tricksWarnNormal:
-      "  (devrait égaler les cartes distribuées, sauf si un Kraken a annulé un pli)",
+    tricksWarnNormal: "  (doit égaler les cartes distribuées)",
     ghostTook: (n) => `  ·  Barbe Grise 👻 en a pris ${n}`,
     tricksWarnOver: "  (plus que les cartes distribuées — vérifiez vos comptes)",
+    krakenRecord: "+ Pli défaussé par le Kraken",
+    krakenRecorded: "Pli du Kraken comptabilisé",
+    krakenUndo: "Annuler",
+    totalScoreTitle: "Score total",
+    totalIncludesRound: "La manche affichée est incluse dans ces totaux.",
+    totalExcludesRound:
+      "La manche affichée n’est pas encore incluse dans ces totaux.",
     finish: "Terminer la partie 🏁",
     updateRound: "Modifier la manche",
     scoreRound: "Valider la manche →",
@@ -163,7 +170,7 @@ export const fr: Strings = {
   loot: {
     title: "Alliances Butin",
     hint:
-      "Enregistrez chaque carte Butin dès qu’elle est jouée. L’app vérifie automatiquement les deux mises.",
+      "Enregistrez chaque carte Butin dès qu’elle est jouée. Les mises seront obligatoirement confirmées en fin de manche.",
     record: "+ Enregistrer un Butin",
     useNumber: (n) => `Butin ${n}`,
     playedByPrompt: "Qui a joué la carte Butin ?",
@@ -184,6 +191,18 @@ export const fr: Strings = {
       "Indiquez les joueurs de chaque Butin avant de valider la manche.",
     legacyNotice:
       "Les anciens points Butin sont conservés, mais les joueurs liés n’avaient pas été enregistrés.",
+  },
+
+  lootConfirmation: {
+    eyebrow: "Validation obligatoire",
+    title: "Confirmer les Butins",
+    intro: (players) =>
+      `${players} ${players === 1 ? "joueur est impliqué" : "joueurs sont impliqués"} dans une alliance Butin. Vérifiez chaque mise avant de continuer.`,
+    madeBid: "Mise réussie",
+    missedBid: "Mise ratée",
+    allianceBonus: "Alliance réussie · +20 points chacun",
+    noAllianceBonus: "Alliance ratée · aucun bonus Butin",
+    confirm: "Confirmer les mises",
   },
 
   rules: {

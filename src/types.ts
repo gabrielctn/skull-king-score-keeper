@@ -73,6 +73,12 @@ export interface Game {
   /** Loot cards used in each round, capped at the two cards in the deck. */
   lootUses: LootUse[][];
   /**
+   * Tricks destroyed by a Kraken (or otherwise discarded with no winner) in
+   * each round. Official play normally caps this at one, but a count keeps the
+   * saved data explicit and future-proof.
+   */
+  discardedTricks: number[];
+  /**
    * Cards dealt per round. cardsDealt[r - 1] defaults to r, but can be fewer
    * in late rounds for 7-8 players, or anything for custom round structures.
    * The zero-bid multiplier and the bid/trick caps use this value.
@@ -94,4 +100,4 @@ export interface Game {
 }
 
 /** Current persisted-game schema version (for save migrations). */
-export const GAME_SCHEMA_VERSION = 5;
+export const GAME_SCHEMA_VERSION = 6;

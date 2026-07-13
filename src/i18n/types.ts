@@ -76,6 +76,7 @@ export interface Strings {
     bid: string;
     won: string;
     bonus: string;
+    roundPoints: string;
     /** "{n} total" */
     total: (n: number) => string;
     /** "Tricks recorded: {x} / {y}" */
@@ -85,6 +86,12 @@ export interface Strings {
     /** "Greybeard 👻 took {n}" */
     ghostTook: (n: number) => string;
     tricksWarnOver: string;
+    krakenRecord: string;
+    krakenRecorded: string;
+    krakenUndo: string;
+    totalScoreTitle: string;
+    totalIncludesRound: string;
+    totalExcludesRound: string;
     finish: string;
     updateRound: string;
     scoreRound: string;
@@ -184,6 +191,17 @@ export interface Strings {
     maxRecorded: string;
     incomplete: string;
     legacyNotice: string;
+  };
+
+  lootConfirmation: {
+    eyebrow: string;
+    title: string;
+    intro: (players: number) => string;
+    madeBid: string;
+    missedBid: string;
+    allianceBonus: string;
+    noAllianceBonus: string;
+    confirm: string;
   };
 
   rules: {

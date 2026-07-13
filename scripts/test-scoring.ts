@@ -434,6 +434,11 @@ const duo = createGame(
 );
 // 5 cards dealt, the two players together won 3 tricks -> ghost took 2.
 eq("ghost takes remainder when on", ghostTricks(solo, 3, 5), 2);
+eq(
+  "discarded Kraken trick is not assigned to the ghost",
+  ghostTricks(solo, 3, 5, 1),
+  1
+);
 // All tricks went to the two players -> ghost took none.
 eq("ghost takes 0 when players took all", ghostTricks(solo, 5, 5), 0);
 // > cards is impossible; clamp at 0 rather than reporting negative tricks.
@@ -445,6 +450,11 @@ eq(
   "ghost flag leaves scoreRound untouched",
   scoreRound(5, E(2, 2, { black14: true })),
   40 + 20
+);
+eq(
+  "new games initialize discarded-trick tracking for every round",
+  solo.discardedTricks.length,
+  solo.totalRounds
 );
 
 console.log("\nTurn order: dealer rotates clockwise, leader follows");

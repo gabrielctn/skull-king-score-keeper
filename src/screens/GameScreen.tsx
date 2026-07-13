@@ -16,7 +16,6 @@ import {
   isRoundComplete,
   lootBonusForPlayer,
   madeBid,
-  playerTotal,
   scoreRound,
   standings,
 } from "../scoring";
@@ -25,6 +24,7 @@ import { useI18n } from "../i18n/context";
 import Stepper from "../components/Stepper";
 import BonusEditor from "../components/BonusEditor";
 import LootTracker from "../components/LootTracker";
+import LootConfirmationModal from "../components/LootConfirmationModal";
 import RulesModal from "../components/RulesModal";
 import ScoreBreakdownModal from "../components/ScoreBreakdownModal";
 import { colors, radius, spacing } from "../theme";
@@ -67,6 +67,11 @@ export default function GameScreen({
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [rulesOpen, setRulesOpen] = useState(false);
   const [scorePlayerId, setScorePlayerId] = useState<string | null>(null);
+  const [lootReviewOpen, setLootReviewOpen] = useState(false);
+  const [lootReviewed, setLootReviewed] = useState(() =>
+    isRoundComplete(game, displayRound)
+  );
+  const [draftRoundNumber, setDraftRoundNumber] = useState(displayRound);
 
   const cards = cardsForRound(game, displayRound);
   // Indicative dealer / first-trick order for the round being shown.
@@ -76,9 +81,13 @@ export default function GameScreen({
   // Reseed the draft whenever the visible round changes.
   useEffect(() => {
     setDraft(cloneRound(game.rounds[displayRound - 1], playerIds));
+    setDraftRoundNumber(displayRound);
+    setLootReviewed(isRoundComplete(game, displayRound));
+    setLootReviewOpen(false);
   }, [displayRound, game.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const update = (playerId: string, field: keyof RoundEntry, value: number) => {
+    if (field === "bid" || field === "tricks") setLootReviewed(false);
     setDraft((prev) => {
       const capped =
         (field === "bid" || field === "tricks") && value > cards
@@ -109,13 +118,19 @@ export default function GameScreen({
     (sum, id) => sum + (draft[id]?.tricks ?? 0),
     0
   );
+  const discardedTricks = Math.min(
+    cards,
+    Math.max(0, game.discardedTricks[displayRound - 1] ?? 0)
+  );
+  const accountedTricks = tricksTotal + discardedTricks;
   // In the 2-player variant the Greybeard ghost steals the leftover tricks, so
   // the players' total may be below the cards dealt; only an impossible total
   // above the cards dealt is a problem.
-  const ghost = ghostTricks(game, tricksTotal, cards);
+  const ghost = ghostTricks(game, tricksTotal, cards, discardedTricks);
   const tricksOk = game.twoPlayerGhost
-    ? tricksTotal <= cards
-    : tricksTotal === cards;
+    ? accountedTricks <= cards
+    : accountedTricks === cards;
+  const roundReady = tricksOk;
   const alreadyRecorded = isRoundComplete(game, displayRound);
   const lootAvailable = game.advancedCards && game.players.length > 2;
   const lootUses = lootAvailable
@@ -124,8 +139,34 @@ export default function GameScreen({
   const lootIncomplete = lootUses.some(
     (lootUse) => lootUse.playedById === null || lootUse.boundToId === null
   );
+  const hasLootAlliance = lootUses.some(
+    (lootUse) =>
+      lootUse.playedById !== null &&
+      lootUse.boundToId !== null &&
+      lootUse.playedById !== lootUse.boundToId
+  );
+
+  useEffect(() => {
+    if (
+      draftRoundNumber === displayRound &&
+      roundReady &&
+      hasLootAlliance &&
+      !lootIncomplete &&
+      !lootReviewed
+    ) {
+      setLootReviewOpen(true);
+    }
+  }, [
+    displayRound,
+    draftRoundNumber,
+    hasLootAlliance,
+    lootIncomplete,
+    lootReviewed,
+    roundReady,
+  ]);
 
   const updateLootUses = (nextUses: LootUse[]) => {
+    setLootReviewed(false);
     const next: Game = {
       ...game,
       lootUses: game.lootUses.map((roundUses, index) =>
@@ -136,8 +177,24 @@ export default function GameScreen({
     onUpdateGame(next);
   };
 
+  const toggleDiscardedTrick = () => {
+    const nextCount = discardedTricks > 0 ? 0 : 1;
+    const next: Game = {
+      ...game,
+      discardedTricks: game.discardedTricks.map((count, index) =>
+        index === displayRound - 1 ? nextCount : count
+      ),
+      updatedAt: Date.now(),
+    };
+    onUpdateGame(next);
+  };
+
   const commitRound = () => {
     if (lootIncomplete) return;
+    if (hasLootAlliance && !lootReviewed) {
+      setLootReviewOpen(true);
+      return;
+    }
     const recordedRound: RoundEntries = {};
     for (const id of playerIds) {
       recordedRound[id] = { ...draft[id], recorded: true };
@@ -286,7 +343,6 @@ export default function GameScreen({
 
         {game.players.map((p) => {
           const entry = draft[p.id] ?? emptyEntry();
-          const totalScore = playerTotal(game, p.id);
           const roundScore = scoreRound(
             cards,
             entry,
@@ -308,6 +364,7 @@ export default function GameScreen({
             b.expansion8 > 0 ||
             b.davyJonesLeviathans > 0 ||
             b.secondCaptured;
+          const showRoundScore = alreadyRecorded || roundReady || entryTouched;
           return (
             <View
               key={p.id}
@@ -321,7 +378,10 @@ export default function GameScreen({
                   {p.name}
                 </Text>
                 <View style={styles.playerScores}>
-                  {entryTouched ? (
+                  <Text style={styles.roundScoreLabel}>
+                    {t.game.roundPoints}
+                  </Text>
+                  {showRoundScore ? (
                     <Text
                       style={[
                         styles.roundScore,
@@ -336,22 +396,6 @@ export default function GameScreen({
                       —
                     </Text>
                   )}
-                  <TouchableOpacity
-                    style={styles.totalScoreButton}
-                    activeOpacity={0.68}
-                    hitSlop={4}
-                    onPress={() => setScorePlayerId(p.id)}
-                    accessibilityRole="button"
-                    accessibilityLabel={t.scoreBreakdown.openFor(
-                      p.name,
-                      totalScore
-                    )}
-                  >
-                    <Text style={styles.totalScore}>
-                      {t.game.total(totalScore)}
-                    </Text>
-                    <Text style={styles.totalInfo}>ⓘ</Text>
-                  </TouchableOpacity>
                 </View>
               </View>
 
@@ -397,6 +441,31 @@ export default function GameScreen({
           );
         })}
 
+        <TouchableOpacity
+          style={[
+            styles.krakenButton,
+            layout.gameColumns === 2 && styles.fullWidth,
+            discardedTricks > 0 && styles.krakenButtonActive,
+          ]}
+          onPress={toggleDiscardedTrick}
+          accessibilityRole="button"
+          accessibilityState={{ selected: discardedTricks > 0 }}
+        >
+          <Text
+            style={[
+              styles.krakenButtonText,
+              discardedTricks > 0 && styles.krakenButtonTextActive,
+            ]}
+          >
+            {discardedTricks > 0
+              ? `✓ ${t.game.krakenRecorded}`
+              : t.game.krakenRecord}
+          </Text>
+          {discardedTricks > 0 ? (
+            <Text style={styles.krakenUndo}>{t.game.krakenUndo}</Text>
+          ) : null}
+        </TouchableOpacity>
+
         <Text
           style={[
             styles.tricksHint,
@@ -404,7 +473,7 @@ export default function GameScreen({
             tricksOk ? styles.hintOk : styles.hintWarn,
           ]}
         >
-          {t.game.tricksRecorded(tricksTotal, cards)}
+          {t.game.tricksRecorded(accountedTricks, cards)}
           {game.twoPlayerGhost
             ? tricksOk
               ? t.game.ghostTook(ghost)
@@ -414,6 +483,23 @@ export default function GameScreen({
               : t.game.tricksWarnNormal}
         </Text>
       </ScrollView>
+
+      <View
+        style={[
+          styles.boardHeading,
+          {
+            maxWidth: layout.gameContentMaxWidth,
+            paddingHorizontal: layout.screenPadding,
+          },
+        ]}
+      >
+        <Text style={styles.boardTitle}>{t.game.totalScoreTitle}</Text>
+        <Text style={styles.boardCaption}>
+          {alreadyRecorded
+            ? t.game.totalIncludesRound
+            : t.game.totalExcludesRound}
+        </Text>
+      </View>
 
       <View
         style={[
@@ -483,6 +569,16 @@ export default function GameScreen({
         game={game}
         playerId={scorePlayerId}
         onClose={() => setScorePlayerId(null)}
+      />
+      <LootConfirmationModal
+        visible={lootReviewOpen}
+        players={game.players}
+        entries={draft}
+        lootUses={lootUses}
+        onConfirm={() => {
+          setLootReviewed(true);
+          setLootReviewOpen(false);
+        }}
       />
     </SafeAreaView>
   );
@@ -601,19 +697,14 @@ const styles = StyleSheet.create({
     marginRight: spacing.sm,
   },
   playerScores: { alignItems: "flex-end" },
+  roundScoreLabel: {
+    color: colors.textDim,
+    fontSize: 10,
+    textTransform: "uppercase",
+    letterSpacing: 0.6,
+    marginBottom: 2,
+  },
   roundScore: { fontSize: 18, fontWeight: "800" },
-  totalScoreButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    minHeight: 36,
-    paddingLeft: spacing.xs,
-  },
-  totalScore: { color: colors.textDim, fontSize: 12 },
-  totalInfo: {
-    color: colors.gold,
-    fontSize: 12,
-    marginLeft: 4,
-  },
   pos: { color: colors.positive },
   neg: { color: colors.negative },
   scorePlaceholder: { color: colors.textDim },
@@ -639,8 +730,52 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
   },
   fullWidth: { width: "100%" },
+  krakenButton: {
+    minHeight: 44,
+    borderWidth: 1,
+    borderColor: colors.cardBorder,
+    borderRadius: radius.sm,
+    backgroundColor: colors.bgElevated,
+    paddingHorizontal: spacing.md,
+    marginTop: spacing.xs,
+    marginBottom: spacing.xs,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  krakenButtonActive: {
+    borderColor: colors.positive,
+    backgroundColor: colors.card,
+  },
+  krakenButtonText: { color: colors.gold, fontSize: 13, fontWeight: "800" },
+  krakenButtonTextActive: { color: colors.positive },
+  krakenUndo: {
+    color: colors.textDim,
+    fontSize: 11,
+    marginLeft: spacing.sm,
+    textDecorationLine: "underline",
+  },
   hintOk: { color: colors.positive },
   hintWarn: { color: colors.textDim },
+  boardHeading: {
+    width: "100%",
+    alignSelf: "center",
+    alignItems: "center",
+    paddingTop: spacing.sm,
+  },
+  boardTitle: {
+    color: colors.text,
+    fontSize: 14,
+    fontWeight: "800",
+    textTransform: "uppercase",
+    letterSpacing: 0.8,
+  },
+  boardCaption: {
+    color: colors.textDim,
+    fontSize: 11,
+    textAlign: "center",
+    marginTop: 2,
+  },
   boardStrip: {
     width: "100%",
     alignSelf: "center",
