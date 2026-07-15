@@ -23,7 +23,9 @@ export interface Strings {
   };
 
   home: {
+    title: string;
     subtitle: string;
+    unofficial: string;
     resume: string;
     history: string;
     historyHint: string;
@@ -39,6 +41,9 @@ export interface Strings {
     playersRound: (players: number, round: number, total: number) => string;
     /** "Leading: {name} ({total})" */
     leading: (name: string, total: number) => string;
+    support: string;
+    supportHint: string;
+    disclaimer: string;
     offline: string;
   };
 
@@ -207,6 +212,8 @@ export interface Strings {
   rules: {
     title: string;
     done: string;
+    unofficialNotice: string;
+    officialRules: string;
     headings: {
       scoring: string;
       bonus: string;

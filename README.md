@@ -1,11 +1,17 @@
-# ☠️ Skull King Scorekeeper
+# ☠️ Unofficial score keeper for Skull King
 
-An installable, **offline-first PWA** for keeping score in the **Skull King** card game,
-built with **React Native + Expo (web) + TypeScript** and deployed as a static site to
-**GitHub Pages**. Add it to your home screen and it runs without any network — perfect
-for a table with no wifi.
+A fan-made, installable **offline-first PWA** for keeping score in the **Skull King**
+card game, built with **React Native + Expo (web) + TypeScript** and deployed as a
+static site to **GitHub Pages**. Add it to your home screen and it runs without any
+network — perfect for a table with no wifi.
 
 **Live:** https://gabrielctn.github.io/skull-king-score-keeper/
+
+> **Unofficial fan project.** This app is not affiliated with, endorsed by, or
+> sponsored by Grandpa Beck's Games, its publishers, or distributors. "Skull King"
+> and the official game elements belong to their respective rights holders.
+
+**Optional support:** https://buymeacoffee.com/gabrielctn — the app remains completely free.
 
 ## What it does
 
@@ -24,7 +30,7 @@ for a table with no wifi.
 
 ## Scoring rules (built in)
 
-Implements Grandpa Beck's **2022 Skull King** rules exactly.
+The scoring logic is designed around the **2022 Skull King** scoring rules.
 
 Bid scoring:
 

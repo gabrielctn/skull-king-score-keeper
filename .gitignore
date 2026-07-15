@@ -27,6 +27,8 @@ yarn-error.*
 
 # Tooling
 .superpowers/
+.playwright-cli/page-*.yml
+output/playwright/
 
 # Legacy native Xcode scaffold (superseded by the Expo project)
 # Skull-King/

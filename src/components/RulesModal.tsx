@@ -1,6 +1,7 @@
 import React from "react";
 import {
   Image,
+  Linking,
   Modal,
   ScrollView,
   StyleSheet,
@@ -14,6 +15,8 @@ import { illustrations } from "../assets/illustrations";
 import { useI18n } from "../i18n/context";
 import { Entry } from "../i18n/types";
 import { getResponsiveLayout } from "../responsive";
+
+const OFFICIAL_RULES_URL = "https://www.grandpabecksgames.com/pages/skull-king";
 
 interface Props {
   visible: boolean;
@@ -38,6 +41,9 @@ export default function RulesModal({ visible, onClose }: Props) {
   const { t } = useI18n();
   const { width } = useWindowDimensions();
   const layout = getResponsiveLayout(width);
+  const openOfficialRules = () => {
+    void Linking.openURL(OFFICIAL_RULES_URL).catch(() => undefined);
+  };
   return (
     <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
       <View style={[styles.backdrop, layout.isTablet && styles.backdropWide]}>
@@ -58,6 +64,19 @@ export default function RulesModal({ visible, onClose }: Props) {
             </TouchableOpacity>
           </View>
           <ScrollView contentContainerStyle={styles.scroll}>
+            <View style={styles.notice}>
+              <Text style={styles.noticeText}>{t.rules.unofficialNotice}</Text>
+              <TouchableOpacity
+                onPress={openOfficialRules}
+                accessibilityRole="link"
+                accessibilityLabel={t.rules.officialRules}
+                style={styles.officialRulesLink}
+              >
+                <Text style={styles.officialRulesText}>
+                  {t.rules.officialRules} ↗
+                </Text>
+              </TouchableOpacity>
+            </View>
             <Section heading={t.rules.headings.scoring} entries={t.rules.scoring} />
             <Section heading={t.rules.headings.bonus} entries={t.rules.bonusEntries} />
             <Section heading={t.rules.headings.expansion} entries={t.rules.expansion} />
@@ -116,6 +135,20 @@ const styles = StyleSheet.create({
   close: { paddingHorizontal: spacing.sm, paddingVertical: spacing.xs },
   closeText: { color: colors.gold, fontSize: 16, fontWeight: "700" },
   scroll: { padding: spacing.md },
+  notice: {
+    borderLeftWidth: 2,
+    borderLeftColor: colors.goldDim,
+    paddingLeft: spacing.md,
+    marginBottom: spacing.lg,
+  },
+  noticeText: { color: colors.textDim, fontSize: 13, lineHeight: 18 },
+  officialRulesLink: {
+    alignSelf: "flex-start",
+    minHeight: 36,
+    justifyContent: "center",
+    marginTop: spacing.xs,
+  },
+  officialRulesText: { color: colors.gold, fontSize: 13, fontWeight: "700" },
   heading: {
     color: colors.gold,
     fontSize: 13,

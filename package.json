@@ -11,7 +11,8 @@
     "test:scoring": "node --import tsx scripts/test-scoring.ts",
     "test:storage": "node --import tsx scripts/test-storage.ts",
     "test:responsive": "node --import tsx scripts/test-responsive-layout.ts",
-    "test:assets": "node --import tsx scripts/test-assets.ts"
+    "test:assets": "node --import tsx scripts/test-assets.ts",
+    "test:branding": "node --import tsx scripts/test-branding.ts"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "2.2.0",

@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Skull King Scorekeeper",
+    "name": "Score Keeper — Unofficial",
     "slug": "skull-king-scorekeeper",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -15,9 +15,9 @@
     "web": {
       "bundler": "metro",
       "favicon": "./assets/favicon.png",
-      "name": "Skull King Scorekeeper",
-      "shortName": "Skull King",
-      "description": "Score-keeper for the Skull King card game — works offline.",
+      "name": "Unofficial Score Keeper for Skull King",
+      "shortName": "Score Keeper",
+      "description": "Unofficial score keeper for the Skull King card game — works offline.",
       "themeColor": "#0b1722",
       "backgroundColor": "#0b1722",
       "display": "standalone",

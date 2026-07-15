@@ -1,5 +1,5 @@
 /*
- * Skull King Scorekeeper — service worker.
+ * Unofficial score keeper — service worker.
  *
  * The CACHE_VERSION, PRECACHE_URLS and OFFLINE_FALLBACK placeholders below are
  * filled in at build time by scripts/build-pwa.mjs. The version is a hash of the

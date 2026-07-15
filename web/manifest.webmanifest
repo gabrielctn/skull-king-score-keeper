@@ -1,7 +1,7 @@
 {
-  "name": "Skull King Scorekeeper",
-  "short_name": "Skull King",
-  "description": "Score-keeper for the Skull King card game — works fully offline.",
+  "name": "Unofficial Score Keeper for Skull King",
+  "short_name": "Score Keeper",
+  "description": "Unofficial score keeper for the Skull King card game — works fully offline.",
   "id": "/skull-king-score-keeper/",
   "start_url": "/skull-king-score-keeper/",
   "scope": "/skull-king-score-keeper/",

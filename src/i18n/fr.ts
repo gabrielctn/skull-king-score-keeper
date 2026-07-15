@@ -10,7 +10,9 @@ export const fr: Strings = {
   },
 
   home: {
-    subtitle: "Compteur de points",
+    title: "Compteur de scores",
+    subtitle: "pour Skull King",
+    unofficial: "Application non officielle",
     resume: "Reprendre la partie",
     history: "Parties récentes",
     historyHint: "Touchez une partie pour la reprendre ou consulter son classement.",
@@ -25,6 +27,11 @@ export const fr: Strings = {
     playersRound: (players, round, total) =>
       `${players} joueurs · manche ${round} sur ${total}`,
     leading: (name, total) => `En tête : ${name} (${total})`,
+    support: "Soutenir le développeur ☕",
+    supportHint:
+      "Contribution facultative · l’application reste entièrement gratuite.",
+    disclaimer:
+      "Application créée par un joueur, sans affiliation, approbation ni sponsoring de Grandpa Beck’s Games, de ses éditeurs ou distributeurs. « Skull King » et les éléments officiels du jeu appartiennent à leurs ayants droit respectifs.",
     offline: "Fonctionne hors ligne · installable depuis le navigateur",
   },
 
@@ -39,7 +46,7 @@ export const fr: Strings = {
     twoPlayers: "Deux joueurs",
     ghostTitle: "Fantôme Barbe Grise 👻",
     ghostHint:
-      "La variante officielle à 2 joueurs : distribuez une troisième main pour le fantôme Barbe Grise. Il joue mais ne mise jamais et ne marque pas, il vous vole donc des plis — vos deux totaux de plis peuvent être inférieurs au nombre de cartes distribuées.",
+      "La variante à 2 joueurs décrite dans le livret : distribuez une troisième main pour le fantôme Barbe Grise. Il joue mais ne mise jamais et ne marque pas, il vous vole donc des plis — vos deux totaux de plis peuvent être inférieurs au nombre de cartes distribuées.",
     rounds: "Manches",
     roundsHint: "Une partie standard de Skull King compte 10 manches.",
     expansion: "Cartes d'extension",
@@ -208,6 +215,9 @@ export const fr: Strings = {
   rules: {
     title: "Score & Cartes",
     done: "Terminé",
+    unofficialNotice:
+      "Résumé pratique non officiel, rédigé pour faciliter le décompte. En cas de doute, le livret de votre édition fait foi.",
+    officialRules: "Consulter les règles officielles",
     headings: {
       scoring: "Décompte",
       bonus: "Points bonus",
@@ -330,7 +340,7 @@ export const fr: Strings = {
     twoPlayer: [
       {
         title: "Barbe Grise, le fantôme 👻",
-        body: "La variante officielle à 2 joueurs distribue une troisième main pour le fantôme Barbe Grise. À chaque pli il joue en deuxième, sans suivre la couleur demandée, et sa Tigresse compte toujours comme une fuite. Les cartes Butin ne sont pas utilisées.",
+        body: "La variante à 2 joueurs du livret distribue une troisième main pour le fantôme Barbe Grise. À chaque pli il joue en deuxième, sans suivre la couleur demandée, et sa Tigresse compte toujours comme une fuite. Les cartes Butin ne sont pas utilisées.",
       },
       {
         title: "Il joue mais ne marque jamais",

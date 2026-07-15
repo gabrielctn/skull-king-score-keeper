@@ -30,6 +30,7 @@ const webSrc = join(root, "web");
 
 const appJson = JSON.parse(readFileSync(join(root, "app.json"), "utf8"));
 const baseUrl = (appJson.expo?.experiments?.baseUrl ?? "").replace(/\/$/, ""); // e.g. "/skull-king-score-keeper"
+const installedAppTitle = appJson.expo?.web?.shortName ?? appJson.expo?.name ?? "Score Keeper";
 
 function fail(msg) {
   console.error(`\n[build-pwa] ${msg}\n`);
@@ -56,7 +57,7 @@ const headTags = [
   // "black" (not "black-translucent") keeps content below the iOS status bar,
   // since the app doesn't opt into safe-area insets on web.
   `<meta name="apple-mobile-web-app-status-bar-style" content="black" />`,
-  `<meta name="apple-mobile-web-app-title" content="Skull King" />`,
+  `<meta name="apple-mobile-web-app-title" content="${installedAppTitle}" />`,
 ].join("\n    ");
 
 if (!html.includes('rel="manifest"')) {

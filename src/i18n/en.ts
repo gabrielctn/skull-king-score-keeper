@@ -10,7 +10,9 @@ export const en: Strings = {
   },
 
   home: {
-    subtitle: "Scorekeeper",
+    title: "Score keeper",
+    subtitle: "for Skull King",
+    unofficial: "Unofficial fan-made app",
     resume: "Resume game",
     history: "Recent games",
     historyHint: "Tap a game to resume it or view its standings.",
@@ -25,6 +27,10 @@ export const en: Strings = {
     playersRound: (players, round, total) =>
       `${players} players · round ${round} of ${total}`,
     leading: (name, total) => `Leading: ${name} (${total})`,
+    support: "Support the developer ☕",
+    supportHint: "Optional contribution · the app remains completely free.",
+    disclaimer:
+      "Made by a player with no affiliation, endorsement, or sponsorship from Grandpa Beck’s Games, its publishers, or distributors. “Skull King” and the official game elements belong to their respective rights holders.",
     offline: "Works offline · install from your browser",
   },
 
@@ -39,7 +45,7 @@ export const en: Strings = {
     twoPlayers: "Two players",
     ghostTitle: "Greybeard ghost 👻",
     ghostHint:
-      "The official 2-player variant: deal a third hand for the Greybeard ghost. He plays but never bids or scores, so he steals some tricks — your two trick counts can total less than the cards dealt.",
+      "The two-player variant described in the rulebook: deal a third hand for the Greybeard ghost. He plays but never bids or scores, so he steals some tricks — your two trick counts can total less than the cards dealt.",
     rounds: "Rounds",
     roundsHint: "Standard Skull King is 10 rounds.",
     expansion: "Expansion cards",
@@ -205,6 +211,9 @@ export const en: Strings = {
   rules: {
     title: "Scoring & Cards",
     done: "Done",
+    unofficialNotice:
+      "Unofficial practical summary written to make scoring easier. When in doubt, the rulebook for your edition takes precedence.",
+    officialRules: "View the official rules",
     headings: {
       scoring: "Scoring",
       bonus: "Bonus points",
@@ -327,7 +336,7 @@ export const en: Strings = {
     twoPlayer: [
       {
         title: "Greybeard the ghost 👻",
-        body: "The official 2-player variant deals a third hand for the Greybeard ghost. On each trick he plays second, ignoring the led suit, and his Tigress always counts as an escape. Loot cards are not used.",
+        body: "The rulebook's two-player variant deals a third hand for the Greybeard ghost. On each trick he plays second, ignoring the led suit, and his Tigress always counts as an escape. Loot cards are not used.",
       },
       {
         title: "He plays but never scores",

@@ -2,13 +2,13 @@
 
 ## Objectif
 
-Remplacer toutes les illustrations vectorielles actuelles par une collection raster cohérente, qualitative et adaptée à l’univers graphique officiel de Skull King. La refonte concerne les illustrations intégrées à l’application ainsi que les assets de marque Expo.
+Remplacer toutes les illustrations vectorielles actuelles par une collection raster originale, cohérente et qualitative, dans un univers nautique et pirate distinct des visuels officiels. La refonte concerne les illustrations intégrées à l’application ainsi que les assets de marque Expo.
 
 L’interface fonctionnelle reste inchangée. Cette étape ne constitue pas une refonte générale des écrans.
 
 ## Direction artistique
 
-La collection reprend le langage visuel de la boîte de jeu fournie comme référence, sans recopier ses compositions ou ses illustrations :
+La collection suit une direction artistique nautique originale, sans recopier les compositions ou illustrations du jeu :
 
 - peinture traditionnelle texturée et légèrement irrégulière ;
 - contours organiques, hachures et modelé visible ;

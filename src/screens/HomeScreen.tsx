@@ -1,6 +1,7 @@
 import React from "react";
 import {
   Image,
+  Linking,
   Modal,
   SafeAreaView,
   ScrollView,
@@ -17,6 +18,8 @@ import { illustrations } from "../assets/illustrations";
 import { useI18n } from "../i18n/context";
 import { Lang } from "../i18n/types";
 import { getResponsiveLayout } from "../responsive";
+
+const SUPPORT_URL = "https://buymeacoffee.com/gabrielctn";
 
 interface Props {
   gameHistory: Game[];
@@ -46,6 +49,9 @@ export default function HomeScreen({
     if (!pendingDelete) return;
     onDeleteGame(pendingDelete.id);
     setPendingDelete(null);
+  };
+  const openSupportPage = () => {
+    void Linking.openURL(SUPPORT_URL).catch(() => undefined);
   };
 
   return (
@@ -93,7 +99,8 @@ export default function HomeScreen({
               resizeMode="contain"
             />
           </View>
-          <Text style={styles.title}>Skull King</Text>
+          <Text style={styles.unofficial}>{t.home.unofficial}</Text>
+          <Text style={styles.title}>{t.home.title}</Text>
           <Text style={styles.subtitle}>{t.home.subtitle}</Text>
         </View>
 
@@ -168,6 +175,20 @@ export default function HomeScreen({
               </View>
             </View>
           ) : null}
+
+          <View style={styles.support}>
+            <TouchableOpacity
+              style={styles.supportBtn}
+              onPress={openSupportPage}
+              accessibilityRole="link"
+              accessibilityLabel={t.home.support}
+              accessibilityHint={t.home.supportHint}
+            >
+              <Text style={styles.supportText}>{t.home.support}</Text>
+            </TouchableOpacity>
+            <Text style={styles.supportHint}>{t.home.supportHint}</Text>
+            <Text style={styles.disclaimer}>{t.home.disclaimer}</Text>
+          </View>
 
           <Text style={styles.footer}>{t.home.offline}</Text>
         </View>
@@ -258,8 +279,23 @@ const styles = StyleSheet.create({
   },
   compass: { width: 230, height: 230, opacity: 0.16 },
   skullKing: { width: 170, height: 190 },
-  title: { color: colors.gold, fontSize: 42, fontWeight: "800", letterSpacing: 1 },
-  subtitle: { color: colors.textDim, fontSize: 18, marginTop: spacing.xs },
+  unofficial: {
+    color: colors.goldDim,
+    fontSize: 11,
+    fontWeight: "800",
+    letterSpacing: 1.4,
+    textTransform: "uppercase",
+    marginBottom: spacing.sm,
+  },
+  title: {
+    color: colors.gold,
+    fontSize: 38,
+    lineHeight: 43,
+    fontWeight: "800",
+    letterSpacing: 0.4,
+    textAlign: "center",
+  },
+  subtitle: { color: colors.textDim, fontSize: 17, marginTop: spacing.xs },
   actions: { width: "100%", alignSelf: "center" },
   actionsDesktop: { flex: 1, maxWidth: 380 },
   primaryBtn: {
@@ -314,6 +350,36 @@ const styles = StyleSheet.create({
     borderLeftColor: colors.cardBorder,
   },
   deleteIcon: { color: colors.textDim, fontSize: 28, fontWeight: "300" },
+  support: {
+    marginTop: spacing.xl,
+    paddingTop: spacing.lg,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: colors.cardBorder,
+    alignItems: "center",
+  },
+  supportBtn: {
+    minHeight: 44,
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: colors.goldDim,
+    borderRadius: radius.md,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+  },
+  supportText: { color: colors.gold, fontSize: 15, fontWeight: "800" },
+  supportHint: {
+    color: colors.textDim,
+    fontSize: 12,
+    textAlign: "center",
+    marginTop: spacing.sm,
+  },
+  disclaimer: {
+    color: colors.textDim,
+    fontSize: 11,
+    lineHeight: 16,
+    textAlign: "center",
+    marginTop: spacing.md,
+  },
   modalOverlay: {
     flex: 1,
     backgroundColor: colors.overlay,
@@ -355,7 +421,7 @@ const styles = StyleSheet.create({
   footer: {
     color: colors.textDim,
     textAlign: "center",
-    marginTop: spacing.xl,
+    marginTop: spacing.md,
     fontSize: 12,
   },
 });

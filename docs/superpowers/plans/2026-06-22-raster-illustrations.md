@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Replace the five React Native SVG illustrations and four Expo brand assets with a coherent, painted raster collection inspired by the supplied Skull King visual language.
+**Goal:** Replace the five React Native SVG illustrations and four Expo brand assets with a coherent, original painted raster collection in a distinct nautical-pirate direction.
 
 **Architecture:** Generate six source rasters with the built-in image generator: five transparent subjects plus one opaque leather-and-map texture. Post-process them into project-owned PNG files, derive the Expo icon variants from the same Skull King source, expose app illustrations through one typed asset manifest, and render them with React Native `Image`. A focused asset test validates file presence, PNG dimensions, alpha requirements, Expo references, and the complete removal of SVG illustration usage.
 
@@ -710,4 +710,3 @@ If no corrections were needed, skip this commit. Otherwise:
 git add src/screens/HomeScreen.tsx src/screens/SetupScreen.tsx src/components/RulesModal.tsx src/screens/ResultsScreen.tsx
 git commit -m "fix: tune raster artwork sizing"
 ```
-
