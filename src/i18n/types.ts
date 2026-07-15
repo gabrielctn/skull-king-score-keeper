@@ -4,7 +4,7 @@
  * is the translation-completeness check. Parameterized strings are functions.
  */
 
-export type Lang = "en" | "fr";
+export type Lang = "en" | "fr" | "de" | "ar" | "zh";
 
 /** A rules-modal entry: a bold title and a paragraph body. */
 export interface Entry {
@@ -45,6 +45,17 @@ export interface Strings {
     supportHint: string;
     disclaimer: string;
     offline: string;
+  };
+
+  whatsNew: {
+    open: string;
+    badge: string;
+    title: string;
+    version: (version: string, date: string) => string;
+    automaticUpdatesTitle: string;
+    automaticUpdatesBody: string;
+    items: string[];
+    close: string;
   };
 
   setup: {

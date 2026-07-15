@@ -34,6 +34,22 @@ export const en: Strings = {
     offline: "Works offline · install from your browser",
   },
 
+  whatsNew: {
+    open: "What's new",
+    badge: "New",
+    title: "What's new",
+    version: (version, date) => `Version ${version} · ${date}`,
+    automaticUpdatesTitle: "Always up to date",
+    automaticUpdatesBody:
+      "Installed apps now download each new release automatically and switch to it as soon as the device is online.",
+    items: [
+      "German, Arabic and Simplified Chinese are now available. On first launch, the app follows your device language when supported and otherwise uses English.",
+      "Arabic includes right-to-left layout support throughout the app.",
+      "A new What's new view keeps release improvements easy to find.",
+    ],
+    close: "Got it",
+  },
+
   setup: {
     title: "New Game",
     crew: "Gather your crew",

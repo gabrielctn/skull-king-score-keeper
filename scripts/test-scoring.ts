@@ -24,6 +24,10 @@ import {
 import { dealerIndex, leaderIndex, playOrder } from "../src/turnOrder";
 import { en } from "../src/i18n/en";
 import { fr } from "../src/i18n/fr";
+import { de } from "../src/i18n/de";
+import { ar } from "../src/i18n/ar";
+import { zh } from "../src/i18n/zh";
+import { resolvePreferredLang } from "../src/i18n/detection";
 import { BonusInput, LootUse, RoundEntries, RoundEntry } from "../src/types";
 
 let passed = 0;
@@ -517,12 +521,23 @@ eq("tie: leader total", b2[0].total, 20);
 eq("tie: both rank 1", b2[0].rank + b2[1].rank, 2);
 eq("tie: third ranked 3", b2[2].rank, 3);
 
-console.log("\ni18n: EN and FR rules lists stay in sync");
-eq("scoring entries match", fr.rules.scoring.length, en.rules.scoring.length);
-eq("bonus entries match", fr.rules.bonusEntries.length, en.rules.bonusEntries.length);
-eq("expansion entries match", fr.rules.expansion.length, en.rules.expansion.length);
-eq("special entries match", fr.rules.special.length, en.rules.special.length);
-eq("two-player entries match", fr.rules.twoPlayer.length, en.rules.twoPlayer.length);
+console.log("\ni18n: every locale's rules and release notes stay in sync");
+for (const [locale, strings] of Object.entries({ fr, de, ar, zh })) {
+  eq(`${locale} scoring entries`, strings.rules.scoring.length, en.rules.scoring.length);
+  eq(`${locale} bonus entries`, strings.rules.bonusEntries.length, en.rules.bonusEntries.length);
+  eq(`${locale} expansion entries`, strings.rules.expansion.length, en.rules.expansion.length);
+  eq(`${locale} special entries`, strings.rules.special.length, en.rules.special.length);
+  eq(`${locale} two-player entries`, strings.rules.twoPlayer.length, en.rules.twoPlayer.length);
+  eq(`${locale} release-note entries`, strings.whatsNew.items.length, en.whatsNew.items.length);
+}
+
+console.log("\ni18n: device-language detection");
+eqs("French regional locale", resolvePreferredLang(["fr-CA"]), "fr");
+eqs("German regional locale", resolvePreferredLang(["de-AT"]), "de");
+eqs("Arabic regional locale", resolvePreferredLang(["ar-MA"]), "ar");
+eqs("Simplified Chinese locale", resolvePreferredLang(["zh-Hans-CN"]), "zh");
+eqs("first supported preference wins", resolvePreferredLang(["es", "de", "fr"]), "de");
+eqs("unsupported languages fall back", resolvePreferredLang(["es", "ja"]), "en");
 
 console.log(`\n${passed} passed, ${failed} failed`);
 if (failed > 0) process.exit(1);

@@ -15,9 +15,16 @@ import { Game } from "../types";
 import { standings } from "../scoring";
 import { colors, radius, spacing } from "../theme";
 import { illustrations } from "../assets/illustrations";
-import { useI18n } from "../i18n/context";
+import {
+  browserLocale,
+  languageLabel,
+  SUPPORTED_LANGS,
+  useI18n,
+} from "../i18n/context";
 import { Lang } from "../i18n/types";
 import { getResponsiveLayout } from "../responsive";
+import { CURRENT_RELEASE, CURRENT_RELEASE_DATE } from "../releases";
+import { loadSeenRelease, saveSeenRelease } from "../storage";
 
 const SUPPORT_URL = "https://buymeacoffee.com/gabrielctn";
 
@@ -38,12 +45,29 @@ export default function HomeScreen({
   const { width } = useWindowDimensions();
   const layout = getResponsiveLayout(width);
   const [pendingDelete, setPendingDelete] = React.useState<Game | null>(null);
+  const [whatsNewOpen, setWhatsNewOpen] = React.useState(false);
+  const [releaseSeen, setReleaseSeen] = React.useState(true);
+  React.useEffect(() => {
+    let active = true;
+    void loadSeenRelease().then((seen) => {
+      if (!active || seen === CURRENT_RELEASE) return;
+      setReleaseSeen(false);
+      setWhatsNewOpen(true);
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
   const formatDate = (timestamp: number) =>
-    new Date(timestamp).toLocaleDateString(lang === "fr" ? "fr-FR" : "en-US", {
+    new Date(timestamp).toLocaleDateString(browserLocale(lang), {
       day: "numeric",
       month: "short",
       year: "numeric",
     });
+  const releaseDate = new Date(`${CURRENT_RELEASE_DATE}T12:00:00Z`).toLocaleDateString(
+    browserLocale(lang),
+    { day: "numeric", month: "long", year: "numeric" }
+  );
 
   const deletePendingGame = () => {
     if (!pendingDelete) return;
@@ -53,11 +77,16 @@ export default function HomeScreen({
   const openSupportPage = () => {
     void Linking.openURL(SUPPORT_URL).catch(() => undefined);
   };
+  const closeWhatsNew = () => {
+    setWhatsNewOpen(false);
+    setReleaseSeen(true);
+    void saveSeenRelease(CURRENT_RELEASE);
+  };
 
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.langSwitch}>
-        {(["fr", "en"] as Lang[]).map((l) => (
+        {SUPPORTED_LANGS.map((l: Lang) => (
           <TouchableOpacity
             key={l}
             onPress={() => setLang(l)}
@@ -65,7 +94,7 @@ export default function HomeScreen({
             accessibilityRole="button"
           >
             <Text style={[styles.langText, lang === l && styles.langTextOn]}>
-              {l.toUpperCase()}
+              {languageLabel(l)}
             </Text>
           </TouchableOpacity>
         ))}
@@ -190,6 +219,19 @@ export default function HomeScreen({
             <Text style={styles.disclaimer}>{t.home.disclaimer}</Text>
           </View>
 
+          <TouchableOpacity
+            style={styles.whatsNewButton}
+            onPress={() => setWhatsNewOpen(true)}
+            accessibilityRole="button"
+            accessibilityLabel={t.whatsNew.open}
+          >
+            <Text style={styles.whatsNewIcon}>✦</Text>
+            <Text style={styles.whatsNewText}>{t.whatsNew.open}</Text>
+            {!releaseSeen ? (
+              <Text style={styles.whatsNewBadge}>{t.whatsNew.badge}</Text>
+            ) : null}
+          </TouchableOpacity>
+
           <Text style={styles.footer}>{t.home.offline}</Text>
         </View>
         </View>
@@ -223,6 +265,50 @@ export default function HomeScreen({
           </View>
         </View>
       </Modal>
+      <Modal
+        visible={whatsNewOpen}
+        transparent
+        animationType="fade"
+        onRequestClose={closeWhatsNew}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.releaseDialog} accessibilityViewIsModal>
+            <Text style={styles.releaseEyebrow}>
+              {t.whatsNew.version(CURRENT_RELEASE, releaseDate)}
+            </Text>
+            <Text style={styles.releaseTitle}>{t.whatsNew.title}</Text>
+            <ScrollView
+              style={styles.releaseScroll}
+              contentContainerStyle={styles.releaseScrollContent}
+            >
+              <View style={styles.updateNotice}>
+                <Text style={styles.updateNoticeIcon}>↻</Text>
+                <View style={styles.updateNoticeCopy}>
+                  <Text style={styles.updateNoticeTitle}>
+                    {t.whatsNew.automaticUpdatesTitle}
+                  </Text>
+                  <Text style={styles.updateNoticeBody}>
+                    {t.whatsNew.automaticUpdatesBody}
+                  </Text>
+                </View>
+              </View>
+              {t.whatsNew.items.map((item, index) => (
+                <View key={index} style={styles.releaseItem}>
+                  <Text style={styles.releaseBullet}>✦</Text>
+                  <Text style={styles.releaseItemText}>{item}</Text>
+                </View>
+              ))}
+            </ScrollView>
+            <TouchableOpacity
+              style={styles.releaseCloseButton}
+              onPress={closeWhatsNew}
+              accessibilityRole="button"
+            >
+              <Text style={styles.releaseCloseText}>{t.whatsNew.close}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -242,10 +328,10 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   langBtn: {
-    paddingHorizontal: spacing.sm,
+    paddingHorizontal: 7,
     paddingVertical: 6,
     backgroundColor: colors.bgElevated,
-    minWidth: 38,
+    minWidth: 36,
     alignItems: "center",
   },
   langBtnOn: { backgroundColor: colors.gold },
@@ -380,6 +466,28 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: spacing.md,
   },
+  whatsNewButton: {
+    minHeight: 44,
+    marginTop: spacing.md,
+    alignSelf: "center",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: spacing.md,
+    borderRadius: radius.md,
+  },
+  whatsNewIcon: { color: colors.gold, fontSize: 15, marginRight: spacing.sm },
+  whatsNewText: { color: colors.text, fontSize: 14, fontWeight: "700" },
+  whatsNewBadge: {
+    color: colors.bg,
+    backgroundColor: colors.gold,
+    fontSize: 10,
+    fontWeight: "800",
+    overflow: "hidden",
+    borderRadius: radius.sm,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    marginLeft: spacing.sm,
+  },
   modalOverlay: {
     flex: 1,
     backgroundColor: colors.overlay,
@@ -418,6 +526,69 @@ const styles = StyleSheet.create({
     marginLeft: spacing.sm,
   },
   confirmDeleteText: { color: colors.text, fontSize: 15, fontWeight: "800" },
+  releaseDialog: {
+    width: "100%",
+    maxWidth: 520,
+    maxHeight: "86%",
+    backgroundColor: colors.bg,
+    borderColor: colors.goldDim,
+    borderWidth: 1,
+    borderRadius: radius.lg,
+    padding: spacing.lg,
+  },
+  releaseEyebrow: {
+    color: colors.goldDim,
+    fontSize: 11,
+    fontWeight: "800",
+    letterSpacing: 0.7,
+    textTransform: "uppercase",
+  },
+  releaseTitle: {
+    color: colors.gold,
+    fontSize: 28,
+    fontWeight: "800",
+    marginTop: spacing.xs,
+    marginBottom: spacing.md,
+  },
+  releaseScroll: { flexGrow: 0 },
+  releaseScrollContent: { paddingBottom: spacing.sm },
+  updateNotice: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    backgroundColor: colors.bgElevated,
+    borderRadius: radius.md,
+    padding: spacing.md,
+    marginBottom: spacing.lg,
+  },
+  updateNoticeIcon: {
+    color: colors.positive,
+    fontSize: 24,
+    fontWeight: "700",
+    marginRight: spacing.md,
+  },
+  updateNoticeCopy: { flex: 1 },
+  updateNoticeTitle: { color: colors.text, fontSize: 15, fontWeight: "800" },
+  updateNoticeBody: {
+    color: colors.textDim,
+    fontSize: 13,
+    lineHeight: 19,
+    marginTop: 3,
+  },
+  releaseItem: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    marginBottom: spacing.md,
+  },
+  releaseBullet: { color: colors.gold, fontSize: 12, marginRight: spacing.sm, marginTop: 3 },
+  releaseItemText: { flex: 1, color: colors.text, fontSize: 14, lineHeight: 21 },
+  releaseCloseButton: {
+    backgroundColor: colors.gold,
+    borderRadius: radius.lg,
+    paddingVertical: spacing.md,
+    alignItems: "center",
+    marginTop: spacing.sm,
+  },
+  releaseCloseText: { color: colors.bg, fontSize: 16, fontWeight: "800" },
   footer: {
     color: colors.textDim,
     textAlign: "center",

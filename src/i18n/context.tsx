@@ -1,15 +1,42 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { Lang, Strings } from "./types";
 import { en } from "./en";
 import { fr } from "./fr";
+import { de } from "./de";
+import { ar } from "./ar";
+import { zh } from "./zh";
 import { saveLang } from "../storage";
+import { resolvePreferredLang } from "./detection";
 
-const dictionaries: Record<Lang, Strings> = { en, fr };
+export const SUPPORTED_LANGS: readonly Lang[] = ["fr", "en", "de", "ar", "zh"];
+
+const dictionaries: Record<Lang, Strings> = { en, fr, de, ar, zh };
+
+const browserLanguageMap: Record<Lang, string> = {
+  en: "en-US",
+  fr: "fr-FR",
+  de: "de-DE",
+  ar: "ar",
+  zh: "zh-CN",
+};
+
+export function browserLocale(lang: Lang): string {
+  return browserLanguageMap[lang];
+}
+
+export function languageLabel(lang: Lang): string {
+  return dictionaries[lang].langLabel;
+}
 
 /** Best-effort first-launch language guess (web only); defaults to English. */
 export function detectLang(): Lang {
-  if (typeof navigator !== "undefined" && navigator.language) {
-    return navigator.language.toLowerCase().startsWith("fr") ? "fr" : "en";
+  if (typeof navigator !== "undefined") {
+    const requested = navigator.languages?.length
+      ? navigator.languages
+      : navigator.language
+        ? [navigator.language]
+        : [];
+    return resolvePreferredLang(requested);
   }
   return "en";
 }
@@ -31,6 +58,12 @@ export function I18nProvider({
   children: React.ReactNode;
 }) {
   const [lang, setLangState] = useState<Lang>(initialLang);
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    document.documentElement.lang = browserLocale(lang);
+    document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+    document.body.dir = lang === "ar" ? "rtl" : "ltr";
+  }, [lang]);
   const setLang = (next: Lang) => {
     setLangState(next);
     void saveLang(next);

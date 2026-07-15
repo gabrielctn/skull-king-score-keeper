@@ -1,6 +1,9 @@
 import { readFileSync } from "node:fs";
 import { en } from "../src/i18n/en";
 import { fr } from "../src/i18n/fr";
+import { de } from "../src/i18n/de";
+import { ar } from "../src/i18n/ar";
+import { zh } from "../src/i18n/zh";
 
 let passed = 0;
 let failed = 0;
@@ -58,6 +61,15 @@ check(
   "English copy carries the non-affiliation notice",
   en.home.unofficial.includes("Unofficial") &&
     en.home.disclaimer.includes("no affiliation")
+);
+check(
+  "New locale copy carries the non-affiliation notice",
+  de.home.unofficial.includes("Inoffizielle") &&
+    de.home.disclaimer.includes("ohne Verbindung") &&
+    ar.home.unofficial.includes("غير رسمي") &&
+    ar.home.disclaimer.includes("من دون أي انتساب") &&
+    zh.home.unofficial.includes("非官方") &&
+    zh.home.disclaimer.includes("无任何隶属")
 );
 check("README identifies the project as unofficial", readme.includes("Unofficial fan project"));
 check(

@@ -39,7 +39,7 @@ self.addEventListener("fetch", (event) => {
   // Navigations: serve the cached app shell so the app opens offline.
   if (request.mode === "navigate") {
     event.respondWith(
-      fetch(request).catch(() =>
+      fetch(request, { cache: "no-store" }).catch(() =>
         caches.match(OFFLINE_FALLBACK).then((cached) => cached || Response.error())
       )
     );

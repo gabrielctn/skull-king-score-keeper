@@ -35,6 +35,22 @@ export const fr: Strings = {
     offline: "Fonctionne hors ligne · installable depuis le navigateur",
   },
 
+  whatsNew: {
+    open: "Nouveautés",
+    badge: "Nouveau",
+    title: "Nouveautés",
+    version: (version, date) => `Version ${version} · ${date}`,
+    automaticUpdatesTitle: "Toujours à jour",
+    automaticUpdatesBody:
+      "Les applications installées téléchargent désormais chaque nouvelle version automatiquement et l'activent dès que l'appareil est en ligne.",
+    items: [
+      "L'allemand, l'arabe et le chinois simplifié sont désormais disponibles. Au premier lancement, l'app utilise la langue de votre appareil si elle est prise en charge, sinon l'anglais.",
+      "L'arabe bénéficie d'une mise en page complète de droite à gauche.",
+      "Une nouvelle rubrique Nouveautés permet de retrouver facilement les améliorations de chaque version.",
+    ],
+    close: "Compris",
+  },
+
   setup: {
     title: "Nouvelle partie",
     crew: "Rassemblez votre équipage",

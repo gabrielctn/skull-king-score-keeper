@@ -6,6 +6,7 @@ import { Lang } from "./i18n/types";
 const CURRENT_GAME_KEY = "skullking:currentGame";
 const GAME_HISTORY_KEY = "skullking:gameHistory";
 const LANG_KEY = "skullking:lang";
+const SEEN_RELEASE_KEY = "skullking:seenRelease";
 
 /**
  * Bring a loaded game up to the current schema. Older saves stored `bonus`
@@ -173,7 +174,13 @@ export async function saveGameHistory(games: Game[]): Promise<void> {
 export async function loadLang(): Promise<Lang | null> {
   try {
     const value = await AsyncStorage.getItem(LANG_KEY);
-    return value === "en" || value === "fr" ? value : null;
+    return value === "en" ||
+      value === "fr" ||
+      value === "de" ||
+      value === "ar" ||
+      value === "zh"
+      ? value
+      : null;
   } catch (e) {
     console.warn("Failed to load language", e);
     return null;
@@ -186,5 +193,23 @@ export async function saveLang(lang: Lang): Promise<void> {
     await AsyncStorage.setItem(LANG_KEY, lang);
   } catch (e) {
     console.warn("Failed to save language", e);
+  }
+}
+
+/** Last changelog release acknowledged by this device. */
+export async function loadSeenRelease(): Promise<string | null> {
+  try {
+    return await AsyncStorage.getItem(SEEN_RELEASE_KEY);
+  } catch (e) {
+    console.warn("Failed to load seen release", e);
+    return null;
+  }
+}
+
+export async function saveSeenRelease(version: string): Promise<void> {
+  try {
+    await AsyncStorage.setItem(SEEN_RELEASE_KEY, version);
+  } catch (e) {
+    console.warn("Failed to save seen release", e);
   }
 }

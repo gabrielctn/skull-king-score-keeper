@@ -27,6 +27,12 @@ network — perfect for a table with no wifi.
   Davy Jones' Locker, the Second, and a rules reference for every new card.
 - Final standings with ranks (ties handled) and a winner screen.
 - Games auto-save, so you can close the app mid-game and resume.
+- Complete English, French, German, Arabic (RTL), and Simplified Chinese UI,
+  with first-launch device-language detection and an English fallback.
+- Installed PWAs update themselves on launch, when brought back to the foreground,
+  when connectivity returns, and during hourly checks while open.
+- A localized **What's new** view opens once for each release and remains available
+  from the home screen.
 
 ## Scoring rules (built in)
 
@@ -117,6 +123,24 @@ serves it, expose `dist/` at that path — e.g. symlink it into a folder named
 
 The worker is registered from `src/registerServiceWorker.ts` (web + production only).
 The app shell and assets are precached, so the whole app works with no network.
+The registration bypasses the browser's HTTP cache when checking the worker. A new
+worker installs immediately, removes old caches, takes control, and reloads an open
+installed app exactly once. Like every PWA, it needs a network connection and an
+opportunity for the browser to run; a closed offline device updates on its next
+online launch.
+
+### Publishing release notes
+
+For each user-visible release:
+
+1. Bump `CURRENT_RELEASE` and its date in `src/releases.ts`.
+2. Replace the localized `whatsNew.items` entries in every file under `src/i18n/`.
+3. Keep the package and Expo versions aligned in `package.json`, `package-lock.json`,
+   and `app.json`.
+
+The typed `Strings` contract prevents a locale from omitting the release-note UI,
+and `npm run test:scoring` verifies that all localized rules and note lists remain
+structurally synchronized.
 
 > **Note (iOS):** Safari may evict a PWA's stored data after ~7 days of no use, so
 > an in-progress game saved on iOS isn't guaranteed to survive a long break. This is
