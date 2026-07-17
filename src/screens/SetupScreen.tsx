@@ -49,6 +49,7 @@ export default function SetupScreen({ onStart, onBack }: Props) {
   const [advanced, setAdvanced] = useState(true);
   const [newExpansion, setNewExpansion] = useState(false);
   const [twoPlayerGhost, setTwoPlayerGhost] = useState(true);
+  const [customizationVisible, setCustomizationVisible] = useState(false);
 
   const setName = (id: string, name: string) =>
     setPlayers((prev) => prev.map((p) => (p.id === id ? { ...p, name } : p)));
@@ -114,7 +115,11 @@ export default function SetupScreen({ onStart, onBack }: Props) {
             },
           ]}
         >
-          <TouchableOpacity onPress={onBack}>
+          <TouchableOpacity
+            onPress={onBack}
+            style={styles.backButton}
+            accessibilityRole="button"
+          >
             <Text style={styles.back}>‹ {t.common.back}</Text>
           </TouchableOpacity>
           <Text style={styles.title}>{t.setup.title}</Text>
@@ -153,12 +158,23 @@ export default function SetupScreen({ onStart, onBack }: Props) {
                 onChangeText={(t) => setName(p.id, t)}
                 returnKeyType="done"
                 maxLength={20}
+                accessibilityLabel={t.setup.playerPlaceholder(i + 1)}
               />
-              <View style={styles.reorder}>
+              <View
+                style={[
+                  styles.reorder,
+                  width <= 360 && styles.reorderNarrow,
+                ]}
+              >
                 <TouchableOpacity
                   onPress={() => movePlayer(i, -1)}
                   disabled={i === 0}
                   style={[styles.reorderBtn, i === 0 && styles.reorderBtnDisabled]}
+                  accessibilityRole="button"
+                  accessibilityLabel={t.setup.movePlayerUp(
+                    p.name.trim() || t.setup.playerPlaceholder(i + 1)
+                  )}
+                  accessibilityState={{ disabled: i === 0 }}
                 >
                   <Text style={styles.reorderText}>▲</Text>
                 </TouchableOpacity>
@@ -169,6 +185,11 @@ export default function SetupScreen({ onStart, onBack }: Props) {
                     styles.reorderBtn,
                     i === players.length - 1 && styles.reorderBtnDisabled,
                   ]}
+                  accessibilityRole="button"
+                  accessibilityLabel={t.setup.movePlayerDown(
+                    p.name.trim() || t.setup.playerPlaceholder(i + 1)
+                  )}
+                  accessibilityState={{ disabled: i === players.length - 1 }}
                 >
                   <Text style={styles.reorderText}>▼</Text>
                 </TouchableOpacity>
@@ -180,23 +201,54 @@ export default function SetupScreen({ onStart, onBack }: Props) {
                   styles.removeBtn,
                   players.length <= 2 && styles.removeBtnDisabled,
                 ]}
+                accessibilityRole="button"
+                accessibilityLabel={t.setup.removePlayer(
+                  p.name.trim() || t.setup.playerPlaceholder(i + 1)
+                )}
+                accessibilityState={{ disabled: players.length <= 2 }}
               >
                 <Text style={styles.removeText}>✕</Text>
               </TouchableOpacity>
             </View>
           ))}
 
-          <TouchableOpacity style={styles.addBtn} onPress={addPlayer}>
+          <TouchableOpacity
+            style={styles.addBtn}
+            onPress={addPlayer}
+            accessibilityRole="button"
+          >
             <Text style={styles.addText}>{t.setup.addPlayer}</Text>
           </TouchableOpacity>
 
+          <View style={styles.quickIntro}>
+            <Text style={styles.quickTitle}>{t.setup.quickTitle}</Text>
+            <Text style={styles.quickHint}>{t.setup.quickHint}</Text>
+            <TouchableOpacity
+              style={styles.customizeButton}
+              onPress={() => setCustomizationVisible((visible) => !visible)}
+              accessibilityRole="button"
+              accessibilityState={{ expanded: customizationVisible }}
+            >
+              <Text style={styles.customizeText}>
+                {customizationVisible
+                  ? t.setup.hideCustomization
+                  : t.setup.customize}
+              </Text>
+              <Text style={styles.customizeChevron}>
+                {customizationVisible ? "▴" : "▾"}
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {customizationVisible ? (
+            <>
           {isTwoPlayer ? (
             <>
               <Text style={[styles.section, { marginTop: spacing.lg }]}>
                 {t.setup.twoPlayers}
               </Text>
               <View style={styles.advancedRow}>
-                <View style={{ flex: 1, marginRight: spacing.md }}>
+                <View style={{ flex: 1, marginEnd: spacing.md }}>
                   <Text style={styles.advancedTitle}>{t.setup.ghostTitle}</Text>
                   <Text style={styles.advancedHint}>{t.setup.ghostHint}</Text>
                 </View>
@@ -297,7 +349,7 @@ export default function SetupScreen({ onStart, onBack }: Props) {
             {t.setup.expansion}
           </Text>
           <View style={styles.advancedRow}>
-            <View style={{ flex: 1, marginRight: spacing.md }}>
+            <View style={{ flex: 1, marginEnd: spacing.md }}>
               <Text style={styles.advancedTitle}>{t.setup.advancedTitle}</Text>
               <Text style={styles.advancedHint}>{t.setup.advancedHint}</Text>
             </View>
@@ -308,7 +360,7 @@ export default function SetupScreen({ onStart, onBack }: Props) {
             />
           </View>
           <View style={[styles.advancedRow, { marginTop: spacing.sm }]}>
-            <View style={{ flex: 1, marginRight: spacing.md }}>
+            <View style={{ flex: 1, marginEnd: spacing.md }}>
               <Text style={styles.advancedTitle}>
                 {t.setup.newExpansionTitle}
               </Text>
@@ -322,6 +374,8 @@ export default function SetupScreen({ onStart, onBack }: Props) {
               accessibilityLabel={t.setup.newExpansionTitle}
             />
           </View>
+            </>
+          ) : null}
         </ScrollView>
 
         <View
@@ -337,6 +391,8 @@ export default function SetupScreen({ onStart, onBack }: Props) {
             style={[styles.startBtn, !canStart && styles.startBtnDisabled]}
             onPress={start}
             disabled={!canStart}
+            accessibilityRole="button"
+            accessibilityState={{ disabled: !canStart }}
           >
             <Text style={styles.startText}>
               {canStart ? t.setup.start : t.setup.needPlayers}
@@ -360,6 +416,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
   },
   back: { color: colors.gold, fontSize: 17 },
+  backButton: { minHeight: 44, justifyContent: "center" },
   title: { color: colors.text, fontSize: 20, fontWeight: "700" },
   scroll: {
     width: "100%",
@@ -396,6 +453,7 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
+    minWidth: 0,
     backgroundColor: colors.card,
     borderColor: colors.cardBorder,
     borderWidth: 1,
@@ -412,18 +470,19 @@ const styles = StyleSheet.create({
     lineHeight: 16,
     marginBottom: spacing.sm,
   },
-  reorder: { marginRight: spacing.xs },
+  reorder: { flexDirection: "row", marginEnd: spacing.xs },
+  reorderNarrow: { flexDirection: "column" },
   reorderBtn: {
-    width: 26,
-    height: 18,
+    width: 44,
+    height: 44,
     alignItems: "center",
     justifyContent: "center",
   },
   reorderBtnDisabled: { opacity: 0.2 },
   reorderText: { color: colors.gold, fontSize: 12 },
   removeBtn: {
-    width: 36,
-    height: 36,
+    width: 44,
+    height: 44,
     borderRadius: radius.sm,
     alignItems: "center",
     justifyContent: "center",
@@ -438,8 +497,31 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
     alignItems: "center",
     marginTop: spacing.xs,
+    minHeight: 44,
   },
   addText: { color: colors.gold, fontSize: 16, fontWeight: "600" },
+  quickIntro: {
+    marginTop: spacing.lg,
+    paddingTop: spacing.md,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: colors.cardBorder,
+  },
+  quickTitle: { color: colors.text, fontSize: 17, fontWeight: "800" },
+  quickHint: {
+    color: colors.textDim,
+    fontSize: 13,
+    lineHeight: 18,
+    marginTop: spacing.xs,
+  },
+  customizeButton: {
+    minHeight: 44,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: spacing.sm,
+  },
+  customizeText: { color: colors.gold, fontSize: 15, fontWeight: "700" },
+  customizeChevron: { color: colors.gold, fontSize: 14, marginStart: spacing.sm },
   roundsHint: { color: colors.textDim, fontSize: 12, marginTop: spacing.sm },
   structureRow: {
     flexDirection: "row",
@@ -460,7 +542,7 @@ const styles = StyleSheet.create({
     borderColor: colors.cardBorder,
     alignItems: "center",
     justifyContent: "center",
-    marginRight: spacing.md,
+    marginEnd: spacing.md,
     marginTop: 1,
   },
   radioSelected: { borderColor: colors.gold },
@@ -479,7 +561,7 @@ const styles = StyleSheet.create({
   structureCards: { color: colors.textDim, fontSize: 13, marginTop: 4 },
   classicStepper: { alignItems: "center", marginTop: spacing.sm },
   structureToggle: {
-    minHeight: 40,
+    minHeight: 44,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -525,5 +607,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   startBtnDisabled: { backgroundColor: colors.goldDim },
-  startText: { color: colors.bg, fontSize: 18, fontWeight: "800" },
+  startText: {
+    color: colors.bg,
+    fontSize: 16,
+    fontWeight: "800",
+    textAlign: "center",
+    paddingHorizontal: spacing.sm,
+  },
 });

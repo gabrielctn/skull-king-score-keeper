@@ -30,16 +30,22 @@ const SUPPORT_URL = "https://buymeacoffee.com/gabrielctn";
 
 interface Props {
   gameHistory: Game[];
+  currentGameId: string | null;
   onNewGame: () => void;
   onOpenGame: (game: Game) => void;
   onDeleteGame: (gameId: string) => void;
+  onExportBackup: () => Promise<void>;
+  onImportBackup: () => Promise<number | null>;
 }
 
 export default function HomeScreen({
   gameHistory,
+  currentGameId,
   onNewGame,
   onOpenGame,
   onDeleteGame,
+  onExportBackup,
+  onImportBackup,
 }: Props) {
   const { t, lang, setLang } = useI18n();
   const { width } = useWindowDimensions();
@@ -47,17 +53,34 @@ export default function HomeScreen({
   const [pendingDelete, setPendingDelete] = React.useState<Game | null>(null);
   const [whatsNewOpen, setWhatsNewOpen] = React.useState(false);
   const [releaseSeen, setReleaseSeen] = React.useState(true);
+  const [backupBusy, setBackupBusy] = React.useState(false);
+  const [backupMessage, setBackupMessage] = React.useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
+  const activeGame =
+    gameHistory.find(
+      (historyGame) =>
+        historyGame.id === currentGameId && historyGame.status === "in_progress"
+    ) ?? gameHistory.find((historyGame) => historyGame.status === "in_progress");
   React.useEffect(() => {
     let active = true;
     void loadSeenRelease().then((seen) => {
       if (!active || seen === CURRENT_RELEASE) return;
+      // A changelog is useful to returning users, not as a first-launch modal.
+      // Mark the release as seen when there is no prior game proving that the
+      // person has used an earlier version.
+      if (seen === null && gameHistory.length === 0) {
+        void saveSeenRelease(CURRENT_RELEASE);
+        return;
+      }
       setReleaseSeen(false);
       setWhatsNewOpen(true);
     });
     return () => {
       active = false;
     };
-  }, []);
+  }, [gameHistory.length]);
   const formatDate = (timestamp: number) =>
     new Date(timestamp).toLocaleDateString(browserLocale(lang), {
       day: "numeric",
@@ -81,6 +104,34 @@ export default function HomeScreen({
     setWhatsNewOpen(false);
     setReleaseSeen(true);
     void saveSeenRelease(CURRENT_RELEASE);
+  };
+  const exportBackup = async () => {
+    setBackupBusy(true);
+    setBackupMessage(null);
+    try {
+      await onExportBackup();
+    } catch {
+      setBackupMessage({ type: "error", text: t.home.backupError });
+    } finally {
+      setBackupBusy(false);
+    }
+  };
+  const importBackup = async () => {
+    setBackupBusy(true);
+    setBackupMessage(null);
+    try {
+      const imported = await onImportBackup();
+      if (imported !== null) {
+        setBackupMessage({
+          type: "success",
+          text: t.home.importSuccess(imported),
+        });
+      }
+    } catch {
+      setBackupMessage({ type: "error", text: t.home.backupError });
+    } finally {
+      setBackupBusy(false);
+    }
   };
 
   return (
@@ -134,9 +185,32 @@ export default function HomeScreen({
         </View>
 
         <View style={[styles.actions, layout.isDesktop && styles.actionsDesktop]}>
-          <TouchableOpacity style={styles.primaryBtn} onPress={onNewGame}>
-            <Text style={styles.primaryBtnText}>{t.common.newGame}</Text>
-          </TouchableOpacity>
+          {activeGame ? (
+            <>
+              <TouchableOpacity
+                style={styles.primaryBtn}
+                onPress={() => onOpenGame(activeGame)}
+                accessibilityRole="button"
+              >
+                <Text style={styles.primaryBtnText}>{t.home.resume}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.secondaryBtn}
+                onPress={onNewGame}
+                accessibilityRole="button"
+              >
+                <Text style={styles.secondaryBtnText}>{t.common.newGame}</Text>
+              </TouchableOpacity>
+            </>
+          ) : (
+            <TouchableOpacity
+              style={styles.primaryBtn}
+              onPress={onNewGame}
+              accessibilityRole="button"
+            >
+              <Text style={styles.primaryBtnText}>{t.common.newGame}</Text>
+            </TouchableOpacity>
+          )}
 
           {gameHistory.length > 0 ? (
             <View style={styles.history}>
@@ -204,6 +278,44 @@ export default function HomeScreen({
               </View>
             </View>
           ) : null}
+
+          <View style={styles.dataTools}>
+            <Text style={styles.dataTitle}>{t.home.dataTitle}</Text>
+            <Text style={styles.dataHint}>{t.home.dataHint}</Text>
+            <View style={styles.dataActions}>
+              <TouchableOpacity
+                style={styles.dataButton}
+                onPress={() => void exportBackup()}
+                disabled={backupBusy}
+                accessibilityRole="button"
+                accessibilityState={{ disabled: backupBusy }}
+              >
+                <Text style={styles.dataButtonText}>{t.home.exportBackup}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.dataButton, styles.dataButtonLast]}
+                onPress={() => void importBackup()}
+                disabled={backupBusy}
+                accessibilityRole="button"
+                accessibilityState={{ disabled: backupBusy }}
+              >
+                <Text style={styles.dataButtonText}>{t.home.importBackup}</Text>
+              </TouchableOpacity>
+            </View>
+            {backupMessage ? (
+              <Text
+                style={[
+                  styles.dataMessage,
+                  backupMessage.type === "success"
+                    ? styles.dataMessageSuccess
+                    : styles.dataMessageError,
+                ]}
+                accessibilityRole="alert"
+              >
+                {backupMessage.text}
+              </Text>
+            ) : null}
+          </View>
 
           <View style={styles.support}>
             <TouchableOpacity
@@ -391,6 +503,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   primaryBtnText: { color: colors.bg, fontSize: 18, fontWeight: "800" },
+  secondaryBtn: {
+    minHeight: 48,
+    borderColor: colors.goldDim,
+    borderWidth: 1,
+    borderRadius: radius.lg,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: spacing.sm,
+  },
+  secondaryBtnText: { color: colors.gold, fontSize: 16, fontWeight: "800" },
   history: { marginTop: spacing.xl },
   historyTitle: { color: colors.text, fontSize: 19, fontWeight: "800" },
   historyHint: { color: colors.textDim, fontSize: 13, marginTop: spacing.xs },
@@ -436,6 +558,35 @@ const styles = StyleSheet.create({
     borderLeftColor: colors.cardBorder,
   },
   deleteIcon: { color: colors.textDim, fontSize: 28, fontWeight: "300" },
+  dataTools: {
+    marginTop: spacing.xl,
+    paddingTop: spacing.lg,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: colors.cardBorder,
+  },
+  dataTitle: { color: colors.text, fontSize: 17, fontWeight: "800" },
+  dataHint: {
+    color: colors.textDim,
+    fontSize: 12,
+    lineHeight: 17,
+    marginTop: spacing.xs,
+  },
+  dataActions: { flexDirection: "row", marginTop: spacing.md },
+  dataButton: {
+    flex: 1,
+    minHeight: 44,
+    alignItems: "center",
+    justifyContent: "center",
+    borderColor: colors.cardBorder,
+    borderWidth: 1,
+    borderRadius: radius.md,
+    marginEnd: spacing.sm,
+  },
+  dataButtonLast: { marginEnd: 0 },
+  dataButtonText: { color: colors.gold, fontSize: 14, fontWeight: "800" },
+  dataMessage: { fontSize: 12, marginTop: spacing.sm },
+  dataMessageSuccess: { color: colors.positive },
+  dataMessageError: { color: colors.negative },
   support: {
     marginTop: spacing.xl,
     paddingTop: spacing.lg,

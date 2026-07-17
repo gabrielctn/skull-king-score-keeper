@@ -114,11 +114,13 @@ export function normalizeGame(raw: any): Game | null {
 }
 
 /** Persist the in-progress (or just-finished) game so it survives restarts. */
-export async function saveGame(game: Game): Promise<void> {
+export async function saveGame(game: Game): Promise<boolean> {
   try {
     await AsyncStorage.setItem(CURRENT_GAME_KEY, JSON.stringify(game));
+    return true;
   } catch (e) {
     console.warn("Failed to save game", e);
+    return false;
   }
 }
 
@@ -134,11 +136,13 @@ export async function loadGame(): Promise<Game | null> {
   }
 }
 
-export async function clearGame(): Promise<void> {
+export async function clearGame(): Promise<boolean> {
   try {
     await AsyncStorage.removeItem(CURRENT_GAME_KEY);
+    return true;
   } catch (e) {
     console.warn("Failed to clear game", e);
+    return false;
   }
 }
 
@@ -162,11 +166,13 @@ export async function loadGameHistory(): Promise<Game[]> {
 }
 
 /** Replace the persisted history with the supplied games. */
-export async function saveGameHistory(games: Game[]): Promise<void> {
+export async function saveGameHistory(games: Game[]): Promise<boolean> {
   try {
     await AsyncStorage.setItem(GAME_HISTORY_KEY, JSON.stringify(games));
+    return true;
   } catch (e) {
     console.warn("Failed to save game history", e);
+    return false;
   }
 }
 

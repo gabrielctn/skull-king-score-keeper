@@ -7,6 +7,9 @@ export const de: Strings = {
     home: "Startseite",
     back: "Zurück",
     newGame: "Neues Spiel",
+    storageError:
+      "Die lokale Speicherung ist fehlgeschlagen. Exportiere deine Spiele, bevor du die App schließt.",
+    dismiss: "Schließen",
   },
 
   home: {
@@ -27,6 +30,13 @@ export const de: Strings = {
     playersRound: (players, round, total) =>
       `${players} Spieler · Runde ${round} von ${total}`,
     leading: (name, total) => `In Führung: ${name} (${total})`,
+    dataTitle: "Deine Daten",
+    dataHint: "Exportiere eine Kopie deiner Spiele oder stelle sie auf diesem Gerät wieder her.",
+    exportBackup: "Exportieren",
+    importBackup: "Importieren",
+    importSuccess: (count) =>
+      `${count} ${count === 1 ? "Spiel importiert" : "Spiele importiert"}.`,
+    backupError: "Diese Sicherung konnte nicht gelesen werden.",
     support: "Entwickler unterstützen ☕",
     supportHint: "Freiwilliger Beitrag · die App bleibt vollständig kostenlos.",
     disclaimer:
@@ -58,6 +68,14 @@ export const de: Strings = {
       "Gib die Spieler im Uhrzeigersinn ein — Spieler 1 gibt in der ersten Runde. Mit den Pfeilen kannst du die Sitzordnung ändern.",
     playerPlaceholder: (n) => `Spieler ${n}`,
     addPlayer: "+ Spieler hinzufügen",
+    quickTitle: "Schnelles Spiel",
+    quickHint:
+      "Die empfohlenen Einstellungen sind bereit. Spieler eingeben und starten oder das Spiel anpassen.",
+    customize: "Spiel anpassen",
+    hideCustomization: "Optionen ausblenden",
+    movePlayerUp: (name) => `${name} nach oben verschieben`,
+    movePlayerDown: (name) => `${name} nach unten verschieben`,
+    removePlayer: (name) => `${name} entfernen`,
     twoPlayers: "Zwei Spieler",
     ghostTitle: "Graubart-Geist 👻",
     ghostHint:
@@ -114,12 +132,25 @@ export const de: Strings = {
     finish: "Spiel beenden 🏁",
     updateRound: "Runde aktualisieren",
     scoreRound: "Runde werten →",
+    untouchedTitle: "Diese Runde werten?",
+    untouchedMessage:
+      "Es wurden keine Gebote oder Stiche eingegeben. Bestätige, dass beide Spieler null geboten haben und Graubart alle Stiche gewonnen hat.",
+    untouchedCancel: "Eingaben prüfen",
+    untouchedConfirm: "Ja, werten",
   },
 
   results: {
     gameOver: "Spiel beendet",
     winner: (name, total) => `${name} gewinnt mit ${total}!`,
     review: "Runden einzeln ansehen",
+    rematch: "Revanche mit derselben Crew",
+    installTitle: "Punktezähler an Bord behalten",
+    installHint: "Installiere die App für schnellen Zugriff und vollständig offline spielbare Partien.",
+    installIosHint:
+      "Öffne diese Seite bei Bedarf in Safari und tippe dann auf Teilen und „Zum Home-Bildschirm“.",
+    installError: "Die Installation konnte nicht gestartet werden. Versuche es später erneut.",
+    install: "App installieren",
+    installDismiss: "Später",
     backHome: "Zur Startseite",
   },
 

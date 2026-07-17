@@ -7,6 +7,9 @@ export const ar: Strings = {
     home: "الرئيسية",
     back: "رجوع",
     newGame: "لعبة جديدة",
+    storageError:
+      "فشل الحفظ المحلي. صدّر مبارياتك قبل إغلاق التطبيق.",
+    dismiss: "إغلاق",
   },
 
   home: {
@@ -27,6 +30,12 @@ export const ar: Strings = {
     playersRound: (players, round, total) =>
       `${players} لاعبين · الجولة ${round} من ${total}`,
     leading: (name, total) => `المتصدر: ${name} (${total})`,
+    dataTitle: "بياناتك",
+    dataHint: "صدّر نسخة من مبارياتك أو استعدها على هذا الجهاز.",
+    exportBackup: "تصدير",
+    importBackup: "استيراد",
+    importSuccess: (count) => `تم استيراد ${count} من المباريات.`,
+    backupError: "تعذّرت قراءة هذه النسخة الاحتياطية.",
     support: "ادعم المطوّر ☕",
     supportHint: "مساهمة اختيارية · سيبقى التطبيق مجانيًا بالكامل.",
     disclaimer:
@@ -58,6 +67,14 @@ export const ar: Strings = {
       "أدخل اللاعبين حسب ترتيب جلوسهم مع عقارب الساعة — يوزّع اللاعب 1 الجولة الأولى. استخدم الأسهم لإعادة ترتيب الطاولة.",
     playerPlaceholder: (n) => `اللاعب ${n}`,
     addPlayer: "+ إضافة لاعب",
+    quickTitle: "مباراة سريعة",
+    quickHint:
+      "الإعدادات المقترحة جاهزة. أدخل أسماء اللاعبين وابدأ، أو خصّص المباراة.",
+    customize: "تخصيص المباراة",
+    hideCustomization: "إخفاء الخيارات",
+    movePlayerUp: (name) => `نقل ${name} إلى الأعلى`,
+    movePlayerDown: (name) => `نقل ${name} إلى الأسفل`,
+    removePlayer: (name) => `إزالة ${name}`,
     twoPlayers: "لاعبان",
     ghostTitle: "شبح غراي بيرد 👻",
     ghostHint:
@@ -115,12 +132,25 @@ export const ar: Strings = {
     finish: "إنهاء اللعبة 🏁",
     updateRound: "تحديث الجولة",
     scoreRound: "احتساب الجولة ←",
+    untouchedTitle: "احتساب هذه الجولة؟",
+    untouchedMessage:
+      "لم تُدخل أي مزايدة أو لمّة. أكّد أن كلا اللاعبين زايدا بصفر وأن غراي بيرد فاز بكل اللمّات.",
+    untouchedCancel: "مراجعة الإدخالات",
+    untouchedConfirm: "نعم، احتسبها",
   },
 
   results: {
     gameOver: "انتهت اللعبة",
     winner: (name, total) => `فاز ${name} بمجموع ${total}!`,
     review: "مراجعة الجولات واحدة تلو الأخرى",
+    rematch: "إعادة اللعب مع الطاقم نفسه",
+    installTitle: "احتفظ بعدّاد النقاط على متن السفينة",
+    installHint: "ثبّت التطبيق للوصول السريع واللعب دون اتصال.",
+    installIosHint:
+      "افتح هذه الصفحة في Safari عند الحاجة، ثم اضغط على مشاركة و«إضافة إلى الشاشة الرئيسية».",
+    installError: "تعذّر بدء التثبيت. يمكنك المحاولة مرة أخرى لاحقًا.",
+    install: "تثبيت التطبيق",
+    installDismiss: "لاحقًا",
     backHome: "العودة إلى الرئيسية",
   },
 

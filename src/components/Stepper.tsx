@@ -35,7 +35,9 @@ export default function Stepper({
           style={[styles.btn, value <= min && styles.btnDisabled]}
           onPress={dec}
           disabled={value <= min}
+          accessibilityRole="button"
           accessibilityLabel={t.stepper.decrease(a11y)}
+          accessibilityState={{ disabled: value <= min }}
         >
           <Text style={styles.btnText}>−</Text>
         </TouchableOpacity>
@@ -44,7 +46,9 @@ export default function Stepper({
           style={[styles.btn, value >= max && styles.btnDisabled]}
           onPress={inc}
           disabled={value >= max}
+          accessibilityRole="button"
           accessibilityLabel={t.stepper.increase(a11y)}
+          accessibilityState={{ disabled: value >= max }}
         >
           <Text style={styles.btnText}>+</Text>
         </TouchableOpacity>
@@ -58,8 +62,8 @@ const styles = StyleSheet.create({
   label: { color: colors.textDim, fontSize: 12, marginBottom: 4 },
   row: { flexDirection: "row", alignItems: "center" },
   btn: {
-    width: 36,
-    height: 36,
+    width: 44,
+    height: 44,
     borderRadius: radius.sm,
     backgroundColor: colors.bgElevated,
     borderWidth: 1,

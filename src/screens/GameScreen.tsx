@@ -1,5 +1,6 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
+  Modal,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -8,7 +9,7 @@ import {
   View,
   useWindowDimensions,
 } from "react-native";
-import { BonusInput, Game, LootUse, RoundEntries, RoundEntry } from "../types";
+import { BonusInput, Game, LootUse, RoundEntries } from "../types";
 import {
   cardsForRound,
   emptyEntry,
@@ -48,6 +49,52 @@ function cloneRound(round: RoundEntries, playerIds: string[]): RoundEntries {
   return out;
 }
 
+/**
+ * Draft entries live in the same persisted structure as scored entries.  A
+ * round only contributes to the score once every entry is explicitly marked
+ * as recorded, so clearing this flag is what makes editing a scored round
+ * safe.
+ */
+function unrecordRound(
+  round: RoundEntries,
+  playerIds: string[]
+): RoundEntries {
+  const out = cloneRound(round, playerIds);
+  for (const id of playerIds) out[id].recorded = false;
+  return out;
+}
+
+/** Return the earliest round that still needs to be scored. */
+function firstUnrecordedRound(game: Game): number | null {
+  for (let index = 0; index < game.totalRounds; index++) {
+    const round = game.rounds[index];
+    if (!game.players.every((player) => round?.[player.id]?.recorded)) {
+      return index + 1;
+    }
+  }
+  return null;
+}
+
+function roundHasInput(
+  game: Game,
+  roundNumber: number,
+  round: RoundEntries
+): boolean {
+  if (isRoundComplete(game, roundNumber)) return true;
+  if ((game.lootUses[roundNumber - 1] ?? []).length > 0) return true;
+  if ((game.discardedTricks[roundNumber - 1] ?? 0) > 0) return true;
+  return game.players.some((player) => {
+    const entry = round[player.id];
+    return Boolean(
+      entry &&
+        (entry.bid > 0 ||
+          entry.tricks > 0 ||
+          entry.legacyLoot > 0 ||
+          Object.values(entry.bonus).some(Boolean))
+    );
+  });
+}
+
 export default function GameScreen({
   game,
   onUpdateGame,
@@ -64,14 +111,28 @@ export default function GameScreen({
   const [draft, setDraft] = useState<RoundEntries>(() =>
     cloneRound(game.rounds[displayRound - 1], playerIds)
   );
+  // Event handlers can fire before a parent re-render has supplied the game we
+  // just persisted. Keep immediate refs so consecutive edits always compose
+  // instead of overwriting one another with an older prop/state snapshot.
+  const latestGame = useRef(game);
+  const receivedGame = useRef(game);
+  const latestDraft = useRef(draft);
+  if (receivedGame.current !== game) {
+    receivedGame.current = game;
+    latestGame.current = game;
+  }
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [rulesOpen, setRulesOpen] = useState(false);
   const [scorePlayerId, setScorePlayerId] = useState<string | null>(null);
   const [lootReviewOpen, setLootReviewOpen] = useState(false);
+  const [untouchedReviewOpen, setUntouchedReviewOpen] = useState(false);
   const [lootReviewed, setLootReviewed] = useState(() =>
     isRoundComplete(game, displayRound)
   );
   const [draftRoundNumber, setDraftRoundNumber] = useState(displayRound);
+  const [roundTouched, setRoundTouched] = useState(() =>
+    roundHasInput(game, displayRound, draft)
+  );
 
   const cards = cardsForRound(game, displayRound);
   // Indicative dealer / first-trick order for the round being shown.
@@ -80,38 +141,90 @@ export default function GameScreen({
 
   // Reseed the draft whenever the visible round changes.
   useEffect(() => {
-    setDraft(cloneRound(game.rounds[displayRound - 1], playerIds));
+    const shownGame = latestGame.current;
+    const shownDraft = cloneRound(
+      shownGame.rounds[displayRound - 1],
+      playerIds
+    );
+    latestDraft.current = shownDraft;
+    setDraft(shownDraft);
     setDraftRoundNumber(displayRound);
-    setLootReviewed(isRoundComplete(game, displayRound));
+    setLootReviewed(isRoundComplete(shownGame, displayRound));
     setLootReviewOpen(false);
+    setUntouchedReviewOpen(false);
+    setRoundTouched(roundHasInput(shownGame, displayRound, shownDraft));
   }, [displayRound, game.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const update = (playerId: string, field: keyof RoundEntry, value: number) => {
-    if (field === "bid" || field === "tricks") setLootReviewed(false);
-    setDraft((prev) => {
-      const capped =
-        (field === "bid" || field === "tricks") && value > cards
-          ? cards
-          : value;
-      return { ...prev, [playerId]: { ...prev[playerId], [field]: capped } };
+  /**
+   * Persist an editable round immediately. Optional round-level changes are
+   * written in the same Game update so cards, Loot and Kraken state cannot get
+   * out of sync with the bid/trick/bonus draft.
+   */
+  const persistDraft = (
+    nextDraft: RoundEntries,
+    updates: Partial<
+      Pick<Game, "cardsDealt" | "lootUses" | "discardedTricks">
+    > = {}
+  ) => {
+    const current = latestGame.current;
+    const unrecordedDraft = unrecordRound(nextDraft, playerIds);
+    const rounds = current.rounds.map((round, index) =>
+      index === displayRound - 1 ? unrecordedDraft : round
+    );
+    const next: Game = {
+      ...current,
+      ...updates,
+      rounds,
+      status: "in_progress",
+      updatedAt: Date.now(),
+    };
+    next.currentRound = firstUnrecordedRound(next) ?? next.totalRounds;
+
+    latestDraft.current = unrecordedDraft;
+    latestGame.current = next;
+    setDraft(unrecordedDraft);
+    setRoundTouched(true);
+    onUpdateGame(next);
+  };
+
+  const update = (
+    playerId: string,
+    field: "bid" | "tricks",
+    value: number
+  ) => {
+    setLootReviewed(false);
+    const capped = Math.min(
+      value,
+      cardsForRound(latestGame.current, displayRound)
+    );
+    persistDraft({
+      ...latestDraft.current,
+      [playerId]: {
+        ...latestDraft.current[playerId],
+        [field]: capped,
+      },
     });
   };
 
   const updateBonus = (playerId: string, bonus: BonusInput) =>
-    setDraft((prev) => ({
-      ...prev,
-      [playerId]: { ...prev[playerId], bonus },
-    }));
+    persistDraft({
+      ...latestDraft.current,
+      [playerId]: { ...latestDraft.current[playerId], bonus },
+    });
 
   const setCards = (value: number) => {
-    const next: Game = {
-      ...game,
-      cardsDealt: game.cardsDealt.map((c, i) =>
-        i === displayRound - 1 ? value : c
+    setLootReviewed(false);
+    const current = latestGame.current;
+    const cappedDraft = cloneRound(latestDraft.current, playerIds);
+    for (const id of playerIds) {
+      cappedDraft[id].bid = Math.min(cappedDraft[id].bid, value);
+      cappedDraft[id].tricks = Math.min(cappedDraft[id].tricks, value);
+    }
+    persistDraft(cappedDraft, {
+      cardsDealt: current.cardsDealt.map((roundCards, index) =>
+        index === displayRound - 1 ? value : roundCards
       ),
-      updatedAt: Date.now(),
-    };
-    onUpdateGame(next);
+    });
   };
 
   const tricksTotal = playerIds.reduce(
@@ -167,56 +280,101 @@ export default function GameScreen({
 
   const updateLootUses = (nextUses: LootUse[]) => {
     setLootReviewed(false);
-    const next: Game = {
-      ...game,
-      lootUses: game.lootUses.map((roundUses, index) =>
+    const current = latestGame.current;
+    persistDraft(latestDraft.current, {
+      lootUses: current.lootUses.map((roundUses, index) =>
         index === displayRound - 1 ? nextUses.slice(0, 2) : roundUses
       ),
-      updatedAt: Date.now(),
-    };
-    onUpdateGame(next);
+    });
   };
 
   const toggleDiscardedTrick = () => {
-    const nextCount = discardedTricks > 0 ? 0 : 1;
-    const next: Game = {
-      ...game,
-      discardedTricks: game.discardedTricks.map((count, index) =>
+    const current = latestGame.current;
+    const currentCards = cardsForRound(current, displayRound);
+    const currentDiscardedTricks = Math.min(
+      currentCards,
+      Math.max(0, current.discardedTricks[displayRound - 1] ?? 0)
+    );
+    const nextCount = currentDiscardedTricks > 0 ? 0 : 1;
+    persistDraft(latestDraft.current, {
+      discardedTricks: current.discardedTricks.map((count, index) =>
         index === displayRound - 1 ? nextCount : count
       ),
-      updatedAt: Date.now(),
-    };
-    onUpdateGame(next);
+    });
   };
 
-  const commitRound = () => {
-    if (lootIncomplete) return;
-    if (hasLootAlliance && !lootReviewed) {
+  const commitRound = (allowUntouched = false) => {
+    const current = latestGame.current;
+    const currentDraft = cloneRound(latestDraft.current, playerIds);
+    const currentCards = cardsForRound(current, displayRound);
+    const currentDiscardedTricks = Math.min(
+      currentCards,
+      Math.max(0, current.discardedTricks[displayRound - 1] ?? 0)
+    );
+    const currentTricksTotal = playerIds.reduce(
+      (sum, id) => sum + (currentDraft[id]?.tricks ?? 0),
+      0
+    );
+    const currentAccountedTricks =
+      currentTricksTotal + currentDiscardedTricks;
+    const currentTricksOk = current.twoPlayerGhost
+      ? currentAccountedTricks <= currentCards
+      : currentAccountedTricks === currentCards;
+    const currentLootUses =
+      current.advancedCards && current.players.length > 2
+        ? (current.lootUses[displayRound - 1] ?? [])
+        : [];
+    const currentLootIncomplete = currentLootUses.some(
+      (lootUse) => lootUse.playedById === null || lootUse.boundToId === null
+    );
+    const currentHasLootAlliance = currentLootUses.some(
+      (lootUse) =>
+        lootUse.playedById !== null &&
+        lootUse.boundToId !== null &&
+        lootUse.playedById !== lootUse.boundToId
+    );
+
+    if (!currentTricksOk || currentLootIncomplete) return;
+    if (
+      !allowUntouched &&
+      !roundTouched &&
+      !isRoundComplete(current, displayRound)
+    ) {
+      setUntouchedReviewOpen(true);
+      return;
+    }
+    if (currentHasLootAlliance && !lootReviewed) {
       setLootReviewOpen(true);
       return;
     }
     const recordedRound: RoundEntries = {};
     for (const id of playerIds) {
-      recordedRound[id] = { ...draft[id], recorded: true };
+      recordedRound[id] = {
+        ...currentDraft[id],
+        bonus: { ...currentDraft[id].bonus },
+        recorded: true,
+      };
     }
-    const rounds = game.rounds.map((r, i) =>
-      i === displayRound - 1 ? recordedRound : r
+    const rounds = current.rounds.map((round, index) =>
+      index === displayRound - 1 ? recordedRound : round
     );
-    const next: Game = { ...game, rounds, updatedAt: Date.now() };
+    const next: Game = { ...current, rounds, updatedAt: Date.now() };
+    const nextRound = firstUnrecordedRound(next);
 
-    const allRecorded = next.rounds.every((r) =>
-      playerIds.every((id) => r[id]?.recorded)
-    );
-    if (allRecorded) {
+    latestDraft.current = recordedRound;
+    latestGame.current = next;
+    setDraft(recordedRound);
+    if (nextRound === null) {
       next.status = "finished";
-      next.currentRound = game.totalRounds;
+      next.currentRound = next.totalRounds;
       onUpdateGame(next);
       onFinish(next);
       return;
     }
-    next.currentRound = Math.min(displayRound + 1, game.totalRounds);
+    next.status = "in_progress";
+    next.currentRound = nextRound;
     onUpdateGame(next);
-    if (displayRound < game.totalRounds) setDisplayRound(displayRound + 1);
+    setDisplayRound(nextRound);
   };
 
   const board = standings(game);
@@ -232,13 +390,21 @@ export default function GameScreen({
           },
         ]}
       >
-        <TouchableOpacity onPress={onExit} style={styles.sideBtn}>
+        <TouchableOpacity
+          onPress={onExit}
+          style={styles.sideBtn}
+          accessibilityRole="button"
+          accessibilityLabel={t.common.home}
+        >
           <Text style={styles.headerBtn}>‹ {t.common.home}</Text>
         </TouchableOpacity>
         <View style={styles.roundNav}>
           <TouchableOpacity
             onPress={() => setDisplayRound((r) => Math.max(1, r - 1))}
             disabled={displayRound <= 1}
+            accessibilityRole="button"
+            accessibilityLabel={t.game.round(Math.max(1, displayRound - 1))}
+            accessibilityState={{ disabled: displayRound <= 1 }}
           >
             <Text style={[styles.chevron, displayRound <= 1 && styles.disabled]}>
               ‹
@@ -254,6 +420,11 @@ export default function GameScreen({
               setDisplayRound((r) => Math.min(game.totalRounds, r + 1))
             }
             disabled={displayRound >= game.totalRounds}
+            accessibilityRole="button"
+            accessibilityLabel={t.game.round(
+              Math.min(game.totalRounds, displayRound + 1)
+            )}
+            accessibilityState={{ disabled: displayRound >= game.totalRounds }}
           >
             <Text
               style={[
@@ -268,6 +439,8 @@ export default function GameScreen({
         <TouchableOpacity
           onPress={() => setRulesOpen(true)}
           style={[styles.sideBtn, { alignItems: "flex-end" }]}
+          accessibilityRole="button"
+          accessibilityLabel={t.rules.title}
         >
           <Text style={styles.help}>?</Text>
         </TouchableOpacity>
@@ -421,6 +594,9 @@ export default function GameScreen({
                   onPress={() =>
                     setExpanded((prev) => ({ ...prev, [p.id]: !prev[p.id] }))
                   }
+                  accessibilityRole="button"
+                  accessibilityState={{ expanded: open }}
+                  accessibilityLabel={`${t.game.bonus} · ${p.name}`}
                 >
                   <Text style={styles.bonusToggleText}>
                     {t.game.bonus} {open ? "▾" : "▸"}
@@ -545,13 +721,13 @@ export default function GameScreen({
           style={[
             styles.scoreBtn,
             layout.isTablet && styles.scoreBtnWide,
-            lootIncomplete && styles.scoreBtnDisabled,
+            (!roundReady || lootIncomplete) && styles.scoreBtnDisabled,
           ]}
-          onPress={commitRound}
-          disabled={lootIncomplete}
+          onPress={() => commitRound()}
+          disabled={!roundReady || lootIncomplete}
           accessibilityRole="button"
-          accessibilityState={{ disabled: lootIncomplete }}
-          aria-disabled={lootIncomplete}
+          accessibilityState={{ disabled: !roundReady || lootIncomplete }}
+          aria-disabled={!roundReady || lootIncomplete}
         >
           <Text style={styles.scoreBtnText}>
             {displayRound === game.totalRounds && !alreadyRecorded
@@ -564,6 +740,46 @@ export default function GameScreen({
       </View>
 
       <RulesModal visible={rulesOpen} onClose={() => setRulesOpen(false)} />
+      <Modal
+        visible={untouchedReviewOpen}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setUntouchedReviewOpen(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View
+            style={styles.confirmDialog}
+            accessibilityRole="alert"
+            accessibilityViewIsModal
+          >
+            <Text style={styles.confirmTitle}>{t.game.untouchedTitle}</Text>
+            <Text style={styles.confirmMessage}>{t.game.untouchedMessage}</Text>
+            <View style={styles.confirmActions}>
+              <TouchableOpacity
+                style={styles.confirmCancel}
+                onPress={() => setUntouchedReviewOpen(false)}
+                accessibilityRole="button"
+              >
+                <Text style={styles.confirmCancelText}>
+                  {t.game.untouchedCancel}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.confirmAccept}
+                onPress={() => {
+                  setUntouchedReviewOpen(false);
+                  commitRound(true);
+                }}
+                accessibilityRole="button"
+              >
+                <Text style={styles.confirmAcceptText}>
+                  {t.game.untouchedConfirm}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
       <ScoreBreakdownModal
         visible={scorePlayerId !== null}
         game={game}
@@ -813,4 +1029,47 @@ const styles = StyleSheet.create({
   scoreBtnWide: { alignSelf: "center", width: "100%", maxWidth: 440 },
   scoreBtnDisabled: { opacity: 0.45 },
   scoreBtnText: { color: colors.bg, fontSize: 18, fontWeight: "800" },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: colors.overlay,
+    alignItems: "center",
+    justifyContent: "center",
+    padding: spacing.lg,
+  },
+  confirmDialog: {
+    width: "100%",
+    maxWidth: 420,
+    backgroundColor: colors.card,
+    borderColor: colors.cardBorder,
+    borderWidth: 1,
+    borderRadius: radius.lg,
+    padding: spacing.lg,
+  },
+  confirmTitle: { color: colors.text, fontSize: 20, fontWeight: "800" },
+  confirmMessage: {
+    color: colors.textDim,
+    fontSize: 14,
+    lineHeight: 20,
+    marginTop: spacing.sm,
+  },
+  confirmActions: {
+    marginTop: spacing.lg,
+  },
+  confirmCancel: {
+    minHeight: 44,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: spacing.md,
+  },
+  confirmCancelText: { color: colors.text, fontSize: 14, fontWeight: "700" },
+  confirmAccept: {
+    minHeight: 44,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: colors.gold,
+    borderRadius: radius.md,
+    paddingHorizontal: spacing.md,
+    marginTop: spacing.sm,
+  },
+  confirmAcceptText: { color: colors.bg, fontSize: 14, fontWeight: "800" },
 });

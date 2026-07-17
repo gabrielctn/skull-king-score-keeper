@@ -7,6 +7,9 @@ export const en: Strings = {
     home: "Home",
     back: "Back",
     newGame: "New game",
+    storageError:
+      "Local saving failed. Export your games before closing the app.",
+    dismiss: "Dismiss",
   },
 
   home: {
@@ -27,6 +30,13 @@ export const en: Strings = {
     playersRound: (players, round, total) =>
       `${players} players · round ${round} of ${total}`,
     leading: (name, total) => `Leading: ${name} (${total})`,
+    dataTitle: "Your data",
+    dataHint: "Export a copy of your games or restore it on this device.",
+    exportBackup: "Export",
+    importBackup: "Import",
+    importSuccess: (count) =>
+      `${count} ${count === 1 ? "game imported" : "games imported"}.`,
+    backupError: "This backup could not be read.",
     support: "Support the developer ☕",
     supportHint: "Optional contribution · the app remains completely free.",
     disclaimer:
@@ -58,6 +68,14 @@ export const en: Strings = {
       "Enter players in clockwise seating order — player 1 deals the first round. Use the arrows to rearrange the table.",
     playerPlaceholder: (n) => `Player ${n}`,
     addPlayer: "+ Add player",
+    quickTitle: "Quick game",
+    quickHint:
+      "Recommended settings are ready. Enter the players and start, or customize the game.",
+    customize: "Customize game",
+    hideCustomization: "Hide options",
+    movePlayerUp: (name) => `Move ${name} up`,
+    movePlayerDown: (name) => `Move ${name} down`,
+    removePlayer: (name) => `Remove ${name}`,
     twoPlayers: "Two players",
     ghostTitle: "Greybeard ghost 👻",
     ghostHint:
@@ -115,12 +133,25 @@ export const en: Strings = {
     finish: "Finish game 🏁",
     updateRound: "Update round",
     scoreRound: "Score round →",
+    untouchedTitle: "Score this round?",
+    untouchedMessage:
+      "No bids or tricks were entered. Confirm that both players bid zero and Greybeard won every trick.",
+    untouchedCancel: "Check entries",
+    untouchedConfirm: "Yes, score it",
   },
 
   results: {
     gameOver: "Game Over",
     winner: (name, total) => `${name} wins with ${total}!`,
     review: "Review round-by-round",
+    rematch: "Rematch with the same crew",
+    installTitle: "Keep the score keeper aboard",
+    installHint: "Install the app for quick access and fully offline play.",
+    installIosHint:
+      "Open this page in Safari if needed, then tap Share and “Add to Home Screen”.",
+    installError: "Installation could not start. You can try again later.",
+    install: "Install app",
+    installDismiss: "Later",
     backHome: "Back to home",
   },
 

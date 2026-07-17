@@ -22,6 +22,8 @@ export interface Strings {
     home: string;
     back: string;
     newGame: string;
+    storageError: string;
+    dismiss: string;
   };
 
   home: {
@@ -43,6 +45,12 @@ export interface Strings {
     playersRound: (players: number, round: number, total: number) => string;
     /** "Leading: {name} ({total})" */
     leading: (name: string, total: number) => string;
+    dataTitle: string;
+    dataHint: string;
+    exportBackup: string;
+    importBackup: string;
+    importSuccess: (count: number) => string;
+    backupError: string;
     support: string;
     supportHint: string;
     disclaimer: string;
@@ -68,6 +76,13 @@ export interface Strings {
     /** Placeholder for an empty player row, e.g. "Player 3". */
     playerPlaceholder: (n: number) => string;
     addPlayer: string;
+    quickTitle: string;
+    quickHint: string;
+    customize: string;
+    hideCustomization: string;
+    movePlayerUp: (name: string) => string;
+    movePlayerDown: (name: string) => string;
+    removePlayer: (name: string) => string;
     twoPlayers: string;
     ghostTitle: string;
     ghostHint: string;
@@ -121,6 +136,10 @@ export interface Strings {
     finish: string;
     updateRound: string;
     scoreRound: string;
+    untouchedTitle: string;
+    untouchedMessage: string;
+    untouchedCancel: string;
+    untouchedConfirm: string;
   };
 
   results: {
@@ -128,6 +147,13 @@ export interface Strings {
     /** "{name} wins with {total}!" */
     winner: (name: string, total: number) => string;
     review: string;
+    rematch: string;
+    installTitle: string;
+    installHint: string;
+    installIosHint: string;
+    installError: string;
+    install: string;
+    installDismiss: string;
     backHome: string;
   };
 

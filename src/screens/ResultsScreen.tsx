@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Image,
   SafeAreaView,
@@ -16,9 +16,16 @@ import { illustrations } from "../assets/illustrations";
 import { useI18n } from "../i18n/context";
 import { getResponsiveLayout } from "../responsive";
 import ScoreBreakdownModal from "../components/ScoreBreakdownModal";
+import {
+  getPwaInstallMode,
+  PwaInstallMode,
+  promptPwaInstall,
+  subscribeToInstallPrompt,
+} from "../pwaInstall";
 
 interface Props {
   game: Game;
+  onRematch: () => void;
   onNewGame: () => void;
   onHome: () => void;
   onReview: () => void;
@@ -29,6 +36,7 @@ const medal = (rank: number) =>
 
 export default function ResultsScreen({
   game,
+  onRematch,
   onNewGame,
   onHome,
   onReview,
@@ -39,6 +47,30 @@ export default function ResultsScreen({
   const rows = standings(game);
   const winner = rows[0];
   const [scorePlayerId, setScorePlayerId] = useState<string | null>(null);
+  const [installMode, setInstallMode] = useState<PwaInstallMode>(
+    getPwaInstallMode()
+  );
+  const [installDismissed, setInstallDismissed] = useState(false);
+  const [installFailed, setInstallFailed] = useState(false);
+
+  useEffect(
+    () =>
+      subscribeToInstallPrompt(() =>
+        setInstallMode(getPwaInstallMode())
+      ),
+    []
+  );
+
+  const installApp = async () => {
+    setInstallFailed(false);
+    try {
+      await promptPwaInstall();
+    } catch {
+      setInstallFailed(true);
+    } finally {
+      setInstallMode(getPwaInstallMode());
+    }
+  };
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -98,15 +130,74 @@ export default function ResultsScreen({
           ))}
         </View>
 
-        <TouchableOpacity style={styles.secondaryBtn} onPress={onReview}>
+        <TouchableOpacity
+          style={styles.secondaryBtn}
+          onPress={onReview}
+          accessibilityRole="button"
+        >
           <Text style={styles.secondaryText}>{t.results.review}</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.primaryBtn} onPress={onNewGame}>
+        <TouchableOpacity
+          style={styles.primaryBtn}
+          onPress={onRematch}
+          accessibilityRole="button"
+        >
+          <Text style={styles.primaryText}>{t.results.rematch}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.primaryBtn}
+          onPress={onNewGame}
+          accessibilityRole="button"
+        >
           <Text style={styles.primaryText}>{t.common.newGame}</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.linkBtn} onPress={onHome}>
+        <TouchableOpacity
+          style={styles.linkBtn}
+          onPress={onHome}
+          accessibilityRole="button"
+        >
           <Text style={styles.linkText}>{t.results.backHome}</Text>
         </TouchableOpacity>
+        {(installMode !== "none" || installFailed) && !installDismissed ? (
+          <View style={styles.installPrompt}>
+            <Text style={styles.installTitle}>{t.results.installTitle}</Text>
+            <Text
+              style={[
+                styles.installHint,
+                installFailed && styles.installError,
+              ]}
+              accessibilityRole={installFailed ? "alert" : undefined}
+            >
+              {installFailed
+                ? t.results.installError
+                : installMode === "manual_ios"
+                  ? t.results.installIosHint
+                  : t.results.installHint}
+            </Text>
+            <View style={styles.installActions}>
+              <TouchableOpacity
+                style={styles.installDismiss}
+                onPress={() => setInstallDismissed(true)}
+                accessibilityRole="button"
+              >
+                <Text style={styles.installDismissText}>
+                  {t.results.installDismiss}
+                </Text>
+              </TouchableOpacity>
+              {installMode === "prompt" && !installFailed ? (
+                <TouchableOpacity
+                  style={styles.installButton}
+                  onPress={() => void installApp()}
+                  accessibilityRole="button"
+                >
+                  <Text style={styles.installButtonText}>
+                    {t.results.install}
+                  </Text>
+                </TouchableOpacity>
+              ) : null}
+            </View>
+          </View>
+        ) : null}
       </ScrollView>
       <ScoreBreakdownModal
         visible={scorePlayerId !== null}
@@ -179,4 +270,40 @@ const styles = StyleSheet.create({
   secondaryText: { color: colors.gold, fontSize: 16, fontWeight: "600" },
   linkBtn: { paddingVertical: spacing.md },
   linkText: { color: colors.textDim, fontSize: 15 },
+  installPrompt: {
+    alignSelf: "stretch",
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: colors.cardBorder,
+    marginTop: spacing.sm,
+    paddingTop: spacing.lg,
+  },
+  installTitle: { color: colors.text, fontSize: 17, fontWeight: "800" },
+  installHint: {
+    color: colors.textDim,
+    fontSize: 13,
+    lineHeight: 18,
+    marginTop: spacing.xs,
+  },
+  installError: { color: colors.negative },
+  installActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    marginTop: spacing.md,
+  },
+  installDismiss: {
+    minHeight: 44,
+    justifyContent: "center",
+    paddingHorizontal: spacing.md,
+  },
+  installDismissText: { color: colors.textDim, fontSize: 14, fontWeight: "700" },
+  installButton: {
+    minHeight: 44,
+    justifyContent: "center",
+    backgroundColor: colors.gold,
+    borderRadius: radius.md,
+    paddingHorizontal: spacing.md,
+    marginStart: spacing.sm,
+  },
+  installButtonText: { color: colors.bg, fontSize: 14, fontWeight: "800" },
 });

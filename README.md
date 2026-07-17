@@ -16,6 +16,8 @@ network — perfect for a table with no wifi.
 ## What it does
 
 - Add 2+ players and choose the number of rounds (1–10, default 10).
+- Start immediately with **Quick Game**, or reveal the advanced round and
+  expansion settings only when they are needed.
 - For each round, enter every player's **bid** and **tricks won**, plus a
   structured **bonus editor** for captured special cards — no mental math.
 - Record each **Loot alliance** as it happens; the linked players stay visible
@@ -26,7 +28,14 @@ network — perfect for a table with no wifi.
 - Full support for the **new Skull King expansion**: conditional 7/8 points,
   Davy Jones' Locker, the Second, and a rules reference for every new card.
 - Final standings with ranks (ties handled) and a winner screen.
-- Games auto-save, so you can close the app mid-game and resume.
+- Every bid, trick, bonus and round option auto-saves as a draft, so you can
+  close the app at any moment and resume the exact game from the home screen.
+- Reopen and correct any scored round; the app then returns to the earliest
+  round that still needs scoring.
+- Export every game to a versioned JSON backup and merge it back safely on this
+  or another device.
+- Start a rematch from the final standings with the same crew, options and card
+  structure.
 - Complete English, French, German, Arabic (RTL), and Simplified Chinese UI,
   with first-launch device-language detection and an English fallback.
 - Installed PWAs update themselves on launch, when brought back to the foreground,
@@ -84,9 +93,9 @@ Special cards that affect *what you enter* (explained in the in-app "?" referenc
 - **The Second:** beats everything except Skull King and Mermaids; capturing it
   with either awards +30.
 
-The scoring engine is covered by 70 checks (`npm run test:scoring`), with 14
-additional save-migration checks (`npm run test:storage`), including the
-rulebook's worked examples and Loot edge cases.
+The project is covered by 285 automated checks (`npm test`) across scoring,
+save migrations, backup validation, responsive layout, assets and branding,
+including the rulebook's worked examples and Loot edge cases.
 
 ---
 
@@ -179,6 +188,8 @@ Skull-King/
 │   ├── types.ts                  # Shared types (Player, Game, RoundEntry)
 │   ├── scoring.ts                # Pure scoring engine (fully unit-tested)
 │   ├── storage.ts                # AsyncStorage (→ localStorage on web)
+│   ├── backup.ts                 # Versioned, validated JSON import/export
+│   ├── pwaInstall.ts             # Deferred install prompt + iOS guidance
 │   ├── registerServiceWorker.ts  # Registers the SW (web + prod only)
 │   ├── theme.ts                  # Colors + spacing tokens
 │   ├── components/
@@ -190,6 +201,7 @@ Skull-King/
 │       └── ResultsScreen.tsx
 └── scripts/
     ├── build-pwa.mjs             # Post-export PWA build step
+    ├── test-backup.ts            # Backup validation and merge tests
     └── test-scoring.ts           # Scoring engine tests
 ```
 
@@ -198,6 +210,8 @@ Skull-King/
 ```bash
 npm run web            # Expo web dev server
 npm run build:web      # production PWA build → dist/
-npm run test:scoring   # run the scoring engine tests (29 checks)
+npm test               # typecheck + every automated test suite
+npm run test:scoring   # scoring engine tests
+npm run test:backup    # backup validation, migration and merge tests
 npm run typecheck      # tsc --noEmit
 ```

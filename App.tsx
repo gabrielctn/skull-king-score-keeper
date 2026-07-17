@@ -1,5 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { ActivityIndicator, StatusBar, StyleSheet, View } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  ActivityIndicator,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { Game } from "./src/types";
 import {
   clearGame,
@@ -10,15 +17,50 @@ import {
   saveGameHistory,
 } from "./src/storage";
 import { colors } from "./src/theme";
-import { I18nProvider, detectLang } from "./src/i18n/context";
+import { I18nProvider, detectLang, useI18n } from "./src/i18n/context";
 import { Lang } from "./src/i18n/types";
 import HomeScreen from "./src/screens/HomeScreen";
 import SetupScreen from "./src/screens/SetupScreen";
 import GameScreen from "./src/screens/GameScreen";
 import ResultsScreen from "./src/screens/ResultsScreen";
 import { registerServiceWorker } from "./src/registerServiceWorker";
+import { createGame } from "./src/scoring";
+import { initializePwaInstallPrompt } from "./src/pwaInstall";
+import {
+  deduplicateGames,
+  downloadBackupJson,
+  mergeBackupData,
+  parseBackup,
+  pickBackupJsonFile,
+  serializeBackup,
+} from "./src/backup";
 
 type Screen = "home" | "setup" | "game" | "results";
+type PendingCurrentGame = Game | null | undefined;
+
+function StorageWarning({
+  visible,
+  onDismiss,
+}: {
+  visible: boolean;
+  onDismiss: () => void;
+}) {
+  const { t } = useI18n();
+  if (!visible) return null;
+  return (
+    <View style={styles.storageWarning} accessibilityRole="alert">
+      <Text style={styles.storageWarningText}>{t.common.storageError}</Text>
+      <TouchableOpacity
+        style={styles.storageWarningDismiss}
+        onPress={onDismiss}
+        accessibilityRole="button"
+        accessibilityLabel={t.common.dismiss}
+      >
+        <Text style={styles.storageWarningDismissText}>×</Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
 
 export default function App() {
   const [screen, setScreen] = useState<Screen>("home");
@@ -26,11 +68,93 @@ export default function App() {
   const [gameHistory, setGameHistory] = useState<Game[]>([]);
   const [lang, setLang] = useState<Lang | null>(null);
   const [loading, setLoading] = useState(true);
+  const [storageError, setStorageError] = useState(false);
+  const historyRef = useRef<Game[]>([]);
+  const pendingCurrentSave = useRef<PendingCurrentGame>(undefined);
+  const currentSaveWorker = useRef<Promise<void> | null>(null);
+  const pendingHistorySave = useRef<Game[] | null>(null);
+  const historySaveWorker = useRef<Promise<void> | null>(null);
+  const historySaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const persistenceFailures = useRef(0);
+
+  const markStorageFailure = () => {
+    persistenceFailures.current += 1;
+    setStorageError(true);
+  };
+
+  const startCurrentSave = (): Promise<void> => {
+    if (currentSaveWorker.current) return currentSaveWorker.current;
+    const worker = (async () => {
+      while (pendingCurrentSave.current !== undefined) {
+        const pending = pendingCurrentSave.current;
+        pendingCurrentSave.current = undefined;
+        const saved = pending ? await saveGame(pending) : await clearGame();
+        if (!saved) markStorageFailure();
+      }
+    })();
+    currentSaveWorker.current = worker;
+    void worker.finally(() => {
+      currentSaveWorker.current = null;
+      if (pendingCurrentSave.current !== undefined) void startCurrentSave();
+    });
+    return worker;
+  };
+
+  const queueCurrentSave = (nextGame: Game | null) => {
+    pendingCurrentSave.current = nextGame;
+    void startCurrentSave();
+  };
+
+  const flushCurrentSave = async () => {
+    if (pendingCurrentSave.current !== undefined) void startCurrentSave();
+    while (currentSaveWorker.current) await currentSaveWorker.current;
+  };
+
+  const startHistorySave = (): Promise<void> => {
+    if (historySaveWorker.current) return historySaveWorker.current;
+    const worker = (async () => {
+      while (pendingHistorySave.current) {
+        const pending = pendingHistorySave.current;
+        pendingHistorySave.current = null;
+        if (!(await saveGameHistory(pending))) markStorageFailure();
+      }
+    })();
+    historySaveWorker.current = worker;
+    void worker.finally(() => {
+      historySaveWorker.current = null;
+      if (pendingHistorySave.current && historySaveTimer.current === null) {
+        void startHistorySave();
+      }
+    });
+    return worker;
+  };
+
+  const queueHistorySave = (history: Game[], immediate = false) => {
+    pendingHistorySave.current = history;
+    if (historySaveTimer.current) clearTimeout(historySaveTimer.current);
+    historySaveTimer.current = null;
+    if (immediate) {
+      void startHistorySave();
+      return;
+    }
+    historySaveTimer.current = setTimeout(() => {
+      historySaveTimer.current = null;
+      void startHistorySave();
+    }, 300);
+  };
+
+  const flushHistorySave = async () => {
+    if (historySaveTimer.current) clearTimeout(historySaveTimer.current);
+    historySaveTimer.current = null;
+    if (pendingHistorySave.current) void startHistorySave();
+    while (historySaveWorker.current) await historySaveWorker.current;
+  };
 
   // Restore the saved game and language on launch, and register the PWA
   // service worker (web only). Loading the language here (before first paint)
   // avoids a flash of the wrong language.
   useEffect(() => {
+    initializePwaInstallPrompt();
     registerServiceWorker();
     (async () => {
       const [saved, history, savedLang] = await Promise.all([
@@ -44,63 +168,110 @@ export default function App() {
             (a, b) => b.updatedAt - a.updatedAt
           )
         : history;
+      historyRef.current = migratedHistory;
       setGameHistory(migratedHistory);
       if (saved && history.every((item) => item.id !== saved.id)) {
-        void saveGameHistory(migratedHistory);
+        queueHistorySave(migratedHistory, true);
       }
       setLang(savedLang ?? detectLang());
       setLoading(false);
     })();
   }, []);
 
-  const persist = (g: Game) => {
+  const persist = (g: Game, historyImmediate = false) => {
     setGame(g);
-    void saveGame(g);
-    setGameHistory((previous) => {
-      const next = [g, ...previous.filter((item) => item.id !== g.id)].sort(
-        (a, b) => b.updatedAt - a.updatedAt
-      );
-      void saveGameHistory(next);
-      return next;
-    });
+    queueCurrentSave(g);
+    const next = [
+      g,
+      ...historyRef.current.filter((item) => item.id !== g.id),
+    ].sort((a, b) => b.updatedAt - a.updatedAt);
+    historyRef.current = next;
+    setGameHistory(next);
+    queueHistorySave(next, historyImmediate);
   };
 
   const handleNewGame = () => setScreen("setup");
 
   const handleStart = (g: Game) => {
-    persist(g);
+    persist(g, true);
     setScreen("game");
   };
 
   const handleOpenHistory = (selectedGame: Game) => {
     setGame(selectedGame);
-    void saveGame(selectedGame);
+    queueCurrentSave(selectedGame);
     setScreen(selectedGame.status === "finished" ? "results" : "game");
   };
 
   const handleDeleteHistory = (gameId: string) => {
-    setGameHistory((previous) => {
-      const next = previous.filter((item) => item.id !== gameId);
-      void saveGameHistory(next);
-      return next;
-    });
+    const next = historyRef.current.filter((item) => item.id !== gameId);
+    historyRef.current = next;
+    setGameHistory(next);
+    queueHistorySave(next, true);
     if (game?.id === gameId) {
       setGame(null);
-      void clearGame();
+      queueCurrentSave(null);
     }
   };
 
+  const handleExportBackup = async () => {
+    const json = serializeBackup({ currentGame: game, history: gameHistory });
+    downloadBackupJson(json);
+  };
+
+  const handleImportBackup = async (): Promise<number | null> => {
+    const json = await pickBackupJsonFile();
+    if (json === null) return null;
+
+    const imported = parseBackup(json);
+    const merged = mergeBackupData(
+      { currentGame: game, history: gameHistory },
+      imported
+    );
+    const failureCount = persistenceFailures.current;
+    queueCurrentSave(merged.currentGame);
+    queueHistorySave(merged.history, true);
+    await Promise.all([flushCurrentSave(), flushHistorySave()]);
+    if (persistenceFailures.current !== failureCount) {
+      throw new Error("Imported backup could not be persisted");
+    }
+    historyRef.current = merged.history;
+    setGame(merged.currentGame);
+    setGameHistory(merged.history);
+
+    return deduplicateGames([
+      ...imported.history,
+      ...(imported.currentGame ? [imported.currentGame] : []),
+    ]).length;
+  };
+
   const handleFinish = (g: Game) => {
-    persist(g);
+    // A finished game must reach history before the user can immediately
+    // clear the current slot or launch a rematch from the results screen.
+    persist(g, true);
     setScreen("results");
   };
 
   const handleHome = () => setScreen("home");
 
   const handleNewFromResults = () => {
-    void clearGame();
+    queueCurrentSave(null);
     setGame(null);
     setScreen("setup");
+  };
+
+  const handleRematch = () => {
+    if (!game) return;
+    const rematch = createGame(
+      game.players.map((player) => ({ ...player })),
+      game.cardsDealt.length,
+      game.advancedCards,
+      game.twoPlayerGhost,
+      game.newExpansion,
+      game.cardsDealt
+    );
+    persist(rematch, true);
+    setScreen("game");
   };
 
   if (loading || lang === null) {
@@ -119,9 +290,12 @@ export default function App() {
         {screen === "home" && (
           <HomeScreen
             gameHistory={gameHistory}
+            currentGameId={game?.id ?? null}
             onNewGame={handleNewGame}
             onOpenGame={handleOpenHistory}
             onDeleteGame={handleDeleteHistory}
+            onExportBackup={handleExportBackup}
+            onImportBackup={handleImportBackup}
           />
         )}
         {screen === "setup" && (
@@ -138,11 +312,16 @@ export default function App() {
         {screen === "results" && game && (
           <ResultsScreen
             game={game}
+            onRematch={handleRematch}
             onNewGame={handleNewFromResults}
             onHome={handleHome}
             onReview={() => setScreen("game")}
           />
         )}
+        <StorageWarning
+          visible={storageError}
+          onDismiss={() => setStorageError(false)}
+        />
       </View>
     </I18nProvider>
   );
@@ -156,4 +335,31 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  storageWarning: {
+    position: "absolute",
+    left: 16,
+    right: 16,
+    bottom: 16,
+    zIndex: 100,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: colors.danger,
+    borderRadius: 10,
+    paddingStart: 14,
+    minHeight: 52,
+  },
+  storageWarningText: {
+    flex: 1,
+    color: colors.text,
+    fontSize: 13,
+    lineHeight: 18,
+    paddingVertical: 10,
+  },
+  storageWarningDismiss: {
+    width: 44,
+    height: 44,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  storageWarningDismissText: { color: colors.text, fontSize: 24 },
 });

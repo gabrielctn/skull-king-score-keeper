@@ -7,6 +7,8 @@ export const zh: Strings = {
     home: "首页",
     back: "返回",
     newGame: "新游戏",
+    storageError: "本地保存失败。关闭应用前请先导出对局。",
+    dismiss: "关闭",
   },
 
   home: {
@@ -27,6 +29,12 @@ export const zh: Strings = {
     playersRound: (players, round, total) =>
       `${players} 名玩家 · 第 ${round}/${total} 回合`,
     leading: (name, total) => `领先：${name}（${total}）`,
+    dataTitle: "你的数据",
+    dataHint: "导出对局备份，或在此设备上恢复备份。",
+    exportBackup: "导出",
+    importBackup: "导入",
+    importSuccess: (count) => `已导入 ${count} 局游戏。`,
+    backupError: "无法读取此备份。",
     support: "支持开发者 ☕",
     supportHint: "自愿赞助 · 本应用将始终完全免费。",
     disclaimer:
@@ -58,6 +66,13 @@ export const zh: Strings = {
       "请按顺时针座位顺序输入玩家——玩家 1 在第一回合发牌。使用箭头调整座位顺序。",
     playerPlaceholder: (n) => `玩家 ${n}`,
     addPlayer: "+ 添加玩家",
+    quickTitle: "快速游戏",
+    quickHint: "推荐设置已就绪。输入玩家即可开始，也可以自定义本局。",
+    customize: "自定义游戏",
+    hideCustomization: "隐藏选项",
+    movePlayerUp: (name) => `将 ${name} 上移`,
+    movePlayerDown: (name) => `将 ${name} 下移`,
+    removePlayer: (name) => `移除 ${name}`,
     twoPlayers: "双人游戏",
     ghostTitle: "灰胡子幽灵 👻",
     ghostHint:
@@ -113,12 +128,25 @@ export const zh: Strings = {
     finish: "结束游戏 🏁",
     updateRound: "更新回合",
     scoreRound: "结算回合 →",
+    untouchedTitle: "结算本回合？",
+    untouchedMessage:
+      "尚未输入叫牌或赢墩。请确认两位玩家都叫零，且所有墩都由灰胡子赢得。",
+    untouchedCancel: "检查输入",
+    untouchedConfirm: "确认结算",
   },
 
   results: {
     gameOver: "游戏结束",
     winner: (name, total) => `${name} 以 ${total} 分获胜！`,
     review: "逐回合查看",
+    rematch: "与同一队伍再来一局",
+    installTitle: "把计分器留在船上",
+    installHint: "安装应用，快速打开并完全离线游玩。",
+    installIosHint:
+      "如有需要，请先在 Safari 中打开此页面，再点按“共享”和“添加到主屏幕”。",
+    installError: "无法开始安装，你可以稍后重试。",
+    install: "安装应用",
+    installDismiss: "稍后",
     backHome: "返回首页",
   },
 

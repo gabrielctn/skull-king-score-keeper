@@ -7,6 +7,9 @@ export const fr: Strings = {
     home: "Accueil",
     back: "Retour",
     newGame: "Nouvelle partie",
+    storageError:
+      "La sauvegarde locale a échoué. Exportez vos parties avant de fermer l’app.",
+    dismiss: "Fermer",
   },
 
   home: {
@@ -27,6 +30,13 @@ export const fr: Strings = {
     playersRound: (players, round, total) =>
       `${players} joueurs · manche ${round} sur ${total}`,
     leading: (name, total) => `En tête : ${name} (${total})`,
+    dataTitle: "Vos données",
+    dataHint: "Exportez une copie de vos parties ou restaurez-la sur cet appareil.",
+    exportBackup: "Exporter",
+    importBackup: "Importer",
+    importSuccess: (count) =>
+      `${count} ${count === 1 ? "partie importée" : "parties importées"}.`,
+    backupError: "Impossible de lire cette sauvegarde.",
     support: "Soutenir le développeur ☕",
     supportHint:
       "Contribution facultative · l’application reste entièrement gratuite.",
@@ -59,6 +69,14 @@ export const fr: Strings = {
       "Saisissez les joueurs dans l'ordre des places, sens horaire — le joueur 1 distribue la 1re manche. Utilisez les flèches pour réorganiser la table.",
     playerPlaceholder: (n) => `Joueur ${n}`,
     addPlayer: "+ Ajouter un joueur",
+    quickTitle: "Partie rapide",
+    quickHint:
+      "Les réglages recommandés sont prêts. Saisissez les joueurs et commencez, ou personnalisez la partie.",
+    customize: "Personnaliser la partie",
+    hideCustomization: "Masquer les options",
+    movePlayerUp: (name) => `Déplacer ${name} vers le haut`,
+    movePlayerDown: (name) => `Déplacer ${name} vers le bas`,
+    removePlayer: (name) => `Retirer ${name}`,
     twoPlayers: "Deux joueurs",
     ghostTitle: "Fantôme Barbe Grise 👻",
     ghostHint:
@@ -116,12 +134,25 @@ export const fr: Strings = {
     finish: "Terminer la partie 🏁",
     updateRound: "Modifier la manche",
     scoreRound: "Valider la manche →",
+    untouchedTitle: "Valider cette manche ?",
+    untouchedMessage:
+      "Aucune mise ni aucun pli n’a été saisi. Confirmez que les deux joueurs ont misé zéro et que Barbe Grise a remporté tous les plis.",
+    untouchedCancel: "Vérifier",
+    untouchedConfirm: "Oui, valider",
   },
 
   results: {
     gameOver: "Partie terminée",
     winner: (name, total) => `${name} gagne avec ${total} !`,
     review: "Revoir manche par manche",
+    rematch: "Revanche avec le même équipage",
+    installTitle: "Gardez le compteur à bord",
+    installHint: "Installez l’app pour la retrouver rapidement et jouer hors ligne.",
+    installIosHint:
+      "Ouvrez cette page dans Safari si nécessaire, puis touchez Partager et « Sur l’écran d’accueil ».",
+    installError: "L’installation n’a pas pu démarrer. Vous pourrez réessayer plus tard.",
+    install: "Installer l’app",
+    installDismiss: "Plus tard",
     backHome: "Retour à l'accueil",
   },
 
