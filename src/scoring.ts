@@ -478,7 +478,11 @@ export function createGame(
   cardsPerRound?: number[]
 ): Game {
   const now = Date.now();
-  const roundCount = cardsPerRound?.length ?? totalRounds;
+  // An empty structure would create a game with zero rounds but a
+  // currentRound of 1; fall back to the classic structure instead.
+  const structure =
+    cardsPerRound && cardsPerRound.length > 0 ? cardsPerRound : undefined;
+  const roundCount = structure?.length ?? totalRounds;
   return {
     id: `game_${now}`,
     players,
@@ -487,8 +491,8 @@ export function createGame(
     rounds: Array.from({ length: roundCount }, () => emptyRound(players)),
     lootUses: Array.from({ length: roundCount }, () => []),
     discardedTricks: Array.from({ length: roundCount }, () => 0),
-    cardsDealt: cardsPerRound
-      ? [...cardsPerRound]
+    cardsDealt: structure
+      ? [...structure]
       : Array.from({ length: roundCount }, (_, i) => i + 1),
     advancedCards,
     newExpansion,

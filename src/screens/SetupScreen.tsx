@@ -207,56 +207,59 @@ export default function SetupScreen({ onStart, onBack }: Props) {
             {t.setup.rounds}
           </Text>
           <Text style={styles.seatingHint}>{t.setup.structureHint}</Text>
-          {ROUND_STRUCTURE_IDS.map((id) => {
-            const selected = structure === id;
-            const cards = structureCards(id, id === "classic" ? rounds : 10);
-            return (
-              <TouchableOpacity
-                key={id}
-                style={[
-                  styles.structureRow,
-                  selected && styles.structureRowSelected,
-                ]}
-                onPress={() => setStructure(id)}
-                accessibilityRole="radio"
-                accessibilityState={{ checked: selected }}
-                accessibilityLabel={`${t.setup.structureNames[id]} · ${t.setup.structureRounds(cards.length)}`}
-              >
-                <View
-                  style={[styles.radio, selected && styles.radioSelected]}
+          <View accessibilityRole="radiogroup" accessibilityLabel={t.setup.rounds}>
+            {ROUND_STRUCTURE_IDS.map((id) => {
+              const selected = structure === id;
+              const cards = structureCards(id, id === "classic" ? rounds : 10);
+              return (
+                <TouchableOpacity
+                  key={id}
+                  style={[
+                    styles.structureRow,
+                    selected && styles.structureRowSelected,
+                  ]}
+                  onPress={() => setStructure(id)}
+                  accessibilityRole="radio"
+                  accessibilityState={{ checked: selected }}
+                  aria-checked={selected}
+                  accessibilityLabel={`${t.setup.structureNames[id]} · ${t.setup.structureRounds(cards.length)}`}
                 >
-                  {selected ? <View style={styles.radioDot} /> : null}
-                </View>
-                <View style={{ flex: 1 }}>
-                  <View style={styles.structureHeader}>
-                    <Text style={styles.advancedTitle}>
-                      {t.setup.structureNames[id]}
-                    </Text>
-                    <Text style={styles.structureRounds}>
-                      {t.setup.structureRounds(cards.length)}
-                    </Text>
+                  <View
+                    style={[styles.radio, selected && styles.radioSelected]}
+                  >
+                    {selected ? <View style={styles.radioDot} /> : null}
                   </View>
-                  <Text style={styles.structureCards}>
-                    {cards.join(" · ")}
-                  </Text>
-                  {id === "classic" && selected ? (
-                    <View style={styles.classicStepper}>
-                      <Stepper
-                        value={rounds}
-                        onChange={setRounds}
-                        min={1}
-                        max={10}
-                        label={t.setup.rounds}
-                      />
-                      <Text style={styles.roundsHint}>
-                        {t.setup.roundsHint}
+                  <View style={{ flex: 1 }}>
+                    <View style={styles.structureHeader}>
+                      <Text style={styles.advancedTitle}>
+                        {t.setup.structureNames[id]}
+                      </Text>
+                      <Text style={styles.structureRounds}>
+                        {t.setup.structureRounds(cards.length)}
                       </Text>
                     </View>
-                  ) : null}
-                </View>
-              </TouchableOpacity>
-            );
-          })}
+                    <Text style={styles.structureCards}>
+                      {cards.join(" · ")}
+                    </Text>
+                    {id === "classic" && selected ? (
+                      <View style={styles.classicStepper}>
+                        <Stepper
+                          value={rounds}
+                          onChange={setRounds}
+                          min={1}
+                          max={10}
+                          label={t.setup.rounds}
+                        />
+                        <Text style={styles.roundsHint}>
+                          {t.setup.roundsHint}
+                        </Text>
+                      </View>
+                    ) : null}
+                  </View>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
 
           <Text style={[styles.section, { marginTop: spacing.lg }]}>
             {t.setup.expansion}

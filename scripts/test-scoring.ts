@@ -562,6 +562,10 @@ console.log("\nRound structures (rulebook 'Variable Card Counts')");
 
   const classic = createGame(players, 10, true, false, true);
   eqs("createGame without a structure stays classic", classic.cardsDealt.join(","), "1,2,3,4,5,6,7,8,9,10");
+
+  const emptyStructure = createGame(players, 10, true, false, true, []);
+  eq("empty structure falls back to the classic rounds", emptyStructure.totalRounds, 10);
+  eqs("empty structure deals the classic sequence", emptyStructure.cardsDealt.join(","), "1,2,3,4,5,6,7,8,9,10");
 }
 
 console.log("\ni18n: every locale names every round structure");
