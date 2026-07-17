@@ -65,6 +65,18 @@ export const fr: Strings = {
       "La variante à 2 joueurs décrite dans le livret : distribuez une troisième main pour le fantôme Barbe Grise. Il joue mais ne mise jamais et ne marque pas, il vous vole donc des plis — vos deux totaux de plis peuvent être inférieurs au nombre de cartes distribuées.",
     rounds: "Manches",
     roundsHint: "Une partie standard de Skull King compte 10 manches.",
+    structureHint:
+      "Le livret propose plusieurs façons de distribuer les cartes. Choisissez la structure des manches de cette partie.",
+    structureNames: {
+      classic: "Classique",
+      evenKeeled: "Pas d'impair",
+      brawl: "Prêt au combat",
+      skirmish: "Attaque éclair",
+      barrage: "Tir de barrage",
+      whirlpool: "Tourbillon",
+      bedtime: "L'heure du dodo",
+    },
+    structureRounds: (n) => `${n} ${n === 1 ? "manche" : "manches"}`,
     expansion: "Cartes d'extension",
     advancedTitle: "Butin & pari Rascal",
     advancedHint:

@@ -17,6 +17,11 @@ import { createGame } from "../scoring";
 import { Game } from "../types";
 import Stepper from "../components/Stepper";
 import ToggleSwitch from "../components/ToggleSwitch";
+import {
+  ROUND_STRUCTURE_IDS,
+  RoundStructureId,
+  structureCards,
+} from "../roundStructures";
 import { colors, radius, spacing } from "../theme";
 import { illustrations } from "../assets/illustrations";
 import { useI18n } from "../i18n/context";
@@ -39,6 +44,7 @@ export default function SetupScreen({ onStart, onBack }: Props) {
     { id: newId(), name: "" },
   ]);
   const [rounds, setRounds] = useState(10);
+  const [structure, setStructure] = useState<RoundStructureId>("classic");
   const [advanced, setAdvanced] = useState(true);
   const [newExpansion, setNewExpansion] = useState(true);
   const [twoPlayerGhost, setTwoPlayerGhost] = useState(true);
@@ -74,13 +80,15 @@ export default function SetupScreen({ onStart, onBack }: Props) {
 
   const start = () => {
     if (!canStart) return;
+    const cardsPerRound = structureCards(structure, rounds);
     onStart(
       createGame(
         named,
-        rounds,
+        cardsPerRound.length,
         advanced,
         isTwoPlayer && twoPlayerGhost,
-        newExpansion
+        newExpansion,
+        cardsPerRound
       )
     );
   };
@@ -198,9 +206,59 @@ export default function SetupScreen({ onStart, onBack }: Props) {
           <Text style={[styles.section, { marginTop: spacing.lg }]}>
             {t.setup.rounds}
           </Text>
-          <View style={styles.roundsCard}>
-            <Stepper value={rounds} onChange={setRounds} min={1} max={10} />
-            <Text style={styles.roundsHint}>{t.setup.roundsHint}</Text>
+          <Text style={styles.seatingHint}>{t.setup.structureHint}</Text>
+          <View accessibilityRole="radiogroup" accessibilityLabel={t.setup.rounds}>
+            {ROUND_STRUCTURE_IDS.map((id) => {
+              const selected = structure === id;
+              const cards = structureCards(id, id === "classic" ? rounds : 10);
+              return (
+                <TouchableOpacity
+                  key={id}
+                  style={[
+                    styles.structureRow,
+                    selected && styles.structureRowSelected,
+                  ]}
+                  onPress={() => setStructure(id)}
+                  accessibilityRole="radio"
+                  accessibilityState={{ checked: selected }}
+                  aria-checked={selected}
+                  accessibilityLabel={`${t.setup.structureNames[id]} · ${t.setup.structureRounds(cards.length)}`}
+                >
+                  <View
+                    style={[styles.radio, selected && styles.radioSelected]}
+                  >
+                    {selected ? <View style={styles.radioDot} /> : null}
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <View style={styles.structureHeader}>
+                      <Text style={styles.advancedTitle}>
+                        {t.setup.structureNames[id]}
+                      </Text>
+                      <Text style={styles.structureRounds}>
+                        {t.setup.structureRounds(cards.length)}
+                      </Text>
+                    </View>
+                    <Text style={styles.structureCards}>
+                      {cards.join(" · ")}
+                    </Text>
+                    {id === "classic" && selected ? (
+                      <View style={styles.classicStepper}>
+                        <Stepper
+                          value={rounds}
+                          onChange={setRounds}
+                          min={1}
+                          max={10}
+                          label={t.setup.rounds}
+                        />
+                        <Text style={styles.roundsHint}>
+                          {t.setup.roundsHint}
+                        </Text>
+                      </View>
+                    ) : null}
+                  </View>
+                </TouchableOpacity>
+              );
+            })}
           </View>
 
           <Text style={[styles.section, { marginTop: spacing.lg }]}>
@@ -350,15 +408,44 @@ const styles = StyleSheet.create({
     marginTop: spacing.xs,
   },
   addText: { color: colors.gold, fontSize: 16, fontWeight: "600" },
-  roundsCard: {
+  roundsHint: { color: colors.textDim, fontSize: 12, marginTop: spacing.sm },
+  structureRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
     backgroundColor: colors.card,
     borderColor: colors.cardBorder,
     borderWidth: 1,
     borderRadius: radius.md,
     padding: spacing.md,
-    alignItems: "center",
+    marginBottom: spacing.sm,
   },
-  roundsHint: { color: colors.textDim, fontSize: 12, marginTop: spacing.sm },
+  structureRowSelected: { borderColor: colors.gold },
+  radio: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: colors.cardBorder,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: spacing.md,
+    marginTop: 1,
+  },
+  radioSelected: { borderColor: colors.gold },
+  radioDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: colors.gold,
+  },
+  structureHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  structureRounds: { color: colors.textDim, fontSize: 12 },
+  structureCards: { color: colors.textDim, fontSize: 13, marginTop: 4 },
+  classicStepper: { alignItems: "center", marginTop: spacing.sm },
   advancedRow: {
     flexDirection: "row",
     alignItems: "center",

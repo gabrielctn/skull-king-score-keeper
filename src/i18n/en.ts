@@ -64,6 +64,18 @@ export const en: Strings = {
       "The two-player variant described in the rulebook: deal a third hand for the Greybeard ghost. He plays but never bids or scores, so he steals some tricks — your two trick counts can total less than the cards dealt.",
     rounds: "Rounds",
     roundsHint: "Standard Skull King is 10 rounds.",
+    structureHint:
+      "The rulebook suggests several ways to deal the cards. Pick the round structure for this game.",
+    structureNames: {
+      classic: "Classic",
+      evenKeeled: "Even Keeled",
+      brawl: "Skip to the Brawl",
+      skirmish: "Swift-n-Salty Skirmish",
+      barrage: "Broadside Barrage",
+      whirlpool: "Whirlpool",
+      bedtime: "Past Your Bedtime",
+    },
+    structureRounds: (n) => `${n} ${n === 1 ? "round" : "rounds"}`,
     expansion: "Expansion cards",
     advancedTitle: "Loot & Rascal wager",
     advancedHint:
