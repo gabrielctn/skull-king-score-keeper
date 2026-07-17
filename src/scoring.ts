@@ -469,18 +469,27 @@ export function createGame(
   totalRounds = 10,
   advancedCards = true,
   twoPlayerGhost = false,
-  newExpansion = true
+  newExpansion = true,
+  /**
+   * Cards dealt in each round, for the rulebook's alternate round structures
+   * ("Pas d'impair", "Prêt au combat", ...). When provided, its length wins
+   * over `totalRounds`. Defaults to the classic 1, 2, ... `totalRounds`.
+   */
+  cardsPerRound?: number[]
 ): Game {
   const now = Date.now();
+  const roundCount = cardsPerRound?.length ?? totalRounds;
   return {
     id: `game_${now}`,
     players,
-    totalRounds,
+    totalRounds: roundCount,
     currentRound: 1,
-    rounds: Array.from({ length: totalRounds }, () => emptyRound(players)),
-    lootUses: Array.from({ length: totalRounds }, () => []),
-    discardedTricks: Array.from({ length: totalRounds }, () => 0),
-    cardsDealt: Array.from({ length: totalRounds }, (_, i) => i + 1),
+    rounds: Array.from({ length: roundCount }, () => emptyRound(players)),
+    lootUses: Array.from({ length: roundCount }, () => []),
+    discardedTricks: Array.from({ length: roundCount }, () => 0),
+    cardsDealt: cardsPerRound
+      ? [...cardsPerRound]
+      : Array.from({ length: roundCount }, (_, i) => i + 1),
     advancedCards,
     newExpansion,
     twoPlayerGhost,

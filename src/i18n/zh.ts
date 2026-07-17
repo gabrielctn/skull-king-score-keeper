@@ -64,6 +64,17 @@ export const zh: Strings = {
       "规则书中的双人变体：为灰胡子幽灵发第三手牌。他会出牌，但从不叫牌或得分，因此会抢走部分墩——两位玩家赢得的墩数之和可能少于发牌数。",
     rounds: "回合数",
     roundsHint: "标准 Skull King 游戏共 10 回合。",
+    structureHint: "规则书提供多种发牌方式。请选择本局的回合结构。",
+    structureNames: {
+      classic: "经典",
+      evenKeeled: "只玩双数",
+      brawl: "直接开战",
+      skirmish: "闪电突袭",
+      barrage: "全力炮击",
+      whirlpool: "漩涡",
+      bedtime: "睡前一局",
+    },
+    structureRounds: (n) => `${n} 回合`,
     expansion: "扩展牌",
     advancedTitle: "战利品与 Rascal 赌注",
     advancedHint:

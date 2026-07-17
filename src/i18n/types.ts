@@ -4,6 +4,8 @@
  * is the translation-completeness check. Parameterized strings are functions.
  */
 
+import { RoundStructureId } from "../roundStructures";
+
 export type Lang = "en" | "fr" | "de" | "ar" | "zh";
 
 /** A rules-modal entry: a bold title and a paragraph body. */
@@ -71,6 +73,12 @@ export interface Strings {
     ghostHint: string;
     rounds: string;
     roundsHint: string;
+    /** Explains that the rulebook offers alternate round/card structures. */
+    structureHint: string;
+    /** Rulebook name of each round structure. */
+    structureNames: Record<RoundStructureId, string>;
+    /** "{n} rounds" summary shown next to a structure's card sequence. */
+    structureRounds: (n: number) => string;
     expansion: string;
     advancedTitle: string;
     advancedHint: string;

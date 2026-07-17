@@ -22,6 +22,11 @@ import {
   standings,
 } from "../src/scoring";
 import { dealerIndex, leaderIndex, playOrder } from "../src/turnOrder";
+import {
+  ROUND_STRUCTURE_IDS,
+  RoundStructureId,
+  structureCards,
+} from "../src/roundStructures";
 import { en } from "../src/i18n/en";
 import { fr } from "../src/i18n/fr";
 import { de } from "../src/i18n/de";
@@ -520,6 +525,55 @@ const b2 = standings(g2);
 eq("tie: leader total", b2[0].total, 20);
 eq("tie: both rank 1", b2[0].rank + b2[1].rank, 2);
 eq("tie: third ranked 3", b2[2].rank, 3);
+
+console.log("\nRound structures (rulebook 'Variable Card Counts')");
+{
+  const expected: Record<RoundStructureId, number[]> = {
+    classic: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    evenKeeled: [2, 2, 4, 4, 6, 6, 8, 8, 10, 10],
+    brawl: [6, 7, 8, 9, 10],
+    skirmish: [5, 5, 5, 5, 5],
+    barrage: [10, 10, 10, 10, 10, 10, 10, 10, 10, 10],
+    whirlpool: [9, 9, 7, 7, 5, 5, 3, 3, 1, 1],
+    bedtime: [1],
+  };
+  for (const id of ROUND_STRUCTURE_IDS) {
+    eqs(`${id} card sequence`, structureCards(id).join(","), expected[id].join(","));
+  }
+  eqs(
+    "classic can still be shortened",
+    structureCards("classic", 5).join(","),
+    "1,2,3,4,5"
+  );
+
+  const players = [
+    { id: "a", name: "Anne" },
+    { id: "b", name: "Bonny" },
+  ];
+  const brawl = createGame(players, 10, true, false, true, structureCards("brawl"));
+  eq("brawl game has 5 rounds", brawl.totalRounds, 5);
+  eqs("brawl game deals 6-10", brawl.cardsDealt.join(","), "6,7,8,9,10");
+  eq("brawl game has entries per round", brawl.rounds.length, 5);
+  eq("brawl game tracks loot per round", brawl.lootUses.length, 5);
+  eq("brawl game tracks discards per round", brawl.discardedTricks.length, 5);
+  brawl.rounds[0] = { a: E(0, 0), b: E(0, 1) };
+  eq("zero bid uses the structure's card count", playerTotal(brawl, "a"), 60);
+  eq("zero-bid miss uses the structure's card count", playerTotal(brawl, "b"), -60);
+
+  const classic = createGame(players, 10, true, false, true);
+  eqs("createGame without a structure stays classic", classic.cardsDealt.join(","), "1,2,3,4,5,6,7,8,9,10");
+}
+
+console.log("\ni18n: every locale names every round structure");
+for (const [locale, strings] of Object.entries({ en, fr, de, ar, zh })) {
+  for (const id of ROUND_STRUCTURE_IDS) {
+    eq(
+      `${locale} names '${id}'`,
+      (strings.setup.structureNames[id] ?? "").length > 0 ? 1 : 0,
+      1
+    );
+  }
+}
 
 console.log("\ni18n: every locale's rules and release notes stay in sync");
 for (const [locale, strings] of Object.entries({ fr, de, ar, zh })) {

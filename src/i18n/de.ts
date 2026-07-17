@@ -64,6 +64,18 @@ export const de: Strings = {
       "Die Zwei-Spieler-Variante aus der Anleitung: Teile eine dritte Hand für den Graubart-Geist aus. Er spielt, bietet und punktet aber nie. So stiehlt er Stiche — die Summe eurer Stiche kann kleiner als die Zahl der ausgeteilten Karten sein.",
     rounds: "Runden",
     roundsHint: "Eine Standardpartie Skull King hat 10 Runden.",
+    structureHint:
+      "Die Anleitung schlägt mehrere Kartenverteilungen vor. Wähle die Rundenstruktur für diese Partie.",
+    structureNames: {
+      classic: "Klassisch",
+      evenKeeled: "Nur gerade Zahlen",
+      brawl: "Direkt ins Gefecht",
+      skirmish: "Blitzangriff",
+      barrage: "Breitseiten-Beschuss",
+      whirlpool: "Strudel",
+      bedtime: "Schlafenszeit",
+    },
+    structureRounds: (n) => `${n} ${n === 1 ? "Runde" : "Runden"}`,
     expansion: "Erweiterungskarten",
     advancedTitle: "Beute & Rascal-Wette",
     advancedHint:
