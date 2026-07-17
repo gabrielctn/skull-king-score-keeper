@@ -282,9 +282,15 @@ export default function SetupScreen({ onStart, onBack }: Props) {
                 ? t.setup.hideOtherStructures
                 : t.setup.showOtherStructures}
             </Text>
-            <Text style={styles.structureToggleIcon}>
-              {roundVariantsVisible ? "⌃" : "⌄"}
-            </Text>
+            <View style={styles.structureToggleIcon}>
+              <View
+                style={[
+                  styles.structureToggleChevron,
+                  roundVariantsVisible &&
+                    styles.structureToggleChevronExpanded,
+                ]}
+              />
+            </View>
           </TouchableOpacity>
 
           <Text style={[styles.section, { marginTop: spacing.lg }]}>
@@ -485,11 +491,21 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   structureToggleIcon: {
-    color: colors.gold,
-    fontSize: 18,
-    marginLeft: spacing.xs,
-    marginTop: -2,
+    width: 20,
+    height: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    marginStart: spacing.xs,
   },
+  structureToggleChevron: {
+    width: 8,
+    height: 8,
+    borderRightWidth: 2,
+    borderBottomWidth: 2,
+    borderColor: colors.gold,
+    transform: [{ rotate: "45deg" }],
+  },
+  structureToggleChevronExpanded: { transform: [{ rotate: "-135deg" }] },
   advancedRow: {
     flexDirection: "row",
     alignItems: "center",
