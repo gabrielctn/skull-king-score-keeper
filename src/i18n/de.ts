@@ -76,6 +76,8 @@ export const de: Strings = {
       bedtime: "Schlafenszeit",
     },
     structureRounds: (n) => `${n} ${n === 1 ? "Runde" : "Runden"}`,
+    showOtherStructures: "Andere Rundentypen anzeigen",
+    hideOtherStructures: "Andere Rundentypen ausblenden",
     expansion: "Erweiterungskarten",
     advancedTitle: "Beute & Rascal-Wette",
     advancedHint:

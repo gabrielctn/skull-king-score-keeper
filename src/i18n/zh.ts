@@ -75,6 +75,8 @@ export const zh: Strings = {
       bedtime: "睡前一局",
     },
     structureRounds: (n) => `${n} 回合`,
+    showOtherStructures: "显示其他回合类型",
+    hideOtherStructures: "隐藏其他回合类型",
     expansion: "扩展牌",
     advancedTitle: "战利品与 Rascal 赌注",
     advancedHint:

@@ -45,8 +45,9 @@ export default function SetupScreen({ onStart, onBack }: Props) {
   ]);
   const [rounds, setRounds] = useState(10);
   const [structure, setStructure] = useState<RoundStructureId>("classic");
+  const [roundVariantsVisible, setRoundVariantsVisible] = useState(false);
   const [advanced, setAdvanced] = useState(true);
-  const [newExpansion, setNewExpansion] = useState(true);
+  const [newExpansion, setNewExpansion] = useState(false);
   const [twoPlayerGhost, setTwoPlayerGhost] = useState(true);
 
   const setName = (id: string, name: string) =>
@@ -77,6 +78,11 @@ export default function SetupScreen({ onStart, onBack }: Props) {
   // The Greybeard ghost is the official 2-player variant; only offer it (and
   // only apply it) when there are exactly two real players.
   const isTwoPlayer = named.length === 2;
+  const visibleStructureIds = roundVariantsVisible
+    ? ROUND_STRUCTURE_IDS
+    : ROUND_STRUCTURE_IDS.filter(
+        (id) => id === "classic" || id === structure
+      );
 
   const start = () => {
     if (!canStart) return;
@@ -208,7 +214,7 @@ export default function SetupScreen({ onStart, onBack }: Props) {
           </Text>
           <Text style={styles.seatingHint}>{t.setup.structureHint}</Text>
           <View accessibilityRole="radiogroup" accessibilityLabel={t.setup.rounds}>
-            {ROUND_STRUCTURE_IDS.map((id) => {
+            {visibleStructureIds.map((id) => {
               const selected = structure === id;
               const cards = structureCards(id, id === "classic" ? rounds : 10);
               return (
@@ -260,6 +266,26 @@ export default function SetupScreen({ onStart, onBack }: Props) {
               );
             })}
           </View>
+          <TouchableOpacity
+            style={styles.structureToggle}
+            onPress={() => setRoundVariantsVisible((visible) => !visible)}
+            accessibilityRole="button"
+            accessibilityState={{ expanded: roundVariantsVisible }}
+            accessibilityLabel={
+              roundVariantsVisible
+                ? t.setup.hideOtherStructures
+                : t.setup.showOtherStructures
+            }
+          >
+            <Text style={styles.structureToggleText}>
+              {roundVariantsVisible
+                ? t.setup.hideOtherStructures
+                : t.setup.showOtherStructures}
+            </Text>
+            <Text style={styles.structureToggleIcon}>
+              {roundVariantsVisible ? "⌃" : "⌄"}
+            </Text>
+          </TouchableOpacity>
 
           <Text style={[styles.section, { marginTop: spacing.lg }]}>
             {t.setup.expansion}
@@ -446,6 +472,24 @@ const styles = StyleSheet.create({
   structureRounds: { color: colors.textDim, fontSize: 12 },
   structureCards: { color: colors.textDim, fontSize: 13, marginTop: 4 },
   classicStepper: { alignItems: "center", marginTop: spacing.sm },
+  structureToggle: {
+    minHeight: 40,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: spacing.md,
+  },
+  structureToggleText: {
+    color: colors.gold,
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  structureToggleIcon: {
+    color: colors.gold,
+    fontSize: 18,
+    marginLeft: spacing.xs,
+    marginTop: -2,
+  },
   advancedRow: {
     flexDirection: "row",
     alignItems: "center",

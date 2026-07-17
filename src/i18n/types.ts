@@ -79,6 +79,8 @@ export interface Strings {
     structureNames: Record<RoundStructureId, string>;
     /** "{n} rounds" summary shown next to a structure's card sequence. */
     structureRounds: (n: number) => string;
+    showOtherStructures: string;
+    hideOtherStructures: string;
     expansion: string;
     advancedTitle: string;
     advancedHint: string;

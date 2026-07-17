@@ -77,6 +77,8 @@ export const ar: Strings = {
     },
     structureRounds: (n) =>
       n === 1 ? "جولة واحدة" : n === 2 ? "جولتان" : `${n} جولات`,
+    showOtherStructures: "إظهار أنواع الجولات الأخرى",
+    hideOtherStructures: "إخفاء أنواع الجولات الأخرى",
     expansion: "أوراق التوسعة",
     advancedTitle: "الغنيمة ورهان Rascal",
     advancedHint:

@@ -76,6 +76,8 @@ export const en: Strings = {
       bedtime: "Past Your Bedtime",
     },
     structureRounds: (n) => `${n} ${n === 1 ? "round" : "rounds"}`,
+    showOtherStructures: "Show other round types",
+    hideOtherStructures: "Hide other round types",
     expansion: "Expansion cards",
     advancedTitle: "Loot & Rascal wager",
     advancedHint:

@@ -77,6 +77,8 @@ export const fr: Strings = {
       bedtime: "L'heure du dodo",
     },
     structureRounds: (n) => `${n} ${n === 1 ? "manche" : "manches"}`,
+    showOtherStructures: "Afficher les autres types de manches",
+    hideOtherStructures: "Masquer les autres types de manches",
     expansion: "Cartes d'extension",
     advancedTitle: "Butin & pari Rascal",
     advancedHint:
