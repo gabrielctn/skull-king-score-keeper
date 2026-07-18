@@ -7,6 +7,7 @@ export function resolvePreferredLang(locales: readonly string[]): Lang {
     if (
       code === "en" ||
       code === "fr" ||
+      code === "es" ||
       code === "de" ||
       code === "ar" ||
       code === "zh"
