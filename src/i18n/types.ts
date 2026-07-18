@@ -6,6 +6,8 @@
 
 import { RoundStructureId } from "../roundStructures";
 import type { AwardKind } from "../stats";
+import type { RascalBet, ScoringMode } from "../types";
+import type { RascalOutcome } from "../scoring";
 
 export type Lang = "en" | "fr" | "de" | "ar" | "zh";
 
@@ -118,6 +120,16 @@ export interface Strings {
     structureRounds: (n: number) => string;
     showOtherStructures: string;
     hideOtherStructures: string;
+    /** Section header for choosing the official scoring system. */
+    scoring: string;
+    scoringHint: string;
+    /** Rulebook name of each scoring system. */
+    scoringNames: Record<ScoringMode, string>;
+    /** One-line description of each scoring system. */
+    scoringHints: Record<ScoringMode, string>;
+    /** Toggle for the Rascal optional rules (Chevrotine / Boulet de canon). */
+    rascalBetsTitle: string;
+    rascalBetsHint: string;
     expansion: string;
     advancedTitle: string;
     advancedHint: string;
@@ -164,6 +176,12 @@ export interface Strings {
     untouchedMessage: string;
     untouchedCancel: string;
     untouchedConfirm: string;
+    /** Banner line in Rascal games: "… · {points} points at stake". */
+    rascalStake: (points: number) => string;
+    /** Official names of the two Rascal optional-rules declarations. */
+    rascalBetNames: Record<RascalBet, string>;
+    /** Accessibility label of a player's declaration selector. */
+    rascalBetFor: (name: string) => string;
   };
 
   results: {
@@ -272,6 +290,14 @@ export interface Strings {
     bidMissed: (bid: number, difference: number) => string;
     zeroBidSuccess: (cards: number) => string;
     zeroBidMissed: (cards: number) => string;
+    /** Badge names of the Rascal accuracy tiers. */
+    outcomes: Record<RascalOutcome, string>;
+    /** Bid-line labels for Rascal-scored rounds. */
+    rascalBidDirect: (bid: number) => string;
+    rascalBidGlancing: string;
+    rascalBidWhiff: (diff: number) => string;
+    rascalCannonballWon: string;
+    rascalCannonballLost: (diff: number) => string;
     ignored: string;
     items: {
       colored14: (count: number) => string;
@@ -354,12 +380,14 @@ export interface Strings {
     officialRules: string;
     headings: {
       scoring: string;
+      rascal: string;
       bonus: string;
       expansion: string;
       special: string;
       twoPlayer: string;
     };
     scoring: Entry[];
+    rascal: Entry[];
     bonusEntries: Entry[];
     expansion: Entry[];
     special: Entry[];

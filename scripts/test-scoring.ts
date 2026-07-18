@@ -780,6 +780,31 @@ for (const [locale, strings] of Object.entries({ en, fr, de, ar, zh })) {
   }
 }
 
+console.log("\ni18n: every locale names the scoring modes and Rascal terms");
+for (const [locale, strings] of Object.entries({ en, fr, de, ar, zh })) {
+  for (const mode of ["classic", "rascal"] as const) {
+    eq(
+      `${locale} names '${mode}' scoring`,
+      (strings.setup.scoringNames?.[mode] ?? "").length > 0 ? 1 : 0,
+      1
+    );
+  }
+  for (const outcome of ["directHit", "glancingBlow", "whiff"] as const) {
+    eq(
+      `${locale} names '${outcome}'`,
+      (strings.scoreBreakdown.outcomes?.[outcome] ?? "").length > 0 ? 1 : 0,
+      1
+    );
+  }
+  for (const bet of ["buckshot", "cannonball"] as const) {
+    eq(
+      `${locale} names '${bet}'`,
+      (strings.game.rascalBetNames?.[bet] ?? "").length > 0 ? 1 : 0,
+      1
+    );
+  }
+}
+
 console.log("\ni18n: every locale names every award");
 for (const [locale, strings] of Object.entries({ en, fr, de, ar, zh })) {
   for (const kind of AWARD_KINDS) {
@@ -792,9 +817,10 @@ for (const [locale, strings] of Object.entries({ en, fr, de, ar, zh })) {
 }
 
 console.log("\ni18n: every locale's rules and release notes stay in sync");
-eq("English release-note entries", en.whatsNew.items.length, 4);
+eq("English release-note entries", en.whatsNew.items.length, 3);
 for (const [locale, strings] of Object.entries({ fr, de, ar, zh })) {
   eq(`${locale} scoring entries`, strings.rules.scoring.length, en.rules.scoring.length);
+  eq(`${locale} rascal entries`, (strings.rules.rascal ?? []).length, en.rules.rascal?.length ?? -1);
   eq(`${locale} bonus entries`, strings.rules.bonusEntries.length, en.rules.bonusEntries.length);
   eq(`${locale} expansion entries`, strings.rules.expansion.length, en.rules.expansion.length);
   eq(`${locale} special entries`, strings.rules.special.length, en.rules.special.length);

@@ -45,10 +45,9 @@ export const zh: Strings = {
     automaticUpdatesBody:
       "已安装的应用会自动下载每个新版本，并在设备联网后立即切换到新版本。",
     items: [
-      "玩家统计会记住每场已结束游戏中的船员，并在下次开局时推荐用过的名字。",
-      "得分走势图逐回合呈现每位玩家总分的起伏变化。",
-      "可分享的终局战报会把最终排名和船员称号制成随时可发送的图片或文字摘要。",
-      "结果页面新增领奖台、彩纸庆祝和趣味船员称号，让胜利更有仪式感。",
+      "创建对局时可在两种官方计分方式中选择：经典 Skull King 计分或 Rascal 计分——每张发牌 10 分，准确度决定所得份额。",
+      "同时支持 Rascal 可选规则：每回合宣布散弹或炮弹，孤注一掷，每张牌 15 分。",
+      "得分明细会标注每回合的准确度——正中目标、擦身而过或完全落空——并显示减半的奖励分，应用内规则也新增了该计分方式的说明。",
     ],
     close: "知道了",
   },
@@ -111,6 +110,20 @@ export const zh: Strings = {
     structureRounds: (n) => `${n} 回合`,
     showOtherStructures: "显示其他回合类型",
     hideOtherStructures: "隐藏其他回合类型",
+    scoring: "计分方式",
+    scoringHint: "规则书提供两种官方计分方式。请为本局选择其一。",
+    scoringNames: {
+      classic: "Skull King 计分",
+      rascal: "Rascal 计分",
+    },
+    scoringHints: {
+      classic: "经典计分：叫牌准确每墩得 20 分，叫错则会扣分。",
+      rascal:
+        "每回合的赌注为每张发牌 10 分。叫牌准确：全部获得。相差 1：获得一半。相差 2 或以上：一无所获——永远不会扣分。",
+    },
+    rascalBetsTitle: "Rascal 可选规则 ✊",
+    rascalBetsHint:
+      "叫牌后，每人宣布散弹（张开手掌：按常规档位计分）或炮弹（握紧拳头：叫牌准确时每张发牌得 15 分，否则一分不得——奖励分同样如此）。",
     expansion: "扩展牌",
     advancedTitle: "战利品与 Rascal 赌注",
     advancedHint:
@@ -154,6 +167,12 @@ export const zh: Strings = {
       "尚未输入叫牌或赢墩。请确认两位玩家都叫零，且所有墩都由灰胡子赢得。",
     untouchedCancel: "检查输入",
     untouchedConfirm: "确认结算",
+    rascalStake: (points) => `Rascal 计分 · 本回合赌注 ${points} 分`,
+    rascalBetNames: {
+      buckshot: "散弹",
+      cannonball: "炮弹",
+    },
+    rascalBetFor: (name) => `${name} 的宣布`,
   },
 
   results: {
@@ -263,6 +282,16 @@ export const zh: Strings = {
     bidMissed: (bid, difference) => `叫牌 ${bid} 未完成 · 相差 ${difference} 墩`,
     zeroBidSuccess: (cards) => `零叫成功 · ${cards} 张牌`,
     zeroBidMissed: (cards) => `零叫失败 · ${cards} 张牌`,
+    outcomes: {
+      directHit: "正中目标",
+      glancingBlow: "擦身而过",
+      whiff: "完全落空",
+    },
+    rascalBidDirect: (bid) => `正中目标 · 叫 ${bid} 准确 · 全部得分`,
+    rascalBidGlancing: "擦身而过 · 相差 1 · 得分减半",
+    rascalBidWhiff: (diff) => `完全落空 · 相差 ${diff}`,
+    rascalCannonballWon: "炮弹 · 叫牌准确 · 每张牌 15 分",
+    rascalCannonballLost: (diff) => `炮弹落空 · 相差 ${diff}`,
     ignored: "不计分",
     items: {
       colored14: (count) => `俘获 ${count} 张彩色 14`,
@@ -339,6 +368,7 @@ export const zh: Strings = {
     officialRules: "查看官方规则",
     headings: {
       scoring: "计分",
+      rascal: "Rascal 计分",
       bonus: "奖励分",
       expansion: "新扩展",
       special: "特殊牌",
@@ -347,6 +377,12 @@ export const zh: Strings = {
     scoring: [
       { title: "叫 1 或更多", body: "准确完成：每赢一墩 +20。叫多或叫少：每相差一墩 -10，且赢得的墩不再得分。" },
       { title: "叫零", body: "赢 0 墩：本回合每张发牌 +10。赢任何一墩：本回合每张发牌 -10。" },
+    ],
+    rascal: [
+      { title: "官方的另一种计分方式", body: "在创建对局时选择。每回合所有玩家的潜在得分相同——每张发牌 10 分，与叫牌数无关——最终拿到多少取决于叫牌的准确度。分数永远不会变成负数。" },
+      { title: "正中目标 · 擦身而过 · 完全落空", body: "叫牌准确：赢得全部赌注。相差 1：获得一半。相差 2 或以上：一无所获。" },
+      { title: "奖励分遵循同样的档位", body: "俘获奖励在正中目标时全额计入，擦身而过时减半，完全落空时不计。战利品、特殊 7/8 与 Rascal 海盗赌注仍保留各自“叫牌必须准确”的条件。" },
+      { title: "可选规则：散弹或炮弹", body: "若在设置中启用，每人在叫牌后做出选择并同时亮出：张开手掌（散弹）按常规档位计分；握紧拳头（炮弹）在叫牌准确时每张发牌得 15 分，否则一分不得——奖励分同样如此。" },
     ],
     bonusEntries: [
       { title: "彩色 14（每张 +10）", body: "回合结束时，你俘获的每张黄色 / 紫色 / 绿色 14（即赢得含有该牌的墩）。" },

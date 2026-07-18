@@ -9,8 +9,15 @@ import {
   View,
   useWindowDimensions,
 } from "react-native";
-import { BonusInput, Game, LootUse, RoundEntries } from "../types";
 import {
+  BonusInput,
+  Game,
+  LootUse,
+  RascalBet,
+  RoundEntries,
+} from "../types";
+import {
+  RASCAL_POINTS_PER_CARD,
   cardsForRound,
   emptyEntry,
   ghostTricks,
@@ -94,6 +101,7 @@ function roundHasInput(
         (entry.bid > 0 ||
           entry.tricks > 0 ||
           entry.legacyLoot > 0 ||
+          entry.rascalBet === "cannonball" ||
           Object.values(entry.bonus).some(Boolean))
     );
   });
@@ -216,6 +224,12 @@ export default function GameScreen({
     persistDraft({
       ...latestDraft.current,
       [playerId]: { ...latestDraft.current[playerId], bonus },
+    });
+
+  const updateRascalBet = (playerId: string, rascalBet: RascalBet) =>
+    persistDraft({
+      ...latestDraft.current,
+      [playerId]: { ...latestDraft.current[playerId], rascalBet },
     });
 
   const setCards = (value: number) => {
@@ -492,6 +506,11 @@ export default function GameScreen({
           ))}
         </View>
         <Text style={styles.turnHint}>{t.game.playOrderHint}</Text>
+        {game.scoringMode === "rascal" ? (
+          <Text style={styles.rascalStake}>
+            🎲 {t.game.rascalStake(RASCAL_POINTS_PER_CARD * cards)}
+          </Text>
+        ) : null}
       </View>
 
       <ScrollView
@@ -525,7 +544,8 @@ export default function GameScreen({
           const roundScore = scoreRound(
             cards,
             entry,
-            lootBonusForPlayer(draft, lootUses, p.id)
+            lootBonusForPlayer(draft, lootUses, p.id),
+            game.scoringMode
           );
           const open = !!expanded[p.id];
           const b = entry.bonus;
@@ -533,6 +553,7 @@ export default function GameScreen({
             entry.recorded ||
             entry.bid > 0 ||
             entry.tricks > 0 ||
+            entry.rascalBet === "cannonball" ||
             b.colored14 > 0 ||
             b.black14 ||
             b.mermaidByPirate > 0 ||
@@ -609,6 +630,42 @@ export default function GameScreen({
                   </Text>
                 </TouchableOpacity>
               </View>
+
+              {game.scoringMode === "rascal" && game.rascalBets ? (
+                <View
+                  style={styles.betRow}
+                  accessibilityRole="radiogroup"
+                  accessibilityLabel={t.game.rascalBetFor(p.name)}
+                >
+                  {(["buckshot", "cannonball"] as const).map((bet) => {
+                    const selected = entry.rascalBet === bet;
+                    return (
+                      <TouchableOpacity
+                        key={bet}
+                        style={[
+                          styles.betChip,
+                          selected && styles.betChipSelected,
+                        ]}
+                        onPress={() => updateRascalBet(p.id, bet)}
+                        accessibilityRole="radio"
+                        accessibilityState={{ checked: selected }}
+                        aria-checked={selected}
+                      >
+                        <Text
+                          style={[
+                            styles.betChipText,
+                            selected && styles.betChipTextSelected,
+                          ]}
+                          numberOfLines={1}
+                        >
+                          {bet === "buckshot" ? "🖐" : "✊"}{" "}
+                          {t.game.rascalBetNames[bet]}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+              ) : null}
 
               {open ? (
                 <BonusEditor
@@ -873,6 +930,12 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontStyle: "italic",
   },
+  rascalStake: {
+    color: colors.gold,
+    fontSize: 12,
+    fontWeight: "700",
+    marginTop: spacing.xs,
+  },
   scroll: {
     width: "100%",
     alignSelf: "center",
@@ -936,6 +999,28 @@ const styles = StyleSheet.create({
     backgroundColor: colors.bgElevated,
   },
   bonusToggleText: { color: colors.gold, fontWeight: "700", fontSize: 13 },
+  betRow: {
+    flexDirection: "row",
+    marginTop: spacing.sm,
+    columnGap: spacing.sm,
+  },
+  betChip: {
+    flex: 1,
+    minHeight: 40,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: colors.cardBorder,
+    borderRadius: radius.sm,
+    backgroundColor: colors.bgElevated,
+    paddingHorizontal: spacing.sm,
+  },
+  betChipSelected: {
+    borderColor: colors.gold,
+    backgroundColor: colors.card,
+  },
+  betChipText: { color: colors.textDim, fontSize: 13, fontWeight: "700" },
+  betChipTextSelected: { color: colors.gold },
   tricksHint: {
     textAlign: "center",
     fontSize: 12,

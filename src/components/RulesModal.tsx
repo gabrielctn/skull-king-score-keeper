@@ -78,6 +78,7 @@ export default function RulesModal({ visible, onClose }: Props) {
               </TouchableOpacity>
             </View>
             <Section heading={t.rules.headings.scoring} entries={t.rules.scoring} />
+            <Section heading={t.rules.headings.rascal} entries={t.rules.rascal} />
             <Section heading={t.rules.headings.bonus} entries={t.rules.bonusEntries} />
             <Section heading={t.rules.headings.expansion} entries={t.rules.expansion} />
             <Section heading={t.rules.headings.special} entries={t.rules.special} />

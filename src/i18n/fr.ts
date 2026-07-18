@@ -47,10 +47,9 @@ export const fr: Strings = {
     automaticUpdatesBody:
       "Les applications installées téléchargent désormais chaque nouvelle version automatiquement et l'activent dès que l'appareil est en ligne.",
     items: [
-      "Les statistiques gardent la mémoire de votre équipage d’une partie à l’autre et proposent les noms connus lors de la suivante.",
-      "Les courbes de score racontent l’évolution de chaque joueur, manche après manche.",
-      "Un récapitulatif de fin de partie transforme le classement et les distinctions en image ou résumé prêt à partager.",
-      "L’écran des résultats fête la victoire avec un podium, des confettis et des distinctions pleines d’esprit.",
+      "Choisissez entre les deux décomptes officiels à la création d'une partie : les scores selon Skull King ou selon Rascal — 10 points par carte distribuée, et votre précision décide de votre part.",
+      "Les règles optionnelles de Rascal sont aussi prises en charge : à chaque manche, déclarez Chevrotine ou Boulet de canon pour un quitte ou double à 15 points par carte.",
+      "Le détail des scores nomme la précision de chaque manche — coup direct, frappe à revers ou échec cuisant — avec les bonus réduits de moitié, et la référence des règles couvre le nouveau décompte.",
     ],
     close: "Compris",
   },
@@ -118,6 +117,22 @@ export const fr: Strings = {
     structureRounds: (n) => `${n} ${n === 1 ? "manche" : "manches"}`,
     showOtherStructures: "Afficher les autres types de manches",
     hideOtherStructures: "Masquer les autres types de manches",
+    scoring: "Décompte des points",
+    scoringHint:
+      "Le livret propose deux façons officielles de compter les points. Choisissez celle de cette partie.",
+    scoringNames: {
+      classic: "Les scores selon Skull King",
+      rascal: "Les scores selon Rascal",
+    },
+    scoringHints: {
+      classic:
+        "Le décompte classique : une mise exacte rapporte 20 par pli, une erreur coûte des points.",
+      rascal:
+        "Chaque manche met en jeu 10 points par carte distribuée. Mise exacte : la totalité. Écart de 1 : la moitié. Écart de 2 ou plus : rien — jamais de points négatifs.",
+    },
+    rascalBetsTitle: "Règles optionnelles de Rascal ✊",
+    rascalBetsHint:
+      "Après la mise, chacun déclare Chevrotine (main ouverte : barème habituel) ou Boulet de canon (poing fermé : 15 points par carte distribuée si la mise est exacte, sinon rien — bonus compris).",
     expansion: "Cartes d'extension",
     advancedTitle: "Butin & pari Rascal",
     advancedHint:
@@ -162,6 +177,13 @@ export const fr: Strings = {
       "Aucune mise ni aucun pli n’a été saisi. Confirmez que les deux joueurs ont misé zéro et que Barbe Grise a remporté tous les plis.",
     untouchedCancel: "Vérifier",
     untouchedConfirm: "Oui, valider",
+    rascalStake: (points) =>
+      `Scores selon Rascal · ${points} points en jeu`,
+    rascalBetNames: {
+      buckshot: "Chevrotine",
+      cannonball: "Boulet de canon",
+    },
+    rascalBetFor: (name) => `Déclaration de ${name}`,
   },
 
   results: {
@@ -286,6 +308,18 @@ export const fr: Strings = {
       `Mise à zéro réussie · ${cards} ${cards === 1 ? "carte" : "cartes"}`,
     zeroBidMissed: (cards) =>
       `Mise à zéro ratée · ${cards} ${cards === 1 ? "carte" : "cartes"}`,
+    outcomes: {
+      directHit: "Coup direct",
+      glancingBlow: "Frappe à revers",
+      whiff: "Échec cuisant",
+    },
+    rascalBidDirect: (bid) =>
+      `Coup direct · mise ${bid} exacte · tous les points`,
+    rascalBidGlancing: "Frappe à revers · écart de 1 · moitié des points",
+    rascalBidWhiff: (diff) => `Échec cuisant · écart de ${diff}`,
+    rascalCannonballWon: "Boulet de canon · mise exacte · 15 par carte",
+    rascalCannonballLost: (diff) =>
+      `Boulet de canon perdu · écart de ${diff}`,
     ignored: "Non compté",
     items: {
       colored14: (count) =>
@@ -380,6 +414,7 @@ export const fr: Strings = {
     officialRules: "Consulter les règles officielles",
     headings: {
       scoring: "Décompte",
+      rascal: "Les scores selon Rascal",
       bonus: "Points bonus",
       expansion: "Extension",
       special: "Cartes spéciales",
@@ -393,6 +428,24 @@ export const fr: Strings = {
       {
         title: "Mise à zéro",
         body: "0 pli remporté : +10 × cartes distribuées cette manche. Au moins 1 pli : -10 × cartes distribuées cette manche.",
+      },
+    ],
+    rascal: [
+      {
+        title: "Un décompte officiel alternatif",
+        body: "Choisi à la création de la partie. Tous les joueurs ont le même potentiel à chaque manche — 10 points par carte distribuée, quelle que soit la mise — et c'est la précision qui décide de ce que vous en gagnez. Les scores ne deviennent jamais négatifs.",
+      },
+      {
+        title: "Coup direct · frappe à revers · échec cuisant",
+        body: "Mise exacte : tous les points mis en jeu. Écart de 1 : la moitié. Écart de 2 ou plus : aucun point.",
+      },
+      {
+        title: "Les bonus suivent le même barème",
+        body: "Les bonus de capture comptent en entier sur un coup direct, à moitié sur une frappe à revers, et pas du tout sur un échec cuisant. Le Butin, les 7/8 spéciaux et le pari du pirate Rascal gardent leur propre condition de mise exacte.",
+      },
+      {
+        title: "Option : Chevrotine ou Boulet de canon",
+        body: "Si l'option est activée, chacun choisit après avoir misé, puis tout le monde révèle en même temps. Main ouverte (Chevrotine) : barème habituel ; poing fermé (Boulet de canon) : 15 points par carte distribuée si la mise est exacte, sinon rien — bonus compris.",
       },
     ],
     bonusEntries: [

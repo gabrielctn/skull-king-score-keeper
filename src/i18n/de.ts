@@ -46,10 +46,9 @@ export const de: Strings = {
     automaticUpdatesBody:
       "Installierte Apps laden jede neue Version automatisch und wechseln zu ihr, sobald das Gerät online ist.",
     items: [
-      "Spielerstatistiken behalten eure Crew über beendete Partien hinweg im Gedächtnis und schlagen bekannte Namen beim nächsten Aufbau vor.",
-      "Punkteverlaufskurven zeigen Runde für Runde, wie sich jedes Ergebnis entwickelt hat.",
-      "Ein teilbarer Spielrückblick macht aus Endstand und Auszeichnungen ein versandfertiges Bild oder eine Zusammenfassung.",
-      "Das Ergebnis wird jetzt mit Siegertreppchen, Konfetti und augenzwinkernden Crew-Auszeichnungen gefeiert.",
+      "Wähle beim Erstellen einer Partie zwischen den beiden offiziellen Wertungen: klassische Skull-King-Wertung oder Rascal-Wertung — 10 Punkte pro ausgeteilter Karte, deine Genauigkeit entscheidet über deinen Anteil.",
+      "Auch die optionalen Rascal-Regeln sind dabei: Erkläre jede Runde Schrotladung oder Kanonenkugel — alles oder nichts mit 15 Punkten pro Karte.",
+      "Die Punktedetails benennen die Genauigkeit jeder Runde — Volltreffer, Streifschuss oder Fehlschlag — samt halbierter Boni, und die Regelhilfe erklärt das neue System.",
     ],
     close: "Verstanden",
   },
@@ -117,6 +116,22 @@ export const de: Strings = {
     structureRounds: (n) => `${n} ${n === 1 ? "Runde" : "Runden"}`,
     showOtherStructures: "Andere Rundentypen anzeigen",
     hideOtherStructures: "Andere Rundentypen ausblenden",
+    scoring: "Wertung",
+    scoringHint:
+      "Die Anleitung bietet zwei offizielle Wertungssysteme. Wähle das System für diese Partie.",
+    scoringNames: {
+      classic: "Skull-King-Wertung",
+      rascal: "Rascal-Wertung",
+    },
+    scoringHints: {
+      classic:
+        "Die klassische Wertung: Eine exakte Ansage bringt 20 pro Stich, Fehler kosten Punkte.",
+      rascal:
+        "Jede Runde stehen 10 Punkte pro ausgeteilter Karte auf dem Spiel. Exakte Ansage: alles. 1 daneben: die Hälfte. 2 oder mehr daneben: nichts — nie Minuspunkte.",
+    },
+    rascalBetsTitle: "Optionale Rascal-Regeln ✊",
+    rascalBetsHint:
+      "Nach der Ansage erklärt jede Person Schrotladung (offene Hand: übliche Stufen) oder Kanonenkugel (geschlossene Faust: 15 Punkte pro Karte bei exakter Ansage, sonst nichts — Boni eingeschlossen).",
     expansion: "Erweiterungskarten",
     advancedTitle: "Beute & Rascal-Wette",
     advancedHint:
@@ -160,6 +175,13 @@ export const de: Strings = {
       "Es wurden keine Gebote oder Stiche eingegeben. Bestätige, dass beide Spieler null geboten haben und Graubart alle Stiche gewonnen hat.",
     untouchedCancel: "Eingaben prüfen",
     untouchedConfirm: "Ja, werten",
+    rascalStake: (points) =>
+      `Rascal-Wertung · ${points} Punkte im Spiel`,
+    rascalBetNames: {
+      buckshot: "Schrotladung",
+      cannonball: "Kanonenkugel",
+    },
+    rascalBetFor: (name) => `Erklärung von ${name}`,
   },
 
   results: {
@@ -279,6 +301,18 @@ export const de: Strings = {
       `Nullansage getroffen · ${cards} ${cards === 1 ? "Karte" : "Karten"}`,
     zeroBidMissed: (cards) =>
       `Nullansage verfehlt · ${cards} ${cards === 1 ? "Karte" : "Karten"}`,
+    outcomes: {
+      directHit: "Volltreffer",
+      glancingBlow: "Streifschuss",
+      whiff: "Fehlschlag",
+    },
+    rascalBidDirect: (bid) =>
+      `Volltreffer · Ansage ${bid} exakt · alle Punkte`,
+    rascalBidGlancing: "Streifschuss · 1 daneben · halbe Punkte",
+    rascalBidWhiff: (diff) => `Fehlschlag · ${diff} daneben`,
+    rascalCannonballWon: "Kanonenkugel · exakte Ansage · 15 pro Karte",
+    rascalCannonballLost: (diff) =>
+      `Kanonenkugel verloren · ${diff} daneben`,
     ignored: "Nicht gewertet",
     items: {
       colored14: (count) => `${count} farbige ${count === 1 ? "14" : "14er"} gefangen`,
@@ -355,6 +389,7 @@ export const de: Strings = {
     officialRules: "Offizielle Regeln ansehen",
     headings: {
       scoring: "Wertung",
+      rascal: "Rascal-Wertung",
       bonus: "Bonuspunkte",
       expansion: "Neue Erweiterung",
       special: "Sonderkarten",
@@ -363,6 +398,12 @@ export const de: Strings = {
     scoring: [
       { title: "Ansage 1 oder mehr", body: "Exakt getroffen: +20 pro gewonnenem Stich. Verfehlt (zu hoch oder zu niedrig): -10 pro Stich Abweichung und keine Punkte für gewonnene Stiche." },
       { title: "Nullansage", body: "0 Stiche: +10 × ausgeteilte Karten dieser Runde. Mindestens 1 Stich: -10 × ausgeteilte Karten dieser Runde." },
+    ],
+    rascal: [
+      { title: "Eine offizielle Alternativwertung", body: "Wird beim Erstellen der Partie gewählt. Alle haben in jeder Runde dasselbe Potenzial — 10 Punkte pro ausgeteilter Karte, egal wie hoch die Ansage — und die Genauigkeit entscheidet, wie viel davon du bekommst. Die Punktzahl wird nie negativ." },
+      { title: "Volltreffer · Streifschuss · Fehlschlag", body: "Exakte Ansage: alle Punkte im Spiel. 1 daneben: die Hälfte. 2 oder mehr daneben: nichts." },
+      { title: "Boni folgen denselben Stufen", body: "Fangboni zählen bei einem Volltreffer voll, bei einem Streifschuss zur Hälfte und bei einem Fehlschlag gar nicht. Beute, die besonderen 7er/8er und die Rascal-Piratenwette behalten ihre eigene Bedingung der exakten Ansage." },
+      { title: "Optional: Schrotladung oder Kanonenkugel", body: "Falls aktiviert, wählt jede Person nach der Ansage und alle zeigen gleichzeitig. Offene Hand (Schrotladung): übliche Stufen; geschlossene Faust (Kanonenkugel): 15 Punkte pro Karte bei exakter Ansage, sonst nichts — Boni eingeschlossen." },
     ],
     bonusEntries: [
       { title: "Farbige 14  (+10 je)", body: "Jede gelbe / violette / grüne 14, die du am Rundenende fängst (den Stich mit ihr gewinnst)." },

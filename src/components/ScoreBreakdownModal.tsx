@@ -37,6 +37,20 @@ function itemLabel(
   copy: Strings["scoreBreakdown"]
 ): string {
   if (item.key === "bid") {
+    if (round.scoringMode === "rascal") {
+      const difference = Math.abs(round.tricks - round.bid);
+      if (round.rascalBet === "cannonball") {
+        return round.madeBid
+          ? copy.rascalCannonballWon
+          : copy.rascalCannonballLost(difference);
+      }
+      if (round.rascalOutcome === "directHit") {
+        return copy.rascalBidDirect(round.bid);
+      }
+      return round.rascalOutcome === "glancingBlow"
+        ? copy.rascalBidGlancing
+        : copy.rascalBidWhiff(difference);
+    }
     if (round.bid === 0) {
       return round.madeBid
         ? copy.zeroBidSuccess(round.cardsDealt)
@@ -67,6 +81,32 @@ function itemLabel(
     lootSelfWin: copy.items.lootSelfWin(item.count),
   };
   return labels[item.key];
+}
+
+/** Color family of a round's status badge and timeline dot. */
+function roundTone(
+  round: PlayerRoundScoreBreakdown
+): "positive" | "glancing" | "negative" {
+  if (round.scoringMode === "rascal") {
+    return round.rascalOutcome === "directHit"
+      ? "positive"
+      : round.rascalOutcome === "glancingBlow"
+        ? "glancing"
+        : "negative";
+  }
+  return round.madeBid ? "positive" : "negative";
+}
+
+/** Badge text: Rascal rounds show their accuracy tier, classic hit/missed. */
+function roundStatusText(
+  round: PlayerRoundScoreBreakdown,
+  copy: Strings["scoreBreakdown"]
+): string {
+  return round.scoringMode === "rascal"
+    ? copy.outcomes[round.rascalOutcome]
+    : round.madeBid
+      ? copy.exact
+      : copy.missed;
 }
 
 export default function ScoreBreakdownModal({
@@ -222,6 +262,8 @@ export default function ScoreBreakdownModal({
               history.map((round, index) => {
                 const open = expandedRound === round.roundNumber;
                 const last = index === history.length - 1;
+                const tone = roundTone(round);
+                const statusText = roundStatusText(round, t.scoreBreakdown);
                 return (
                   <View
                     key={round.roundNumber}
@@ -237,9 +279,11 @@ export default function ScoreBreakdownModal({
                       <View
                         style={[
                           styles.timelineDot,
-                          round.madeBid
+                          tone === "positive"
                             ? styles.timelineDotExact
-                            : styles.timelineDotMissed,
+                            : tone === "glancing"
+                              ? styles.timelineDotGlancing
+                              : styles.timelineDotMissed,
                         ]}
                       />
                       {!last ? <View style={styles.timelineLine} /> : null}
@@ -259,11 +303,7 @@ export default function ScoreBreakdownModal({
                         )} · ${t.scoreBreakdown.roundSummary(
                           round.bid,
                           round.tricks
-                        )} · ${
-                          round.madeBid
-                            ? t.scoreBreakdown.exact
-                            : t.scoreBreakdown.missed
-                        } · ${signed(round.total)}`}
+                        )} · ${statusText} · ${signed(round.total)}`}
                         accessibilityHint={
                           open
                             ? t.scoreBreakdown.collapseRound(round.roundNumber)
@@ -278,22 +318,24 @@ export default function ScoreBreakdownModal({
                             <View
                               style={[
                                 styles.statusBadge,
-                                round.madeBid
+                                tone === "positive"
                                   ? styles.statusExact
-                                  : styles.statusMissed,
+                                  : tone === "glancing"
+                                    ? styles.statusGlancing
+                                    : styles.statusMissed,
                               ]}
                             >
                               <Text
                                 style={[
                                   styles.statusText,
-                                  round.madeBid
+                                  tone === "positive"
                                     ? styles.positiveText
-                                    : styles.negativeText,
+                                    : tone === "glancing"
+                                      ? styles.goldText
+                                      : styles.negativeText,
                                 ]}
                               >
-                                {round.madeBid
-                                  ? t.scoreBreakdown.exact
-                                  : t.scoreBreakdown.missed}
+                                {statusText}
                               </Text>
                             </View>
                           </View>
@@ -540,6 +582,10 @@ const styles = StyleSheet.create({
     borderColor: colors.negative,
     backgroundColor: colors.bg,
   },
+  timelineDotGlancing: {
+    borderColor: colors.gold,
+    backgroundColor: colors.bg,
+  },
   timelineLine: {
     position: "absolute",
     top: 32,
@@ -576,6 +622,7 @@ const styles = StyleSheet.create({
   },
   statusExact: { backgroundColor: "rgba(92, 214, 160, 0.12)" },
   statusMissed: { backgroundColor: "rgba(255, 107, 107, 0.12)" },
+  statusGlancing: { backgroundColor: "rgba(230, 195, 92, 0.12)" },
   statusText: { fontSize: 10, fontWeight: "800" },
   roundSummary: { color: colors.textDim, fontSize: 12, marginTop: 3 },
   roundScoreBlock: {
@@ -636,4 +683,5 @@ const styles = StyleSheet.create({
   runningValue: { color: colors.gold, fontSize: 15, fontWeight: "900" },
   positiveText: { color: colors.positive },
   negativeText: { color: colors.negative },
+  goldText: { color: colors.gold },
 });

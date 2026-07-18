@@ -12,7 +12,7 @@ import {
   View,
   useWindowDimensions,
 } from "react-native";
-import { Game, Player } from "../types";
+import { Game, Player, ScoringMode } from "../types";
 import { createGame } from "../scoring";
 import { playerNameSuggestions } from "../stats";
 import Stepper from "../components/Stepper";
@@ -49,6 +49,8 @@ export default function SetupScreen({ gameHistory, onStart, onBack }: Props) {
   const [roundVariantsVisible, setRoundVariantsVisible] = useState(false);
   const [advanced, setAdvanced] = useState(true);
   const [newExpansion, setNewExpansion] = useState(false);
+  const [scoringMode, setScoringMode] = useState<ScoringMode>("classic");
+  const [rascalBets, setRascalBets] = useState(false);
   const [twoPlayerGhost, setTwoPlayerGhost] = useState(true);
   const [customizationVisible, setCustomizationVisible] = useState(false);
   const [focusedPlayerId, setFocusedPlayerId] = useState<string | null>(null);
@@ -107,7 +109,9 @@ export default function SetupScreen({ gameHistory, onStart, onBack }: Props) {
         advanced,
         isTwoPlayer && twoPlayerGhost,
         newExpansion,
-        cardsPerRound
+        cardsPerRound,
+        scoringMode,
+        scoringMode === "rascal" && rascalBets
       )
     );
   };
@@ -304,6 +308,65 @@ export default function SetupScreen({ gameHistory, onStart, onBack }: Props) {
                 />
               </View>
             </>
+          ) : null}
+
+          <Text style={[styles.section, { marginTop: spacing.lg }]}>
+            {t.setup.scoring}
+          </Text>
+          <Text style={styles.seatingHint}>{t.setup.scoringHint}</Text>
+          <View
+            accessibilityRole="radiogroup"
+            accessibilityLabel={t.setup.scoring}
+          >
+            {(["classic", "rascal"] as const).map((mode) => {
+              const selected = scoringMode === mode;
+              return (
+                <TouchableOpacity
+                  key={mode}
+                  style={[
+                    styles.structureRow,
+                    selected && styles.structureRowSelected,
+                  ]}
+                  onPress={() => setScoringMode(mode)}
+                  accessibilityRole="radio"
+                  accessibilityState={{ checked: selected }}
+                  aria-checked={selected}
+                  accessibilityLabel={t.setup.scoringNames[mode]}
+                >
+                  <View
+                    style={[styles.radio, selected && styles.radioSelected]}
+                  >
+                    {selected ? <View style={styles.radioDot} /> : null}
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.advancedTitle}>
+                      {mode === "classic" ? "☠️ " : "🎲 "}
+                      {t.setup.scoringNames[mode]}
+                    </Text>
+                    <Text style={styles.advancedHint}>
+                      {t.setup.scoringHints[mode]}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+          {scoringMode === "rascal" ? (
+            <View style={[styles.advancedRow, { marginBottom: spacing.sm }]}>
+              <View style={{ flex: 1, marginEnd: spacing.md }}>
+                <Text style={styles.advancedTitle}>
+                  {t.setup.rascalBetsTitle}
+                </Text>
+                <Text style={styles.advancedHint}>
+                  {t.setup.rascalBetsHint}
+                </Text>
+              </View>
+              <ToggleSwitch
+                value={rascalBets}
+                onValueChange={setRascalBets}
+                accessibilityLabel={t.setup.rascalBetsTitle}
+              />
+            </View>
           ) : null}
 
           <Text style={[styles.section, { marginTop: spacing.lg }]}>

@@ -57,6 +57,20 @@ Bid scoring:
 (The zero-bid multiplier uses cards *dealt*, which can be fewer than the round
 number in late rounds with 7–8 players — handled by the editable cards field.)
 
+**Rascal scoring** — the rulebook's official alternate system, selectable at
+game setup:
+
+- Every round puts **10 × cards dealt** at stake for every player, whatever
+  the bid. Exact bid: the full stake. Off by one: half. Off by two or more:
+  nothing — bid points are never negative.
+- Capture bonuses follow the same full / half / none accuracy tiers; Loot,
+  the special 7s/8s and the Rascal pirate wager keep their own exact-bid
+  conditions.
+- Optional per-round declarations (rulebook "Optional Rascal rules"):
+  **Chevrotine / Buckshot** (open hand — standard tiers) or **Boulet de canon
+  / Cannonball** (closed fist — 15 × cards dealt on an exact bid, otherwise
+  nothing, bonuses included).
+
 Bonus points — **awarded for captures regardless of whether you hit your bid**,
 and they go to whoever *captures* the card, no matter who played it:
 

@@ -46,10 +46,9 @@ export const en: Strings = {
     automaticUpdatesBody:
       "Installed apps now download each new release automatically and switch to it as soon as the device is online.",
     items: [
-      "Player statistics now remember your crew across finished games, and known names are suggested when setting up the next one.",
-      "Score-evolution charts reveal how every player's total changed round by round.",
-      "A shareable end-of-game recap turns the final ranking and crew awards into a ready-to-send image or summary.",
-      "The results screen now celebrates with a podium, confetti and playful crew awards.",
+      "Choose between the two official scoring systems when creating a game: classic Skull King scoring or Rascal's scoring — 10 points per card dealt, and your accuracy decides your share.",
+      "Rascal's optional rules are supported too: each round, declare Buckshot or Cannonball for an all-or-nothing 15 points per card dealt.",
+      "Score details name each round's accuracy — direct hit, glancing blow or total whiff — with halved bonuses shown, and the in-app rules cover the new system.",
     ],
     close: "Got it",
   },
@@ -117,6 +116,22 @@ export const en: Strings = {
     structureRounds: (n) => `${n} ${n === 1 ? "round" : "rounds"}`,
     showOtherStructures: "Show other round types",
     hideOtherStructures: "Hide other round types",
+    scoring: "Scoring",
+    scoringHint:
+      "The rulebook offers two official ways to count points. Pick this game's system.",
+    scoringNames: {
+      classic: "Skull King scoring",
+      rascal: "Rascal's scoring",
+    },
+    scoringHints: {
+      classic:
+        "The classic risk-and-reward system: exact bids pay 20 per trick, misses cost points.",
+      rascal:
+        "Each round puts 10 points per card dealt at stake. Exact bid: all of it. Off by one: half. Off by two or more: nothing — never negative.",
+    },
+    rascalBetsTitle: "Rascal's optional rules ✊",
+    rascalBetsHint:
+      "After bidding, everyone declares Buckshot (open hand: the standard tiers) or Cannonball (closed fist: 15 points per card dealt on an exact bid, nothing otherwise — bonuses included).",
     expansion: "Expansion cards",
     advancedTitle: "Loot & Rascal wager",
     advancedHint:
@@ -161,6 +176,12 @@ export const en: Strings = {
       "No bids or tricks were entered. Confirm that both players bid zero and Greybeard won every trick.",
     untouchedCancel: "Check entries",
     untouchedConfirm: "Yes, score it",
+    rascalStake: (points) => `Rascal's scoring · ${points} points at stake`,
+    rascalBetNames: {
+      buckshot: "Buckshot",
+      cannonball: "Cannonball",
+    },
+    rascalBetFor: (name) => `${name}'s declaration`,
   },
 
   results: {
@@ -279,6 +300,16 @@ export const en: Strings = {
       `Zero bid hit · ${cards} ${cards === 1 ? "card" : "cards"}`,
     zeroBidMissed: (cards) =>
       `Zero bid missed · ${cards} ${cards === 1 ? "card" : "cards"}`,
+    outcomes: {
+      directHit: "Direct hit",
+      glancingBlow: "Glancing blow",
+      whiff: "Total whiff",
+    },
+    rascalBidDirect: (bid) => `Direct hit · bid ${bid} exact · full points`,
+    rascalBidGlancing: "Glancing blow · off by one · half the points",
+    rascalBidWhiff: (diff) => `Total whiff · off by ${diff}`,
+    rascalCannonballWon: "Cannonball · exact bid · 15 per card",
+    rascalCannonballLost: (diff) => `Cannonball lost · off by ${diff}`,
     ignored: "Not counted",
     items: {
       colored14: (count) =>
@@ -373,6 +404,7 @@ export const en: Strings = {
     officialRules: "View the official rules",
     headings: {
       scoring: "Scoring",
+      rascal: "Rascal's scoring",
       bonus: "Bonus points",
       expansion: "New expansion",
       special: "Special cards",
@@ -386,6 +418,24 @@ export const en: Strings = {
       {
         title: "Bid zero",
         body: "Win 0 tricks: +10 x cards dealt this round. Win any trick: -10 x cards dealt this round.",
+      },
+    ],
+    rascal: [
+      {
+        title: "An official alternate scoring",
+        body: "Chosen when creating the game. Every player has the same potential each round — 10 points per card dealt, whatever the bid — and accuracy decides how much of it you take. Scores never go negative.",
+      },
+      {
+        title: "Direct hit · glancing blow · total whiff",
+        body: "Exact bid: all the points at stake. Off by one: half of them. Off by two or more: nothing.",
+      },
+      {
+        title: "Bonus points follow the same tiers",
+        body: "Capture bonuses count in full on a direct hit, half on a glancing blow, and not at all on a whiff. Loot, the special 7s/8s and the Rascal pirate wager keep their own exact-bid rules.",
+      },
+      {
+        title: "Optional: Buckshot or Cannonball",
+        body: "If enabled at setup, everyone declares after bidding, then reveals simultaneously. Open hand (Buckshot) keeps the standard tiers; closed fist (Cannonball) pays 15 points per card dealt on an exact bid and nothing otherwise — bonuses included.",
       },
     ],
     bonusEntries: [
