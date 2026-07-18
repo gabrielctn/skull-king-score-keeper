@@ -30,9 +30,12 @@ import RulesModal from "../components/RulesModal";
 import ScoreBreakdownModal from "../components/ScoreBreakdownModal";
 import { colors, radius, spacing } from "../theme";
 import { getResponsiveLayout } from "../responsive";
+import { useKeepAwake } from "../wakeLock";
 
 interface Props {
   game: Game;
+  /** From the app settings: hold a screen wake lock while scoring. */
+  keepAwake: boolean;
   onUpdateGame: (game: Game) => void;
   onFinish: (game: Game) => void;
   onExit: () => void;
@@ -97,11 +100,13 @@ function roundHasInput(
 
 export default function GameScreen({
   game,
+  keepAwake,
   onUpdateGame,
   onFinish,
   onExit,
 }: Props) {
   const { t } = useI18n();
+  useKeepAwake(keepAwake);
   const { width } = useWindowDimensions();
   const layout = getResponsiveLayout(width);
   const playerIds = useMemo(() => game.players.map((p) => p.id), [game.players]);

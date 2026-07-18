@@ -42,4 +42,9 @@ Gotchas learned the hard way:
   embeds the rounds stepper (labeled "Rounds").
 - Scoring sanity: with a 0 bid, "ROUND POINTS" shows `+10 × cards dealt`.
 - Last round shows "Finish game 🏁" instead of "Score round →".
-- Language: home-screen FR/EN/DE/عربي/中文 chips switch the whole UI.
+- Language: the gear button (top-right on home, labeled "Settings"/"Paramètres")
+  opens the Settings screen; its language rows (Français/English/Deutsch/
+  العربية/中文) switch the whole UI instantly.
+- Settings also hosts: the keep-screen-awake toggle (hidden if the browser has
+  no `navigator.wakeLock`), backup export/import, "Delete all games" (disabled
+  until a game exists; confirmation dialog), and the What's new modal.

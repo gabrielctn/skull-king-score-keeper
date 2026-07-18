@@ -9,12 +9,15 @@ import {
 } from "react-native";
 import { Game } from "./src/types";
 import {
+  AppSettings,
   clearGame,
   loadGame,
   loadGameHistory,
   loadLang,
+  loadSettings,
   saveGame,
   saveGameHistory,
+  saveSettings,
 } from "./src/storage";
 import { colors } from "./src/theme";
 import { I18nProvider, detectLang, useI18n } from "./src/i18n/context";
@@ -23,6 +26,7 @@ import HomeScreen from "./src/screens/HomeScreen";
 import SetupScreen from "./src/screens/SetupScreen";
 import GameScreen from "./src/screens/GameScreen";
 import ResultsScreen from "./src/screens/ResultsScreen";
+import SettingsScreen from "./src/screens/SettingsScreen";
 import { registerServiceWorker } from "./src/registerServiceWorker";
 import { createGame } from "./src/scoring";
 import { initializePwaInstallPrompt } from "./src/pwaInstall";
@@ -35,7 +39,7 @@ import {
   serializeBackup,
 } from "./src/backup";
 
-type Screen = "home" | "setup" | "game" | "results";
+type Screen = "home" | "setup" | "game" | "results" | "settings";
 type PendingCurrentGame = Game | null | undefined;
 
 function StorageWarning({
@@ -67,6 +71,7 @@ export default function App() {
   const [game, setGame] = useState<Game | null>(null);
   const [gameHistory, setGameHistory] = useState<Game[]>([]);
   const [lang, setLang] = useState<Lang | null>(null);
+  const [settings, setSettings] = useState<AppSettings | null>(null);
   const [loading, setLoading] = useState(true);
   const [storageError, setStorageError] = useState(false);
   const historyRef = useRef<Game[]>([]);
@@ -157,10 +162,11 @@ export default function App() {
     initializePwaInstallPrompt();
     registerServiceWorker();
     (async () => {
-      const [saved, history, savedLang] = await Promise.all([
+      const [saved, history, savedLang, savedSettings] = await Promise.all([
         loadGame(),
         loadGameHistory(),
         loadLang(),
+        loadSettings(),
       ]);
       if (saved) setGame(saved);
       const migratedHistory = saved
@@ -174,9 +180,15 @@ export default function App() {
         queueHistorySave(migratedHistory, true);
       }
       setLang(savedLang ?? detectLang());
+      setSettings(savedSettings);
       setLoading(false);
     })();
   }, []);
+
+  const handleUpdateSettings = (next: AppSettings) => {
+    setSettings(next);
+    void saveSettings(next);
+  };
 
   const persist = (g: Game, historyImmediate = false) => {
     setGame(g);
@@ -245,6 +257,19 @@ export default function App() {
     ]).length;
   };
 
+  const handleDeleteAllGames = async () => {
+    const failureCount = persistenceFailures.current;
+    queueCurrentSave(null);
+    queueHistorySave([], true);
+    await Promise.all([flushCurrentSave(), flushHistorySave()]);
+    if (persistenceFailures.current !== failureCount) {
+      throw new Error("Stored games could not be cleared");
+    }
+    historyRef.current = [];
+    setGame(null);
+    setGameHistory([]);
+  };
+
   const handleFinish = (g: Game) => {
     // A finished game must reach history before the user can immediately
     // clear the current slot or launch a rematch from the results screen.
@@ -274,7 +299,7 @@ export default function App() {
     setScreen("game");
   };
 
-  if (loading || lang === null) {
+  if (loading || lang === null || settings === null) {
     return (
       <View style={styles.loader}>
         <StatusBar barStyle="light-content" />
@@ -294,8 +319,18 @@ export default function App() {
             onNewGame={handleNewGame}
             onOpenGame={handleOpenHistory}
             onDeleteGame={handleDeleteHistory}
+            onOpenSettings={() => setScreen("settings")}
+          />
+        )}
+        {screen === "settings" && (
+          <SettingsScreen
+            settings={settings}
+            hasGames={gameHistory.length > 0 || game !== null}
+            onUpdateSettings={handleUpdateSettings}
+            onBack={handleHome}
             onExportBackup={handleExportBackup}
             onImportBackup={handleImportBackup}
+            onDeleteAllGames={handleDeleteAllGames}
           />
         )}
         {screen === "setup" && (
@@ -304,6 +339,7 @@ export default function App() {
         {screen === "game" && game && (
           <GameScreen
             game={game}
+            keepAwake={settings.keepAwake}
             onUpdateGame={persist}
             onFinish={handleFinish}
             onExit={handleHome}

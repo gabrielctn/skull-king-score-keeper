@@ -30,13 +30,6 @@ export const fr: Strings = {
     playersRound: (players, round, total) =>
       `${players} joueurs · manche ${round} sur ${total}`,
     leading: (name, total) => `En tête : ${name} (${total})`,
-    dataTitle: "Vos données",
-    dataHint: "Exportez une copie de vos parties ou restaurez-la sur cet appareil.",
-    exportBackup: "Exporter",
-    importBackup: "Importer",
-    importSuccess: (count) =>
-      `${count} ${count === 1 ? "partie importée" : "parties importées"}.`,
-    backupError: "Impossible de lire cette sauvegarde.",
     support: "Soutenir le développeur ☕",
     supportHint:
       "Contribution facultative · l’application reste entièrement gratuite.",
@@ -54,11 +47,35 @@ export const fr: Strings = {
     automaticUpdatesBody:
       "Les applications installées téléchargent désormais chaque nouvelle version automatiquement et l'activent dès que l'appareil est en ligne.",
     items: [
-      "L'allemand, l'arabe et le chinois simplifié sont désormais disponibles. Au premier lancement, l'app utilise la langue de votre appareil si elle est prise en charge, sinon l'anglais.",
-      "L'arabe bénéficie d'une mise en page complète de droite à gauche.",
-      "Une nouvelle rubrique Nouveautés permet de retrouver facilement les améliorations de chaque version.",
+      "Un nouveau menu Paramètres (bouton ⚙ de l'accueil) regroupe désormais la langue, vos données et les nouveautés.",
+      "L'écran reste allumé pendant la partie pour garder les scores visibles entre les manches. Désactivable dans les paramètres.",
+      "Vos données permettent maintenant de supprimer toutes les parties enregistrées en une fois.",
     ],
     close: "Compris",
+  },
+
+  settings: {
+    open: "Paramètres",
+    title: "Paramètres",
+    languageTitle: "Langue",
+    gameTitle: "Pendant la partie",
+    keepAwakeTitle: "Garder l'écran allumé",
+    keepAwakeHint:
+      "Empêche l'appareil de se mettre en veille tant qu'un écran de partie est ouvert.",
+    dataTitle: "Vos données",
+    dataHint: "Exportez une copie de vos parties ou restaurez-la sur cet appareil.",
+    exportBackup: "Exporter",
+    importBackup: "Importer",
+    importSuccess: (count) =>
+      `${count} ${count === 1 ? "partie importée" : "parties importées"}.`,
+    backupError: "Impossible de lire cette sauvegarde.",
+    deleteAll: "Supprimer toutes les parties",
+    deleteAllTitle: "Supprimer toutes les parties ?",
+    deleteAllMessage:
+      "Toutes les parties — y compris une éventuelle partie en cours — seront définitivement supprimées. Pensez à exporter une sauvegarde avant.",
+    deleteAllCancel: "Annuler",
+    deleteAllConfirm: "Tout supprimer",
+    deleteAllSuccess: "Toutes les parties ont été supprimées.",
   },
 
   setup: {

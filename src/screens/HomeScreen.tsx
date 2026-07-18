@@ -15,16 +15,11 @@ import { Game } from "../types";
 import { standings } from "../scoring";
 import { colors, radius, spacing } from "../theme";
 import { illustrations } from "../assets/illustrations";
-import {
-  browserLocale,
-  languageLabel,
-  SUPPORTED_LANGS,
-  useI18n,
-} from "../i18n/context";
-import { Lang } from "../i18n/types";
+import { browserLocale, useI18n } from "../i18n/context";
 import { getResponsiveLayout } from "../responsive";
-import { CURRENT_RELEASE, CURRENT_RELEASE_DATE } from "../releases";
+import { CURRENT_RELEASE } from "../releases";
 import { loadSeenRelease, saveSeenRelease } from "../storage";
+import WhatsNewModal from "../components/WhatsNewModal";
 
 const SUPPORT_URL = "https://buymeacoffee.com/gabrielctn";
 
@@ -34,8 +29,7 @@ interface Props {
   onNewGame: () => void;
   onOpenGame: (game: Game) => void;
   onDeleteGame: (gameId: string) => void;
-  onExportBackup: () => Promise<void>;
-  onImportBackup: () => Promise<number | null>;
+  onOpenSettings: () => void;
 }
 
 export default function HomeScreen({
@@ -44,20 +38,13 @@ export default function HomeScreen({
   onNewGame,
   onOpenGame,
   onDeleteGame,
-  onExportBackup,
-  onImportBackup,
+  onOpenSettings,
 }: Props) {
-  const { t, lang, setLang } = useI18n();
+  const { t, lang } = useI18n();
   const { width } = useWindowDimensions();
   const layout = getResponsiveLayout(width);
   const [pendingDelete, setPendingDelete] = React.useState<Game | null>(null);
   const [whatsNewOpen, setWhatsNewOpen] = React.useState(false);
-  const [releaseSeen, setReleaseSeen] = React.useState(true);
-  const [backupBusy, setBackupBusy] = React.useState(false);
-  const [backupMessage, setBackupMessage] = React.useState<{
-    type: "success" | "error";
-    text: string;
-  } | null>(null);
   const activeGame =
     gameHistory.find(
       (historyGame) =>
@@ -74,7 +61,6 @@ export default function HomeScreen({
         void saveSeenRelease(CURRENT_RELEASE);
         return;
       }
-      setReleaseSeen(false);
       setWhatsNewOpen(true);
     });
     return () => {
@@ -87,10 +73,6 @@ export default function HomeScreen({
       month: "short",
       year: "numeric",
     });
-  const releaseDate = new Date(`${CURRENT_RELEASE_DATE}T12:00:00Z`).toLocaleDateString(
-    browserLocale(lang),
-    { day: "numeric", month: "long", year: "numeric" }
-  );
 
   const deletePendingGame = () => {
     if (!pendingDelete) return;
@@ -102,54 +84,19 @@ export default function HomeScreen({
   };
   const closeWhatsNew = () => {
     setWhatsNewOpen(false);
-    setReleaseSeen(true);
     void saveSeenRelease(CURRENT_RELEASE);
-  };
-  const exportBackup = async () => {
-    setBackupBusy(true);
-    setBackupMessage(null);
-    try {
-      await onExportBackup();
-    } catch {
-      setBackupMessage({ type: "error", text: t.home.backupError });
-    } finally {
-      setBackupBusy(false);
-    }
-  };
-  const importBackup = async () => {
-    setBackupBusy(true);
-    setBackupMessage(null);
-    try {
-      const imported = await onImportBackup();
-      if (imported !== null) {
-        setBackupMessage({
-          type: "success",
-          text: t.home.importSuccess(imported),
-        });
-      }
-    } catch {
-      setBackupMessage({ type: "error", text: t.home.backupError });
-    } finally {
-      setBackupBusy(false);
-    }
   };
 
   return (
     <SafeAreaView style={styles.safe}>
-      <View style={styles.langSwitch}>
-        {SUPPORTED_LANGS.map((l: Lang) => (
-          <TouchableOpacity
-            key={l}
-            onPress={() => setLang(l)}
-            style={[styles.langBtn, lang === l && styles.langBtnOn]}
-            accessibilityRole="button"
-          >
-            <Text style={[styles.langText, lang === l && styles.langTextOn]}>
-              {languageLabel(l)}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
+      <TouchableOpacity
+        style={styles.settingsBtn}
+        onPress={onOpenSettings}
+        accessibilityRole="button"
+        accessibilityLabel={t.settings.open}
+      >
+        <Text style={styles.settingsIcon}>{"⚙︎"}</Text>
+      </TouchableOpacity>
       <ScrollView
         contentContainerStyle={styles.scroll}
         showsVerticalScrollIndicator={false}
@@ -279,44 +226,6 @@ export default function HomeScreen({
             </View>
           ) : null}
 
-          <View style={styles.dataTools}>
-            <Text style={styles.dataTitle}>{t.home.dataTitle}</Text>
-            <Text style={styles.dataHint}>{t.home.dataHint}</Text>
-            <View style={styles.dataActions}>
-              <TouchableOpacity
-                style={styles.dataButton}
-                onPress={() => void exportBackup()}
-                disabled={backupBusy}
-                accessibilityRole="button"
-                accessibilityState={{ disabled: backupBusy }}
-              >
-                <Text style={styles.dataButtonText}>{t.home.exportBackup}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.dataButton, styles.dataButtonLast]}
-                onPress={() => void importBackup()}
-                disabled={backupBusy}
-                accessibilityRole="button"
-                accessibilityState={{ disabled: backupBusy }}
-              >
-                <Text style={styles.dataButtonText}>{t.home.importBackup}</Text>
-              </TouchableOpacity>
-            </View>
-            {backupMessage ? (
-              <Text
-                style={[
-                  styles.dataMessage,
-                  backupMessage.type === "success"
-                    ? styles.dataMessageSuccess
-                    : styles.dataMessageError,
-                ]}
-                accessibilityRole="alert"
-              >
-                {backupMessage.text}
-              </Text>
-            ) : null}
-          </View>
-
           <View style={styles.support}>
             <TouchableOpacity
               style={styles.supportBtn}
@@ -330,19 +239,6 @@ export default function HomeScreen({
             <Text style={styles.supportHint}>{t.home.supportHint}</Text>
             <Text style={styles.disclaimer}>{t.home.disclaimer}</Text>
           </View>
-
-          <TouchableOpacity
-            style={styles.whatsNewButton}
-            onPress={() => setWhatsNewOpen(true)}
-            accessibilityRole="button"
-            accessibilityLabel={t.whatsNew.open}
-          >
-            <Text style={styles.whatsNewIcon}>✦</Text>
-            <Text style={styles.whatsNewText}>{t.whatsNew.open}</Text>
-            {!releaseSeen ? (
-              <Text style={styles.whatsNewBadge}>{t.whatsNew.badge}</Text>
-            ) : null}
-          </TouchableOpacity>
 
           <Text style={styles.footer}>{t.home.offline}</Text>
         </View>
@@ -377,50 +273,7 @@ export default function HomeScreen({
           </View>
         </View>
       </Modal>
-      <Modal
-        visible={whatsNewOpen}
-        transparent
-        animationType="fade"
-        onRequestClose={closeWhatsNew}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.releaseDialog} accessibilityViewIsModal>
-            <Text style={styles.releaseEyebrow}>
-              {t.whatsNew.version(CURRENT_RELEASE, releaseDate)}
-            </Text>
-            <Text style={styles.releaseTitle}>{t.whatsNew.title}</Text>
-            <ScrollView
-              style={styles.releaseScroll}
-              contentContainerStyle={styles.releaseScrollContent}
-            >
-              <View style={styles.updateNotice}>
-                <Text style={styles.updateNoticeIcon}>↻</Text>
-                <View style={styles.updateNoticeCopy}>
-                  <Text style={styles.updateNoticeTitle}>
-                    {t.whatsNew.automaticUpdatesTitle}
-                  </Text>
-                  <Text style={styles.updateNoticeBody}>
-                    {t.whatsNew.automaticUpdatesBody}
-                  </Text>
-                </View>
-              </View>
-              {t.whatsNew.items.map((item, index) => (
-                <View key={index} style={styles.releaseItem}>
-                  <Text style={styles.releaseBullet}>✦</Text>
-                  <Text style={styles.releaseItemText}>{item}</Text>
-                </View>
-              ))}
-            </ScrollView>
-            <TouchableOpacity
-              style={styles.releaseCloseButton}
-              onPress={closeWhatsNew}
-              accessibilityRole="button"
-            >
-              <Text style={styles.releaseCloseText}>{t.whatsNew.close}</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
+      <WhatsNewModal visible={whatsNewOpen} onClose={closeWhatsNew} />
     </SafeAreaView>
   );
 }
@@ -428,27 +281,21 @@ export default function HomeScreen({
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
   scroll: { flexGrow: 1, justifyContent: "center" },
-  langSwitch: {
+  settingsBtn: {
     position: "absolute",
     top: spacing.md,
     right: spacing.md,
     zIndex: 1,
-    flexDirection: "row",
+    width: 44,
+    height: 44,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.bgElevated,
     borderWidth: 1,
     borderColor: colors.cardBorder,
-    borderRadius: radius.sm,
-    overflow: "hidden",
+    borderRadius: radius.md,
   },
-  langBtn: {
-    paddingHorizontal: 7,
-    paddingVertical: 6,
-    backgroundColor: colors.bgElevated,
-    minWidth: 36,
-    alignItems: "center",
-  },
-  langBtnOn: { backgroundColor: colors.gold },
-  langText: { color: colors.textDim, fontSize: 13, fontWeight: "800" },
-  langTextOn: { color: colors.bg },
+  settingsIcon: { color: colors.gold, fontSize: 21, lineHeight: 24 },
   container: {
     flex: 1,
     width: "100%",
@@ -558,35 +405,6 @@ const styles = StyleSheet.create({
     borderLeftColor: colors.cardBorder,
   },
   deleteIcon: { color: colors.textDim, fontSize: 28, fontWeight: "300" },
-  dataTools: {
-    marginTop: spacing.xl,
-    paddingTop: spacing.lg,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: colors.cardBorder,
-  },
-  dataTitle: { color: colors.text, fontSize: 17, fontWeight: "800" },
-  dataHint: {
-    color: colors.textDim,
-    fontSize: 12,
-    lineHeight: 17,
-    marginTop: spacing.xs,
-  },
-  dataActions: { flexDirection: "row", marginTop: spacing.md },
-  dataButton: {
-    flex: 1,
-    minHeight: 44,
-    alignItems: "center",
-    justifyContent: "center",
-    borderColor: colors.cardBorder,
-    borderWidth: 1,
-    borderRadius: radius.md,
-    marginEnd: spacing.sm,
-  },
-  dataButtonLast: { marginEnd: 0 },
-  dataButtonText: { color: colors.gold, fontSize: 14, fontWeight: "800" },
-  dataMessage: { fontSize: 12, marginTop: spacing.sm },
-  dataMessageSuccess: { color: colors.positive },
-  dataMessageError: { color: colors.negative },
   support: {
     marginTop: spacing.xl,
     paddingTop: spacing.lg,
@@ -616,28 +434,6 @@ const styles = StyleSheet.create({
     lineHeight: 16,
     textAlign: "center",
     marginTop: spacing.md,
-  },
-  whatsNewButton: {
-    minHeight: 44,
-    marginTop: spacing.md,
-    alignSelf: "center",
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: spacing.md,
-    borderRadius: radius.md,
-  },
-  whatsNewIcon: { color: colors.gold, fontSize: 15, marginRight: spacing.sm },
-  whatsNewText: { color: colors.text, fontSize: 14, fontWeight: "700" },
-  whatsNewBadge: {
-    color: colors.bg,
-    backgroundColor: colors.gold,
-    fontSize: 10,
-    fontWeight: "800",
-    overflow: "hidden",
-    borderRadius: radius.sm,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    marginLeft: spacing.sm,
   },
   modalOverlay: {
     flex: 1,
@@ -677,69 +473,6 @@ const styles = StyleSheet.create({
     marginLeft: spacing.sm,
   },
   confirmDeleteText: { color: colors.text, fontSize: 15, fontWeight: "800" },
-  releaseDialog: {
-    width: "100%",
-    maxWidth: 520,
-    maxHeight: "86%",
-    backgroundColor: colors.bg,
-    borderColor: colors.goldDim,
-    borderWidth: 1,
-    borderRadius: radius.lg,
-    padding: spacing.lg,
-  },
-  releaseEyebrow: {
-    color: colors.goldDim,
-    fontSize: 11,
-    fontWeight: "800",
-    letterSpacing: 0.7,
-    textTransform: "uppercase",
-  },
-  releaseTitle: {
-    color: colors.gold,
-    fontSize: 28,
-    fontWeight: "800",
-    marginTop: spacing.xs,
-    marginBottom: spacing.md,
-  },
-  releaseScroll: { flexGrow: 0 },
-  releaseScrollContent: { paddingBottom: spacing.sm },
-  updateNotice: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    backgroundColor: colors.bgElevated,
-    borderRadius: radius.md,
-    padding: spacing.md,
-    marginBottom: spacing.lg,
-  },
-  updateNoticeIcon: {
-    color: colors.positive,
-    fontSize: 24,
-    fontWeight: "700",
-    marginRight: spacing.md,
-  },
-  updateNoticeCopy: { flex: 1 },
-  updateNoticeTitle: { color: colors.text, fontSize: 15, fontWeight: "800" },
-  updateNoticeBody: {
-    color: colors.textDim,
-    fontSize: 13,
-    lineHeight: 19,
-    marginTop: 3,
-  },
-  releaseItem: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    marginBottom: spacing.md,
-  },
-  releaseBullet: { color: colors.gold, fontSize: 12, marginRight: spacing.sm, marginTop: 3 },
-  releaseItemText: { flex: 1, color: colors.text, fontSize: 14, lineHeight: 21 },
-  releaseCloseButton: {
-    backgroundColor: colors.gold,
-    borderRadius: radius.lg,
-    paddingVertical: spacing.md,
-    alignItems: "center",
-    marginTop: spacing.sm,
-  },
-  releaseCloseText: { color: colors.bg, fontSize: 16, fontWeight: "800" },
   footer: {
     color: colors.textDim,
     textAlign: "center",

@@ -3,7 +3,7 @@
  * Run with: npm run test:storage
  */
 import { createGame } from "../src/scoring";
-import { normalizeGame } from "../src/storage";
+import { normalizeGame, normalizeSettings } from "../src/storage";
 
 let passed = 0;
 let failed = 0;
@@ -125,6 +125,26 @@ check(
   "Kraken-discard count survives JSON persistence",
   roundTripped?.discardedTricks[0] === 1 &&
     roundTripped.discardedTricks[1] === 0
+);
+
+console.log("App settings normalization");
+check(
+  "missing settings fall back to keep-awake on",
+  normalizeSettings(null).keepAwake === true
+);
+check(
+  "corrupt settings fall back to keep-awake on",
+  normalizeSettings("nonsense").keepAwake === true &&
+    normalizeSettings({ keepAwake: "yes" }).keepAwake === true
+);
+check(
+  "an explicit opt-out survives",
+  normalizeSettings({ keepAwake: false }).keepAwake === false
+);
+check(
+  "unknown fields from newer versions are dropped",
+  Object.keys(normalizeSettings({ keepAwake: true, future: 1 })).join(",") ===
+    "keepAwake"
 );
 
 console.log(`\n${passed} passed, ${failed} failed`);

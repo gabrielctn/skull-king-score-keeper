@@ -30,13 +30,6 @@ export const de: Strings = {
     playersRound: (players, round, total) =>
       `${players} Spieler · Runde ${round} von ${total}`,
     leading: (name, total) => `In Führung: ${name} (${total})`,
-    dataTitle: "Deine Daten",
-    dataHint: "Exportiere eine Kopie deiner Spiele oder stelle sie auf diesem Gerät wieder her.",
-    exportBackup: "Exportieren",
-    importBackup: "Importieren",
-    importSuccess: (count) =>
-      `${count} ${count === 1 ? "Spiel importiert" : "Spiele importiert"}.`,
-    backupError: "Diese Sicherung konnte nicht gelesen werden.",
     support: "Entwickler unterstützen ☕",
     supportHint: "Freiwilliger Beitrag · die App bleibt vollständig kostenlos.",
     disclaimer:
@@ -53,11 +46,35 @@ export const de: Strings = {
     automaticUpdatesBody:
       "Installierte Apps laden jede neue Version automatisch und wechseln zu ihr, sobald das Gerät online ist.",
     items: [
-      "Deutsch, Arabisch und vereinfachtes Chinesisch sind jetzt verfügbar. Beim ersten Start folgt die App der Gerätesprache, wenn sie unterstützt wird, andernfalls wird Englisch verwendet.",
-      "Arabisch unterstützt in der gesamten App die Schreibrichtung von rechts nach links.",
-      "In der neuen Neuigkeiten-Ansicht sind die Verbesserungen jeder Version leicht zu finden.",
+      "Ein neues Einstellungen-Menü (⚙-Knopf auf der Startseite) bündelt jetzt Sprache, deine Daten und die Neuigkeiten.",
+      "Der Bildschirm bleibt während der Partie eingeschaltet, damit die Punkte zwischen den Runden sichtbar bleiben. In den Einstellungen abschaltbar.",
+      "Unter „Deine Daten“ lassen sich jetzt alle gespeicherten Spiele auf einmal löschen.",
     ],
     close: "Verstanden",
+  },
+
+  settings: {
+    open: "Einstellungen",
+    title: "Einstellungen",
+    languageTitle: "Sprache",
+    gameTitle: "Während der Partie",
+    keepAwakeTitle: "Bildschirm eingeschaltet lassen",
+    keepAwakeHint:
+      "Verhindert, dass das Gerät in den Ruhezustand wechselt, solange ein Spielbildschirm geöffnet ist.",
+    dataTitle: "Deine Daten",
+    dataHint: "Exportiere eine Kopie deiner Spiele oder stelle sie auf diesem Gerät wieder her.",
+    exportBackup: "Exportieren",
+    importBackup: "Importieren",
+    importSuccess: (count) =>
+      `${count} ${count === 1 ? "Spiel importiert" : "Spiele importiert"}.`,
+    backupError: "Diese Sicherung konnte nicht gelesen werden.",
+    deleteAll: "Alle Spiele löschen",
+    deleteAllTitle: "Alle Spiele löschen?",
+    deleteAllMessage:
+      "Alle Spiele — auch ein laufendes — werden dauerhaft gelöscht. Exportiere vorher am besten eine Sicherung.",
+    deleteAllCancel: "Abbrechen",
+    deleteAllConfirm: "Alle löschen",
+    deleteAllSuccess: "Alle Spiele wurden gelöscht.",
   },
 
   setup: {

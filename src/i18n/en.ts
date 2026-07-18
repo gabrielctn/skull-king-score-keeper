@@ -30,13 +30,6 @@ export const en: Strings = {
     playersRound: (players, round, total) =>
       `${players} players · round ${round} of ${total}`,
     leading: (name, total) => `Leading: ${name} (${total})`,
-    dataTitle: "Your data",
-    dataHint: "Export a copy of your games or restore it on this device.",
-    exportBackup: "Export",
-    importBackup: "Import",
-    importSuccess: (count) =>
-      `${count} ${count === 1 ? "game imported" : "games imported"}.`,
-    backupError: "This backup could not be read.",
     support: "Support the developer ☕",
     supportHint: "Optional contribution · the app remains completely free.",
     disclaimer:
@@ -53,11 +46,35 @@ export const en: Strings = {
     automaticUpdatesBody:
       "Installed apps now download each new release automatically and switch to it as soon as the device is online.",
     items: [
-      "German, Arabic and Simplified Chinese are now available. On first launch, the app follows your device language when supported and otherwise uses English.",
-      "Arabic includes right-to-left layout support throughout the app.",
-      "A new What's new view keeps release improvements easy to find.",
+      "A new Settings menu (the ⚙ button on the home screen) now gathers the language, your data and What's new.",
+      "The screen stays awake during a game so scores remain visible between rounds. You can turn this off in the settings.",
+      "Your data now includes a way to delete every saved game at once.",
     ],
     close: "Got it",
+  },
+
+  settings: {
+    open: "Settings",
+    title: "Settings",
+    languageTitle: "Language",
+    gameTitle: "During a game",
+    keepAwakeTitle: "Keep the screen awake",
+    keepAwakeHint:
+      "Stops the device from going to sleep while a game screen is open.",
+    dataTitle: "Your data",
+    dataHint: "Export a copy of your games or restore it on this device.",
+    exportBackup: "Export",
+    importBackup: "Import",
+    importSuccess: (count) =>
+      `${count} ${count === 1 ? "game imported" : "games imported"}.`,
+    backupError: "This backup could not be read.",
+    deleteAll: "Delete all games",
+    deleteAllTitle: "Delete all games?",
+    deleteAllMessage:
+      "Every game — including one in progress — will be permanently deleted. Consider exporting a backup first.",
+    deleteAllCancel: "Cancel",
+    deleteAllConfirm: "Delete all",
+    deleteAllSuccess: "All games have been deleted.",
   },
 
   setup: {

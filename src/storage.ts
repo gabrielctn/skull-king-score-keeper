@@ -7,6 +7,27 @@ const CURRENT_GAME_KEY = "skullking:currentGame";
 const GAME_HISTORY_KEY = "skullking:gameHistory";
 const LANG_KEY = "skullking:lang";
 const SEEN_RELEASE_KEY = "skullking:seenRelease";
+const SETTINGS_KEY = "skullking:settings";
+
+/** App-wide preferences, as opposed to the per-game options chosen at setup. */
+export interface AppSettings {
+  /** Hold a screen wake lock while a game screen is open (web only). */
+  keepAwake: boolean;
+}
+
+export const DEFAULT_SETTINGS: AppSettings = { keepAwake: true };
+
+/** Fill defaults so settings written by other app versions load safely. */
+export function normalizeSettings(raw: unknown): AppSettings {
+  const source =
+    raw && typeof raw === "object" ? (raw as Record<string, unknown>) : {};
+  return {
+    keepAwake:
+      typeof source.keepAwake === "boolean"
+        ? source.keepAwake
+        : DEFAULT_SETTINGS.keepAwake,
+  };
+}
 
 /**
  * Bring a loaded game up to the current schema. Older saves stored `bonus`
@@ -199,6 +220,26 @@ export async function saveLang(lang: Lang): Promise<void> {
     await AsyncStorage.setItem(LANG_KEY, lang);
   } catch (e) {
     console.warn("Failed to save language", e);
+  }
+}
+
+/** Load the saved app settings, falling back to defaults field by field. */
+export async function loadSettings(): Promise<AppSettings> {
+  try {
+    const stored = await AsyncStorage.getItem(SETTINGS_KEY);
+    return normalizeSettings(stored ? JSON.parse(stored) : null);
+  } catch (e) {
+    console.warn("Failed to load settings", e);
+    return { ...DEFAULT_SETTINGS };
+  }
+}
+
+/** Persist the app settings. */
+export async function saveSettings(settings: AppSettings): Promise<void> {
+  try {
+    await AsyncStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+  } catch (e) {
+    console.warn("Failed to save settings", e);
   }
 }
 

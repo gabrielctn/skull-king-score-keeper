@@ -28,6 +28,22 @@ export function languageLabel(lang: Lang): string {
   return dictionaries[lang].langLabel;
 }
 
+/**
+ * Each language named in itself, so every reader can find their own entry in
+ * the settings list. Deliberately not translated per locale.
+ */
+const nativeLanguageNames: Record<Lang, string> = {
+  fr: "Français",
+  en: "English",
+  de: "Deutsch",
+  ar: "العربية",
+  zh: "中文（简体）",
+};
+
+export function languageNativeName(lang: Lang): string {
+  return nativeLanguageNames[lang];
+}
+
 /** Best-effort first-launch language guess (web only); defaults to English. */
 export function detectLang(): Lang {
   if (typeof navigator !== "undefined") {

@@ -45,12 +45,6 @@ export interface Strings {
     playersRound: (players: number, round: number, total: number) => string;
     /** "Leading: {name} ({total})" */
     leading: (name: string, total: number) => string;
-    dataTitle: string;
-    dataHint: string;
-    exportBackup: string;
-    importBackup: string;
-    importSuccess: (count: number) => string;
-    backupError: string;
     support: string;
     supportHint: string;
     disclaimer: string;
@@ -66,6 +60,29 @@ export interface Strings {
     automaticUpdatesBody: string;
     items: string[];
     close: string;
+  };
+
+  settings: {
+    /** Accessibility label of the gear button on the home screen. */
+    open: string;
+    title: string;
+    languageTitle: string;
+    /** Section for options that apply while a game screen is open. */
+    gameTitle: string;
+    keepAwakeTitle: string;
+    keepAwakeHint: string;
+    dataTitle: string;
+    dataHint: string;
+    exportBackup: string;
+    importBackup: string;
+    importSuccess: (count: number) => string;
+    backupError: string;
+    deleteAll: string;
+    deleteAllTitle: string;
+    deleteAllMessage: string;
+    deleteAllCancel: string;
+    deleteAllConfirm: string;
+    deleteAllSuccess: string;
   };
 
   setup: {

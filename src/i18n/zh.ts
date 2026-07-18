@@ -29,12 +29,6 @@ export const zh: Strings = {
     playersRound: (players, round, total) =>
       `${players} 名玩家 · 第 ${round}/${total} 回合`,
     leading: (name, total) => `领先：${name}（${total}）`,
-    dataTitle: "你的数据",
-    dataHint: "导出对局备份，或在此设备上恢复备份。",
-    exportBackup: "导出",
-    importBackup: "导入",
-    importSuccess: (count) => `已导入 ${count} 局游戏。`,
-    backupError: "无法读取此备份。",
     support: "支持开发者 ☕",
     supportHint: "自愿赞助 · 本应用将始终完全免费。",
     disclaimer:
@@ -51,11 +45,32 @@ export const zh: Strings = {
     automaticUpdatesBody:
       "已安装的应用会自动下载每个新版本，并在设备联网后立即切换到新版本。",
     items: [
-      "现已支持德语、阿拉伯语和简体中文。首次启动时，应用会优先采用设备语言；若不支持，则默认使用英语。",
-      "阿拉伯语现已在整个应用中支持从右到左布局。",
-      "新增“更新内容”页面，方便随时查看每个版本的改进。",
+      "新增“设置”菜单（首页的 ⚙ 按钮），语言、你的数据和更新内容现已集中在这里。",
+      "对局期间屏幕会保持常亮，方便回合之间查看分数；可在设置中关闭。",
+      "“你的数据”现在支持一次删除所有已保存的游戏。",
     ],
     close: "知道了",
+  },
+
+  settings: {
+    open: "设置",
+    title: "设置",
+    languageTitle: "语言",
+    gameTitle: "对局期间",
+    keepAwakeTitle: "保持屏幕常亮",
+    keepAwakeHint: "游戏界面打开时，阻止设备进入休眠。",
+    dataTitle: "你的数据",
+    dataHint: "导出对局备份，或在此设备上恢复备份。",
+    exportBackup: "导出",
+    importBackup: "导入",
+    importSuccess: (count) => `已导入 ${count} 局游戏。`,
+    backupError: "无法读取此备份。",
+    deleteAll: "删除全部游戏",
+    deleteAllTitle: "删除全部游戏？",
+    deleteAllMessage: "所有游戏（包括进行中的一局）都将被永久删除。建议先导出备份。",
+    deleteAllCancel: "取消",
+    deleteAllConfirm: "全部删除",
+    deleteAllSuccess: "已删除全部游戏。",
   },
 
   setup: {
