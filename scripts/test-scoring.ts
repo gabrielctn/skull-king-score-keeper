@@ -29,6 +29,7 @@ import {
 } from "../src/roundStructures";
 import { en } from "../src/i18n/en";
 import { fr } from "../src/i18n/fr";
+import { es } from "../src/i18n/es";
 import { de } from "../src/i18n/de";
 import { ar } from "../src/i18n/ar";
 import { zh } from "../src/i18n/zh";
@@ -770,7 +771,7 @@ console.log("\nRound structures (rulebook 'Variable Card Counts')");
 }
 
 console.log("\ni18n: every locale names every round structure");
-for (const [locale, strings] of Object.entries({ en, fr, de, ar, zh })) {
+for (const [locale, strings] of Object.entries({ en, fr, es, de, ar, zh })) {
   for (const id of ROUND_STRUCTURE_IDS) {
     eq(
       `${locale} names '${id}'`,
@@ -781,7 +782,7 @@ for (const [locale, strings] of Object.entries({ en, fr, de, ar, zh })) {
 }
 
 console.log("\ni18n: every locale names the scoring modes and Rascal terms");
-for (const [locale, strings] of Object.entries({ en, fr, de, ar, zh })) {
+for (const [locale, strings] of Object.entries({ en, fr, es, de, ar, zh })) {
   for (const mode of ["classic", "rascal"] as const) {
     eq(
       `${locale} names '${mode}' scoring`,
@@ -806,7 +807,7 @@ for (const [locale, strings] of Object.entries({ en, fr, de, ar, zh })) {
 }
 
 console.log("\ni18n: every locale names every award");
-for (const [locale, strings] of Object.entries({ en, fr, de, ar, zh })) {
+for (const [locale, strings] of Object.entries({ en, fr, es, de, ar, zh })) {
   for (const kind of AWARD_KINDS) {
     eq(
       `${locale} names '${kind}'`,
@@ -818,7 +819,7 @@ for (const [locale, strings] of Object.entries({ en, fr, de, ar, zh })) {
 
 console.log("\ni18n: every locale's rules and release notes stay in sync");
 eq("English release-note entries", en.whatsNew.items.length, 3);
-for (const [locale, strings] of Object.entries({ fr, de, ar, zh })) {
+for (const [locale, strings] of Object.entries({ fr, es, de, ar, zh })) {
   eq(`${locale} scoring entries`, strings.rules.scoring.length, en.rules.scoring.length);
   eq(`${locale} rascal entries`, (strings.rules.rascal ?? []).length, en.rules.rascal?.length ?? -1);
   eq(`${locale} bonus entries`, strings.rules.bonusEntries.length, en.rules.bonusEntries.length);
@@ -830,11 +831,12 @@ for (const [locale, strings] of Object.entries({ fr, de, ar, zh })) {
 
 console.log("\ni18n: device-language detection");
 eqs("French regional locale", resolvePreferredLang(["fr-CA"]), "fr");
+eqs("Spanish regional locale", resolvePreferredLang(["es-MX"]), "es");
 eqs("German regional locale", resolvePreferredLang(["de-AT"]), "de");
 eqs("Arabic regional locale", resolvePreferredLang(["ar-MA"]), "ar");
 eqs("Simplified Chinese locale", resolvePreferredLang(["zh-Hans-CN"]), "zh");
-eqs("first supported preference wins", resolvePreferredLang(["es", "de", "fr"]), "de");
-eqs("unsupported languages fall back", resolvePreferredLang(["es", "ja"]), "en");
+eqs("first supported preference wins", resolvePreferredLang(["ja", "es", "fr"]), "es");
+eqs("unsupported languages fall back", resolvePreferredLang(["it", "ja"]), "en");
 
 console.log(`\n${passed} passed, ${failed} failed`);
 if (failed > 0) process.exit(1);

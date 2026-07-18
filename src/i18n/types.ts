@@ -9,7 +9,7 @@ import type { AwardKind } from "../stats";
 import type { RascalBet, ScoringMode } from "../types";
 import type { RascalOutcome } from "../scoring";
 
-export type Lang = "en" | "fr" | "de" | "ar" | "zh";
+export type Lang = "en" | "fr" | "es" | "de" | "ar" | "zh";
 
 /** A rules-modal entry: a bold title and a paragraph body. */
 export interface Entry {

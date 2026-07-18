@@ -224,6 +224,7 @@ export async function loadLang(): Promise<Lang | null> {
     const value = await AsyncStorage.getItem(LANG_KEY);
     return value === "en" ||
       value === "fr" ||
+      value === "es" ||
       value === "de" ||
       value === "ar" ||
       value === "zh"

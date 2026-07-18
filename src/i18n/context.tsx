@@ -2,19 +2,28 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { Lang, Strings } from "./types";
 import { en } from "./en";
 import { fr } from "./fr";
+import { es } from "./es";
 import { de } from "./de";
 import { ar } from "./ar";
 import { zh } from "./zh";
 import { saveLang } from "../storage";
 import { resolvePreferredLang } from "./detection";
 
-export const SUPPORTED_LANGS: readonly Lang[] = ["fr", "en", "de", "ar", "zh"];
+export const SUPPORTED_LANGS: readonly Lang[] = [
+  "fr",
+  "en",
+  "es",
+  "de",
+  "ar",
+  "zh",
+];
 
-const dictionaries: Record<Lang, Strings> = { en, fr, de, ar, zh };
+const dictionaries: Record<Lang, Strings> = { en, fr, es, de, ar, zh };
 
 const browserLanguageMap: Record<Lang, string> = {
   en: "en-US",
   fr: "fr-FR",
+  es: "es-ES",
   de: "de-DE",
   ar: "ar",
   zh: "zh-CN",
@@ -35,6 +44,7 @@ export function languageLabel(lang: Lang): string {
 const nativeLanguageNames: Record<Lang, string> = {
   fr: "Français",
   en: "English",
+  es: "Español",
   de: "Deutsch",
   ar: "العربية",
   zh: "中文（简体）",
