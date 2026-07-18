@@ -1,6 +1,6 @@
 import { Platform } from "react-native";
 
-export const GOOGLE_ANALYTICS_ID = "G-5NTJY6QF95";
+export const GOOGLE_ANALYTICS_ID = "G-JJ74VCT4C6";
 
 export type AnalyticsConsent = "accepted" | "declined";
 
