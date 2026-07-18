@@ -294,7 +294,9 @@ export default function App() {
       game.advancedCards,
       game.twoPlayerGhost,
       game.newExpansion,
-      game.cardsDealt
+      game.cardsDealt,
+      game.scoringMode,
+      game.rascalBets
     );
     persist(rematch, true);
     setScreen("game");

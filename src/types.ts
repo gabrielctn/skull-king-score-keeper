@@ -4,6 +4,21 @@ export interface Player {
 }
 
 /**
+ * Official scoring system chosen at setup (rulebook "Décompte des points"):
+ * the classic "scores selon Skull King" or the accuracy-based
+ * "scores selon Rascal".
+ */
+export type ScoringMode = "classic" | "rascal";
+
+/**
+ * Rascal optional-rules declaration, made after bidding (rulebook p.20):
+ * "buckshot" (Chevrotine, open hand) keeps the standard Rascal tiers,
+ * "cannonball" (Boulet de canon, closed fist) pays 15 points per card dealt
+ * on an exact bid and nothing otherwise.
+ */
+export type RascalBet = "buckshot" | "cannonball";
+
+/**
  * Structured bonus / special-card events captured by a player in one round.
  * Every field is something the player observes at the table; the app turns
  * them into points so there's no mental math.
@@ -57,6 +72,12 @@ export interface RoundEntry {
   legacyLoot: number;
   /** True once the round result has been recorded for this player. */
   recorded: boolean;
+  /**
+   * This player's Rascal optional-rules declaration for the round. Only
+   * meaningful when the game uses Rascal scoring with `rascalBets` on;
+   * everywhere else it stays "buckshot".
+   */
+  rascalBet: RascalBet;
 }
 
 /** Map of playerId -> RoundEntry for a single round. */
@@ -84,6 +105,13 @@ export interface Game {
    * The zero-bid multiplier and the bid/trick caps use this value.
    */
   cardsDealt: number[];
+  /** Which official scoring system this game uses. */
+  scoringMode: ScoringMode;
+  /**
+   * Rascal optional rules: each round every player declares Chevrotine or
+   * Boulet de canon after bidding. Only used when scoringMode is "rascal".
+   */
+  rascalBets: boolean;
   /** Show Loot & Rascal-wager fields in the bonus editor. */
   advancedCards: boolean;
   /** Show and score the cards from the 2025 Skull King expansion. */
@@ -100,4 +128,4 @@ export interface Game {
 }
 
 /** Current persisted-game schema version (for save migrations). */
-export const GAME_SCHEMA_VERSION = 6;
+export const GAME_SCHEMA_VERSION = 7;

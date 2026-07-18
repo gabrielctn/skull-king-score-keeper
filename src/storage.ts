@@ -1,5 +1,11 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { BonusInput, Game, LootUse, RoundEntries } from "./types";
+import {
+  BonusInput,
+  Game,
+  LootUse,
+  RoundEntries,
+  ScoringMode,
+} from "./types";
 import { emptyBonus } from "./scoring";
 import { Lang } from "./i18n/types";
 
@@ -36,6 +42,8 @@ export function normalizeSettings(raw: unknown): AppSettings {
  * the two allied players, so keep those historical points in `legacyLoot`.
  * Schema v5 adds the new expansion fields and toggle; old games keep it off.
  * Schema v6 records tricks destroyed by a Kraken; older saves default to 0.
+ * Schema v7 adds Rascal scoring (mode, optional-rules flag and per-entry
+ * declarations); older saves stay on classic scoring.
  */
 export function normalizeGame(raw: any): Game | null {
   if (!raw || !Array.isArray(raw.players) || !Array.isArray(raw.rounds)) {
@@ -60,6 +68,13 @@ export function normalizeGame(raw: any): Game | null {
     return { ...emptyBonus(), ...currentBonus };
   };
 
+  const scoringMode: ScoringMode =
+    raw.scoringMode === "rascal" ? "rascal" : "classic";
+  // The optional-rules flag (and any stored declaration) only means something
+  // in a Rascal game with bets on; reset it everywhere else so stale values
+  // can never change a score.
+  const rascalBets = scoringMode === "rascal" && raw.rascalBets === true;
+
   const rounds: RoundEntries[] = raw.rounds.map((round: any) => {
     const out: RoundEntries = {};
     for (const p of raw.players) {
@@ -73,6 +88,10 @@ export function normalizeGame(raw: any): Game | null {
           Number(e?.legacyLoot ?? e?.bonus?.loot ?? 0) || 0
         ),
         recorded: !!e?.recorded,
+        rascalBet:
+          rascalBets && e?.rascalBet === "cannonball"
+            ? "cannonball"
+            : "buckshot",
       };
     }
     return out;
@@ -123,6 +142,8 @@ export function normalizeGame(raw: any): Game | null {
     lootUses,
     discardedTricks,
     cardsDealt,
+    scoringMode,
+    rascalBets,
     advancedCards: raw.advancedCards ?? true,
     newExpansion: raw.newExpansion ?? false,
     // v2 saves predate the 2-player ghost; default off to keep their strict

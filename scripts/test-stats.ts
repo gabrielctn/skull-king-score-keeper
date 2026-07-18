@@ -89,6 +89,7 @@ const E = (
   bonus: { ...emptyBonus(), ...bonus },
   legacyLoot,
   recorded,
+  rascalBet: "buckshot",
 });
 
 interface GameOptions {

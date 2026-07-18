@@ -79,6 +79,13 @@ const E = (
   bonus: { ...emptyBonus(), ...bonus },
   legacyLoot,
   recorded,
+  rascalBet: "buckshot",
+});
+
+/** The same entry with the Rascal optional-rules closed-fist declaration. */
+const cannonball = (entry: RoundEntry): RoundEntry => ({
+  ...entry,
+  rascalBet: "cannonball",
 });
 
 console.log("Bid scoring (rulebook examples)");
@@ -220,6 +227,191 @@ console.log("\nRascal wager (+ if hit, - if missed)");
 eq("rascal +10 when hit", scoreRound(5, E(1, 1, { rascalWager: 10 })), 20 + 10);
 eq("rascal -10 when missed", scoreRound(5, E(1, 0, { rascalWager: 10 })), -10 - 10);
 eq("rascal +20 on a made zero-bid", scoreRound(5, E(0, 0, { rascalWager: 20 })), 50 + 20);
+
+console.log("\nRascal scoring (rulebook p.18-19)");
+// p.19 Exemple A: 3 cards dealt, exact bids on 0, 1 and 2 all earn the full 30.
+eq("Suzie: bid 0 won 0 (cards 3)", scoreRound(3, E(0, 0), 0, "rascal"), 30);
+eq("Félix: bid 1 won 1 (cards 3)", scoreRound(3, E(1, 1), 0, "rascal"), 30);
+eq("Pauline: bid 2 won 2 (cards 3)", scoreRound(3, E(2, 2), 0, "rascal"), 30);
+// p.19 Exemple B: 4 cards dealt -> direct hit +40, off by 1 +20, off by 2 +0.
+eq("direct hit takes all points at stake", scoreRound(4, E(1, 1), 0, "rascal"), 40);
+eq("glancing blow takes half", scoreRound(4, E(0, 1), 0, "rascal"), 20);
+eq("total whiff takes nothing", scoreRound(4, E(4, 2), 0, "rascal"), 0);
+// Accuracy is symmetric: over or under by one is the same glancing blow.
+eq("over by one", scoreRound(6, E(2, 3), 0, "rascal"), 30);
+eq("under by one", scoreRound(6, E(3, 2), 0, "rascal"), 30);
+// No classic zero-bid rule: a zero bid follows the same accuracy tiers.
+eq("zero bid, off by one (cards 9)", scoreRound(9, E(0, 1), 0, "rascal"), 45);
+eq("zero bid, off by two", scoreRound(9, E(0, 2), 0, "rascal"), 0);
+// The bid itself can never go negative in this mode.
+eq("worst miss still scores 0", scoreRound(10, E(10, 0), 0, "rascal"), 0);
+
+console.log("\nRascal scoring: capture bonuses follow the accuracy tiers");
+eq(
+  "direct hit keeps the full bonus",
+  scoreRound(4, E(1, 1, { black14: true }), 0, "rascal"),
+  40 + 20
+);
+eq(
+  "glancing blow halves capture bonuses",
+  scoreRound(4, E(1, 2, { black14: true, colored14: 1 }), 0, "rascal"),
+  20 + 10 + 5
+);
+eq(
+  "total whiff drops capture bonuses",
+  scoreRound(4, E(0, 2, { mermaidCapturesSkullKing: true }), 0, "rascal"),
+  0
+);
+// Extras with their own exact-bid condition keep it (official FAQ + card rules).
+eq(
+  "pirate wager is won on a direct hit",
+  scoreRound(4, E(1, 1, { rascalWager: 10 }), 0, "rascal"),
+  40 + 10
+);
+eq(
+  "pirate wager is lost even on a glancing blow",
+  scoreRound(4, E(1, 2, { rascalWager: 10 }), 0, "rascal"),
+  20 - 10
+);
+eq(
+  "expansion 7/8 still need the exact bid",
+  scoreRound(4, E(1, 2, { expansion8: 2 }), 0, "rascal"),
+  20
+);
+eq(
+  "expansion 7/8 apply on a direct hit",
+  scoreRound(4, E(1, 1, { expansion7: 1, expansion8: 1 }), 0, "rascal"),
+  40
+);
+eq(
+  "verified Loot flows through unchanged",
+  scoreRound(3, E(1, 1), 20, "rascal"),
+  30 + 20
+);
+eq(
+  "legacy Loot still needs the exact bid",
+  scoreRound(3, E(1, 2, {}, true, 1), 0, "rascal"),
+  15
+);
+
+console.log("\nRascal optional rules (rulebook p.20: 6 cards, bid 3)");
+eq("Chevrotine exact bid: 60", scoreRound(6, E(3, 3), 0, "rascal"), 60);
+eq("Chevrotine off by one: 30", scoreRound(6, E(3, 2), 0, "rascal"), 30);
+eq(
+  "Boulet de canon exact bid: 90",
+  scoreRound(6, cannonball(E(3, 3)), 0, "rascal"),
+  90
+);
+eq(
+  "Boulet de canon off by one: 0",
+  scoreRound(6, cannonball(E(3, 4)), 0, "rascal"),
+  0
+);
+eq(
+  "cannonball bonuses require the exact bid",
+  scoreRound(6, cannonball(E(3, 4, { black14: true })), 0, "rascal"),
+  0
+);
+eq(
+  "cannonball direct hit keeps full bonuses",
+  scoreRound(6, cannonball(E(3, 3, { black14: true })), 0, "rascal"),
+  90 + 20
+);
+eq(
+  "declarations are ignored in classic scoring",
+  scoreRound(5, cannonball(E(1, 0)), 0, "classic"),
+  -10
+);
+eq(
+  "the mode parameter defaults to classic",
+  scoreRound(5, cannonball(E(1, 1))),
+  20
+);
+
+console.log("\nRascal breakdown & history");
+const glance = scoreRoundBreakdown(
+  4,
+  E(1, 2, { black14: true, expansion8: 1 }),
+  0,
+  0,
+  0,
+  "rascal"
+);
+eqs("breakdown carries the mode", glance.scoringMode, "rascal");
+eqs("breakdown carries the outcome", glance.rascalOutcome, "glancingBlow");
+eq(
+  "halved bonus keeps its line",
+  glance.items.find((item) => item.key === "black14")?.points ?? 999,
+  10
+);
+eq(
+  "exact-only extra shows as ignored",
+  glance.items.find((item) => item.key === "expansion8")?.applied ? 1 : 0,
+  0
+);
+eq(
+  "breakdown items sum to the total",
+  glance.items.reduce((sum, item) => sum + item.points, 0),
+  glance.total
+);
+eq("glancing-blow total", glance.total, 20 + 10);
+
+const whiffed = scoreRoundBreakdown(4, E(0, 2, { black14: true }), 0, 0, 0, "rascal");
+eqs("whiff outcome", whiffed.rascalOutcome, "whiff");
+eq(
+  "whiffed capture bonus shows 0 and not applied",
+  (whiffed.items.find((item) => item.key === "black14")?.points ?? 999) +
+    ((whiffed.items.find((item) => item.key === "black14")?.applied ?? true)
+      ? 1
+      : 0),
+  0
+);
+eq("whiff total is zero", whiffed.total, 0);
+
+const classicBreakdown = scoreRoundBreakdown(5, E(2, 2));
+eqs("classic breakdown carries its mode", classicBreakdown.scoringMode, "classic");
+
+console.log("\nRascal games: createGame options + history totals");
+const rascalPlayers = [
+  { id: "a", name: "Anne" },
+  { id: "b", name: "Bonny" },
+];
+const rascalGame = createGame(
+  rascalPlayers,
+  3,
+  true,
+  false,
+  true,
+  undefined,
+  "rascal",
+  true
+);
+eqs("createGame stores the scoring mode", rascalGame.scoringMode, "rascal");
+eq("createGame stores the optional-rules flag", rascalGame.rascalBets ? 1 : 0, 1);
+eqs(
+  "new entries default to the open hand",
+  rascalGame.rounds[0].a.rascalBet,
+  "buckshot"
+);
+const defaultGame = createGame(rascalPlayers, 2);
+eqs("default games stay classic", defaultGame.scoringMode, "classic");
+eq("default games keep bets off", defaultGame.rascalBets ? 1 : 0, 0);
+
+rascalGame.rounds[0] = { a: E(1, 1), b: E(0, 1) }; // 1 card: +10 / +5
+rascalGame.rounds[1] = { a: E(0, 2), b: cannonball(E(2, 2)) }; // 2 cards: 0 / +30
+eq("rascal history: Anne", playerTotal(rascalGame, "a"), 10);
+eq("rascal history: Bonny", playerTotal(rascalGame, "b"), 5 + 30);
+const rascalHistory = playerScoreHistory(rascalGame, "b");
+eqs(
+  "history rounds carry outcomes",
+  rascalHistory[0].rascalOutcome,
+  "glancingBlow"
+);
+eqs(
+  "history rounds carry declarations",
+  rascalHistory[1].rascalBet,
+  "cannonball"
+);
 
 console.log("\nNew expansion scoring");
 eq(

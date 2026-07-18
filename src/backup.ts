@@ -176,6 +176,13 @@ function validateRawEntry(value: unknown, path: string): void {
     MAX_BONUS_COUNT
   );
   assertOptionalBoolean(value.recorded, `${path}.recorded`);
+  if (
+    value.rascalBet !== undefined &&
+    value.rascalBet !== "buckshot" &&
+    value.rascalBet !== "cannonball"
+  ) {
+    failGame(`${path}.rascalBet`, 'expected "buckshot" or "cannonball"');
+  }
   validateRawBonus(value.bonus, `${path}.bonus`);
 }
 
@@ -315,8 +322,16 @@ function validateRawGame(value: unknown, path: string): Record<string, unknown> 
     "advancedCards",
     "newExpansion",
     "twoPlayerGhost",
+    "rascalBets",
   ]) {
     assertOptionalBoolean(value[field], `${path}.${field}`);
+  }
+  if (
+    value.scoringMode !== undefined &&
+    value.scoringMode !== "classic" &&
+    value.scoringMode !== "rascal"
+  ) {
+    failGame(`${path}.scoringMode`, 'expected "classic" or "rascal"');
   }
   if (
     value.status !== undefined &&
@@ -353,6 +368,7 @@ function cleanEntry(entry: RoundEntry): RoundEntry {
     bonus: cleanBonus(entry.bonus),
     legacyLoot: entry.legacyLoot,
     recorded: entry.recorded,
+    rascalBet: entry.rascalBet,
   };
 }
 
@@ -406,6 +422,8 @@ function normalizeBackupGame(value: unknown, path: string): Game {
     ),
     discardedTricks: [...normalized.discardedTricks],
     cardsDealt: [...normalized.cardsDealt],
+    scoringMode: normalized.scoringMode,
+    rascalBets: normalized.rascalBets,
     advancedCards: normalized.advancedCards,
     newExpansion: normalized.newExpansion,
     twoPlayerGhost: normalized.twoPlayerGhost,

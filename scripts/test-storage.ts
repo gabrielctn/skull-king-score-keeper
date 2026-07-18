@@ -127,6 +127,76 @@ check(
     roundTripped.discardedTricks[1] === 0
 );
 
+console.log("Rascal scoring migration (schema v7)");
+check(
+  "pre-v7 saves default to classic scoring",
+  legacy?.scoringMode === "classic" && legacy?.rascalBets === false
+);
+check(
+  "pre-v7 entries default to the open-hand declaration",
+  legacy?.rounds[0].a.rascalBet === "buckshot"
+);
+const rascalRounds = [
+  {
+    a: { bid: 1, tricks: 1, bonus: {}, recorded: true, rascalBet: "cannonball" },
+    b: { bid: 0, tricks: 0, bonus: {}, recorded: true, rascalBet: "buckshot" },
+    c: { bid: 0, tricks: 0, bonus: {}, recorded: true },
+  },
+];
+const rascalSave = normalizeGame({
+  id: "rascal",
+  players,
+  totalRounds: 1,
+  rounds: rascalRounds,
+  scoringMode: "rascal",
+  rascalBets: true,
+});
+check(
+  "rascal mode and optional-rules flag survive",
+  rascalSave?.scoringMode === "rascal" && rascalSave.rascalBets === true
+);
+check(
+  "cannonball declarations survive",
+  rascalSave?.rounds[0].a.rascalBet === "cannonball" &&
+    rascalSave.rounds[0].c.rascalBet === "buckshot"
+);
+const betsOff = normalizeGame({
+  id: "betsOff",
+  players,
+  totalRounds: 1,
+  rounds: rascalRounds,
+  scoringMode: "rascal",
+  rascalBets: false,
+});
+check(
+  "declarations reset when the optional rules are off",
+  betsOff?.rounds[0].a.rascalBet === "buckshot"
+);
+const classicWithBet = normalizeGame({
+  id: "classicBet",
+  players,
+  totalRounds: 1,
+  rounds: rascalRounds,
+  scoringMode: "classic",
+  rascalBets: true,
+});
+check(
+  "declarations reset outside rascal mode",
+  classicWithBet?.rounds[0].a.rascalBet === "buckshot"
+);
+const badMode = normalizeGame({
+  id: "bad",
+  players,
+  totalRounds: 1,
+  rounds: [{}],
+  scoringMode: "pirate",
+  rascalBets: "yes",
+});
+check(
+  "unknown scoring options fall back to classic",
+  badMode?.scoringMode === "classic" && badMode.rascalBets === false
+);
+
 console.log("App settings normalization");
 check(
   "missing settings fall back to keep-awake on",

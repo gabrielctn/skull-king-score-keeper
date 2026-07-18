@@ -3,8 +3,10 @@ import {
   Game,
   LootUse,
   Player,
+  RascalBet,
   RoundEntries,
   RoundEntry,
+  ScoringMode,
 } from "./types";
 
 /**
@@ -33,7 +35,26 @@ import {
  *     rather than entered as a pre-calculated per-player count.
  *   - Rascal pirate wager (0/10/20): +wager if the bid is hit, -wager if missed.
  *   - Expansion 7 / 8: -5 / +5 to their captor only when the bid is hit.
+ *
+ * Rascal scoring ("Les scores selon Rascal", rulebook p.18-20) replaces the
+ * bid scoring above when `Game.scoringMode` is "rascal":
+ *   - Every round puts 10 points per card dealt at stake, whatever the bid.
+ *   - Direct hit (exact bid): the full stake. Glancing blow (off by one):
+ *     half. Total whiff (off by two or more): nothing. Never negative.
+ *   - Capture bonuses follow the same tiers: full / half / none.
+ *   - Optional rules: a "cannonball" declaration pays 15 points per card on
+ *     an exact bid and nothing otherwise — bonuses included.
+ *   - Extras with their own exact-bid condition (Loot, expansion 7/8, the
+ *     Rascal pirate wager) keep it unchanged.
  */
+
+/** Rascal scoring: points per card dealt at stake each round. */
+export const RASCAL_POINTS_PER_CARD = 10;
+/** Rascal optional rules: cannonball payout per card dealt on an exact bid. */
+export const RASCAL_CANNONBALL_POINTS_PER_CARD = 15;
+
+/** Accuracy tier of a Rascal-scored round (rulebook p.18). */
+export type RascalOutcome = "directHit" | "glancingBlow" | "whiff";
 
 export const BONUS_VALUES = {
   colored14: 10,
@@ -80,6 +101,12 @@ export interface RoundScoreBreakdown {
   bid: number;
   tricks: number;
   madeBid: boolean;
+  /** Scoring system the round was scored under. */
+  scoringMode: ScoringMode;
+  /** Accuracy tier — only meaningful when scoringMode is "rascal". */
+  rascalOutcome: RascalOutcome;
+  /** The player's optional-rules declaration for the round. */
+  rascalBet: RascalBet;
   items: ScoreBreakdownItem[];
   total: number;
 }
@@ -95,8 +122,45 @@ export function madeBid(entry: RoundEntry): boolean {
   return entry.bid === entry.tricks;
 }
 
+/** Rascal accuracy tier: exact, off by one, or off by two and more. */
+export function rascalOutcome(entry: RoundEntry): RascalOutcome {
+  const diff = Math.abs(entry.tricks - entry.bid);
+  return diff === 0 ? "directHit" : diff === 1 ? "glancingBlow" : "whiff";
+}
+
+/**
+ * Multiplier Rascal scoring applies to capture bonuses: full on a direct
+ * hit, half on a glancing blow, none on a whiff — and with a cannonball
+ * declaration, full on an exact bid and none otherwise.
+ */
+function rascalCaptureScale(entry: RoundEntry): 0 | 0.5 | 1 {
+  const outcome = rascalOutcome(entry);
+  if (entry.rascalBet === "cannonball") {
+    return outcome === "directHit" ? 1 : 0;
+  }
+  return outcome === "directHit" ? 1 : outcome === "glancingBlow" ? 0.5 : 0;
+}
+
 /** Points from the bid alone (no bonuses). */
-export function bidScore(cardsDealt: number, entry: RoundEntry): number {
+export function bidScore(
+  cardsDealt: number,
+  entry: RoundEntry,
+  mode: ScoringMode = "classic"
+): number {
+  if (mode === "rascal") {
+    if (entry.rascalBet === "cannonball") {
+      return madeBid(entry)
+        ? RASCAL_CANNONBALL_POINTS_PER_CARD * cardsDealt
+        : 0;
+    }
+    const stake = RASCAL_POINTS_PER_CARD * cardsDealt;
+    const outcome = rascalOutcome(entry);
+    return outcome === "directHit"
+      ? stake
+      : outcome === "glancingBlow"
+        ? stake / 2
+        : 0;
+  }
   if (entry.bid === 0) {
     return madeBid(entry) ? 10 * cardsDealt : -10 * cardsDealt;
   }
@@ -220,14 +284,18 @@ export function scoreRoundBreakdown(
   entry: RoundEntry,
   lootBonus = 0,
   lootAttempts = Math.floor(lootBonus / BONUS_VALUES.loot),
-  lootSelfWins = 0
+  lootSelfWins = 0,
+  mode: ScoringMode = "classic"
 ): RoundScoreBreakdown {
   const exact = madeBid(entry);
+  // Rascal scoring scales capture bonuses by accuracy; classic keeps them
+  // whole. Every base value is even, so the half tier stays an integer.
+  const captureScale = mode === "rascal" ? rascalCaptureScale(entry) : 1;
   const items: ScoreBreakdownItem[] = [
     {
       key: "bid",
       count: entry.bid,
-      points: bidScore(cardsDealt, entry),
+      points: bidScore(cardsDealt, entry, mode),
       applied: true,
     },
   ];
@@ -242,32 +310,35 @@ export function scoreRoundBreakdown(
     items.push({ key, count, points, applied });
   };
 
+  const addCapture = (key: ScoreBreakdownKey, count: number, points: number) =>
+    add(key, count, points * captureScale, captureScale > 0);
+
   const b = entry.bonus;
-  add("colored14", b.colored14, b.colored14 * BONUS_VALUES.colored14);
-  add("black14", b.black14 ? 1 : 0, b.black14 ? BONUS_VALUES.black14 : 0);
-  add(
+  addCapture("colored14", b.colored14, b.colored14 * BONUS_VALUES.colored14);
+  addCapture("black14", b.black14 ? 1 : 0, b.black14 ? BONUS_VALUES.black14 : 0);
+  addCapture(
     "mermaidByPirate",
     b.mermaidByPirate,
     b.mermaidByPirate * BONUS_VALUES.mermaidByPirate
   );
-  add(
+  addCapture(
     "pirateBySkullKing",
     b.pirateBySkullKing,
     b.pirateBySkullKing * BONUS_VALUES.pirateBySkullKing
   );
-  add(
+  addCapture(
     "mermaidCapturesSkullKing",
     b.mermaidCapturesSkullKing ? 1 : 0,
     b.mermaidCapturesSkullKing
       ? BONUS_VALUES.mermaidCapturesSkullKing
       : 0
   );
-  add(
+  addCapture(
     "davyJonesLeviathans",
     b.davyJonesLeviathans,
     b.davyJonesLeviathans * BONUS_VALUES.davyJonesLeviathan
   );
-  add(
+  addCapture(
     "secondCaptured",
     b.secondCaptured ? 1 : 0,
     b.secondCaptured ? BONUS_VALUES.secondCaptured : 0
@@ -309,6 +380,9 @@ export function scoreRoundBreakdown(
     bid: entry.bid,
     tricks: entry.tricks,
     madeBid: exact,
+    scoringMode: mode,
+    rascalOutcome: rascalOutcome(entry),
+    rascalBet: entry.rascalBet,
     items,
     total: items.reduce((sum, item) => sum + item.points, 0),
   };
@@ -318,9 +392,17 @@ export function scoreRoundBreakdown(
 export function scoreRound(
   cardsDealt: number,
   entry: RoundEntry,
-  lootBonus = 0
+  lootBonus = 0,
+  mode: ScoringMode = "classic"
 ): number {
-  return scoreRoundBreakdown(cardsDealt, entry, lootBonus).total;
+  return scoreRoundBreakdown(
+    cardsDealt,
+    entry,
+    lootBonus,
+    Math.floor(lootBonus / BONUS_VALUES.loot),
+    0,
+    mode
+  ).total;
 }
 
 /** Cards dealt for a given 1-based round (defaults to the round number). */
@@ -373,7 +455,8 @@ export function playerScoreHistory(
         entry,
         loot,
         lootEvents.alliances,
-        lootEvents.selfWins
+        lootEvents.selfWins,
+        game.scoringMode
       );
       runningTotal += breakdown.total;
       history.push({ ...breakdown, roundNumber: r, runningTotal });
@@ -455,6 +538,7 @@ export function emptyEntry(): RoundEntry {
     bonus: emptyBonus(),
     legacyLoot: 0,
     recorded: false,
+    rascalBet: "buckshot",
   };
 }
 
@@ -475,7 +559,10 @@ export function createGame(
    * ("Pas d'impair", "Prêt au combat", ...). When provided, its length wins
    * over `totalRounds`. Defaults to the classic 1, 2, ... `totalRounds`.
    */
-  cardsPerRound?: number[]
+  cardsPerRound?: number[],
+  scoringMode: ScoringMode = "classic",
+  /** Rascal optional rules (Chevrotine / Boulet de canon declarations). */
+  rascalBets = false
 ): Game {
   const now = Date.now();
   // An empty structure would create a game with zero rounds but a
@@ -494,6 +581,8 @@ export function createGame(
     cardsDealt: structure
       ? [...structure]
       : Array.from({ length: roundCount }, (_, i) => i + 1),
+    scoringMode,
+    rascalBets: scoringMode === "rascal" && rascalBets,
     advancedCards,
     newExpansion,
     twoPlayerGhost,

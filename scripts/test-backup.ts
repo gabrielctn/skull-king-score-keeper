@@ -105,7 +105,52 @@ check(
   serializeBackup(parsed, parsed.exportedAt) === json
 );
 
+const rascalRoundTrip = createGame(
+  players,
+  2,
+  true,
+  false,
+  true,
+  undefined,
+  "rascal",
+  true
+);
+rascalRoundTrip.id = "rascal";
+rascalRoundTrip.createdAt = 90;
+rascalRoundTrip.updatedAt = 100;
+rascalRoundTrip.rounds[0].a.rascalBet = "cannonball";
+const rascalJson = serializeBackup(
+  { currentGame: rascalRoundTrip, history: [] },
+  1
+);
+const rascalParsed = parseBackup(rascalJson);
+check(
+  "rascal scoring options survive",
+  rascalParsed.currentGame?.scoringMode === "rascal" &&
+    rascalParsed.currentGame.rascalBets === true
+);
+check(
+  "rascal declarations survive",
+  rascalParsed.currentGame?.rounds[0].a.rascalBet === "cannonball"
+);
+
 console.log("Defensive parsing");
+{
+  const tamperedMode = JSON.parse(rascalJson);
+  tamperedMode.currentGame.scoringMode = "pirate";
+  expectBackupError(
+    "invalid scoring modes are rejected",
+    () => parseBackup(JSON.stringify(tamperedMode)),
+    "invalid_game"
+  );
+  const tamperedBet = JSON.parse(rascalJson);
+  tamperedBet.currentGame.rounds[0].a.rascalBet = "grapeshot";
+  expectBackupError(
+    "invalid bet declarations are rejected",
+    () => parseBackup(JSON.stringify(tamperedBet)),
+    "invalid_game"
+  );
+}
 expectBackupError("malformed JSON is rejected", () => parseBackup("{"), "invalid_json");
 expectBackupError(
   "wrong product marker is rejected",
