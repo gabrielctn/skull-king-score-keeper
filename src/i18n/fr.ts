@@ -12,6 +12,14 @@ export const fr: Strings = {
     dismiss: "Fermer",
   },
 
+  cookies: {
+    accessibilityLabel: "Choix des cookies statistiques",
+    message:
+      "Nous utilisons des cookies Google Analytics pour mesurer les visites et améliorer le compteur de scores.",
+    decline: "Refuser",
+    accept: "Accepter",
+  },
+
   home: {
     title: "Compteur de scores",
     subtitle: "pour Skull King",

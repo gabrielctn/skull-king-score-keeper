@@ -12,6 +12,14 @@ export const ar: Strings = {
     dismiss: "إغلاق",
   },
 
+  cookies: {
+    accessibilityLabel: "خيارات ملفات تعريف الارتباط التحليلية",
+    message:
+      "نستخدم ملفات تعريف ارتباط Google Analytics لفهم الزيارات وتحسين حاسبة النقاط.",
+    decline: "رفض",
+    accept: "قبول",
+  },
+
   home: {
     title: "حاسبة النقاط",
     subtitle: "للعبة Skull King",

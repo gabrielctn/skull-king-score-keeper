@@ -12,6 +12,14 @@ export const de: Strings = {
     dismiss: "Schließen",
   },
 
+  cookies: {
+    accessibilityLabel: "Auswahl für Analyse-Cookies",
+    message:
+      "Wir verwenden Google-Analytics-Cookies, um Besuche zu verstehen und den Punktezähler zu verbessern.",
+    decline: "Ablehnen",
+    accept: "Akzeptieren",
+  },
+
   home: {
     title: "Punktezähler",
     subtitle: "für Skull King",

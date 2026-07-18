@@ -12,6 +12,14 @@ export const en: Strings = {
     dismiss: "Dismiss",
   },
 
+  cookies: {
+    accessibilityLabel: "Analytics cookie choices",
+    message:
+      "We use Google Analytics cookies to understand visits and improve the score keeper.",
+    decline: "Decline",
+    accept: "Accept",
+  },
+
   home: {
     title: "Score keeper",
     subtitle: "for Skull King",
