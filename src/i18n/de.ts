@@ -76,6 +76,9 @@ export const de: Strings = {
     deleteAllCancel: "Abbrechen",
     deleteAllConfirm: "Alle löschen",
     deleteAllSuccess: "Alle Spiele wurden gelöscht.",
+    feedbackTitle: "Feedback",
+    feedbackHint: "Fehler gefunden oder eine Idee? Ich freue mich über Nachricht.",
+    feedbackButton: "Feedback senden",
   },
 
   setup: {

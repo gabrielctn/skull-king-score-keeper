@@ -77,6 +77,9 @@ export const fr: Strings = {
     deleteAllCancel: "Annuler",
     deleteAllConfirm: "Tout supprimer",
     deleteAllSuccess: "Toutes les parties ont été supprimées.",
+    feedbackTitle: "Votre avis",
+    feedbackHint: "Un bug ou une idée ? N'hésitez pas à m'écrire.",
+    feedbackButton: "Envoyer un retour",
   },
 
   setup: {

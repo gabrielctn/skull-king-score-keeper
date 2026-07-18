@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  Linking,
   Modal,
   SafeAreaView,
   ScrollView,
@@ -27,6 +28,8 @@ import { CURRENT_RELEASE, CURRENT_RELEASE_DATE } from "../releases";
 import { isWakeLockSupported } from "../wakeLock";
 import ToggleSwitch from "../components/ToggleSwitch";
 import WhatsNewModal from "../components/WhatsNewModal";
+
+const FEEDBACK_EMAIL = "gabrielcretin@gmail.com";
 
 interface Props {
   settings: AppSettings;
@@ -120,6 +123,13 @@ export default function SettingsScreen({
     } finally {
       setDataBusy(false);
     }
+  };
+
+  const openFeedback = () => {
+    const subject = encodeURIComponent("Skull King feedback");
+    void Linking.openURL(
+      `mailto:${FEEDBACK_EMAIL}?subject=${subject}`
+    ).catch(() => undefined);
   };
 
   const openWhatsNew = () => {
@@ -262,6 +272,22 @@ export default function SettingsScreen({
             {dataMessage.text}
           </Text>
         ) : null}
+
+        <Text style={[styles.section, styles.sectionSpacing]}>
+          {t.settings.feedbackTitle}
+        </Text>
+        <Text style={styles.dataHint}>{t.settings.feedbackHint}</Text>
+        <TouchableOpacity
+          style={styles.feedbackButton}
+          onPress={openFeedback}
+          accessibilityRole="button"
+          accessibilityLabel={t.settings.feedbackButton}
+          accessibilityHint={FEEDBACK_EMAIL}
+        >
+          <Text style={styles.feedbackButtonText}>
+            {t.settings.feedbackButton}
+          </Text>
+        </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.whatsNewRow}
@@ -430,6 +456,15 @@ const styles = StyleSheet.create({
   dataMessage: { fontSize: 12, marginTop: spacing.sm },
   dataMessageSuccess: { color: colors.positive },
   dataMessageError: { color: colors.negative },
+  feedbackButton: {
+    minHeight: 44,
+    alignItems: "center",
+    justifyContent: "center",
+    borderColor: colors.cardBorder,
+    borderWidth: 1,
+    borderRadius: radius.md,
+  },
+  feedbackButtonText: { color: colors.gold, fontSize: 14, fontWeight: "800" },
   whatsNewRow: {
     flexDirection: "row",
     alignItems: "center",

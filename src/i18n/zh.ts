@@ -72,6 +72,9 @@ export const zh: Strings = {
     deleteAllCancel: "取消",
     deleteAllConfirm: "全部删除",
     deleteAllSuccess: "已删除全部游戏。",
+    feedbackTitle: "反馈",
+    feedbackHint: "发现问题或有好点子？欢迎告诉我。",
+    feedbackButton: "发送反馈",
   },
 
   setup: {

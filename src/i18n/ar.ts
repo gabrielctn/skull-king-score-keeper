@@ -74,6 +74,9 @@ export const ar: Strings = {
     deleteAllCancel: "إلغاء",
     deleteAllConfirm: "حذف الكل",
     deleteAllSuccess: "حُذفت كل المباريات.",
+    feedbackTitle: "ملاحظاتك",
+    feedbackHint: "وجدت خطأً أو لديك فكرة؟ يسعدني أن أسمع منك.",
+    feedbackButton: "إرسال ملاحظة",
   },
 
   setup: {

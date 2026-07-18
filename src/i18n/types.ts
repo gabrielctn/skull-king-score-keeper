@@ -84,6 +84,10 @@ export interface Strings {
     deleteAllCancel: string;
     deleteAllConfirm: string;
     deleteAllSuccess: string;
+    /** Section inviting players to send feedback to the developer. */
+    feedbackTitle: string;
+    feedbackHint: string;
+    feedbackButton: string;
   };
 
   setup: {
