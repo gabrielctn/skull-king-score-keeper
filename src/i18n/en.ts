@@ -46,9 +46,10 @@ export const en: Strings = {
     automaticUpdatesBody:
       "Installed apps now download each new release automatically and switch to it as soon as the device is online.",
     items: [
-      "A new Settings menu (the ⚙ button on the home screen) now gathers the language, your data and What's new.",
-      "The screen stays awake during a game so scores remain visible between rounds. You can turn this off in the settings.",
-      "Your data now includes a way to delete every saved game at once.",
+      "Player statistics now remember your crew across finished games, and known names are suggested when setting up the next one.",
+      "Score-evolution charts reveal how every player's total changed round by round.",
+      "A shareable end-of-game recap turns the final ranking and crew awards into a ready-to-send image or summary.",
+      "The results screen now celebrates with a podium, confetti and playful crew awards.",
     ],
     close: "Got it",
   },
@@ -120,6 +121,8 @@ export const en: Strings = {
     newExpansionTitle: "New expansion",
     newExpansionHint:
       "Adds scoring for the special 7s and 8s, Davy Jones' Locker, and the Second. The other expansion effects are covered in the in-game rules.",
+    knownPlayers: "Known players",
+    useKnownPlayer: (name) => `Use ${name}`,
     start: "Start game ☠️",
     needPlayers: "Add at least 2 players",
   },
@@ -160,6 +163,9 @@ export const en: Strings = {
   results: {
     gameOver: "Game Over",
     winner: (name, total) => `${name} wins with ${total}!`,
+    podiumTitle: "Podium",
+    podiumPlace: (rank, name, total) =>
+      `Rank ${rank}, ${name}, ${total} points`,
     review: "Review round-by-round",
     rematch: "Rematch with the same crew",
     installTitle: "Keep the score keeper aboard",
@@ -170,6 +176,76 @@ export const en: Strings = {
     install: "Install app",
     installDismiss: "Later",
     backHome: "Back to home",
+  },
+
+  stats: {
+    open: "Player statistics",
+    title: "Statistics",
+    groupTitle: "Crew records",
+    playerTitle: (name) => `${name}'s statistics`,
+    emptyTitle: "No tales to tell yet",
+    emptyBody: "Finish a game to start building your crew's history.",
+    leaderboard: "Leaderboard",
+    records: "Records",
+    scoreEvolution: "Score evolution",
+    gamesPlayed: "Games played",
+    wins: "Wins",
+    winRate: "Win rate",
+    exactBidRate: "Exact-bid rate",
+    zeroBidRate: "Zero-bid success",
+    averagePoints: "Average points",
+    bestScore: "Best score",
+    winStreak: "Current win streak",
+    recentGames: "Recent games",
+    bestFinalScore: "Best final score",
+    worstRound: "Worst round",
+    bestExactBid: "Best exact-bid rate",
+    unavailable: "Not available",
+    chartLabel: (leader, rounds) =>
+      `Score evolution after ${rounds} ${rounds === 1 ? "round" : "rounds"}; ${leader} leads.`,
+    playerSummary: (games, wins) =>
+      `${games} ${games === 1 ? "game" : "games"} · ${wins} ${
+        wins === 1 ? "win" : "wins"
+      }`,
+    bidSummary: (successes, attempts) => `${successes} of ${attempts}`,
+    scoreRecordHolder: (name, score, date) =>
+      `${name} · ${score} points · ${date}`,
+    roundRecordHolder: (name, score, round, date) =>
+      `${name} · ${score} points in round ${round} · ${date}`,
+    rateRecordHolder: (name, rate, successes, attempts) =>
+      `${name} · ${rate} (${successes}/${attempts})`,
+    recentGame: (date, rank, score) =>
+      `${date} · rank ${rank} · ${score} points`,
+  },
+
+  share: {
+    button: "Share recap",
+    preparing: "Preparing recap…",
+    busy: "Sharing…",
+    fileShared: "Recap shared.",
+    textShared: "Summary shared.",
+    copiedDownloaded: "Copied and downloaded.",
+    copied: "Copied.",
+    downloaded: "Downloaded.",
+    error: "Could not share the recap.",
+    summaryTitle: "Skull King game recap",
+    awardsHeading: "Crew awards",
+    gameDate: (date) => `Played ${date}`,
+    rankingLine: (medal, name, score) =>
+      `${medal} ${name} — ${score} points`,
+    awardLine: (award, name) => `${award}: ${name}`,
+    cancelled: "Sharing cancelled.",
+  },
+
+  awards: {
+    title: "Crew awards",
+    names: {
+      lookout: "The Lookout",
+      zeroBidRoyalty: "Zero-bid Royalty",
+      comeback: "The Comeback",
+      reckless: "The Reckless",
+      castaway: "The Castaway",
+    },
   },
 
   scoreBreakdown: {

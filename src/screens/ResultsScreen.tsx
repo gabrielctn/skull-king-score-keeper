@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Image,
   SafeAreaView,
@@ -13,9 +13,18 @@ import { Game } from "../types";
 import { standings } from "../scoring";
 import { colors, radius, spacing } from "../theme";
 import { illustrations } from "../assets/illustrations";
-import { useI18n } from "../i18n/context";
+import { browserLocale, useI18n } from "../i18n/context";
 import { getResponsiveLayout } from "../responsive";
 import ScoreBreakdownModal from "../components/ScoreBreakdownModal";
+import ScoreChart from "../components/ScoreChart";
+import Podium from "../components/Podium";
+import { gameAwards } from "../stats";
+import {
+  prepareShareRecap,
+  renderShareRecapPng,
+  sharePreparedRecap,
+  ShareRecapOutcome,
+} from "../shareRecap";
 import {
   getPwaInstallMode,
   PwaInstallMode,
@@ -41,10 +50,11 @@ export default function ResultsScreen({
   onHome,
   onReview,
 }: Props) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const { width } = useWindowDimensions();
   const layout = getResponsiveLayout(width);
-  const rows = standings(game);
+  const rows = useMemo(() => standings(game), [game]);
+  const awards = useMemo(() => gameAwards(game), [game]);
   const winner = rows[0];
   const [scorePlayerId, setScorePlayerId] = useState<string | null>(null);
   const [installMode, setInstallMode] = useState<PwaInstallMode>(
@@ -52,6 +62,22 @@ export default function ResultsScreen({
   );
   const [installDismissed, setInstallDismissed] = useState(false);
   const [installFailed, setInstallFailed] = useState(false);
+  const [recapPng, setRecapPng] = useState<Blob | null | undefined>(undefined);
+  const [shareBusy, setShareBusy] = useState(false);
+  const [shareStatus, setShareStatus] = useState<
+    ShareRecapOutcome | "error" | null
+  >(null);
+
+  const shareContent = useMemo(
+    () => ({
+      game,
+      awards,
+      strings: t,
+      locale: browserLocale(lang),
+      rtl: lang === "ar",
+    }),
+    [awards, game, lang, t]
+  );
 
   useEffect(
     () =>
@@ -60,6 +86,22 @@ export default function ResultsScreen({
       ),
     []
   );
+
+  useEffect(() => {
+    let active = true;
+    setRecapPng(undefined);
+    void renderShareRecapPng(shareContent)
+      .then((blob) => {
+        if (active) setRecapPng(blob);
+      })
+      .catch(() => {
+        // Text sharing remains available when canvas rendering is unavailable.
+        if (active) setRecapPng(null);
+      });
+    return () => {
+      active = false;
+    };
+  }, [shareContent]);
 
   const installApp = async () => {
     setInstallFailed(false);
@@ -71,6 +113,39 @@ export default function ResultsScreen({
       setInstallMode(getPwaInstallMode());
     }
   };
+
+  const shareRecap = async () => {
+    if (shareBusy || recapPng === undefined) return;
+    setShareBusy(true);
+    setShareStatus(null);
+
+    // sharePreparedRecap invokes Web Share before its first await so the call
+    // remains inside this button's transient user-activation window.
+    const sharing = sharePreparedRecap(
+      prepareShareRecap(shareContent, recapPng)
+    );
+    try {
+      setShareStatus(await sharing);
+    } catch {
+      setShareStatus("error");
+    } finally {
+      setShareBusy(false);
+    }
+  };
+
+  const shareStatusText =
+    shareStatus === null
+      ? null
+      : shareStatus === "error"
+        ? t.share.error
+        : {
+            "file-shared": t.share.fileShared,
+            "text-shared": t.share.textShared,
+            "copied-downloaded": t.share.copiedDownloaded,
+            copied: t.share.copied,
+            downloaded: t.share.downloaded,
+            cancelled: t.share.cancelled,
+          }[shareStatus];
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -97,6 +172,47 @@ export default function ResultsScreen({
           </Text>
         ) : null}
 
+        <Podium rows={rows} awards={awards} />
+        <ScoreChart game={game} />
+
+        <TouchableOpacity
+          style={[
+            styles.shareBtn,
+            (shareBusy || recapPng === undefined) && styles.shareBtnDisabled,
+          ]}
+          onPress={() => void shareRecap()}
+          disabled={shareBusy || recapPng === undefined}
+          accessibilityRole="button"
+          accessibilityState={{ disabled: shareBusy || recapPng === undefined }}
+        >
+          <Text style={styles.shareIcon}>↗</Text>
+          <Text style={styles.shareText}>
+            {recapPng === undefined
+              ? t.share.preparing
+              : shareBusy
+                ? t.share.busy
+                : t.share.button}
+          </Text>
+        </TouchableOpacity>
+        {shareStatusText ? (
+          <Text
+            style={[
+              styles.shareStatus,
+              shareStatus === "error" && styles.shareError,
+              shareStatus !== "error" &&
+                shareStatus !== "cancelled" &&
+                styles.shareSuccess,
+            ]}
+            accessibilityRole={shareStatus === "error" ? "alert" : undefined}
+            accessibilityLiveRegion={
+              shareStatus === "error" ? "assertive" : "polite"
+            }
+          >
+            {shareStatusText}
+          </Text>
+        ) : null}
+
+        <Text style={styles.sectionTitle}>{t.stats.leaderboard}</Text>
         <View style={styles.card}>
           {rows.map((row) => (
             <TouchableOpacity
@@ -217,15 +333,53 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
     alignItems: "center",
   },
-  chest: { marginTop: spacing.md, marginBottom: spacing.xs },
-  treasureChest: { width: 190, height: 165 },
+  chest: { marginTop: spacing.xs, marginBottom: -spacing.sm },
+  treasureChest: { width: 132, height: 115 },
   title: { color: colors.gold, fontSize: 34, fontWeight: "800" },
   winner: {
     color: colors.text,
     fontSize: 18,
     marginTop: spacing.sm,
-    marginBottom: spacing.lg,
+    marginBottom: spacing.md,
     textAlign: "center",
+  },
+  shareBtn: {
+    alignSelf: "stretch",
+    minHeight: 52,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.gold,
+    borderRadius: radius.lg,
+    paddingHorizontal: spacing.md,
+    marginTop: spacing.md,
+  },
+  shareBtnDisabled: { opacity: 0.5 },
+  shareIcon: {
+    color: colors.bg,
+    fontSize: 21,
+    fontWeight: "800",
+    marginEnd: spacing.sm,
+  },
+  shareText: { color: colors.bg, fontSize: 17, fontWeight: "800" },
+  shareStatus: {
+    alignSelf: "stretch",
+    color: colors.textDim,
+    fontSize: 12,
+    textAlign: "center",
+    marginTop: spacing.sm,
+  },
+  shareSuccess: { color: colors.positive },
+  shareError: { color: colors.negative },
+  sectionTitle: {
+    alignSelf: "stretch",
+    color: colors.gold,
+    fontSize: 13,
+    fontWeight: "800",
+    letterSpacing: 1,
+    textTransform: "uppercase",
+    marginTop: spacing.xl,
+    marginBottom: spacing.sm,
   },
   card: {
     alignSelf: "stretch",

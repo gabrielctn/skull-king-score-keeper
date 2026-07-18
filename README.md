@@ -93,9 +93,10 @@ Special cards that affect *what you enter* (explained in the in-app "?" referenc
 - **The Second:** beats everything except Skull King and Mermaids; capturing it
   with either awards +30.
 
-The project is covered by 285 automated checks (`npm test`) across scoring,
-save migrations, backup validation, responsive layout, assets and branding,
-including the rulebook's worked examples and Loot edge cases.
+The project is covered by automated checks (`npm test`) across scoring,
+player-history statistics, saved game migrations, backup validation,
+responsive layout, assets and branding, including the rulebook's worked
+examples and Loot edge cases.
 
 ---
 

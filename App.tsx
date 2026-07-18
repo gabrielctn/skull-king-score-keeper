@@ -27,6 +27,7 @@ import SetupScreen from "./src/screens/SetupScreen";
 import GameScreen from "./src/screens/GameScreen";
 import ResultsScreen from "./src/screens/ResultsScreen";
 import SettingsScreen from "./src/screens/SettingsScreen";
+import StatsScreen from "./src/screens/StatsScreen";
 import { registerServiceWorker } from "./src/registerServiceWorker";
 import { createGame } from "./src/scoring";
 import { initializePwaInstallPrompt } from "./src/pwaInstall";
@@ -39,7 +40,7 @@ import {
   serializeBackup,
 } from "./src/backup";
 
-type Screen = "home" | "setup" | "game" | "results" | "settings";
+type Screen = "home" | "setup" | "game" | "results" | "settings" | "stats";
 type PendingCurrentGame = Game | null | undefined;
 
 function StorageWarning({
@@ -319,8 +320,12 @@ export default function App() {
             onNewGame={handleNewGame}
             onOpenGame={handleOpenHistory}
             onDeleteGame={handleDeleteHistory}
+            onOpenStats={() => setScreen("stats")}
             onOpenSettings={() => setScreen("settings")}
           />
+        )}
+        {screen === "stats" && (
+          <StatsScreen gameHistory={gameHistory} onBack={handleHome} />
         )}
         {screen === "settings" && (
           <SettingsScreen
@@ -334,7 +339,11 @@ export default function App() {
           />
         )}
         {screen === "setup" && (
-          <SetupScreen onStart={handleStart} onBack={handleHome} />
+          <SetupScreen
+            gameHistory={gameHistory}
+            onStart={handleStart}
+            onBack={handleHome}
+          />
         )}
         {screen === "game" && game && (
           <GameScreen

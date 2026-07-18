@@ -1,15 +1,16 @@
 {
   "name": "skull-king-scorekeeper",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "main": "index.ts",
   "scripts": {
     "start": "expo start --web",
     "web": "expo start --web",
     "build:web": "expo export -p web && node scripts/build-pwa.mjs",
     "serve:web": "npx serve dist -l 8080",
-    "test": "npm run typecheck && npm run test:scoring && npm run test:storage && npm run test:backup && npm run test:responsive && npm run test:assets && npm run test:branding",
+    "test": "npm run typecheck && npm run test:scoring && npm run test:stats && npm run test:storage && npm run test:backup && npm run test:responsive && npm run test:assets && npm run test:branding",
     "typecheck": "tsc --noEmit",
     "test:scoring": "node --import tsx scripts/test-scoring.ts",
+    "test:stats": "node --import tsx scripts/test-stats.ts",
     "test:storage": "node --import tsx scripts/test-storage.ts",
     "test:backup": "node --import tsx scripts/test-backup.ts",
     "test:responsive": "node --import tsx scripts/test-responsive-layout.ts",

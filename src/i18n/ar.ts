@@ -46,9 +46,10 @@ export const ar: Strings = {
     automaticUpdatesBody:
       "تنزّل التطبيقات المثبّتة كل إصدار جديد تلقائيًا وتنتقل إليه فور اتصال الجهاز بالإنترنت.",
     items: [
-      "قائمة إعدادات جديدة (زر ⚙ في الشاشة الرئيسية) تجمع الآن اللغة وبياناتك وما الجديد.",
-      "تبقى الشاشة مضاءة أثناء اللعبة لتظل النقاط ظاهرة بين الجولات، ويمكن إيقاف ذلك من الإعدادات.",
-      "يمكنك الآن حذف كل المباريات المحفوظة دفعة واحدة من قسم بياناتك.",
+      "تتذكر إحصاءات اللاعبين طاقمكم عبر المباريات المكتملة وتقترح الأسماء المعروفة عند إعداد المباراة التالية.",
+      "تكشف مخططات تطور النقاط كيف تغيّر مجموع كل لاعب جولة بعد جولة.",
+      "يحوّل ملخص نهاية المباراة القابل للمشاركة الترتيب النهائي وأوسمة الطاقم إلى صورة أو نص جاهز للإرسال.",
+      "تحتفل شاشة النتائج الآن بمنصة تتويج وقصاصات ملوّنة وأوسمة مرحة للطاقم.",
     ],
     close: "فهمت",
   },
@@ -119,6 +120,8 @@ export const ar: Strings = {
     newExpansionTitle: "التوسعة الجديدة",
     newExpansionHint:
       "يضيف تسجيل نقاط أوراق 7 و8 الخاصة وخزانة ديفي جونز والثاني. تُشرح بقية تأثيرات التوسعة في قواعد اللعبة داخل التطبيق.",
+    knownPlayers: "لاعبون معروفون",
+    useKnownPlayer: (name) => `استخدم اسم ${name}`,
     start: "ابدأ اللعبة ☠️",
     needPlayers: "أضف لاعبين اثنين على الأقل",
   },
@@ -158,6 +161,9 @@ export const ar: Strings = {
   results: {
     gameOver: "انتهت اللعبة",
     winner: (name, total) => `فاز ${name} بمجموع ${total}!`,
+    podiumTitle: "منصة التتويج",
+    podiumPlace: (rank, name, total) =>
+      `المركز ${rank}، ${name}، ${total} نقطة`,
     review: "مراجعة الجولات واحدة تلو الأخرى",
     rematch: "إعادة اللعب مع الطاقم نفسه",
     installTitle: "احتفظ بعدّاد النقاط على متن السفينة",
@@ -168,6 +174,75 @@ export const ar: Strings = {
     install: "تثبيت التطبيق",
     installDismiss: "لاحقًا",
     backHome: "العودة إلى الرئيسية",
+  },
+
+  stats: {
+    open: "إحصاءات اللاعبين",
+    title: "الإحصاءات",
+    groupTitle: "سجل الطاقم",
+    playerTitle: (name) => `إحصاءات ${name}`,
+    emptyTitle: "لا حكايات بحرية بعد",
+    emptyBody: "أنهوا مباراة لبدء تدوين تاريخ طاقمكم.",
+    leaderboard: "لوحة الصدارة",
+    records: "الأرقام القياسية",
+    scoreEvolution: "تطور النقاط",
+    gamesPlayed: "المباريات",
+    wins: "الانتصارات",
+    winRate: "نسبة الفوز",
+    exactBidRate: "نسبة المزايدات الدقيقة",
+    zeroBidRate: "نسبة نجاح مزايدة الصفر",
+    averagePoints: "متوسط النقاط",
+    bestScore: "أفضل نتيجة",
+    winStreak: "سلسلة الفوز الحالية",
+    recentGames: "المباريات الأخيرة",
+    bestFinalScore: "أفضل نتيجة نهائية",
+    worstRound: "أسوأ جولة",
+    bestExactBid: "أفضل نسبة مزايدات دقيقة",
+    unavailable: "غير متاح",
+    chartLabel: (leader, rounds) =>
+      `تطور النقاط بعد ${rounds} من الجولات؛ ${leader} في الصدارة.`,
+    playerSummary: (games, wins) =>
+      `${games} مباراة · ${wins} انتصار`,
+    bidSummary: (successes, attempts) =>
+      `${successes} ناجحة من أصل ${attempts}`,
+    scoreRecordHolder: (name, score, date) =>
+      `${name} · ${score} نقطة · ${date}`,
+    roundRecordHolder: (name, score, round, date) =>
+      `${name} · ${score} نقطة في الجولة ${round} · ${date}`,
+    rateRecordHolder: (name, rate, successes, attempts) =>
+      `${name} · ${rate} (${successes} من ${attempts})`,
+    recentGame: (date, rank, score) =>
+      `${date} · المركز ${rank} · ${score} نقطة`,
+  },
+
+  share: {
+    button: "مشاركة ملخص المباراة",
+    preparing: "جارٍ إعداد الملخص…",
+    busy: "جارٍ المشاركة…",
+    fileShared: "تمت مشاركة الملخص.",
+    textShared: "تمت مشاركة خلاصة المباراة.",
+    copiedDownloaded: "تم النسخ والتنزيل.",
+    copied: "تم النسخ.",
+    downloaded: "تم التنزيل.",
+    error: "تعذرت مشاركة الملخص.",
+    summaryTitle: "ملخص مباراة Skull King",
+    awardsHeading: "أوسمة الطاقم",
+    gameDate: (date) => `تاريخ المباراة: ${date}`,
+    rankingLine: (medal, name, score) =>
+      `${medal} ${name} — ${score} نقطة`,
+    awardLine: (award, name) => `${award}: ${name}`,
+    cancelled: "أُلغيت المشاركة.",
+  },
+
+  awards: {
+    title: "أوسمة الطاقم",
+    names: {
+      lookout: "عين الصقر",
+      zeroBidRoyalty: "تاج الصفر",
+      comeback: "قاهر التيار",
+      reckless: "مغامر بلا مرساة",
+      castaway: "نجم الجزيرة المنسية",
+    },
   },
 
   scoreBreakdown: {

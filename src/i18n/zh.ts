@@ -45,9 +45,10 @@ export const zh: Strings = {
     automaticUpdatesBody:
       "已安装的应用会自动下载每个新版本，并在设备联网后立即切换到新版本。",
     items: [
-      "新增“设置”菜单（首页的 ⚙ 按钮），语言、你的数据和更新内容现已集中在这里。",
-      "对局期间屏幕会保持常亮，方便回合之间查看分数；可在设置中关闭。",
-      "“你的数据”现在支持一次删除所有已保存的游戏。",
+      "玩家统计会记住每场已结束游戏中的船员，并在下次开局时推荐用过的名字。",
+      "得分走势图逐回合呈现每位玩家总分的起伏变化。",
+      "可分享的终局战报会把最终排名和船员称号制成随时可发送的图片或文字摘要。",
+      "结果页面新增领奖台、彩纸庆祝和趣味船员称号，让胜利更有仪式感。",
     ],
     close: "知道了",
   },
@@ -114,6 +115,8 @@ export const zh: Strings = {
     newExpansionTitle: "新扩展",
     newExpansionHint:
       "加入特殊 7、8、戴维·琼斯的储物柜和“副手”的计分。其他扩展效果可在应用内规则中查看。",
+    knownPlayers: "历史玩家",
+    useKnownPlayer: (name) => `使用 ${name}`,
     start: "开始游戏 ☠️",
     needPlayers: "至少添加 2 名玩家",
   },
@@ -153,6 +156,9 @@ export const zh: Strings = {
   results: {
     gameOver: "游戏结束",
     winner: (name, total) => `${name} 以 ${total} 分获胜！`,
+    podiumTitle: "领奖台",
+    podiumPlace: (rank, name, total) =>
+      `第 ${rank} 名，${name}，${total} 分`,
     review: "逐回合查看",
     rematch: "与同一队伍再来一局",
     installTitle: "把计分器留在船上",
@@ -163,6 +169,72 @@ export const zh: Strings = {
     install: "安装应用",
     installDismiss: "稍后",
     backHome: "返回首页",
+  },
+
+  stats: {
+    open: "玩家统计",
+    title: "玩家统计",
+    groupTitle: "船员战绩",
+    playerTitle: (name) => `${name} 的统计`,
+    emptyTitle: "还没有可讲的航海故事",
+    emptyBody: "完成一局游戏，即可开始记录船员们的战绩。",
+    leaderboard: "排行榜",
+    records: "团队纪录",
+    scoreEvolution: "得分走势",
+    gamesPlayed: "游戏局数",
+    wins: "胜场",
+    winRate: "胜率",
+    exactBidRate: "精准叫牌率",
+    zeroBidRate: "零叫成功率",
+    averagePoints: "场均得分",
+    bestScore: "最高得分",
+    winStreak: "当前连胜",
+    recentGames: "最近对局",
+    bestFinalScore: "最高终局得分",
+    worstRound: "最差回合",
+    bestExactBid: "最佳精准叫牌率",
+    unavailable: "暂无",
+    chartLabel: (leader, rounds) =>
+      `已记录 ${rounds} 回合的得分走势；${leader} 当前领先。`,
+    playerSummary: (games, wins) => `${games} 局 · ${wins} 胜`,
+    bidSummary: (successes, attempts) => `${successes}/${attempts}`,
+    scoreRecordHolder: (name, score, date) =>
+      `${name} · ${score} 分 · ${date}`,
+    roundRecordHolder: (name, score, round, date) =>
+      `${name} · 第 ${round} 回合 ${score} 分 · ${date}`,
+    rateRecordHolder: (name, rate, successes, attempts) =>
+      `${name} · ${rate}（${successes}/${attempts}）`,
+    recentGame: (date, rank, score) =>
+      `${date} · 第 ${rank} 名 · ${score} 分`,
+  },
+
+  share: {
+    button: "分享战报",
+    preparing: "正在生成战报…",
+    busy: "正在分享…",
+    fileShared: "战报已分享。",
+    textShared: "战绩摘要已分享。",
+    copiedDownloaded: "已复制并下载。",
+    copied: "已复制。",
+    downloaded: "已下载。",
+    error: "无法分享战报。",
+    summaryTitle: "Skull King 对局战报",
+    awardsHeading: "船员称号",
+    gameDate: (date) => `对局日期：${date}`,
+    rankingLine: (medal, name, score) => `${medal} ${name} — ${score} 分`,
+    awardLine: (award, name) => `${award}：${name}`,
+    cancelled: "已取消分享。",
+  },
+
+  awards: {
+    title: "船员称号",
+    names: {
+      lookout: "鹰眼瞭望手",
+      zeroBidRoyalty: "零叫之王",
+      comeback: "逆风翻盘王",
+      reckless: "亡命叫牌客",
+      castaway: "欢乐落难者",
+    },
   },
 
   scoreBreakdown: {

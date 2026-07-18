@@ -29,6 +29,7 @@ interface Props {
   onNewGame: () => void;
   onOpenGame: (game: Game) => void;
   onDeleteGame: (gameId: string) => void;
+  onOpenStats: () => void;
   onOpenSettings: () => void;
 }
 
@@ -38,6 +39,7 @@ export default function HomeScreen({
   onNewGame,
   onOpenGame,
   onDeleteGame,
+  onOpenStats,
   onOpenSettings,
 }: Props) {
   const { t, lang } = useI18n();
@@ -89,14 +91,24 @@ export default function HomeScreen({
 
   return (
     <SafeAreaView style={styles.safe}>
-      <TouchableOpacity
-        style={styles.settingsBtn}
-        onPress={onOpenSettings}
-        accessibilityRole="button"
-        accessibilityLabel={t.settings.open}
-      >
-        <Text style={styles.settingsIcon}>{"⚙︎"}</Text>
-      </TouchableOpacity>
+      <View style={styles.topActions}>
+        <TouchableOpacity
+          style={styles.iconButton}
+          onPress={onOpenStats}
+          accessibilityRole="button"
+          accessibilityLabel={t.stats.open}
+        >
+          <Text style={styles.topActionIcon}>🏆</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.iconButton, styles.iconButtonLast]}
+          onPress={onOpenSettings}
+          accessibilityRole="button"
+          accessibilityLabel={t.settings.open}
+        >
+          <Text style={styles.topActionIcon}>{"⚙︎"}</Text>
+        </TouchableOpacity>
+      </View>
       <ScrollView
         contentContainerStyle={styles.scroll}
         showsVerticalScrollIndicator={false}
@@ -281,11 +293,14 @@ export default function HomeScreen({
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
   scroll: { flexGrow: 1, justifyContent: "center" },
-  settingsBtn: {
+  topActions: {
     position: "absolute",
     top: spacing.md,
     right: spacing.md,
     zIndex: 1,
+    flexDirection: "row",
+  },
+  iconButton: {
     width: 44,
     height: 44,
     alignItems: "center",
@@ -294,8 +309,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.cardBorder,
     borderRadius: radius.md,
+    marginEnd: spacing.sm,
   },
-  settingsIcon: { color: colors.gold, fontSize: 21, lineHeight: 24 },
+  iconButtonLast: { marginEnd: 0 },
+  topActionIcon: { color: colors.gold, fontSize: 21, lineHeight: 24 },
   container: {
     flex: 1,
     width: "100%",

@@ -47,9 +47,10 @@ export const fr: Strings = {
     automaticUpdatesBody:
       "Les applications installées téléchargent désormais chaque nouvelle version automatiquement et l'activent dès que l'appareil est en ligne.",
     items: [
-      "Un nouveau menu Paramètres (bouton ⚙ de l'accueil) regroupe désormais la langue, vos données et les nouveautés.",
-      "L'écran reste allumé pendant la partie pour garder les scores visibles entre les manches. Désactivable dans les paramètres.",
-      "Vos données permettent maintenant de supprimer toutes les parties enregistrées en une fois.",
+      "Les statistiques gardent la mémoire de votre équipage d’une partie à l’autre et proposent les noms connus lors de la suivante.",
+      "Les courbes de score racontent l’évolution de chaque joueur, manche après manche.",
+      "Un récapitulatif de fin de partie transforme le classement et les distinctions en image ou résumé prêt à partager.",
+      "L’écran des résultats fête la victoire avec un podium, des confettis et des distinctions pleines d’esprit.",
     ],
     close: "Compris",
   },
@@ -121,6 +122,8 @@ export const fr: Strings = {
     newExpansionTitle: "Extension",
     newExpansionHint:
       "Ajoute au décompte les 7 et 8 spéciaux, le Casier de Davy Jones et le Second. Les autres effets de l'extension sont détaillés dans l'aide en jeu.",
+    knownPlayers: "Joueurs connus",
+    useKnownPlayer: (name) => `Utiliser ${name}`,
     start: "Commencer ☠️",
     needPlayers: "Ajoutez au moins 2 joueurs",
   },
@@ -161,6 +164,9 @@ export const fr: Strings = {
   results: {
     gameOver: "Partie terminée",
     winner: (name, total) => `${name} gagne avec ${total} !`,
+    podiumTitle: "Podium",
+    podiumPlace: (rank, name, total) =>
+      `${rank === 1 ? "1re" : `${rank}e`} place, ${name}, ${total} points`,
     review: "Revoir manche par manche",
     rematch: "Revanche avec le même équipage",
     installTitle: "Gardez le compteur à bord",
@@ -171,6 +177,79 @@ export const fr: Strings = {
     install: "Installer l’app",
     installDismiss: "Plus tard",
     backHome: "Retour à l'accueil",
+  },
+
+  stats: {
+    open: "Statistiques des joueurs",
+    title: "Statistiques",
+    groupTitle: "Palmarès de l’équipage",
+    playerTitle: (name) => `${name} — statistiques`,
+    emptyTitle: "Aucune légende à raconter",
+    emptyBody:
+      "Terminez une partie pour commencer l’histoire de votre équipage.",
+    leaderboard: "Classement",
+    records: "Records",
+    scoreEvolution: "Évolution des scores",
+    gamesPlayed: "Parties jouées",
+    wins: "Victoires",
+    winRate: "Taux de victoire",
+    exactBidRate: "Mises réussies",
+    zeroBidRate: "Mises à zéro réussies",
+    averagePoints: "Points moyens",
+    bestScore: "Meilleur score",
+    winStreak: "Victoires d’affilée",
+    recentGames: "Parties récentes",
+    bestFinalScore: "Meilleur score final",
+    worstRound: "Pire manche",
+    bestExactBid: "Meilleur taux de mises réussies",
+    unavailable: "Indisponible",
+    chartLabel: (leader, rounds) =>
+      `Évolution des scores après ${rounds} ${
+        rounds === 1 ? "manche" : "manches"
+      } ; ${leader} est en tête.`,
+    playerSummary: (games, wins) =>
+      `${games} ${games === 1 ? "partie" : "parties"} · ${wins} ${
+        wins === 1 ? "victoire" : "victoires"
+      }`,
+    bidSummary: (successes, attempts) => `${successes} sur ${attempts}`,
+    scoreRecordHolder: (name, score, date) =>
+      `${name} · ${score} points · ${date}`,
+    roundRecordHolder: (name, score, round, date) =>
+      `${name} · ${score} points à la manche ${round} · ${date}`,
+    rateRecordHolder: (name, rate, successes, attempts) =>
+      `${name} · ${rate} (${successes}/${attempts})`,
+    recentGame: (date, rank, score) =>
+      `${date} · ${rank === 1 ? "1er" : `${rank}e`} · ${score} points`,
+  },
+
+  share: {
+    button: "Partager le récapitulatif",
+    preparing: "Préparation…",
+    busy: "Partage…",
+    fileShared: "Récapitulatif partagé.",
+    textShared: "Résumé partagé.",
+    copiedDownloaded: "Copié et téléchargé.",
+    copied: "Copié.",
+    downloaded: "Téléchargé.",
+    error: "Impossible de partager le récapitulatif.",
+    summaryTitle: "Récapitulatif de la partie Skull King",
+    awardsHeading: "Distinctions de l’équipage",
+    gameDate: (date) => `Partie du ${date}`,
+    rankingLine: (medal, name, score) =>
+      `${medal} ${name} — ${score} points`,
+    awardLine: (award, name) => `${award} : ${name}`,
+    cancelled: "Partage annulé.",
+  },
+
+  awards: {
+    title: "Distinctions de l’équipage",
+    names: {
+      lookout: "Œil de la vigie",
+      zeroBidRoyalty: "Couronne du zéro",
+      comeback: "Retour de marée",
+      reckless: "Pari casse-cou",
+      castaway: "Naufragé magnifique",
+    },
   },
 
   scoreBreakdown: {

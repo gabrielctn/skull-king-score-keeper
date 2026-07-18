@@ -28,6 +28,7 @@ import LootTracker from "../components/LootTracker";
 import LootConfirmationModal from "../components/LootConfirmationModal";
 import RulesModal from "../components/RulesModal";
 import ScoreBreakdownModal from "../components/ScoreBreakdownModal";
+import ScoreChart from "../components/ScoreChart";
 import { colors, radius, spacing } from "../theme";
 import { getResponsiveLayout } from "../responsive";
 import { useKeepAwake } from "../wakeLock";
@@ -663,55 +664,47 @@ export default function GameScreen({
               ? t.game.tricksOk
               : t.game.tricksWarnNormal}
         </Text>
-      </ScrollView>
 
-      <View
-        style={[
-          styles.boardHeading,
-          {
-            maxWidth: layout.gameContentMaxWidth,
-            paddingHorizontal: layout.screenPadding,
-          },
-        ]}
-      >
-        <Text style={styles.boardTitle}>{t.game.totalScoreTitle}</Text>
-        <Text style={styles.boardCaption}>
-          {alreadyRecorded
-            ? t.game.totalIncludesRound
-            : t.game.totalExcludesRound}
-        </Text>
-      </View>
-
-      <View
-        style={[
-          styles.boardStrip,
-          {
-            maxWidth: layout.gameContentMaxWidth,
-            paddingHorizontal: layout.screenPadding,
-          },
-        ]}
-      >
-        {board.map((row) => (
-          <TouchableOpacity
-            key={row.player.id}
-            style={styles.boardItem}
-            activeOpacity={0.7}
-            onPress={() => setScorePlayerId(row.player.id)}
-            accessibilityRole="button"
-            accessibilityLabel={t.scoreBreakdown.openRankedFor(
-              row.rank,
-              row.player.name,
-              row.total
-            )}
-          >
-            <Text style={styles.boardName} numberOfLines={1}>
-              {row.player.name}
+        <View
+          style={[
+            styles.totalScoreCard,
+            layout.gameColumns === 2 && styles.fullWidth,
+          ]}
+        >
+          <View style={styles.boardHeading}>
+            <Text style={styles.boardTitle}>{t.game.totalScoreTitle}</Text>
+            <Text style={styles.boardCaption}>
+              {alreadyRecorded
+                ? t.game.totalIncludesRound
+                : t.game.totalExcludesRound}
             </Text>
-            <Text style={styles.boardTotal}>{row.total}</Text>
-            <Text style={styles.boardInfo}>ⓘ</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
+          </View>
+
+          <View style={styles.boardStrip}>
+            {board.map((row) => (
+              <TouchableOpacity
+                key={row.player.id}
+                style={styles.boardItem}
+                activeOpacity={0.7}
+                onPress={() => setScorePlayerId(row.player.id)}
+                accessibilityRole="button"
+                accessibilityLabel={t.scoreBreakdown.openRankedFor(
+                  row.rank,
+                  row.player.name,
+                  row.total
+                )}
+              >
+                <Text style={styles.boardName} numberOfLines={1}>
+                  {row.player.name}
+                </Text>
+                <Text style={styles.boardTotal}>{row.total}</Text>
+                <Text style={styles.boardInfo}>ⓘ</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+          <ScoreChart game={game} />
+        </View>
+      </ScrollView>
 
       <View
         style={[
@@ -978,11 +971,19 @@ const styles = StyleSheet.create({
   },
   hintOk: { color: colors.positive },
   hintWarn: { color: colors.textDim },
+  totalScoreCard: {
+    width: "100%",
+    backgroundColor: colors.card,
+    borderColor: colors.cardBorder,
+    borderWidth: 1,
+    borderRadius: radius.lg,
+    padding: spacing.md,
+    marginTop: spacing.sm,
+    marginBottom: spacing.md,
+  },
   boardHeading: {
     width: "100%",
-    alignSelf: "center",
     alignItems: "center",
-    paddingTop: spacing.sm,
   },
   boardTitle: {
     color: colors.text,
@@ -999,12 +1000,11 @@ const styles = StyleSheet.create({
   },
   boardStrip: {
     width: "100%",
-    alignSelf: "center",
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "center",
-    paddingHorizontal: spacing.sm,
     paddingTop: spacing.xs,
+    paddingBottom: spacing.xs,
   },
   boardItem: {
     backgroundColor: colors.bgElevated,

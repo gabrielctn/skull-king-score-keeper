@@ -34,9 +34,18 @@ import { ar } from "../src/i18n/ar";
 import { zh } from "../src/i18n/zh";
 import { resolvePreferredLang } from "../src/i18n/detection";
 import { BonusInput, LootUse, RoundEntries, RoundEntry } from "../src/types";
+import type { AwardKind } from "../src/stats";
 
 let passed = 0;
 let failed = 0;
+
+const AWARD_KINDS = [
+  "lookout",
+  "zeroBidRoyalty",
+  "comeback",
+  "reckless",
+  "castaway",
+] as const satisfies readonly AwardKind[];
 
 function eq(label: string, actual: number, expected: number) {
   if (actual === expected) {
@@ -579,7 +588,19 @@ for (const [locale, strings] of Object.entries({ en, fr, de, ar, zh })) {
   }
 }
 
+console.log("\ni18n: every locale names every award");
+for (const [locale, strings] of Object.entries({ en, fr, de, ar, zh })) {
+  for (const kind of AWARD_KINDS) {
+    eq(
+      `${locale} names '${kind}'`,
+      strings.awards.names[kind].trim().length > 0 ? 1 : 0,
+      1
+    );
+  }
+}
+
 console.log("\ni18n: every locale's rules and release notes stay in sync");
+eq("English release-note entries", en.whatsNew.items.length, 4);
 for (const [locale, strings] of Object.entries({ fr, de, ar, zh })) {
   eq(`${locale} scoring entries`, strings.rules.scoring.length, en.rules.scoring.length);
   eq(`${locale} bonus entries`, strings.rules.bonusEntries.length, en.rules.bonusEntries.length);

@@ -5,6 +5,7 @@
  */
 
 import { RoundStructureId } from "../roundStructures";
+import type { AwardKind } from "../stats";
 
 export type Lang = "en" | "fr" | "de" | "ar" | "zh";
 
@@ -118,6 +119,8 @@ export interface Strings {
     advancedHint: string;
     newExpansionTitle: string;
     newExpansionHint: string;
+    knownPlayers: string;
+    useKnownPlayer: (name: string) => string;
     start: string;
     needPlayers: string;
   };
@@ -163,6 +166,8 @@ export interface Strings {
     gameOver: string;
     /** "{name} wins with {total}!" */
     winner: (name: string, total: number) => string;
+    podiumTitle: string;
+    podiumPlace: (rank: number, name: string, total: number) => string;
     review: string;
     rematch: string;
     installTitle: string;
@@ -172,6 +177,71 @@ export interface Strings {
     install: string;
     installDismiss: string;
     backHome: string;
+  };
+
+  stats: {
+    open: string;
+    title: string;
+    groupTitle: string;
+    playerTitle: (name: string) => string;
+    emptyTitle: string;
+    emptyBody: string;
+    leaderboard: string;
+    records: string;
+    scoreEvolution: string;
+    gamesPlayed: string;
+    wins: string;
+    winRate: string;
+    exactBidRate: string;
+    zeroBidRate: string;
+    averagePoints: string;
+    bestScore: string;
+    winStreak: string;
+    recentGames: string;
+    bestFinalScore: string;
+    worstRound: string;
+    bestExactBid: string;
+    unavailable: string;
+    chartLabel: (leader: string, rounds: number) => string;
+    playerSummary: (games: number, wins: number) => string;
+    bidSummary: (successes: number, attempts: number) => string;
+    scoreRecordHolder: (name: string, score: number, date: string) => string;
+    roundRecordHolder: (
+      name: string,
+      score: number,
+      round: number,
+      date: string
+    ) => string;
+    rateRecordHolder: (
+      name: string,
+      rate: string,
+      successes: number,
+      attempts: number
+    ) => string;
+    recentGame: (date: string, rank: number, score: number) => string;
+  };
+
+  share: {
+    button: string;
+    preparing: string;
+    busy: string;
+    fileShared: string;
+    textShared: string;
+    copiedDownloaded: string;
+    copied: string;
+    downloaded: string;
+    error: string;
+    summaryTitle: string;
+    awardsHeading: string;
+    gameDate: (date: string) => string;
+    rankingLine: (medal: string, name: string, score: number) => string;
+    awardLine: (award: string, name: string) => string;
+    cancelled: string;
+  };
+
+  awards: {
+    title: string;
+    names: Record<AwardKind, string>;
   };
 
   scoreBreakdown: {

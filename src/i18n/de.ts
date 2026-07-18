@@ -46,9 +46,10 @@ export const de: Strings = {
     automaticUpdatesBody:
       "Installierte Apps laden jede neue Version automatisch und wechseln zu ihr, sobald das Gerät online ist.",
     items: [
-      "Ein neues Einstellungen-Menü (⚙-Knopf auf der Startseite) bündelt jetzt Sprache, deine Daten und die Neuigkeiten.",
-      "Der Bildschirm bleibt während der Partie eingeschaltet, damit die Punkte zwischen den Runden sichtbar bleiben. In den Einstellungen abschaltbar.",
-      "Unter „Deine Daten“ lassen sich jetzt alle gespeicherten Spiele auf einmal löschen.",
+      "Spielerstatistiken behalten eure Crew über beendete Partien hinweg im Gedächtnis und schlagen bekannte Namen beim nächsten Aufbau vor.",
+      "Punkteverlaufskurven zeigen Runde für Runde, wie sich jedes Ergebnis entwickelt hat.",
+      "Ein teilbarer Spielrückblick macht aus Endstand und Auszeichnungen ein versandfertiges Bild oder eine Zusammenfassung.",
+      "Das Ergebnis wird jetzt mit Siegertreppchen, Konfetti und augenzwinkernden Crew-Auszeichnungen gefeiert.",
     ],
     close: "Verstanden",
   },
@@ -120,6 +121,8 @@ export const de: Strings = {
     newExpansionTitle: "Neue Erweiterung",
     newExpansionHint:
       "Wertet die besonderen 7er und 8er, Davy Jones’ Truhe und den Zweiten. Die übrigen Erweiterungseffekte stehen in den Spielregeln der App.",
+    knownPlayers: "Bekannte Spieler",
+    useKnownPlayer: (name) => `${name} übernehmen`,
     start: "Spiel starten ☠️",
     needPlayers: "Mindestens 2 Spieler hinzufügen",
   },
@@ -159,6 +162,9 @@ export const de: Strings = {
   results: {
     gameOver: "Spiel beendet",
     winner: (name, total) => `${name} gewinnt mit ${total}!`,
+    podiumTitle: "Siegertreppchen",
+    podiumPlace: (rank, name, total) =>
+      `Platz ${rank}, ${name}, ${total} Punkte`,
     review: "Runden einzeln ansehen",
     rematch: "Revanche mit derselben Crew",
     installTitle: "Punktezähler an Bord behalten",
@@ -169,6 +175,79 @@ export const de: Strings = {
     install: "App installieren",
     installDismiss: "Später",
     backHome: "Zur Startseite",
+  },
+
+  stats: {
+    open: "Spielerstatistik",
+    title: "Statistik",
+    groupTitle: "Bilanz der Crew",
+    playerTitle: (name) => `Statistik für ${name}`,
+    emptyTitle: "Noch kein Seemannsgarn",
+    emptyBody:
+      "Beendet ein Spiel, um die Geschichte eurer Crew zu schreiben.",
+    leaderboard: "Rangliste",
+    records: "Rekorde",
+    scoreEvolution: "Punkteverlauf",
+    gamesPlayed: "Gespielte Partien",
+    wins: "Siege",
+    winRate: "Siegquote",
+    exactBidRate: "Trefferquote der Ansagen",
+    zeroBidRate: "Erfolgreiche Nullansagen",
+    averagePoints: "Punktedurchschnitt",
+    bestScore: "Bestes Ergebnis",
+    winStreak: "Aktuelle Siegesserie",
+    recentGames: "Letzte Partien",
+    bestFinalScore: "Bestes Endergebnis",
+    worstRound: "Schlechteste Runde",
+    bestExactBid: "Beste Ansagequote",
+    unavailable: "Nicht verfügbar",
+    chartLabel: (leader, rounds) =>
+      `Punkteverlauf nach ${rounds} ${
+        rounds === 1 ? "Runde" : "Runden"
+      }; ${leader} führt.`,
+    playerSummary: (games, wins) =>
+      `${games} ${games === 1 ? "Partie" : "Partien"} · ${wins} ${
+        wins === 1 ? "Sieg" : "Siege"
+      }`,
+    bidSummary: (successes, attempts) => `${successes} von ${attempts}`,
+    scoreRecordHolder: (name, score, date) =>
+      `${name} · ${score} Punkte · ${date}`,
+    roundRecordHolder: (name, score, round, date) =>
+      `${name} · ${score} Punkte in Runde ${round} · ${date}`,
+    rateRecordHolder: (name, rate, successes, attempts) =>
+      `${name} · ${rate} (${successes}/${attempts})`,
+    recentGame: (date, rank, score) =>
+      `${date} · Platz ${rank} · ${score} Punkte`,
+  },
+
+  share: {
+    button: "Spielrückblick teilen",
+    preparing: "Rückblick wird erstellt…",
+    busy: "Wird geteilt…",
+    fileShared: "Rückblick geteilt.",
+    textShared: "Zusammenfassung geteilt.",
+    copiedDownloaded: "Kopiert und heruntergeladen.",
+    copied: "Kopiert.",
+    downloaded: "Heruntergeladen.",
+    error: "Der Rückblick konnte nicht geteilt werden.",
+    summaryTitle: "Skull-King-Spielrückblick",
+    awardsHeading: "Auszeichnungen der Crew",
+    gameDate: (date) => `Gespielt am ${date}`,
+    rankingLine: (medal, name, score) =>
+      `${medal} ${name} — ${score} Punkte`,
+    awardLine: (award, name) => `${award}: ${name}`,
+    cancelled: "Teilen abgebrochen.",
+  },
+
+  awards: {
+    title: "Auszeichnungen der Crew",
+    names: {
+      lookout: "Adlerauge im Ausguck",
+      zeroBidRoyalty: "Krone der Null",
+      comeback: "Gezeitenwender",
+      reckless: "Waghals des Meeres",
+      castaway: "Gestrandeter Glückspilz",
+    },
   },
 
   scoreBreakdown: {
