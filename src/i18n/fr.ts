@@ -89,7 +89,7 @@ export const fr: Strings = {
       "Saisissez les joueurs dans l'ordre des places, sens horaire — le joueur 1 distribue la 1re manche. Utilisez les flèches pour réorganiser la table.",
     playerPlaceholder: (n) => `Joueur ${n}`,
     addPlayer: "+ Ajouter un joueur",
-    quickTitle: "Partie rapide",
+    quickTitle: "Configuration rapide (classique)",
     quickHint:
       "Les réglages recommandés sont prêts. Saisissez les joueurs et commencez, ou personnalisez la partie.",
     customize: "Personnaliser la partie",
