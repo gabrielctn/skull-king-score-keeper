@@ -29,6 +29,13 @@ export interface Strings {
     dismiss: string;
   };
 
+  cookies: {
+    accessibilityLabel: string;
+    message: string;
+    decline: string;
+    accept: string;
+  };
+
   home: {
     title: string;
     subtitle: string;

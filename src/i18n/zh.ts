@@ -11,6 +11,14 @@ export const zh: Strings = {
     dismiss: "关闭",
   },
 
+  cookies: {
+    accessibilityLabel: "分析 Cookie 选项",
+    message:
+      "我们使用 Google Analytics Cookie 来了解访问情况并改进计分器。",
+    decline: "拒绝",
+    accept: "接受",
+  },
+
   home: {
     title: "计分器",
     subtitle: "Skull King 专用",

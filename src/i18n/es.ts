@@ -12,6 +12,14 @@ export const es: Strings = {
     dismiss: "Cerrar",
   },
 
+  cookies: {
+    accessibilityLabel: "Opciones de cookies analíticas",
+    message:
+      "Usamos cookies de Google Analytics para conocer las visitas y mejorar el anotador de puntos.",
+    decline: "Rechazar",
+    accept: "Aceptar",
+  },
+
   home: {
     title: "Anotador de puntos",
     subtitle: "para Skull King",

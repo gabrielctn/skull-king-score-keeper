@@ -39,6 +39,7 @@ import {
   pickBackupJsonFile,
   serializeBackup,
 } from "./src/backup";
+import CookieConsentBanner from "./src/components/CookieConsentBanner";
 
 type Screen = "home" | "setup" | "game" | "results" | "settings" | "stats";
 type PendingCurrentGame = Game | null | undefined;
@@ -365,6 +366,7 @@ export default function App() {
             onReview={() => setScreen("game")}
           />
         )}
+        <CookieConsentBanner />
         <StorageWarning
           visible={storageError}
           onDismiss={() => setStorageError(false)}
