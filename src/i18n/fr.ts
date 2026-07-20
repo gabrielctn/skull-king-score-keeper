@@ -55,9 +55,8 @@ export const fr: Strings = {
     automaticUpdatesBody:
       "Les applications installées téléchargent désormais chaque nouvelle version automatiquement et l'activent dès que l'appareil est en ligne.",
     items: [
-      "Choisissez entre les deux décomptes officiels à la création d'une partie : les scores selon Skull King ou selon Rascal — 10 points par carte distribuée, et votre précision décide de votre part.",
-      "Les règles optionnelles de Rascal sont aussi prises en charge : à chaque manche, déclarez Chevrotine ou Boulet de canon pour un quitte ou double à 15 points par carte.",
-      "Le détail des scores nomme la précision de chaque manche — coup direct, frappe à revers ou échec cuisant — avec les bonus réduits de moitié, et la référence des règles couvre le nouveau décompte.",
+      "Nouveau bouton ▦ sur l'écran de jeu : affichez un QR code et chaque joueur ouvre un suivi des scores en lecture seule sur son propre téléphone.",
+      "Chacun vérifie ses mises, ses plis et chaque bonus sans rien demander au maître du jeu — re-scanner le code actualise la vue.",
     ],
     close: "Compris",
   },
@@ -192,6 +191,44 @@ export const fr: Strings = {
       cannonball: "Boulet de canon",
     },
     rascalBetFor: (name) => `Déclaration de ${name}`,
+  },
+
+  liveShare: {
+    open: "Partager le suivi des scores en direct (QR code)",
+    title: "Suivi en direct",
+    subtitle: "Chaque joueur peut suivre les scores sur son propre téléphone.",
+    scanHint:
+      "Faites scanner ce QR code aux joueurs : il ouvre une vue en lecture seule de cette partie — chaque mise, pli et bonus que vous enregistrez.",
+    updateHint:
+      "Le QR code contient toujours le dernier état enregistré. Pour actualiser sa vue, un joueur le scanne à nouveau, tout simplement.",
+    networkHint:
+      "Le téléphone du joueur a besoin d'une connexion à la première ouverture de l'appli ; ensuite la vue fonctionne aussi hors ligne.",
+    copyLink: "Copier le lien",
+    copied: "Lien copié !",
+    copyError: "Impossible de copier le lien.",
+    qrError: "Impossible de transformer cette partie en QR code.",
+    qrLabel: "QR code ouvrant le suivi en direct des scores de cette partie",
+    close: "Fermer",
+  },
+
+  spectator: {
+    eyebrow: "Suivi en lecture seule",
+    title: "Suivi de partie",
+    roundProgress: (scored, total) =>
+      `Scores après la manche ${scored} sur ${total}`,
+    noRounds: "Aucune manche n'a encore été validée.",
+    finished: "Scores finaux — la partie est terminée.",
+    snapshotAt: (time) => `Scores du maître du jeu · relevés à ${time}`,
+    refreshHint:
+      "Ceci est un instantané. Pour l'actualiser, scannez à nouveau le QR code du maître du jeu.",
+    standingsTitle: "Classement",
+    tapHint:
+      "Touchez votre nom pour votre détail complet manche par manche — mises, plis et chaque bonus.",
+    you: "Vous",
+    openApp: "Ouvrir l'appli pour mes propres parties",
+    invalidTitle: "Code illisible",
+    invalidBody:
+      "Le lien scanné ne contient pas de partie lisible. Demandez au maître du jeu de réafficher le QR code, puis scannez-le à nouveau.",
   },
 
   results: {

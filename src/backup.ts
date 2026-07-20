@@ -433,6 +433,16 @@ function normalizeBackupGame(value: unknown, path: string): Game {
   };
 }
 
+/**
+ * Validate and normalize a single game object that arrived from outside this
+ * device (a backup file, a scanned share code, …). Applies the same hardening
+ * as a backup import: dimension caps, primitive checks, schema migration and
+ * a deep copy that drops unknown fields.
+ */
+export function normalizeUntrustedGame(value: unknown, path = "game"): Game {
+  return normalizeBackupGame(value, path);
+}
+
 function compareText(a: string, b: string): number {
   return a < b ? -1 : a > b ? 1 : 0;
 }

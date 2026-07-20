@@ -265,6 +265,57 @@ export async function saveSettings(settings: AppSettings): Promise<void> {
   }
 }
 
+const SPECTATOR_IDENTITY_KEY = "skullking:spectatorIdentity";
+
+/**
+ * Which player this device's owner is in the game they follow as a
+ * spectator. Lets a re-scan of the game master's QR code jump straight to
+ * the right score details. Only the latest followed game is remembered.
+ */
+export interface SpectatorIdentity {
+  gameId: string;
+  playerId: string;
+  /** Guards against a seat-derived ID pointing at someone else. */
+  playerName: string;
+}
+
+export async function loadSpectatorIdentity(): Promise<SpectatorIdentity | null> {
+  try {
+    const stored = await AsyncStorage.getItem(SPECTATOR_IDENTITY_KEY);
+    if (!stored) return null;
+    const raw = JSON.parse(stored);
+    if (
+      raw &&
+      typeof raw.gameId === "string" &&
+      typeof raw.playerId === "string" &&
+      typeof raw.playerName === "string"
+    ) {
+      return {
+        gameId: raw.gameId,
+        playerId: raw.playerId,
+        playerName: raw.playerName,
+      };
+    }
+    return null;
+  } catch (e) {
+    console.warn("Failed to load spectator identity", e);
+    return null;
+  }
+}
+
+export async function saveSpectatorIdentity(
+  identity: SpectatorIdentity
+): Promise<void> {
+  try {
+    await AsyncStorage.setItem(
+      SPECTATOR_IDENTITY_KEY,
+      JSON.stringify(identity)
+    );
+  } catch (e) {
+    console.warn("Failed to save spectator identity", e);
+  }
+}
+
 /** Last changelog release acknowledged by this device. */
 export async function loadSeenRelease(): Promise<string | null> {
   try {

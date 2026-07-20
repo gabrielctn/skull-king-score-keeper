@@ -34,6 +34,13 @@ Gotchas learned the hard way:
   chevron is the FIRST exact `›` in DOM order: `getByText("›", { exact: true }).nth(0)`.
 - Text inputs are plain `input` elements; fill the first two with player names
   before starting a game.
+- A cookie-consent banner overlays the bottom of the screen on each fresh
+  browser context and intercepts clicks on footer buttons; dismiss it via its
+  "Decline" button right after load.
+- Buttons whose visible label starts with an emoji (e.g. "🔗 Copy link") do
+  not match `getByText("Copy link", { exact: true })` — drop `exact`.
+- RN-web modal sheets slide in: text waits succeed before the animation ends,
+  so `waitForTimeout(~700)` before screenshots of an open sheet.
 
 ## Flows worth driving
 

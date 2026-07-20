@@ -191,6 +191,45 @@ export interface Strings {
     rascalBetFor: (name: string) => string;
   };
 
+  /** Game master's sheet sharing a live-follow QR code of the current game. */
+  liveShare: {
+    /** Accessibility label of the QR button in the game header. */
+    open: string;
+    title: string;
+    subtitle: string;
+    scanHint: string;
+    updateHint: string;
+    networkHint: string;
+    copyLink: string;
+    copied: string;
+    copyError: string;
+    qrError: string;
+    /** Accessibility description of the QR code image. */
+    qrLabel: string;
+    close: string;
+  };
+
+  /** Read-only score-tracking view opened by scanning a live-follow QR code. */
+  spectator: {
+    /** Small "read-only" tag above the title. */
+    eyebrow: string;
+    title: string;
+    /** Progress line: "Scores after round {scored} of {total}". */
+    roundProgress: (scored: number, total: number) => string;
+    noRounds: string;
+    finished: string;
+    /** "Game master's scores · read at {time}". */
+    snapshotAt: (time: string) => string;
+    refreshHint: string;
+    standingsTitle: string;
+    tapHint: string;
+    /** Chip marking the remembered "this is me" row in the standings. */
+    you: string;
+    openApp: string;
+    invalidTitle: string;
+    invalidBody: string;
+  };
+
   results: {
     gameOver: string;
     /** "{name} wins with {total}!" */

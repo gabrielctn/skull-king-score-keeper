@@ -54,9 +54,8 @@ export const de: Strings = {
     automaticUpdatesBody:
       "Installierte Apps laden jede neue Version automatisch und wechseln zu ihr, sobald das Gerät online ist.",
     items: [
-      "Wähle beim Erstellen einer Partie zwischen den beiden offiziellen Wertungen: klassische Skull-King-Wertung oder Rascal-Wertung — 10 Punkte pro ausgeteilter Karte, deine Genauigkeit entscheidet über deinen Anteil.",
-      "Auch die optionalen Rascal-Regeln sind dabei: Erkläre jede Runde Schrotladung oder Kanonenkugel — alles oder nichts mit 15 Punkten pro Karte.",
-      "Die Punktedetails benennen die Genauigkeit jeder Runde — Volltreffer, Streifschuss oder Fehlschlag — samt halbierter Boni, und die Regelhilfe erklärt das neue System.",
+      "Neuer ▦-Knopf im Spielbildschirm: Zeige einen QR-Code und jeder Spieler öffnet auf dem eigenen Handy eine Lese-Ansicht der Punkte.",
+      "Alle prüfen ihre Ansagen, Stiche und jeden Bonus, ohne den Spielleiter zu fragen — erneutes Scannen aktualisiert die Ansicht.",
     ],
     close: "Verstanden",
   },
@@ -190,6 +189,45 @@ export const de: Strings = {
       cannonball: "Kanonenkugel",
     },
     rascalBetFor: (name) => `Erklärung von ${name}`,
+  },
+
+  liveShare: {
+    open: "Live-Punkteverfolgung teilen (QR-Code)",
+    title: "Live mitverfolgen",
+    subtitle: "Alle Spieler können die Punkte auf dem eigenen Handy verfolgen.",
+    scanHint:
+      "Lass die Spieler diesen QR-Code scannen: Er öffnet eine reine Lese-Ansicht dieser Partie — jede Ansage, jeder Stich und jeder Bonus, den du einträgst.",
+    updateHint:
+      "Der QR-Code enthält immer den zuletzt gespeicherten Stand. Zum Aktualisieren scannt ein Spieler ihn einfach erneut.",
+    networkHint:
+      "Das Handy des Spielers braucht beim ersten Öffnen der App eine Verbindung; danach funktioniert die Ansicht auch offline.",
+    copyLink: "Link kopieren",
+    copied: "Link kopiert!",
+    copyError: "Der Link konnte nicht kopiert werden.",
+    qrError: "Diese Partie konnte nicht in einen QR-Code umgewandelt werden.",
+    qrLabel:
+      "QR-Code, der die Live-Punkteverfolgung dieser Partie öffnet",
+    close: "Schließen",
+  },
+
+  spectator: {
+    eyebrow: "Nur-Lese-Ansicht",
+    title: "Partie verfolgen",
+    roundProgress: (scored, total) =>
+      `Punktestand nach Runde ${scored} von ${total}`,
+    noRounds: "Es wurde noch keine Runde gewertet.",
+    finished: "Endstand — die Partie ist beendet.",
+    snapshotAt: (time) => `Punkte des Spielleiters · abgelesen um ${time}`,
+    refreshHint:
+      "Dies ist eine Momentaufnahme. Zum Aktualisieren scanne den QR-Code des Spielleiters erneut.",
+    standingsTitle: "Rangliste",
+    tapHint:
+      "Tippe auf deinen Namen für deine vollständigen Details Runde für Runde — Ansagen, Stiche und jeder Bonus.",
+    you: "Du",
+    openApp: "App für meine eigenen Partien öffnen",
+    invalidTitle: "Code nicht lesbar",
+    invalidBody:
+      "Der gescannte Link enthält keine lesbare Partie. Bitte den Spielleiter, den QR-Code erneut zu zeigen, und scanne ihn noch einmal.",
   },
 
   results: {

@@ -53,9 +53,8 @@ export const zh: Strings = {
     automaticUpdatesBody:
       "已安装的应用会自动下载每个新版本，并在设备联网后立即切换到新版本。",
     items: [
-      "创建对局时可在两种官方计分方式中选择：经典 Skull King 计分或 Rascal 计分——每张发牌 10 分，准确度决定所得份额。",
-      "同时支持 Rascal 可选规则：每回合宣布散弹或炮弹，孤注一掷，每张牌 15 分。",
-      "得分明细会标注每回合的准确度——正中目标、擦身而过或完全落空——并显示减半的奖励分，应用内规则也新增了该计分方式的说明。",
+      "对局界面新增 ▦ 按钮：展示二维码，每位玩家即可在自己的手机上打开只读比分跟踪。",
+      "每个人都能自己核对叫牌、墩数和各项奖励，无需询问记分员——再次扫码即可刷新。",
     ],
     close: "知道了",
   },
@@ -181,6 +180,42 @@ export const zh: Strings = {
       cannonball: "炮弹",
     },
     rascalBetFor: (name) => `${name} 的宣布`,
+  },
+
+  liveShare: {
+    open: "分享实时比分跟踪（二维码）",
+    title: "实时跟踪",
+    subtitle: "每位玩家都可以在自己的手机上跟踪比分。",
+    scanHint:
+      "让玩家扫描此二维码：它会打开本局的只读视图——你记录的每次叫牌、每一墩和每项奖励。",
+    updateHint:
+      "二维码始终包含最新保存的状态。玩家只需再次扫描即可刷新视图。",
+    networkHint:
+      "玩家的手机首次打开应用时需要联网；之后该视图也可以离线使用。",
+    copyLink: "复制链接",
+    copied: "链接已复制！",
+    copyError: "无法复制链接。",
+    qrError: "无法将本局转换为二维码。",
+    qrLabel: "打开本局实时比分跟踪的二维码",
+    close: "关闭",
+  },
+
+  spectator: {
+    eyebrow: "只读跟踪",
+    title: "对局跟踪",
+    roundProgress: (scored, total) =>
+      `第 ${scored} / ${total} 回合后的比分`,
+    noRounds: "尚未结算任何回合。",
+    finished: "最终比分——对局已结束。",
+    snapshotAt: (time) => `记分员的比分 · 读取于 ${time}`,
+    refreshHint: "这是一份快照。要刷新，请再次扫描记分员的二维码。",
+    standingsTitle: "排名",
+    tapHint: "点击你的名字查看逐回合完整明细——叫牌、墩数和每项奖励。",
+    you: "你",
+    openApp: "打开应用记录我自己的对局",
+    invalidTitle: "无法读取此二维码",
+    invalidBody:
+      "扫描的链接不包含可读取的对局。请记分员重新展示二维码，然后再扫描一次。",
   },
 
   results: {

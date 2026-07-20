@@ -54,9 +54,8 @@ export const en: Strings = {
     automaticUpdatesBody:
       "Installed apps now download each new release automatically and switch to it as soon as the device is online.",
     items: [
-      "Choose between the two official scoring systems when creating a game: classic Skull King scoring or Rascal's scoring — 10 points per card dealt, and your accuracy decides your share.",
-      "Rascal's optional rules are supported too: each round, declare Buckshot or Cannonball for an all-or-nothing 15 points per card dealt.",
-      "Score details name each round's accuracy — direct hit, glancing blow or total whiff — with halved bonuses shown, and the in-app rules cover the new system.",
+      "New ▦ button on the game screen: show a QR code and every player can open a live, read-only view of the scores on their own phone.",
+      "Players check their own bids, tricks and every bonus without asking the score keeper — re-scanning the code refreshes their view.",
     ],
     close: "Got it",
   },
@@ -190,6 +189,44 @@ export const en: Strings = {
       cannonball: "Cannonball",
     },
     rascalBetFor: (name) => `${name}'s declaration`,
+  },
+
+  liveShare: {
+    open: "Share live score tracking (QR code)",
+    title: "Follow live",
+    subtitle: "Every player can track the scores on their own phone.",
+    scanHint:
+      "Have the players scan this QR code: it opens a read-only view of this game — every bid, trick and bonus you record.",
+    updateHint:
+      "The QR code always contains the latest saved state. To refresh their view, players simply scan it again.",
+    networkHint:
+      "A player's phone needs a connection the first time it opens the app; after that the view also works offline.",
+    copyLink: "Copy link",
+    copied: "Link copied!",
+    copyError: "Could not copy the link.",
+    qrError: "This game could not be turned into a QR code.",
+    qrLabel: "QR code opening the live score tracking of this game",
+    close: "Close",
+  },
+
+  spectator: {
+    eyebrow: "Read-only tracking",
+    title: "Game tracking",
+    roundProgress: (scored, total) =>
+      `Scores after round ${scored} of ${total}`,
+    noRounds: "No round has been scored yet.",
+    finished: "Final scores — the game is over.",
+    snapshotAt: (time) => `Game master's scores · read at ${time}`,
+    refreshHint:
+      "This is a snapshot. To refresh it, scan the game master's QR code again.",
+    standingsTitle: "Standings",
+    tapHint:
+      "Tap your name for your full round-by-round details — bids, tricks and every bonus.",
+    you: "You",
+    openApp: "Open the app for my own games",
+    invalidTitle: "This code could not be read",
+    invalidBody:
+      "The scanned link does not contain a readable game. Ask the game master to show the QR code again, then rescan it.",
   },
 
   results: {

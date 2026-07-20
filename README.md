@@ -24,6 +24,11 @@ network — perfect for a table with no wifi.
   and both bids are checked before the +20 bonuses are applied.
 - Editable **cards-dealt** per round (for 7–8 players or custom round structures).
 - Live per-round and running totals, with a tricks-vs-cards sanity check.
+- A **live-follow QR code** (▦ button in the game header): players scan it
+  with their own phone and get a read-only view of the standings and their
+  full round-by-round score details, bonuses included — no more asking the
+  game master. The whole snapshot travels inside the QR code (no server);
+  re-scanning refreshes it.
 - A built-in **rules reference** (the "?" button) covering every special card.
 - Full support for the **new Skull King expansion**: conditional 7/8 points,
   Davy Jones' Locker, the Second, and a rules reference for every new card.

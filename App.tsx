@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
+  Platform,
   StatusBar,
   StyleSheet,
   Text,
@@ -28,6 +29,13 @@ import GameScreen from "./src/screens/GameScreen";
 import ResultsScreen from "./src/screens/ResultsScreen";
 import SettingsScreen from "./src/screens/SettingsScreen";
 import StatsScreen from "./src/screens/StatsScreen";
+import SpectatorScreen from "./src/screens/SpectatorScreen";
+import {
+  SpectatorBoot,
+  clearSpectatorSessionCode,
+  consumeScannedShareCode,
+  readSpectatorBoot,
+} from "./src/shareLink";
 import { registerServiceWorker } from "./src/registerServiceWorker";
 import { createGame } from "./src/scoring";
 import { initializePwaInstallPrompt } from "./src/pwaInstall";
@@ -70,6 +78,10 @@ function StorageWarning({
 
 export default function App() {
   const [screen, setScreen] = useState<Screen>("home");
+  // Spectator mode (opened from a scanned share QR code) is resolved in the
+  // lazy initializer, before first paint and before analytics can load, so
+  // the share payload is stripped from the URL as early as possible.
+  const [spectator, setSpectator] = useState<SpectatorBoot>(readSpectatorBoot);
   const [game, setGame] = useState<Game | null>(null);
   const [gameHistory, setGameHistory] = useState<Game[]>([]);
   const [lang, setLang] = useState<Lang | null>(null);
@@ -155,6 +167,23 @@ export default function App() {
     historySaveTimer.current = null;
     if (pendingHistorySave.current) void startHistorySave();
     while (historySaveWorker.current) await historySaveWorker.current;
+  };
+
+  // A QR code scanned while the app is already open navigates to the same
+  // page with a new share payload in the hash; pick it up without a reload.
+  useEffect(() => {
+    if (Platform.OS !== "web" || typeof window === "undefined") return;
+    const handleHashChange = () => {
+      const scanned = consumeScannedShareCode();
+      if (scanned) setSpectator(scanned);
+    };
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, []);
+
+  const handleExitSpectator = () => {
+    clearSpectatorSessionCode();
+    setSpectator({ game: null, invalid: false });
   };
 
   // Restore the saved game and language on launch, and register the PWA
@@ -312,11 +341,21 @@ export default function App() {
     );
   }
 
+  // A scanned snapshot takes over the whole UI. The user's own games stay
+  // untouched underneath and come back through the spectator exit button.
+  const spectatorActive = spectator.game !== null || spectator.invalid;
+
   return (
     <I18nProvider initialLang={lang}>
       <View style={styles.root}>
         <StatusBar barStyle="light-content" backgroundColor={colors.bg} />
-        {screen === "home" && (
+        {spectatorActive && (
+          <SpectatorScreen
+            game={spectator.game}
+            onExit={handleExitSpectator}
+          />
+        )}
+        {!spectatorActive && screen === "home" && (
           <HomeScreen
             gameHistory={gameHistory}
             currentGameId={game?.id ?? null}
@@ -327,10 +366,10 @@ export default function App() {
             onOpenSettings={() => setScreen("settings")}
           />
         )}
-        {screen === "stats" && (
+        {!spectatorActive && screen === "stats" && (
           <StatsScreen gameHistory={gameHistory} onBack={handleHome} />
         )}
-        {screen === "settings" && (
+        {!spectatorActive && screen === "settings" && (
           <SettingsScreen
             settings={settings}
             hasGames={gameHistory.length > 0 || game !== null}
@@ -341,14 +380,14 @@ export default function App() {
             onDeleteAllGames={handleDeleteAllGames}
           />
         )}
-        {screen === "setup" && (
+        {!spectatorActive && screen === "setup" && (
           <SetupScreen
             gameHistory={gameHistory}
             onStart={handleStart}
             onBack={handleHome}
           />
         )}
-        {screen === "game" && game && (
+        {!spectatorActive && screen === "game" && game && (
           <GameScreen
             game={game}
             keepAwake={settings.keepAwake}
@@ -357,7 +396,7 @@ export default function App() {
             onExit={handleHome}
           />
         )}
-        {screen === "results" && game && (
+        {!spectatorActive && screen === "results" && game && (
           <ResultsScreen
             game={game}
             onRematch={handleRematch}
