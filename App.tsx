@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
+  Platform,
   StatusBar,
   StyleSheet,
   Text,
@@ -28,6 +29,20 @@ import GameScreen from "./src/screens/GameScreen";
 import ResultsScreen from "./src/screens/ResultsScreen";
 import SettingsScreen from "./src/screens/SettingsScreen";
 import StatsScreen from "./src/screens/StatsScreen";
+import SpectatorScreen from "./src/screens/SpectatorScreen";
+import {
+  clearSpectatorSessionCode,
+  consumeScannedShareCode,
+  decodeShareCode,
+  loadSpectatorSessionCode,
+} from "./src/shareLink";
+import {
+  clearSpectatorLiveId,
+  consumeScannedLiveId,
+  liveSessionManager,
+  loadSpectatorLiveId,
+} from "./src/liveSession";
+import { liveConfigured } from "./src/liveConfig";
 import { registerServiceWorker } from "./src/registerServiceWorker";
 import { createGame } from "./src/scoring";
 import { initializePwaInstallPrompt } from "./src/pwaInstall";
@@ -43,6 +58,48 @@ import CookieConsentBanner from "./src/components/CookieConsentBanner";
 
 type Screen = "home" | "setup" | "game" | "results" | "settings" | "stats";
 type PendingCurrentGame = Game | null | undefined;
+
+/**
+ * Spectator mode, opened by scanning a share QR code: either a live session
+ * followed in real time, or a static QR-encoded snapshot. `none` is the normal
+ * app.
+ */
+type SpectatorMode =
+  | { kind: "live"; sessionId: string }
+  | { kind: "snapshot"; game: Game | null; invalid: boolean }
+  | { kind: "none" };
+
+const NO_SPECTATOR: SpectatorMode = { kind: "none" };
+
+/**
+ * Resolve spectator mode for this page load. A fresh scan in the URL hash
+ * (either kind) wins over a session restored from an earlier scan in this tab,
+ * and live takes precedence over a snapshot. Called before first paint so the
+ * hash is stripped before analytics can observe it.
+ */
+function readSpectatorMode(): SpectatorMode {
+  const scannedLive = consumeScannedLiveId();
+  if (scannedLive) return { kind: "live", sessionId: scannedLive };
+  const scannedSnapshot = consumeScannedShareCode();
+  if (scannedSnapshot) {
+    return {
+      kind: "snapshot",
+      game: scannedSnapshot.game,
+      invalid: scannedSnapshot.invalid,
+    };
+  }
+  const storedLive = loadSpectatorLiveId();
+  if (storedLive) return { kind: "live", sessionId: storedLive };
+  const storedCode = loadSpectatorSessionCode();
+  if (storedCode) {
+    try {
+      return { kind: "snapshot", game: decodeShareCode(storedCode), invalid: false };
+    } catch {
+      clearSpectatorSessionCode();
+    }
+  }
+  return NO_SPECTATOR;
+}
 
 function StorageWarning({
   visible,
@@ -70,6 +127,10 @@ function StorageWarning({
 
 export default function App() {
   const [screen, setScreen] = useState<Screen>("home");
+  // Spectator mode (opened from a scanned share QR code) is resolved in the
+  // lazy initializer, before first paint and before analytics can load, so
+  // the share payload is stripped from the URL as early as possible.
+  const [spectator, setSpectator] = useState<SpectatorMode>(readSpectatorMode);
   const [game, setGame] = useState<Game | null>(null);
   const [gameHistory, setGameHistory] = useState<Game[]>([]);
   const [lang, setLang] = useState<Lang | null>(null);
@@ -157,6 +218,35 @@ export default function App() {
     while (historySaveWorker.current) await historySaveWorker.current;
   };
 
+  // A QR code scanned while the app is already open navigates to the same
+  // page with a new share payload in the hash; pick it up without a reload.
+  useEffect(() => {
+    if (Platform.OS !== "web" || typeof window === "undefined") return;
+    const handleHashChange = () => {
+      const scannedLive = consumeScannedLiveId();
+      if (scannedLive) {
+        setSpectator({ kind: "live", sessionId: scannedLive });
+        return;
+      }
+      const scanned = consumeScannedShareCode();
+      if (scanned) {
+        setSpectator({
+          kind: "snapshot",
+          game: scanned.game,
+          invalid: scanned.invalid,
+        });
+      }
+    };
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, []);
+
+  const handleExitSpectator = () => {
+    clearSpectatorSessionCode();
+    clearSpectatorLiveId();
+    setSpectator(NO_SPECTATOR);
+  };
+
   // Restore the saved game and language on launch, and register the PWA
   // service worker (web only). Loading the language here (before first paint)
   // avoids a flash of the wrong language.
@@ -187,6 +277,13 @@ export default function App() {
     })();
   }, []);
 
+  // Resume a previously started live session for the loaded game (after an app
+  // restart) so the QR stays valid and saved changes keep syncing.
+  useEffect(() => {
+    if (!liveConfigured() || spectator.kind !== "none" || !game) return;
+    void liveSessionManager().restoreFor(game);
+  }, [game?.id, spectator.kind]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const handleUpdateSettings = (next: AppSettings) => {
     setSettings(next);
     void saveSettings(next);
@@ -202,6 +299,8 @@ export default function App() {
     historyRef.current = next;
     setGameHistory(next);
     queueHistorySave(next, historyImmediate);
+    // Mirror the change to any live session sharing this game.
+    if (liveConfigured()) liveSessionManager().notifyGameChanged(g);
   };
 
   const handleNewGame = () => setScreen("setup");
@@ -312,11 +411,24 @@ export default function App() {
     );
   }
 
+  // A scanned session takes over the whole UI. The user's own games stay
+  // untouched underneath and come back through the spectator exit button.
+  const spectatorActive = spectator.kind !== "none";
+
   return (
     <I18nProvider initialLang={lang}>
       <View style={styles.root}>
         <StatusBar barStyle="light-content" backgroundColor={colors.bg} />
-        {screen === "home" && (
+        {spectatorActive && (
+          <SpectatorScreen
+            game={spectator.kind === "snapshot" ? spectator.game : null}
+            liveSessionId={
+              spectator.kind === "live" ? spectator.sessionId : null
+            }
+            onExit={handleExitSpectator}
+          />
+        )}
+        {!spectatorActive && screen === "home" && (
           <HomeScreen
             gameHistory={gameHistory}
             currentGameId={game?.id ?? null}
@@ -327,10 +439,10 @@ export default function App() {
             onOpenSettings={() => setScreen("settings")}
           />
         )}
-        {screen === "stats" && (
+        {!spectatorActive && screen === "stats" && (
           <StatsScreen gameHistory={gameHistory} onBack={handleHome} />
         )}
-        {screen === "settings" && (
+        {!spectatorActive && screen === "settings" && (
           <SettingsScreen
             settings={settings}
             hasGames={gameHistory.length > 0 || game !== null}
@@ -341,14 +453,14 @@ export default function App() {
             onDeleteAllGames={handleDeleteAllGames}
           />
         )}
-        {screen === "setup" && (
+        {!spectatorActive && screen === "setup" && (
           <SetupScreen
             gameHistory={gameHistory}
             onStart={handleStart}
             onBack={handleHome}
           />
         )}
-        {screen === "game" && game && (
+        {!spectatorActive && screen === "game" && game && (
           <GameScreen
             game={game}
             keepAwake={settings.keepAwake}
@@ -357,7 +469,7 @@ export default function App() {
             onExit={handleHome}
           />
         )}
-        {screen === "results" && game && (
+        {!spectatorActive && screen === "results" && game && (
           <ResultsScreen
             game={game}
             onRematch={handleRematch}

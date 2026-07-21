@@ -24,6 +24,16 @@ network — perfect for a table with no wifi.
   and both bids are checked before the +20 bonuses are applied.
 - Editable **cards-dealt** per round (for 7–8 players or custom round structures).
 - Live per-round and running totals, with a tricks-vs-cards sanity check.
+- **Live score follow** (▦ button in the game header): players scan a QR code
+  with their own phone and get a read-only view of the standings and their
+  full round-by-round score details, bonuses included — no more asking the
+  game master. Two modes share one sheet:
+  - **Live** (real-time) through a Supabase backend: the game master starts a
+    session and every bid, trick and bonus appears on the players' phones as
+    it is recorded, no refresh.
+  - **Offline snapshot** fallback for tables with no connection: the whole
+    game is encoded inside the QR code itself (no server); players re-scan to
+    refresh. This is also what a fork gets with no backend configured.
 - A built-in **rules reference** (the "?" button) covering every special card.
 - Full support for the **new Skull King expansion**: conditional 7/8 points,
   Davy Jones' Locker, the Second, and a rules reference for every new card.
@@ -182,6 +192,31 @@ https://gabrielctn.github.io/skull-king-score-keeper/.
 If you fork/rename the repo, update `experiments.baseUrl` in `app.json` and the
 `start_url`/`scope`/icon paths in `web/manifest.webmanifest` to the new sub-path.
 
+## Live score follow (optional Supabase backend)
+
+The real-time half of the live-follow feature needs a tiny backend; the app
+stays a static PWA on GitHub Pages either way. Without a backend the sharing
+sheet simply offers the **offline QR snapshot** only.
+
+To enable live mode on a fork:
+
+1. Create a free **Supabase** project.
+2. In the dashboard, open **SQL Editor** and run [`supabase/schema.sql`](supabase/schema.sql)
+   (idempotent). It creates the `live_games` session table, row-level security,
+   the writer-key-protected `create/update/end` functions, and the Realtime
+   publication.
+3. Put the project URL and the **publishable / anon** key in
+   [`src/liveConfig.ts`](src/liveConfig.ts) (both are public client values by
+   design — the secret `service_role` key is never used).
+4. The [`supabase-keepalive`](.github/workflows/supabase-keepalive.yml) workflow
+   pings the project weekly so the free tier is not paused for inactivity.
+
+Only the game master's device writes (it holds a per-session writer key whose
+hash lives server-side); spectators read their session by its unguessable id.
+Session rows carry the player names and auto-expire 24 h after the last update,
+so nothing lingers on the server. Everything a spectator receives is re-validated
+through the same hardening as backup imports before it reaches the UI.
+
 ---
 
 ## Project structure
@@ -202,6 +237,10 @@ Skull-King/
 ├── src/
 │   ├── types.ts                  # Shared types (Player, Game, RoundEntry)
 │   ├── scoring.ts                # Pure scoring engine (fully unit-tested)
+│   ├── shareLink.ts              # Offline snapshot codec (game ↔ QR payload)
+│   ├── liveSession.ts            # Live-follow sync (Supabase transport + manager)
+│   ├── liveConfig.ts             # Supabase URL + publishable key (public)
+│   ├── qr.ts                     # QR image (data URL) rendering
 │   ├── storage.ts                # AsyncStorage (→ localStorage on web)
 │   ├── backup.ts                 # Versioned, validated JSON import/export
 │   ├── pwaInstall.ts             # Deferred install prompt + iOS guidance

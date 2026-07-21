@@ -191,6 +191,77 @@ export interface Strings {
     rascalBetFor: (name: string) => string;
   };
 
+  /** Game master's sheet sharing the current game with the other players. */
+  liveShare: {
+    /** Accessibility label of the QR button in the game header. */
+    open: string;
+    title: string;
+    subtitle: string;
+    // Live (real-time, server-backed) section.
+    /** Explanation shown before a live session is started. */
+    liveHint: string;
+    start: string;
+    starting: string;
+    stop: string;
+    liveOnTitle: string;
+    liveScanHint: string;
+    /** Status pill while the session is connected and idle. */
+    statusLive: string;
+    /** Status pill while a change is being pushed. */
+    statusSyncing: string;
+    /** Status pill while sync is failing and retrying. */
+    statusOffline: string;
+    liveError: string;
+    // Offline snapshot (QR-encoded game) fallback section.
+    snapshotTitle: string;
+    snapshotToggleShow: string;
+    snapshotToggleHide: string;
+    scanHint: string;
+    updateHint: string;
+    networkHint: string;
+    copyLink: string;
+    copied: string;
+    copyError: string;
+    qrError: string;
+    /** Accessibility description of the QR code image. */
+    qrLabel: string;
+    close: string;
+  };
+
+  /** Read-only score-tracking view opened by scanning a share QR code. */
+  spectator: {
+    /** Small "read-only" tag above the title (snapshot mode). */
+    eyebrow: string;
+    /** Small tag above the title while following a live session. */
+    liveEyebrow: string;
+    /** Pill shown next to the title while connected to a live session. */
+    liveBadge: string;
+    title: string;
+    /** Progress line: "Scores after round {scored} of {total}". */
+    roundProgress: (scored: number, total: number) => string;
+    noRounds: string;
+    finished: string;
+    /** "Game master's scores · read at {time}". */
+    snapshotAt: (time: string) => string;
+    /** "Updated live · {time}". */
+    liveUpdatedAt: (time: string) => string;
+    refreshHint: string;
+    /** Banner while first connecting to a live session. */
+    connecting: string;
+    /** Banner while a live session is reconnecting. */
+    reconnecting: string;
+    /** Banner when the game master ends the live session. */
+    endedTitle: string;
+    endedBody: string;
+    standingsTitle: string;
+    tapHint: string;
+    /** Chip marking the remembered "this is me" row in the standings. */
+    you: string;
+    openApp: string;
+    invalidTitle: string;
+    invalidBody: string;
+  };
+
   results: {
     gameOver: string;
     /** "{name} wins with {total}!" */

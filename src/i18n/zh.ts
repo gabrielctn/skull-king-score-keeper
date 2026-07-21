@@ -53,9 +53,9 @@ export const zh: Strings = {
     automaticUpdatesBody:
       "已安装的应用会自动下载每个新版本，并在设备联网后立即切换到新版本。",
     items: [
-      "创建对局时可在两种官方计分方式中选择：经典 Skull King 计分或 Rascal 计分——每张发牌 10 分，准确度决定所得份额。",
-      "同时支持 Rascal 可选规则：每回合宣布散弹或炮弹，孤注一掷，每张牌 15 分。",
-      "得分明细会标注每回合的准确度——正中目标、擦身而过或完全落空——并显示减半的奖励分，应用内规则也新增了该计分方式的说明。",
+      "对局界面新增 ▦ 按钮：分享比分，让每位玩家都能在自己的手机上跟进对局。",
+      "开启实时会话后，扫描二维码的玩家可实时看到比分更新——每次叫牌、每一墩和每项奖励，都无需刷新。",
+      "牌桌旁没有网络？离线二维码快照依然可用：玩家随时再次扫描即可查看自己的详细得分。",
     ],
     close: "知道了",
   },
@@ -181,6 +181,63 @@ export const zh: Strings = {
       cannonball: "炮弹",
     },
     rascalBetFor: (name) => `${name} 的宣布`,
+  },
+
+  liveShare: {
+    open: "分享比分跟踪（二维码）",
+    title: "跟踪比分",
+    subtitle: "每位玩家都可以在自己的手机上跟踪比分。",
+    liveHint:
+      "开启实时会话：扫码的玩家将实时跟踪比分——你记录的每次叫牌、每一墩和每项奖励都会立即出现在他们手机上，无需刷新。",
+    start: "开启实时跟踪",
+    starting: "正在开启…",
+    stop: "停止实时跟踪",
+    liveOnTitle: "实时跟踪已开启",
+    liveScanHint: "玩家扫描此二维码即可在自己的手机上实时跟踪比分。",
+    statusLive: "实时 · 自动更新",
+    statusSyncing: "正在保存…",
+    statusOffline: "正在重新连接…",
+    liveError: "实时同步出现问题——正在持续重试。请检查网络，或停止后重新开启。",
+    snapshotTitle: "牌桌旁没有网络？",
+    snapshotToggleShow: "显示离线快照",
+    snapshotToggleHide: "隐藏离线快照",
+    scanHint:
+      "此二维码包含本局的只读快照——目前记录的每次叫牌、每一墩和每项奖励。",
+    updateHint:
+      "它无需服务器，但不会自动更新：玩家再次扫描即可获取最新比分。",
+    networkHint:
+      "玩家的手机首次打开应用时需要联网；之后快照可完全离线使用。",
+    copyLink: "复制链接",
+    copied: "链接已复制！",
+    copyError: "无法复制链接。",
+    qrError: "无法将本局转换为二维码。",
+    qrLabel: "打开本局比分跟踪的二维码",
+    close: "关闭",
+  },
+
+  spectator: {
+    eyebrow: "只读跟踪",
+    liveEyebrow: "实时跟踪",
+    liveBadge: "实时",
+    title: "对局跟踪",
+    roundProgress: (scored, total) =>
+      `第 ${scored} / ${total} 回合后的比分`,
+    noRounds: "尚未结算任何回合。",
+    finished: "最终比分——对局已结束。",
+    snapshotAt: (time) => `记分员的比分 · 读取于 ${time}`,
+    liveUpdatedAt: (time) => `实时更新 · ${time}`,
+    refreshHint: "这是一份快照。要刷新，请再次扫描记分员的二维码。",
+    connecting: "正在连接实时对局…",
+    reconnecting: "连接已断开——正在重新连接…",
+    endedTitle: "实时会话已结束",
+    endedBody: "记分员已停止分享。下方显示你收到的最新比分。",
+    standingsTitle: "排名",
+    tapHint: "点击你的名字查看逐回合完整明细——叫牌、墩数和每项奖励。",
+    you: "你",
+    openApp: "打开应用记录我自己的对局",
+    invalidTitle: "无法读取此二维码",
+    invalidBody:
+      "扫描的链接不包含可读取的对局。请记分员重新展示二维码，然后再扫描一次。",
   },
 
   results: {

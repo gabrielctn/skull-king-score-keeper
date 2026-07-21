@@ -1,0 +1,21 @@
+# Supabase pauses free-tier projects after ~7 days without API activity.
+# One cheap REST read a week keeps the live-follow backend awake. The URL and
+# publishable key are public client-side values (also shipped in the app
+# bundle), so no repository secret is involved.
+name: Keep Supabase awake
+
+on:
+  schedule:
+    - cron: "17 9 * * 1" # Mondays 09:17 UTC
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping the live-games endpoint
+        run: |
+          curl -fsS \
+            "https://hkjneydxqdjasmppfsdp.supabase.co/rest/v1/live_games?select=id&limit=1" \
+            -H "apikey: sb_publishable_V2lxGSsQd88NkUzr6nwdOA_S19pbaZn" \
+            -o /dev/null

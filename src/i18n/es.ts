@@ -56,9 +56,9 @@ export const es: Strings = {
     automaticUpdatesBody:
       "Las aplicaciones instaladas ahora descargan automáticamente cada nueva versión y la activan en cuanto el dispositivo se conecta a internet.",
     items: [
-      "Elige entre los dos sistemas de puntuación oficiales al crear una partida: el clásico de Skull King o el de Rascal, con 10 puntos por carta repartida y una parte determinada por tu precisión.",
-      "También se admiten las reglas opcionales de Rascal: en cada ronda, declara Perdigón o Bala de cañón para jugarte todo o nada a 15 puntos por carta repartida.",
-      "Los detalles de puntuación indican la precisión de cada ronda —impacto directo, impacto parcial o fallo total—, muestran los bonus reducidos a la mitad y las reglas de la aplicación explican el nuevo sistema.",
+      "Nuevo botón ▦ en la pantalla de juego: comparte los puntos para que cada jugador siga la partida en su propio teléfono.",
+      "Inicia una sesión en directo y los jugadores que escaneen el código QR ven los puntos actualizarse en tiempo real — cada apuesta, baza y bonus, sin actualizar nada.",
+      "¿Sin conexión en la mesa? La instantánea QR sin conexión sigue funcionando: los jugadores la vuelven a escanear para consultar su puntuación detallada cuando quieran.",
     ],
     close: "Entendido",
   },
@@ -196,6 +196,69 @@ export const es: Strings = {
       cannonball: "Bala de cañón",
     },
     rascalBetFor: (name) => `Declaración de ${name}`,
+  },
+
+  liveShare: {
+    open: "Compartir el seguimiento de puntos (código QR)",
+    title: "Seguir los puntos",
+    subtitle: "Cada jugador puede seguir los puntos en su propio teléfono.",
+    liveHint:
+      "Inicia una sesión en directo: los jugadores que escaneen el código siguen los puntos en tiempo real — cada apuesta, baza y bonus aparece en su teléfono en cuanto lo registras, sin actualizar nada.",
+    start: "Iniciar seguimiento en directo",
+    starting: "Iniciando…",
+    stop: "Detener seguimiento en directo",
+    liveOnTitle: "Seguimiento en directo activado",
+    liveScanHint:
+      "Los jugadores escanean este código QR para seguir los puntos en directo en su propio teléfono.",
+    statusLive: "En directo · actualización automática",
+    statusSyncing: "Guardando…",
+    statusOffline: "Reconectando…",
+    liveError:
+      "La sincronización en directo tuvo un problema — sigue reintentando. Comprueba tu conexión, o detén e inicia de nuevo.",
+    snapshotTitle: "¿Sin conexión en la mesa?",
+    snapshotToggleShow: "Mostrar instantánea sin conexión",
+    snapshotToggleHide: "Ocultar instantánea sin conexión",
+    scanHint:
+      "Este código QR contiene una instantánea de solo lectura de la partida — cada apuesta, baza y bonus registrados hasta ahora.",
+    updateHint:
+      "Funciona sin servidor, pero no se actualiza solo: los jugadores lo vuelven a escanear para obtener los últimos puntos.",
+    networkHint:
+      "El teléfono del jugador necesita conexión la primera vez que abre la app; después la instantánea funciona totalmente sin conexión.",
+    copyLink: "Copiar enlace",
+    copied: "¡Enlace copiado!",
+    copyError: "No se pudo copiar el enlace.",
+    qrError: "No se pudo convertir esta partida en un código QR.",
+    qrLabel:
+      "Código QR que abre el seguimiento de puntos de esta partida",
+    close: "Cerrar",
+  },
+
+  spectator: {
+    eyebrow: "Seguimiento de solo lectura",
+    liveEyebrow: "Seguimiento en directo",
+    liveBadge: "En directo",
+    title: "Seguimiento de partida",
+    roundProgress: (scored, total) =>
+      `Puntos tras la ronda ${scored} de ${total}`,
+    noRounds: "Todavía no se ha puntuado ninguna ronda.",
+    finished: "Puntuación final — la partida ha terminado.",
+    snapshotAt: (time) => `Puntos del anotador · leídos a las ${time}`,
+    liveUpdatedAt: (time) => `Actualizado en directo · ${time}`,
+    refreshHint:
+      "Esto es una instantánea. Para actualizarla, vuelve a escanear el código QR del anotador.",
+    connecting: "Conectando con la partida en directo…",
+    reconnecting: "Conexión perdida — reconectando…",
+    endedTitle: "Sesión en directo finalizada",
+    endedBody:
+      "El anotador dejó de compartir. Debajo se muestran los últimos puntos recibidos.",
+    standingsTitle: "Clasificación",
+    tapHint:
+      "Toca tu nombre para ver tu detalle completo ronda a ronda — apuestas, bazas y cada bonus.",
+    you: "Tú",
+    openApp: "Abrir la app para mis propias partidas",
+    invalidTitle: "No se pudo leer este código",
+    invalidBody:
+      "El enlace escaneado no contiene una partida legible. Pide al anotador que vuelva a mostrar el código QR y escanéalo de nuevo.",
   },
 
   results: {

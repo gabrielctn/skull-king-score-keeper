@@ -35,6 +35,7 @@ import LootTracker from "../components/LootTracker";
 import LootConfirmationModal from "../components/LootConfirmationModal";
 import RulesModal from "../components/RulesModal";
 import ScoreBreakdownModal from "../components/ScoreBreakdownModal";
+import ShareLiveModal from "../components/ShareLiveModal";
 import ScoreChart from "../components/ScoreChart";
 import { colors, radius, spacing } from "../theme";
 import { getResponsiveLayout } from "../responsive";
@@ -137,6 +138,7 @@ export default function GameScreen({
   }
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [rulesOpen, setRulesOpen] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
   const [scorePlayerId, setScorePlayerId] = useState<string | null>(null);
   const [lootReviewOpen, setLootReviewOpen] = useState(false);
   const [untouchedReviewOpen, setUntouchedReviewOpen] = useState(false);
@@ -456,14 +458,22 @@ export default function GameScreen({
             </Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          onPress={() => setRulesOpen(true)}
-          style={[styles.sideBtn, { alignItems: "flex-end" }]}
-          accessibilityRole="button"
-          accessibilityLabel={t.rules.title}
-        >
-          <Text style={styles.help}>?</Text>
-        </TouchableOpacity>
+        <View style={styles.sideActions}>
+          <TouchableOpacity
+            onPress={() => setShareOpen(true)}
+            accessibilityRole="button"
+            accessibilityLabel={t.liveShare.open}
+          >
+            <Text style={styles.help}>▦</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => setRulesOpen(true)}
+            accessibilityRole="button"
+            accessibilityLabel={t.rules.title}
+          >
+            <Text style={styles.help}>?</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       <View
@@ -795,6 +805,11 @@ export default function GameScreen({
       </View>
 
       <RulesModal visible={rulesOpen} onClose={() => setRulesOpen(false)} />
+      <ShareLiveModal
+        visible={shareOpen}
+        game={game}
+        onClose={() => setShareOpen(false)}
+      />
       <Modal
         visible={untouchedReviewOpen}
         transparent
@@ -867,6 +882,13 @@ const styles = StyleSheet.create({
     paddingTop: spacing.sm,
   },
   sideBtn: { width: 64 },
+  sideActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    columnGap: spacing.sm,
+    minWidth: 64,
+  },
   headerBtn: { color: colors.gold, fontSize: 17 },
   help: {
     color: colors.gold,
