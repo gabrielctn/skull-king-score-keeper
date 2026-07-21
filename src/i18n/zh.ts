@@ -181,6 +181,8 @@ export const zh: Strings = {
       cannonball: "炮弹",
     },
     rascalBetFor: (name) => `${name} 的宣布`,
+    yohohoHint: "点击喊出海盗战吼",
+    yohohoA11y: "播放海盗吼声 Yohoho",
   },
 
   liveShare: {

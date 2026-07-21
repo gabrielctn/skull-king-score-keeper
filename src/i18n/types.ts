@@ -189,6 +189,10 @@ export interface Strings {
     rascalBetNames: Record<RascalBet, string>;
     /** Accessibility label of a player's declaration selector. */
     rascalBetFor: (name: string) => string;
+    /** Playful caption under the just-for-fun Yohoho sound button. */
+    yohohoHint: string;
+    /** Accessibility label for the Yohoho sound button. */
+    yohohoA11y: string;
   };
 
   /** Game master's sheet sharing the current game with the other players. */

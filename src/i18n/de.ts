@@ -190,6 +190,8 @@ export const de: Strings = {
       cannonball: "Kanonenkugel",
     },
     rascalBetFor: (name) => `Erklärung von ${name}`,
+    yohohoHint: "Tippen für den Schlachtruf",
+    yohohoA11y: "Den Piratenruf Yohoho abspielen",
   },
 
   liveShare: {

@@ -188,6 +188,8 @@ export const ar: Strings = {
       cannonball: "قذيفة المدفع",
     },
     rascalBetFor: (name) => `إعلان ${name}`,
+    yohohoHint: "اضغط لإطلاق صيحة القراصنة",
+    yohohoA11y: "تشغيل صيحة القراصنة يوهوهو",
   },
 
   liveShare: {

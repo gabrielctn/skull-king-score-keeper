@@ -190,6 +190,8 @@ export const en: Strings = {
       cannonball: "Cannonball",
     },
     rascalBetFor: (name) => `${name}'s declaration`,
+    yohohoHint: "Tap to sound the battle cry",
+    yohohoA11y: "Play the Yohoho pirate cry",
   },
 
   liveShare: {

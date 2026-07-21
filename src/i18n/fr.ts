@@ -192,6 +192,8 @@ export const fr: Strings = {
       cannonball: "Boulet de canon",
     },
     rascalBetFor: (name) => `Déclaration de ${name}`,
+    yohohoHint: "Appuie pour lancer le cri de guerre",
+    yohohoA11y: "Jouer le cri de pirate Yohoho",
   },
 
   liveShare: {

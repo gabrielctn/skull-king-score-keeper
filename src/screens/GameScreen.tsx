@@ -37,6 +37,7 @@ import RulesModal from "../components/RulesModal";
 import ScoreBreakdownModal from "../components/ScoreBreakdownModal";
 import ShareLiveModal from "../components/ShareLiveModal";
 import ScoreChart from "../components/ScoreChart";
+import YohohoButton from "../components/YohohoButton";
 import { colors, radius, spacing } from "../theme";
 import { getResponsiveLayout } from "../responsive";
 import { useKeepAwake } from "../wakeLock";
@@ -521,6 +522,7 @@ export default function GameScreen({
             🎲 {t.game.rascalStake(RASCAL_POINTS_PER_CARD * cards)}
           </Text>
         ) : null}
+        <YohohoButton />
       </View>
 
       <ScrollView
