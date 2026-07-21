@@ -55,8 +55,9 @@ export const fr: Strings = {
     automaticUpdatesBody:
       "Les applications installées téléchargent désormais chaque nouvelle version automatiquement et l'activent dès que l'appareil est en ligne.",
     items: [
-      "Nouveau bouton ▦ sur l'écran de jeu : affichez un QR code et chaque joueur ouvre un suivi des scores en lecture seule sur son propre téléphone.",
-      "Chacun vérifie ses mises, ses plis et chaque bonus sans rien demander au maître du jeu — re-scanner le code actualise la vue.",
+      "Nouveau bouton ▦ sur l'écran de jeu : partagez les scores pour que chaque joueur suive la partie sur son propre téléphone.",
+      "Démarrez une session en direct et les joueurs qui scannent le QR code voient les scores se mettre à jour en temps réel — chaque mise, pli et bonus, sans rien actualiser.",
+      "Pas de connexion à la table ? L'instantané QR hors ligne fonctionne toujours : les joueurs le re-scannent pour consulter leur score détaillé quand ils veulent.",
     ],
     close: "Compris",
   },
@@ -194,33 +195,57 @@ export const fr: Strings = {
   },
 
   liveShare: {
-    open: "Partager le suivi des scores en direct (QR code)",
-    title: "Suivi en direct",
+    open: "Partager le suivi des scores (QR code)",
+    title: "Suivre les scores",
     subtitle: "Chaque joueur peut suivre les scores sur son propre téléphone.",
+    liveHint:
+      "Démarrez une session en direct : les joueurs qui scannent le code suivent les scores en temps réel — chaque mise, pli et bonus apparaît sur leur téléphone au moment où vous l'enregistrez, sans rien actualiser.",
+    start: "Démarrer le suivi en direct",
+    starting: "Démarrage…",
+    stop: "Arrêter le suivi en direct",
+    liveOnTitle: "Suivi en direct activé",
+    liveScanHint:
+      "Les joueurs scannent ce QR code pour suivre les scores en direct sur leur propre téléphone.",
+    statusLive: "En direct · mise à jour auto",
+    statusSyncing: "Enregistrement…",
+    statusOffline: "Reconnexion…",
+    liveError:
+      "La synchro en direct a rencontré un problème — elle réessaie. Vérifiez votre connexion, ou arrêtez puis relancez.",
+    snapshotTitle: "Pas de connexion à la table ?",
+    snapshotToggleShow: "Afficher l'instantané hors ligne",
+    snapshotToggleHide: "Masquer l'instantané hors ligne",
     scanHint:
-      "Faites scanner ce QR code aux joueurs : il ouvre une vue en lecture seule de cette partie — chaque mise, pli et bonus que vous enregistrez.",
+      "Ce QR code contient un instantané en lecture seule de la partie — chaque mise, pli et bonus enregistrés jusqu'ici.",
     updateHint:
-      "Le QR code contient toujours le dernier état enregistré. Pour actualiser sa vue, un joueur le scanne à nouveau, tout simplement.",
+      "Il fonctionne sans serveur, mais ne se met pas à jour tout seul : les joueurs le re-scannent pour obtenir les derniers scores.",
     networkHint:
-      "Le téléphone du joueur a besoin d'une connexion à la première ouverture de l'appli ; ensuite la vue fonctionne aussi hors ligne.",
+      "Le téléphone du joueur a besoin d'une connexion à la première ouverture de l'appli ; ensuite l'instantané fonctionne entièrement hors ligne.",
     copyLink: "Copier le lien",
     copied: "Lien copié !",
     copyError: "Impossible de copier le lien.",
     qrError: "Impossible de transformer cette partie en QR code.",
-    qrLabel: "QR code ouvrant le suivi en direct des scores de cette partie",
+    qrLabel: "QR code ouvrant le suivi des scores de cette partie",
     close: "Fermer",
   },
 
   spectator: {
     eyebrow: "Suivi en lecture seule",
+    liveEyebrow: "Suivi en direct",
+    liveBadge: "En direct",
     title: "Suivi de partie",
     roundProgress: (scored, total) =>
       `Scores après la manche ${scored} sur ${total}`,
     noRounds: "Aucune manche n'a encore été validée.",
     finished: "Scores finaux — la partie est terminée.",
     snapshotAt: (time) => `Scores du maître du jeu · relevés à ${time}`,
+    liveUpdatedAt: (time) => `Mis à jour en direct · ${time}`,
     refreshHint:
       "Ceci est un instantané. Pour l'actualiser, scannez à nouveau le QR code du maître du jeu.",
+    connecting: "Connexion à la partie en direct…",
+    reconnecting: "Connexion perdue — reconnexion…",
+    endedTitle: "Session en direct terminée",
+    endedBody:
+      "Le maître du jeu a arrêté le partage. Les derniers scores reçus sont affichés ci-dessous.",
     standingsTitle: "Classement",
     tapHint:
       "Touchez votre nom pour votre détail complet manche par manche — mises, plis et chaque bonus.",

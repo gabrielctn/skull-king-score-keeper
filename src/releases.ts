@@ -3,4 +3,4 @@
  * user-visible release. The app will show the notes once per device.
  */
 export const CURRENT_RELEASE = "1.5.0";
-export const CURRENT_RELEASE_DATE = "2026-07-20";
+export const CURRENT_RELEASE_DATE = "2026-07-21";

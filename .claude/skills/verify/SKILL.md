@@ -41,6 +41,15 @@ Gotchas learned the hard way:
   not match `getByText("Copy link", { exact: true })` — drop `exact`.
 - RN-web modal sheets slide in: text waits succeed before the animation ends,
   so `waitForTimeout(~700)` before screenshots of an open sheet.
+- Live score sync (`liveSession.ts`) talks to Supabase. To drive the live UI
+  without the deployed schema, stub the RPCs with Playwright route
+  interception: `**/rest/v1/rpc/create_live_game` → fulfill with a bare
+  JSON-string UUID; `**/rest/v1/live_games**` → fulfill with
+  `{state, updated_at}` for the spectator's initial fetch. The realtime
+  WebSocket is not stubbed (the spectator "Live" badge only lights up against a
+  real deployed publication); the initial REST fetch still delivers the game.
+- `isVisible()` returns immediately — use `.waitFor()` to await async-loaded
+  content (e.g. a spectator screen populated from a network fetch).
 
 ## Flows worth driving
 

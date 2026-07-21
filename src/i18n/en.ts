@@ -54,8 +54,9 @@ export const en: Strings = {
     automaticUpdatesBody:
       "Installed apps now download each new release automatically and switch to it as soon as the device is online.",
     items: [
-      "New ▦ button on the game screen: show a QR code and every player can open a live, read-only view of the scores on their own phone.",
-      "Players check their own bids, tricks and every bonus without asking the score keeper — re-scanning the code refreshes their view.",
+      "New ▦ button on the game screen: share the scores so every player can follow along on their own phone.",
+      "Start a live session and players who scan the QR code see the scores update in real time — every bid, trick and bonus, no refresh needed.",
+      "No connection at the table? The offline QR snapshot still works: players re-scan to check their own detailed score whenever they want.",
     ],
     close: "Got it",
   },
@@ -192,33 +193,57 @@ export const en: Strings = {
   },
 
   liveShare: {
-    open: "Share live score tracking (QR code)",
-    title: "Follow live",
+    open: "Share score tracking (QR code)",
+    title: "Follow the scores",
     subtitle: "Every player can track the scores on their own phone.",
+    liveHint:
+      "Start a live session: players who scan the code follow the scores in real time — every bid, trick and bonus appears on their phone as you record it, no refresh needed.",
+    start: "Start live follow",
+    starting: "Starting…",
+    stop: "Stop live follow",
+    liveOnTitle: "Live follow is on",
+    liveScanHint:
+      "Players scan this QR code to follow the scores live on their own phone.",
+    statusLive: "Live · auto-updating",
+    statusSyncing: "Saving…",
+    statusOffline: "Reconnecting…",
+    liveError:
+      "Live sync hit a problem — it keeps retrying. Check your connection, or stop and start again.",
+    snapshotTitle: "No connection at the table?",
+    snapshotToggleShow: "Show offline snapshot",
+    snapshotToggleHide: "Hide offline snapshot",
     scanHint:
-      "Have the players scan this QR code: it opens a read-only view of this game — every bid, trick and bonus you record.",
+      "This QR code carries a read-only snapshot of the game — every bid, trick and bonus recorded so far.",
     updateHint:
-      "The QR code always contains the latest saved state. To refresh their view, players simply scan it again.",
+      "It works with no server, but does not update on its own: players re-scan to get the latest scores.",
     networkHint:
-      "A player's phone needs a connection the first time it opens the app; after that the view also works offline.",
+      "A player's phone needs a connection the first time it opens the app; after that the snapshot works fully offline.",
     copyLink: "Copy link",
     copied: "Link copied!",
     copyError: "Could not copy the link.",
     qrError: "This game could not be turned into a QR code.",
-    qrLabel: "QR code opening the live score tracking of this game",
+    qrLabel: "QR code opening the score tracking of this game",
     close: "Close",
   },
 
   spectator: {
     eyebrow: "Read-only tracking",
+    liveEyebrow: "Live tracking",
+    liveBadge: "Live",
     title: "Game tracking",
     roundProgress: (scored, total) =>
       `Scores after round ${scored} of ${total}`,
     noRounds: "No round has been scored yet.",
     finished: "Final scores — the game is over.",
     snapshotAt: (time) => `Game master's scores · read at ${time}`,
+    liveUpdatedAt: (time) => `Updated live · ${time}`,
     refreshHint:
       "This is a snapshot. To refresh it, scan the game master's QR code again.",
+    connecting: "Connecting to the live game…",
+    reconnecting: "Connection lost — reconnecting…",
+    endedTitle: "Live session ended",
+    endedBody:
+      "The game master stopped sharing. The last scores you received are shown below.",
     standingsTitle: "Standings",
     tapHint:
       "Tap your name for your full round-by-round details — bids, tricks and every bonus.",

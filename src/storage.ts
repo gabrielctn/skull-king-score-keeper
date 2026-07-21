@@ -265,6 +265,61 @@ export async function saveSettings(settings: AppSettings): Promise<void> {
   }
 }
 
+const LIVE_SESSION_PREFIX = "skullking:liveSession:";
+
+/**
+ * The game master's live-sharing credentials for one game: the server session
+ * id (the read capability in the QR) and the local writer key (required to
+ * push updates). Kept per game so restarting the app resumes the same session.
+ */
+export interface StoredLiveSession {
+  sessionId: string;
+  writerKey: string;
+}
+
+export async function loadLiveSessionFor(
+  gameId: string
+): Promise<StoredLiveSession | null> {
+  try {
+    const stored = await AsyncStorage.getItem(LIVE_SESSION_PREFIX + gameId);
+    if (!stored) return null;
+    const raw = JSON.parse(stored);
+    if (
+      raw &&
+      typeof raw.sessionId === "string" &&
+      typeof raw.writerKey === "string"
+    ) {
+      return { sessionId: raw.sessionId, writerKey: raw.writerKey };
+    }
+    return null;
+  } catch (e) {
+    console.warn("Failed to load live session", e);
+    return null;
+  }
+}
+
+export async function saveLiveSessionFor(
+  gameId: string,
+  session: StoredLiveSession
+): Promise<void> {
+  try {
+    await AsyncStorage.setItem(
+      LIVE_SESSION_PREFIX + gameId,
+      JSON.stringify(session)
+    );
+  } catch (e) {
+    console.warn("Failed to save live session", e);
+  }
+}
+
+export async function clearLiveSessionFor(gameId: string): Promise<void> {
+  try {
+    await AsyncStorage.removeItem(LIVE_SESSION_PREFIX + gameId);
+  } catch (e) {
+    console.warn("Failed to clear live session", e);
+  }
+}
+
 const SPECTATOR_IDENTITY_KEY = "skullking:spectatorIdentity";
 
 /**

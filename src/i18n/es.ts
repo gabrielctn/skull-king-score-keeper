@@ -56,8 +56,9 @@ export const es: Strings = {
     automaticUpdatesBody:
       "Las aplicaciones instaladas ahora descargan automáticamente cada nueva versión y la activan en cuanto el dispositivo se conecta a internet.",
     items: [
-      "Nuevo botón ▦ en la pantalla de juego: muestra un código QR y cada jugador abre en su teléfono un seguimiento de puntos de solo lectura.",
-      "Cada uno comprueba sus apuestas, bazas y cada bonus sin preguntar al anotador — volver a escanear el código actualiza la vista.",
+      "Nuevo botón ▦ en la pantalla de juego: comparte los puntos para que cada jugador siga la partida en su propio teléfono.",
+      "Inicia una sesión en directo y los jugadores que escaneen el código QR ven los puntos actualizarse en tiempo real — cada apuesta, baza y bonus, sin actualizar nada.",
+      "¿Sin conexión en la mesa? La instantánea QR sin conexión sigue funcionando: los jugadores la vuelven a escanear para consultar su puntuación detallada cuando quieran.",
     ],
     close: "Entendido",
   },
@@ -198,34 +199,58 @@ export const es: Strings = {
   },
 
   liveShare: {
-    open: "Compartir el seguimiento de puntos en directo (código QR)",
-    title: "Seguimiento en directo",
+    open: "Compartir el seguimiento de puntos (código QR)",
+    title: "Seguir los puntos",
     subtitle: "Cada jugador puede seguir los puntos en su propio teléfono.",
+    liveHint:
+      "Inicia una sesión en directo: los jugadores que escaneen el código siguen los puntos en tiempo real — cada apuesta, baza y bonus aparece en su teléfono en cuanto lo registras, sin actualizar nada.",
+    start: "Iniciar seguimiento en directo",
+    starting: "Iniciando…",
+    stop: "Detener seguimiento en directo",
+    liveOnTitle: "Seguimiento en directo activado",
+    liveScanHint:
+      "Los jugadores escanean este código QR para seguir los puntos en directo en su propio teléfono.",
+    statusLive: "En directo · actualización automática",
+    statusSyncing: "Guardando…",
+    statusOffline: "Reconectando…",
+    liveError:
+      "La sincronización en directo tuvo un problema — sigue reintentando. Comprueba tu conexión, o detén e inicia de nuevo.",
+    snapshotTitle: "¿Sin conexión en la mesa?",
+    snapshotToggleShow: "Mostrar instantánea sin conexión",
+    snapshotToggleHide: "Ocultar instantánea sin conexión",
     scanHint:
-      "Haz que los jugadores escaneen este código QR: abre una vista de solo lectura de esta partida — cada apuesta, baza y bonus que registres.",
+      "Este código QR contiene una instantánea de solo lectura de la partida — cada apuesta, baza y bonus registrados hasta ahora.",
     updateHint:
-      "El código QR siempre contiene el último estado guardado. Para actualizar su vista, el jugador simplemente lo vuelve a escanear.",
+      "Funciona sin servidor, pero no se actualiza solo: los jugadores lo vuelven a escanear para obtener los últimos puntos.",
     networkHint:
-      "El teléfono del jugador necesita conexión la primera vez que abre la app; después la vista también funciona sin conexión.",
+      "El teléfono del jugador necesita conexión la primera vez que abre la app; después la instantánea funciona totalmente sin conexión.",
     copyLink: "Copiar enlace",
     copied: "¡Enlace copiado!",
     copyError: "No se pudo copiar el enlace.",
     qrError: "No se pudo convertir esta partida en un código QR.",
     qrLabel:
-      "Código QR que abre el seguimiento en directo de los puntos de esta partida",
+      "Código QR que abre el seguimiento de puntos de esta partida",
     close: "Cerrar",
   },
 
   spectator: {
     eyebrow: "Seguimiento de solo lectura",
+    liveEyebrow: "Seguimiento en directo",
+    liveBadge: "En directo",
     title: "Seguimiento de partida",
     roundProgress: (scored, total) =>
       `Puntos tras la ronda ${scored} de ${total}`,
     noRounds: "Todavía no se ha puntuado ninguna ronda.",
     finished: "Puntuación final — la partida ha terminado.",
     snapshotAt: (time) => `Puntos del anotador · leídos a las ${time}`,
+    liveUpdatedAt: (time) => `Actualizado en directo · ${time}`,
     refreshHint:
       "Esto es una instantánea. Para actualizarla, vuelve a escanear el código QR del anotador.",
+    connecting: "Conectando con la partida en directo…",
+    reconnecting: "Conexión perdida — reconectando…",
+    endedTitle: "Sesión en directo finalizada",
+    endedBody:
+      "El anotador dejó de compartir. Debajo se muestran los últimos puntos recibidos.",
     standingsTitle: "Clasificación",
     tapHint:
       "Toca tu nombre para ver tu detalle completo ronda a ronda — apuestas, bazas y cada bonus.",

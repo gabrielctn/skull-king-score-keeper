@@ -54,8 +54,9 @@ export const de: Strings = {
     automaticUpdatesBody:
       "Installierte Apps laden jede neue Version automatisch und wechseln zu ihr, sobald das Gerät online ist.",
     items: [
-      "Neuer ▦-Knopf im Spielbildschirm: Zeige einen QR-Code und jeder Spieler öffnet auf dem eigenen Handy eine Lese-Ansicht der Punkte.",
-      "Alle prüfen ihre Ansagen, Stiche und jeden Bonus, ohne den Spielleiter zu fragen — erneutes Scannen aktualisiert die Ansicht.",
+      "Neuer ▦-Knopf im Spielbildschirm: Teile die Punkte, damit jeder Spieler auf dem eigenen Handy mitverfolgen kann.",
+      "Starte eine Live-Sitzung und wer den QR-Code scannt, sieht die Punkte in Echtzeit — jede Ansage, jeder Stich und jeder Bonus, ganz ohne Aktualisieren.",
+      "Keine Verbindung am Tisch? Die Offline-QR-Momentaufnahme funktioniert weiterhin: Spieler scannen erneut, um jederzeit ihre detaillierten Punkte zu prüfen.",
     ],
     close: "Verstanden",
   },
@@ -192,34 +193,58 @@ export const de: Strings = {
   },
 
   liveShare: {
-    open: "Live-Punkteverfolgung teilen (QR-Code)",
-    title: "Live mitverfolgen",
+    open: "Punkteverfolgung teilen (QR-Code)",
+    title: "Punkte mitverfolgen",
     subtitle: "Alle Spieler können die Punkte auf dem eigenen Handy verfolgen.",
+    liveHint:
+      "Starte eine Live-Sitzung: Wer den Code scannt, verfolgt die Punkte in Echtzeit — jede Ansage, jeder Stich und jeder Bonus erscheint auf dem Handy, sobald du ihn einträgst, ganz ohne Aktualisieren.",
+    start: "Live-Verfolgung starten",
+    starting: "Wird gestartet…",
+    stop: "Live-Verfolgung beenden",
+    liveOnTitle: "Live-Verfolgung ist an",
+    liveScanHint:
+      "Spieler scannen diesen QR-Code, um die Punkte live auf dem eigenen Handy zu verfolgen.",
+    statusLive: "Live · aktualisiert automatisch",
+    statusSyncing: "Wird gespeichert…",
+    statusOffline: "Neuverbindung…",
+    liveError:
+      "Bei der Live-Synchronisierung gab es ein Problem — sie versucht es weiter. Prüfe deine Verbindung, oder beende und starte neu.",
+    snapshotTitle: "Keine Verbindung am Tisch?",
+    snapshotToggleShow: "Offline-Momentaufnahme anzeigen",
+    snapshotToggleHide: "Offline-Momentaufnahme ausblenden",
     scanHint:
-      "Lass die Spieler diesen QR-Code scannen: Er öffnet eine reine Lese-Ansicht dieser Partie — jede Ansage, jeder Stich und jeder Bonus, den du einträgst.",
+      "Dieser QR-Code enthält eine reine Lese-Momentaufnahme der Partie — jede bislang erfasste Ansage, jeder Stich und jeder Bonus.",
     updateHint:
-      "Der QR-Code enthält immer den zuletzt gespeicherten Stand. Zum Aktualisieren scannt ein Spieler ihn einfach erneut.",
+      "Sie kommt ohne Server aus, aktualisiert sich aber nicht von selbst: Spieler scannen erneut, um die neuesten Punkte zu erhalten.",
     networkHint:
-      "Das Handy des Spielers braucht beim ersten Öffnen der App eine Verbindung; danach funktioniert die Ansicht auch offline.",
+      "Das Handy des Spielers braucht beim ersten Öffnen der App eine Verbindung; danach funktioniert die Momentaufnahme vollständig offline.",
     copyLink: "Link kopieren",
     copied: "Link kopiert!",
     copyError: "Der Link konnte nicht kopiert werden.",
     qrError: "Diese Partie konnte nicht in einen QR-Code umgewandelt werden.",
     qrLabel:
-      "QR-Code, der die Live-Punkteverfolgung dieser Partie öffnet",
+      "QR-Code, der die Punkteverfolgung dieser Partie öffnet",
     close: "Schließen",
   },
 
   spectator: {
     eyebrow: "Nur-Lese-Ansicht",
+    liveEyebrow: "Live-Verfolgung",
+    liveBadge: "Live",
     title: "Partie verfolgen",
     roundProgress: (scored, total) =>
       `Punktestand nach Runde ${scored} von ${total}`,
     noRounds: "Es wurde noch keine Runde gewertet.",
     finished: "Endstand — die Partie ist beendet.",
     snapshotAt: (time) => `Punkte des Spielleiters · abgelesen um ${time}`,
+    liveUpdatedAt: (time) => `Live aktualisiert · ${time}`,
     refreshHint:
       "Dies ist eine Momentaufnahme. Zum Aktualisieren scanne den QR-Code des Spielleiters erneut.",
+    connecting: "Verbindung zur Live-Partie…",
+    reconnecting: "Verbindung verloren — Neuverbindung…",
+    endedTitle: "Live-Sitzung beendet",
+    endedBody:
+      "Der Spielleiter hat das Teilen beendet. Unten stehen die zuletzt empfangenen Punkte.",
     standingsTitle: "Rangliste",
     tapHint:
       "Tippe auf deinen Namen für deine vollständigen Details Runde für Runde — Ansagen, Stiche und jeder Bonus.",
