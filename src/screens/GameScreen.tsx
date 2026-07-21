@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Modal,
+  Platform,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -37,6 +38,7 @@ import RulesModal from "../components/RulesModal";
 import ScoreBreakdownModal from "../components/ScoreBreakdownModal";
 import ShareLiveModal from "../components/ShareLiveModal";
 import ScoreChart from "../components/ScoreChart";
+import YohohoButton from "../components/YohohoButton";
 import { colors, radius, spacing } from "../theme";
 import { getResponsiveLayout } from "../responsive";
 import { useKeepAwake } from "../wakeLock";
@@ -521,6 +523,9 @@ export default function GameScreen({
             🎲 {t.game.rascalStake(RASCAL_POINTS_PER_CARD * cards)}
           </Text>
         ) : null}
+        {/* Web-only: playback uses an <audio> element, so the button would be a
+            dead control in native builds. */}
+        {Platform.OS === "web" ? <YohohoButton /> : null}
       </View>
 
       <ScrollView

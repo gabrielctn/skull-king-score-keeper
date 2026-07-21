@@ -196,6 +196,8 @@ export const es: Strings = {
       cannonball: "Bala de cañón",
     },
     rascalBetFor: (name) => `Declaración de ${name}`,
+    yohohoHint: "Toca para lanzar el grito de guerra",
+    yohohoA11y: "Reproducir el grito pirata Yohoho",
   },
 
   liveShare: {
