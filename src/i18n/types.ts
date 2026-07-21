@@ -259,6 +259,12 @@ export interface Strings {
     endedBody: string;
     standingsTitle: string;
     tapHint: string;
+    /** Heading for the one-time "which player are you?" picker. */
+    identityTitle: string;
+    /** Sub-line explaining the identity pick stays fixed for the game. */
+    identityHint: string;
+    /** Section title above the dealer / play-order banner. */
+    turnTitle: string;
     /** Chip marking the remembered "this is me" row in the standings. */
     you: string;
     openApp: string;

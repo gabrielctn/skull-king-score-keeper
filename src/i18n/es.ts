@@ -255,7 +255,11 @@ export const es: Strings = {
       "El anotador dejó de compartir. Debajo se muestran los últimos puntos recibidos.",
     standingsTitle: "Clasificación",
     tapHint:
-      "Toca tu nombre para ver tu detalle completo ronda a ronda — apuestas, bazas y cada bonus.",
+      "Toca cualquier jugador para ver su detalle completo ronda a ronda — apuestas, bazas y cada bonus.",
+    identityTitle: "¿Qué jugador eres?",
+    identityHint:
+      "Elige tu nombre una vez para seguir tus propias puntuaciones. Queda fijo para esta partida.",
+    turnTitle: "Orden de juego",
     you: "Tú",
     openApp: "Abrir la app para mis propias partidas",
     invalidTitle: "No se pudo leer este código",

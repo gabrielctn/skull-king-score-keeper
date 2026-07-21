@@ -248,7 +248,11 @@ export const en: Strings = {
       "The game master stopped sharing. The last scores you received are shown below.",
     standingsTitle: "Standings",
     tapHint:
-      "Tap your name for your full round-by-round details — bids, tricks and every bonus.",
+      "Tap any player for their full round-by-round details — bids, tricks and every bonus.",
+    identityTitle: "Which player are you?",
+    identityHint:
+      "Pick your name once to follow your own scores. It stays fixed for this game.",
+    turnTitle: "Turn order",
     you: "You",
     openApp: "Open the app for my own games",
     invalidTitle: "This code could not be read",

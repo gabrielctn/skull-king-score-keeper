@@ -249,7 +249,11 @@ export const de: Strings = {
       "Der Spielleiter hat das Teilen beendet. Unten stehen die zuletzt empfangenen Punkte.",
     standingsTitle: "Rangliste",
     tapHint:
-      "Tippe auf deinen Namen für deine vollständigen Details Runde für Runde — Ansagen, Stiche und jeder Bonus.",
+      "Tippe auf einen beliebigen Spieler für dessen vollständige Details Runde für Runde — Ansagen, Stiche und jeder Bonus.",
+    identityTitle: "Welcher Spieler bist du?",
+    identityHint:
+      "Wähle einmal deinen Namen, um deine eigenen Punkte zu verfolgen. Das bleibt für dieses Spiel fest.",
+    turnTitle: "Zugreihenfolge",
     you: "Du",
     openApp: "App für meine eigenen Partien öffnen",
     invalidTitle: "Code nicht lesbar",

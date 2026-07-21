@@ -250,7 +250,11 @@ export const fr: Strings = {
       "Le maître du jeu a arrêté le partage. Les derniers scores reçus sont affichés ci-dessous.",
     standingsTitle: "Classement",
     tapHint:
-      "Touchez votre nom pour votre détail complet manche par manche — mises, plis et chaque bonus.",
+      "Touchez un joueur pour son détail complet manche par manche — mises, plis et chaque bonus.",
+    identityTitle: "Quel joueur êtes-vous ?",
+    identityHint:
+      "Choisissez votre nom une fois pour suivre vos propres scores. Ce choix reste fixe pour cette partie.",
+    turnTitle: "Ordre du tour",
     you: "Vous",
     openApp: "Ouvrir l'appli pour mes propres parties",
     invalidTitle: "Code illisible",
