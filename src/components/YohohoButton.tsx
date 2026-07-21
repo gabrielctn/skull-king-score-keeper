@@ -62,15 +62,23 @@ function createAudioElement(): HTMLAudioElement | null {
 export default function YohohoButton() {
   const { t } = useI18n();
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const mounted = useRef(true);
   const [playing, setPlaying] = useState(false);
   const bounce = useRef(new Animated.Value(1)).current;
   const wiggle = useRef(new Animated.Value(0)).current;
 
-  // Release the shared element (and its listeners) when the screen unmounts.
+  // Release the shared element and detach its handlers on unmount. The handlers
+  // are cleared *before* pausing so the resulting "pause" event can't run
+  // setState on an unmounted component.
   useEffect(() => {
     return () => {
-      audioRef.current?.pause();
-      audioRef.current = null;
+      mounted.current = false;
+      const el = audioRef.current;
+      if (el) {
+        el.onended = el.onpause = el.onerror = null;
+        el.pause();
+        audioRef.current = null;
+      }
     };
   }, []);
 
@@ -78,10 +86,12 @@ export default function YohohoButton() {
     const el = audioRef.current ?? createAudioElement();
     if (!el) return;
     if (!audioRef.current) {
-      const stop = () => setPlaying(false);
-      el.addEventListener("ended", stop);
-      el.addEventListener("pause", stop);
-      el.addEventListener("error", stop);
+      const stop = () => {
+        if (mounted.current) setPlaying(false);
+      };
+      el.onended = stop;
+      el.onpause = stop;
+      el.onerror = stop;
       audioRef.current = el;
     }
     // Restart from the top so rapid re-taps re-fire the shout instead of being
@@ -94,7 +104,9 @@ export default function YohohoButton() {
     setPlaying(true);
     const started = el.play();
     if (started && typeof started.catch === "function") {
-      started.catch(() => setPlaying(false));
+      started.catch(() => {
+        if (mounted.current) setPlaying(false);
+      });
     }
   }, []);
 

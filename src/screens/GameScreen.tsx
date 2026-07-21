@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Modal,
+  Platform,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -522,7 +523,9 @@ export default function GameScreen({
             🎲 {t.game.rascalStake(RASCAL_POINTS_PER_CARD * cards)}
           </Text>
         ) : null}
-        <YohohoButton />
+        {/* Web-only: playback uses an <audio> element, so the button would be a
+            dead control in native builds. */}
+        {Platform.OS === "web" ? <YohohoButton /> : null}
       </View>
 
       <ScrollView
