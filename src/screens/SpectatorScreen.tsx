@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { Game } from "../types";
 import { isRoundComplete, standings } from "../scoring";
+import { dealerIndex, playOrder } from "../turnOrder";
 import { browserLocale, useI18n } from "../i18n/context";
 import { loadSpectatorIdentity, saveSpectatorIdentity } from "../storage";
 import {
@@ -56,6 +57,9 @@ export default function SpectatorScreen({ game, liveSessionId, onExit }: Props) 
   const layout = getResponsiveLayout(width);
   const [scorePlayerId, setScorePlayerId] = useState<string | null>(null);
   const [rememberedId, setRememberedId] = useState<string | null>(null);
+  // Whether storage has been checked for a saved "this is me" pick. Gates the
+  // identity picker so it never flashes before a remembered pick can load.
+  const [identityResolved, setIdentityResolved] = useState(false);
 
   const isLive = !!liveSessionId;
   const [liveGame, setLiveGame] = useState<Game | null>(null);
@@ -113,22 +117,26 @@ export default function SpectatorScreen({ game, liveSessionId, onExit }: Props) 
     return count;
   }, [activeGame]);
 
-  // Reopen this device owner's score details when the followed game matches
-  // the remembered identity. Re-checked as the live game's id resolves.
+  // Restore this device owner's "this is me" pick when the followed game
+  // matches a saved identity. The pick is made once (via the identity picker
+  // below) and is never reassigned by tapping other players, so re-scans and
+  // reloads always keep the same "you".
   useEffect(() => {
     let cancelled = false;
     if (!activeGame) return;
+    setIdentityResolved(false);
+    setRememberedId(null);
     void loadSpectatorIdentity().then((identity) => {
-      if (cancelled || !identity || identity.gameId !== activeGame.id) return;
-      const player = activeGame.players.find(
-        (candidate) =>
-          candidate.id === identity.playerId &&
-          candidate.name === identity.playerName
-      );
-      if (player) {
-        setRememberedId(player.id);
-        setScorePlayerId((current) => current ?? player.id);
+      if (cancelled) return;
+      if (identity && identity.gameId === activeGame.id) {
+        const player = activeGame.players.find(
+          (candidate) =>
+            candidate.id === identity.playerId &&
+            candidate.name === identity.playerName
+        );
+        if (player) setRememberedId(player.id);
       }
+      setIdentityResolved(true);
     });
     return () => {
       cancelled = true;
@@ -188,8 +196,15 @@ export default function SpectatorScreen({ game, liveSessionId, onExit }: Props) 
     isLive ? liveUpdatedAt : activeGame.updatedAt,
     locale
   );
-  const openPlayer = (playerId: string, playerName: string) => {
+  // Tapping a standings row only opens that player's breakdown — it never
+  // reassigns "you". The identity pick is deliberately kept separate.
+  const openBreakdown = (playerId: string) => {
     setScorePlayerId(playerId);
+  };
+
+  // The one-time "which player are you?" choice. Once set it is only ever
+  // restored from storage, never changed by row taps, so it stays put.
+  const chooseIdentity = (playerId: string, playerName: string) => {
     setRememberedId(playerId);
     void saveSpectatorIdentity({
       gameId: activeGame.id,
@@ -197,6 +212,19 @@ export default function SpectatorScreen({ game, liveSessionId, onExit }: Props) 
       playerName,
     });
   };
+
+  // Indicative dealer & first-trick order for the round in play, mirroring the
+  // game master's screen so spectators can follow who deals and who leads.
+  const currentRound = Math.min(
+    Math.max(1, activeGame.currentRound),
+    activeGame.totalRounds
+  );
+  const showTurnOrder =
+    activeGame.status !== "finished" && activeGame.players.length > 0;
+  const dealer = showTurnOrder
+    ? activeGame.players[dealerIndex(activeGame, currentRound)]
+    : null;
+  const turnSlots = showTurnOrder ? playOrder(activeGame, currentRound) : [];
 
   const liveBanner =
     isLive && liveStatus === "ended" ? (
@@ -273,6 +301,76 @@ export default function SpectatorScreen({ game, liveSessionId, onExit }: Props) 
           </View>
         ) : null}
 
+        {identityResolved && !rememberedId ? (
+          <View style={styles.identityCard}>
+            <Text style={styles.identityTitle}>
+              {t.spectator.identityTitle}
+            </Text>
+            <Text style={styles.identityHint}>{t.spectator.identityHint}</Text>
+            <View style={styles.identityChips}>
+              {activeGame.players.map((player) => (
+                <TouchableOpacity
+                  key={player.id}
+                  style={styles.identityChip}
+                  activeOpacity={0.7}
+                  onPress={() => chooseIdentity(player.id, player.name)}
+                  accessibilityRole="button"
+                  accessibilityLabel={player.name}
+                >
+                  <Text style={styles.identityChipText} numberOfLines={1}>
+                    {player.name}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+        ) : null}
+
+        {dealer ? (
+          <>
+            <Text style={styles.sectionTitle}>{t.spectator.turnTitle}</Text>
+            <View style={styles.turnCard}>
+              <Text style={styles.turnRound}>{t.game.round(currentRound)}</Text>
+              <Text style={styles.turnDealer}>
+                🃏 <Text style={styles.turnDealerName}>{dealer.name}</Text>{" "}
+                {t.game.dealsVerb}
+              </Text>
+              <View style={styles.turnOrderRow}>
+                {turnSlots.map((slot, i) => {
+                  const isMine =
+                    slot.kind === "player" && slot.player.id === rememberedId;
+                  return (
+                    <React.Fragment key={i}>
+                      {i > 0 ? <Text style={styles.turnArrow}>›</Text> : null}
+                      <View
+                        style={[
+                          styles.turnChip,
+                          slot.kind === "ghost" && styles.turnChipGhost,
+                          i === 0 && styles.turnChipLead,
+                          isMine && styles.turnChipMine,
+                        ]}
+                      >
+                        <Text
+                          style={[
+                            styles.turnChipText,
+                            i === 0 && styles.turnChipLeadText,
+                          ]}
+                          numberOfLines={1}
+                        >
+                          {slot.kind === "ghost"
+                            ? `👻 ${t.game.ghostName}`
+                            : slot.player.name}
+                        </Text>
+                      </View>
+                    </React.Fragment>
+                  );
+                })}
+              </View>
+              <Text style={styles.turnHint}>{t.game.playOrderHint}</Text>
+            </View>
+          </>
+        ) : null}
+
         <Text style={styles.sectionTitle}>{t.spectator.standingsTitle}</Text>
         <Text style={styles.tapHint}>{t.spectator.tapHint}</Text>
         <View style={styles.boardCard}>
@@ -287,7 +385,7 @@ export default function SpectatorScreen({ game, liveSessionId, onExit }: Props) 
                   isRemembered && styles.boardRowMine,
                 ]}
                 activeOpacity={0.7}
-                onPress={() => openPlayer(row.player.id, row.player.name)}
+                onPress={() => openBreakdown(row.player.id)}
                 accessibilityRole="button"
                 accessibilityLabel={t.scoreBreakdown.openRankedFor(
                   row.rank,
@@ -462,6 +560,97 @@ const styles = StyleSheet.create({
     lineHeight: 17,
     marginTop: 2,
     marginBottom: spacing.sm,
+  },
+  identityCard: {
+    backgroundColor: colors.card,
+    borderColor: colors.gold,
+    borderWidth: 1,
+    borderRadius: radius.md,
+    padding: spacing.md,
+    marginBottom: spacing.md,
+  },
+  identityTitle: {
+    color: colors.text,
+    fontSize: 16,
+    fontWeight: "800",
+  },
+  identityHint: {
+    color: colors.textDim,
+    fontSize: 12,
+    lineHeight: 17,
+    marginTop: 2,
+    marginBottom: spacing.sm,
+  },
+  identityChips: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+  },
+  identityChip: {
+    backgroundColor: colors.bgElevated,
+    borderWidth: 1,
+    borderColor: colors.cardBorder,
+    borderRadius: 999,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    margin: 4,
+    minHeight: 40,
+    justifyContent: "center",
+    maxWidth: "100%",
+  },
+  identityChipText: {
+    color: colors.text,
+    fontSize: 14,
+    fontWeight: "700",
+  },
+  turnCard: {
+    backgroundColor: colors.card,
+    borderColor: colors.cardBorder,
+    borderWidth: 1,
+    borderRadius: radius.md,
+    padding: spacing.md,
+    marginTop: spacing.xs,
+    marginBottom: spacing.md,
+    alignItems: "center",
+  },
+  turnRound: {
+    color: colors.gold,
+    fontSize: 11,
+    fontWeight: "800",
+    letterSpacing: 1,
+    textTransform: "uppercase",
+    marginBottom: spacing.xs,
+  },
+  turnDealer: { color: colors.textDim, fontSize: 13, textAlign: "center" },
+  turnDealerName: { color: colors.text, fontWeight: "800" },
+  turnOrderRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: spacing.xs,
+  },
+  turnArrow: { color: colors.textDim, fontSize: 16, marginHorizontal: 4 },
+  turnChip: {
+    backgroundColor: colors.bgElevated,
+    borderWidth: 1,
+    borderColor: colors.cardBorder,
+    borderRadius: radius.sm,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 4,
+    margin: 2,
+    maxWidth: 130,
+  },
+  turnChipLead: { backgroundColor: colors.gold, borderColor: colors.gold },
+  turnChipGhost: { borderColor: colors.accent, borderStyle: "dashed" },
+  turnChipMine: { borderColor: colors.accent, borderWidth: 2 },
+  turnChipText: { color: colors.text, fontSize: 12, fontWeight: "700" },
+  turnChipLeadText: { color: colors.bg },
+  turnHint: {
+    color: colors.textDim,
+    fontSize: 10,
+    marginTop: 4,
+    fontStyle: "italic",
+    textAlign: "center",
   },
   boardCard: {
     backgroundColor: colors.card,
