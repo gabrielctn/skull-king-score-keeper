@@ -14,7 +14,14 @@ import { Game } from "../types";
 import { isRoundComplete, standings } from "../scoring";
 import { dealerIndex, playOrder } from "../turnOrder";
 import { browserLocale, useI18n } from "../i18n/context";
-import { loadSpectatorIdentity, saveSpectatorIdentity } from "../storage";
+import {
+  DEFAULT_SPECTATOR_SORT,
+  loadSpectatorIdentity,
+  loadSpectatorSort,
+  saveSpectatorIdentity,
+  saveSpectatorSort,
+  SpectatorSort,
+} from "../storage";
 import {
   SpectatorLiveStatus,
   watchLiveGame,
@@ -57,6 +64,9 @@ export default function SpectatorScreen({ game, liveSessionId, onExit }: Props) 
   const layout = getResponsiveLayout(width);
   const [scorePlayerId, setScorePlayerId] = useState<string | null>(null);
   const [rememberedId, setRememberedId] = useState<string | null>(null);
+  // How this viewer wants the standings ordered (a per-device preference, so
+  // each spectator picks what is easiest to read on their own phone).
+  const [sort, setSort] = useState<SpectatorSort>(DEFAULT_SPECTATOR_SORT);
   // Whether storage has been checked for a saved "this is me" pick. Gates the
   // identity picker so it never flashes before a remembered pick can load.
   const [identityResolved, setIdentityResolved] = useState(false);
@@ -116,6 +126,36 @@ export default function SpectatorScreen({ game, liveSessionId, onExit }: Props) 
     }
     return count;
   }, [activeGame]);
+
+  // The list order the viewer sees. Ranks on each row always reflect the true
+  // standing; only the row order changes, so a name stays put (alphabetical or
+  // seating order) instead of jumping around as scores shift.
+  const orderedBoard = useMemo(() => {
+    if (sort === "rank" || !activeGame) return board;
+    if (sort === "gameOrder") {
+      const seat = new Map(activeGame.players.map((player, i) => [player.id, i]));
+      return [...board].sort(
+        (a, b) => (seat.get(a.player.id) ?? 0) - (seat.get(b.player.id) ?? 0)
+      );
+    }
+    const locale = browserLocale(lang);
+    return [...board].sort((a, b) =>
+      a.player.name.localeCompare(b.player.name, locale, {
+        sensitivity: "base",
+      })
+    );
+  }, [board, sort, activeGame, lang]);
+
+  // Load this device's saved standings-order preference once on mount.
+  useEffect(() => {
+    let active = true;
+    void loadSpectatorSort().then((saved) => {
+      if (active) setSort(saved);
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   // Restore this device owner's "this is me" pick when the followed game
   // matches a saved identity. The pick is made once (via the identity picker
@@ -212,6 +252,17 @@ export default function SpectatorScreen({ game, liveSessionId, onExit }: Props) 
       playerName,
     });
   };
+
+  const changeSort = (next: SpectatorSort) => {
+    setSort(next);
+    void saveSpectatorSort(next);
+  };
+
+  const sortOptions: { key: SpectatorSort; label: string }[] = [
+    { key: "name", label: t.spectator.sortName },
+    { key: "gameOrder", label: t.spectator.sortGameOrder },
+    { key: "rank", label: t.spectator.sortRank },
+  ];
 
   // Indicative dealer & first-trick order for the round in play, mirroring the
   // game master's screen so spectators can follow who deals and who leads.
@@ -373,8 +424,38 @@ export default function SpectatorScreen({ game, liveSessionId, onExit }: Props) 
 
         <Text style={styles.sectionTitle}>{t.spectator.standingsTitle}</Text>
         <Text style={styles.tapHint}>{t.spectator.tapHint}</Text>
+        {board.length > 1 ? (
+          <View style={styles.sortRow}>
+            <Text style={styles.sortLabel}>{t.spectator.sortLabel}</Text>
+            <View style={styles.sortControl}>
+              {sortOptions.map((option) => {
+                const active = sort === option.key;
+                return (
+                  <TouchableOpacity
+                    key={option.key}
+                    style={[styles.sortChip, active && styles.sortChipActive]}
+                    onPress={() => changeSort(option.key)}
+                    accessibilityRole="button"
+                    accessibilityState={{ selected: active }}
+                    accessibilityLabel={option.label}
+                  >
+                    <Text
+                      style={[
+                        styles.sortChipText,
+                        active && styles.sortChipTextActive,
+                      ]}
+                      numberOfLines={1}
+                    >
+                      {option.label}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          </View>
+        ) : null}
         <View style={styles.boardCard}>
-          {board.map((row, index) => {
+          {orderedBoard.map((row, index) => {
             const isRemembered = row.player.id === rememberedId;
             return (
               <TouchableOpacity
@@ -561,6 +642,39 @@ const styles = StyleSheet.create({
     marginTop: 2,
     marginBottom: spacing.sm,
   },
+  sortRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: spacing.sm,
+  },
+  sortLabel: {
+    color: colors.textDim,
+    fontSize: 11,
+    fontWeight: "800",
+    textTransform: "uppercase",
+    letterSpacing: 0.6,
+    marginEnd: spacing.sm,
+  },
+  sortControl: {
+    flex: 1,
+    flexDirection: "row",
+    backgroundColor: colors.bgElevated,
+    borderColor: colors.cardBorder,
+    borderWidth: 1,
+    borderRadius: radius.sm,
+    padding: 2,
+  },
+  sortChip: {
+    flex: 1,
+    minHeight: 34,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: radius.sm - 2,
+    paddingHorizontal: 6,
+  },
+  sortChipActive: { backgroundColor: colors.gold },
+  sortChipText: { color: colors.textDim, fontSize: 12, fontWeight: "700" },
+  sortChipTextActive: { color: colors.bg, fontWeight: "800" },
   identityCard: {
     backgroundColor: colors.card,
     borderColor: colors.gold,

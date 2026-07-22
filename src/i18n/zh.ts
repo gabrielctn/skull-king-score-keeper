@@ -53,9 +53,10 @@ export const zh: Strings = {
     automaticUpdatesBody:
       "已安装的应用会自动下载每个新版本，并在设备联网后立即切换到新版本。",
     items: [
-      "对局界面新增 ▦ 按钮：分享比分，让每位玩家都能在自己的手机上跟进对局。",
-      "开启实时会话后，扫描二维码的玩家可实时看到比分更新——每次叫牌、每一墩和每项奖励，都无需刷新。",
-      "牌桌旁没有网络？离线二维码快照依然可用：玩家随时再次扫描即可查看自己的详细得分。",
+      "一触即可安装应用：设置中新增按钮，可将其添加到主屏幕；当浏览器需要时，还提供 iPhone 与 Android 的分步指引。",
+      "在手机上跟进比分？可按 A→Z 或座位顺序排列玩家，比分变化时名字不再乱跳。",
+      "你的计分板、统计与历史现以持久存储保存，可在常规清理缓存后继续保留。",
+      "新增队伍纪录与统计：单回合最高、最长连胜、最鲁莽的船长、海怪诱饵、领奖台率等。",
     ],
     close: "知道了",
   },
@@ -82,6 +83,40 @@ export const zh: Strings = {
     feedbackTitle: "反馈",
     feedbackHint: "发现问题或有好点子？欢迎告诉我。",
     feedbackButton: "发送反馈",
+    install: {
+      title: "安装应用",
+      installedTitle: "应用已安装 🎉",
+      installedBody: "计分器已在你的设备上——像普通应用一样打开，并可完全离线使用。",
+      promptHint: "将计分器添加到主屏幕，一触即达并可离线游戏。",
+      manualHint:
+        "将计分器添加到主屏幕，一触即达并可离线游戏。请按下方对应你手机的步骤操作。",
+      button: "立即安装",
+      error: "无法开始安装。请按下方的手动步骤操作。",
+      guideTitle: "如何手动安装",
+      iosTitle: "iPhone 与 iPad（Safari）",
+      iosSteps: [
+        "在 Safari 中打开此页面。",
+        "点按屏幕底部的分享按钮（带向上箭头的方框）。",
+        "向下滚动并点按「添加到主屏幕」。",
+        "点按右上角的「添加」——应用图标即出现在主屏幕上。",
+      ],
+      androidTitle: "Android（Chrome）",
+      androidSteps: [
+        "在 Chrome 中打开此页面。",
+        "点按右上角的 ⋮ 菜单。",
+        "点按「安装应用」（或「添加到主屏幕」）。",
+        "确认「安装」——应用图标即出现在主屏幕上。",
+      ],
+    },
+    durability: {
+      protectedTitle: "你的对局已受保护",
+      protectedBody: "此设备已将你保存的对局标记为持久存储，可在常规清理缓存后继续保留。",
+      atRiskTitle: "保护你保存的对局",
+      atRiskBody:
+        "浏览器可能清除应用数据以释放空间，从而抹去你的计分板、统计与历史。请让浏览器保留它们。",
+      protect: "保护我的对局",
+      protecting: "正在保护…",
+    },
   },
 
   setup: {
@@ -238,6 +273,10 @@ export const zh: Strings = {
     identityTitle: "你是哪位玩家？",
     identityHint: "选择一次你的名字即可跟踪自己的得分，本局游戏中保持不变。",
     turnTitle: "出牌顺序",
+    sortLabel: "排序",
+    sortName: "A→Z",
+    sortGameOrder: "座位",
+    sortRank: "名次",
     you: "你",
     openApp: "打开应用记录我自己的对局",
     invalidTitle: "无法读取此二维码",
@@ -285,6 +324,18 @@ export const zh: Strings = {
     bestFinalScore: "最高终局得分",
     worstRound: "最差回合",
     bestExactBid: "最佳精准叫牌率",
+    totalGames: "对局数",
+    totalRounds: "回合数",
+    totalPlunder: "累计得分",
+    biggestRound: "单回合最高",
+    longestStreak: "最长连胜",
+    mostReckless: "最鲁莽",
+    krakenBait: "海怪诱饵",
+    zeroBidMaster: "零叫大师",
+    longestWinStreak: "最长连胜",
+    podiumRate: "领奖台率",
+    averageRank: "平均名次",
+    bestRoundScore: "最佳回合",
     unavailable: "暂无",
     chartLabel: (leader, rounds) =>
       `已记录 ${rounds} 回合的得分走势；${leader} 当前领先。`,
@@ -296,6 +347,10 @@ export const zh: Strings = {
       `${name} · 第 ${round} 回合 ${score} 分 · ${date}`,
     rateRecordHolder: (name, rate, successes, attempts) =>
       `${name} · ${rate}（${successes}/${attempts}）`,
+    streakRecordHolder: (name, streak) => `${name} · 连胜 ${streak} 场`,
+    recklessRecordHolder: (name, averageBid) =>
+      `${name} · 平均叫牌 ${averageBid}`,
+    countRecordHolder: (name, count) => `${name} · ${count} 次`,
     recentGame: (date, rank, score) =>
       `${date} · 第 ${rank} 名 · ${score} 分`,
   },

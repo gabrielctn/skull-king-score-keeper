@@ -26,8 +26,14 @@ import {
 } from "../storage";
 import { CURRENT_RELEASE, CURRENT_RELEASE_DATE } from "../releases";
 import { isWakeLockSupported } from "../wakeLock";
+import {
+  isPersistentStorageSupported,
+  isStoragePersisted,
+  requestPersistentStorage,
+} from "../storagePersistence";
 import ToggleSwitch from "../components/ToggleSwitch";
 import WhatsNewModal from "../components/WhatsNewModal";
+import InstallAppSection from "../components/InstallAppSection";
 
 const FEEDBACK_EMAIL = "gabrielcretin@gmail.com";
 
@@ -62,6 +68,9 @@ export default function SettingsScreen({
   const [deleteAllOpen, setDeleteAllOpen] = React.useState(false);
   const [whatsNewOpen, setWhatsNewOpen] = React.useState(false);
   const [releaseSeen, setReleaseSeen] = React.useState(true);
+  const [storageSupported, setStorageSupported] = React.useState(false);
+  const [storagePersisted, setStoragePersisted] = React.useState(false);
+  const [storageBusy, setStorageBusy] = React.useState(false);
 
   React.useEffect(() => {
     let active = true;
@@ -72,6 +81,26 @@ export default function SettingsScreen({
       active = false;
     };
   }, []);
+
+  React.useEffect(() => {
+    let active = true;
+    setStorageSupported(isPersistentStorageSupported());
+    void isStoragePersisted().then((persisted) => {
+      if (active) setStoragePersisted(persisted);
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const protectStorage = async () => {
+    setStorageBusy(true);
+    try {
+      setStoragePersisted(await requestPersistentStorage());
+    } finally {
+      setStorageBusy(false);
+    }
+  };
 
   const releaseDate = new Date(
     `${CURRENT_RELEASE_DATE}T12:00:00Z`
@@ -198,6 +227,8 @@ export default function SettingsScreen({
           ))}
         </View>
 
+        <InstallAppSection />
+
         {isWakeLockSupported() ? (
           <>
             <Text style={[styles.section, styles.sectionSpacing]}>
@@ -227,6 +258,43 @@ export default function SettingsScreen({
           {t.settings.dataTitle}
         </Text>
         <Text style={styles.dataHint}>{t.settings.dataHint}</Text>
+        {storageSupported ? (
+          <View style={styles.durabilityCard}>
+            <Text style={styles.durabilityIcon}>
+              {storagePersisted ? "🛡️" : "⚠️"}
+            </Text>
+            <View style={styles.durabilityCopy}>
+              <Text style={styles.durabilityTitle}>
+                {storagePersisted
+                  ? t.settings.durability.protectedTitle
+                  : t.settings.durability.atRiskTitle}
+              </Text>
+              <Text style={styles.durabilityBody}>
+                {storagePersisted
+                  ? t.settings.durability.protectedBody
+                  : t.settings.durability.atRiskBody}
+              </Text>
+              {!storagePersisted ? (
+                <TouchableOpacity
+                  style={[
+                    styles.durabilityButton,
+                    storageBusy && styles.durabilityButtonDisabled,
+                  ]}
+                  onPress={() => void protectStorage()}
+                  disabled={storageBusy}
+                  accessibilityRole="button"
+                  accessibilityState={{ disabled: storageBusy }}
+                >
+                  <Text style={styles.durabilityButtonText}>
+                    {storageBusy
+                      ? t.settings.durability.protecting
+                      : t.settings.durability.protect}
+                  </Text>
+                </TouchableOpacity>
+              ) : null}
+            </View>
+          </View>
+        ) : null}
         <View style={styles.dataActions}>
           <TouchableOpacity
             style={styles.dataButton}
@@ -429,6 +497,36 @@ const styles = StyleSheet.create({
     lineHeight: 17,
     marginBottom: spacing.md,
   },
+  durabilityCard: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    backgroundColor: colors.bgElevated,
+    borderColor: colors.cardBorder,
+    borderWidth: 1,
+    borderRadius: radius.md,
+    padding: spacing.md,
+    marginBottom: spacing.md,
+  },
+  durabilityIcon: { fontSize: 18, marginEnd: spacing.sm, lineHeight: 22 },
+  durabilityCopy: { flex: 1 },
+  durabilityTitle: { color: colors.text, fontSize: 14, fontWeight: "800" },
+  durabilityBody: {
+    color: colors.textDim,
+    fontSize: 12,
+    lineHeight: 17,
+    marginTop: 2,
+  },
+  durabilityButton: {
+    alignSelf: "flex-start",
+    minHeight: 40,
+    justifyContent: "center",
+    backgroundColor: colors.gold,
+    borderRadius: radius.md,
+    paddingHorizontal: spacing.md,
+    marginTop: spacing.sm,
+  },
+  durabilityButtonDisabled: { opacity: 0.5 },
+  durabilityButtonText: { color: colors.bg, fontSize: 13, fontWeight: "800" },
   dataActions: { flexDirection: "row" },
   dataButton: {
     flex: 1,

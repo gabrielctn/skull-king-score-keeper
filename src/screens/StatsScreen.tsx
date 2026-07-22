@@ -123,6 +123,24 @@ export default function StatsScreen({ gameHistory, onBack }: Props) {
               <Text style={styles.heroTitle}>{t.stats.groupTitle}</Text>
             </View>
 
+            <View style={styles.summaryRow}>
+              <SummaryTile
+                icon="🗺️"
+                value={String(snapshot.summary.totalGames)}
+                label={t.stats.totalGames}
+              />
+              <SummaryTile
+                icon="🎴"
+                value={String(snapshot.summary.totalRounds)}
+                label={t.stats.totalRounds}
+              />
+              <SummaryTile
+                icon="💰"
+                value={number(snapshot.summary.totalPlunder)}
+                label={t.stats.totalPlunder}
+              />
+            </View>
+
             <Text style={styles.sectionTitle}>{t.stats.leaderboard}</Text>
             <View style={styles.card}>
               {snapshot.players.map((player, index) => (
@@ -202,6 +220,70 @@ export default function StatsScreen({ gameHistory, onBack }: Props) {
                     : t.stats.unavailable
                 }
               />
+              <RecordCard
+                icon="💰"
+                label={t.stats.biggestRound}
+                value={
+                  snapshot.records.biggestRound
+                    ? t.stats.roundRecordHolder(
+                        snapshot.records.biggestRound.name,
+                        snapshot.records.biggestRound.score,
+                        snapshot.records.biggestRound.roundNumber,
+                        date(snapshot.records.biggestRound.playedAt)
+                      )
+                    : t.stats.unavailable
+                }
+              />
+              <RecordCard
+                icon="🔥"
+                label={t.stats.longestStreak}
+                value={
+                  snapshot.records.longestStreak
+                    ? t.stats.streakRecordHolder(
+                        snapshot.records.longestStreak.name,
+                        snapshot.records.longestStreak.streak
+                      )
+                    : t.stats.unavailable
+                }
+              />
+              <RecordCard
+                icon="💣"
+                label={t.stats.mostReckless}
+                value={
+                  snapshot.records.mostReckless
+                    ? t.stats.recklessRecordHolder(
+                        snapshot.records.mostReckless.name,
+                        number(snapshot.records.mostReckless.averageBid)
+                      )
+                    : t.stats.unavailable
+                }
+              />
+              <RecordCard
+                icon="🐙"
+                label={t.stats.krakenBait}
+                value={
+                  snapshot.records.krakenBait
+                    ? t.stats.countRecordHolder(
+                        snapshot.records.krakenBait.name,
+                        snapshot.records.krakenBait.count
+                      )
+                    : t.stats.unavailable
+                }
+              />
+              <RecordCard
+                icon="🕳️"
+                label={t.stats.zeroBidMaster}
+                value={
+                  snapshot.records.zeroBidMaster
+                    ? t.stats.rateRecordHolder(
+                        snapshot.records.zeroBidMaster.name,
+                        percent(snapshot.records.zeroBidMaster.rate),
+                        snapshot.records.zeroBidMaster.successes,
+                        snapshot.records.zeroBidMaster.attempts
+                      )
+                    : t.stats.unavailable
+                }
+              />
             </View>
           </>
         )}
@@ -235,6 +317,28 @@ function RecordCard({
       <Text style={styles.recordIcon}>{icon}</Text>
       <Text style={styles.recordLabel}>{label}</Text>
       <Text style={styles.recordValue}>{value}</Text>
+    </View>
+  );
+}
+
+function SummaryTile({
+  icon,
+  value,
+  label,
+}: {
+  icon: string;
+  value: string;
+  label: string;
+}) {
+  return (
+    <View style={styles.summaryTile}>
+      <Text style={styles.summaryIcon}>{icon}</Text>
+      <Text style={styles.summaryValue} numberOfLines={1} adjustsFontSizeToFit>
+        {value}
+      </Text>
+      <Text style={styles.summaryLabel} numberOfLines={2}>
+        {label}
+      </Text>
     </View>
   );
 }
@@ -295,6 +399,25 @@ function PlayerDetail({
           }
         />
         <Metric label={t.stats.winStreak} value={String(player.currentWinStreak)} />
+        <Metric
+          label={t.stats.longestWinStreak}
+          value={String(player.longestWinStreak)}
+        />
+        <Metric label={t.stats.podiumRate} value={percent(player.podiumRate)} />
+        <Metric
+          label={t.stats.averageRank}
+          value={
+            player.gamesPlayed > 0 ? number(player.averageRank) : t.stats.unavailable
+          }
+        />
+        <Metric
+          label={t.stats.bestRoundScore}
+          value={
+            player.bestRound === null
+              ? t.stats.unavailable
+              : String(player.bestRound)
+          }
+        />
       </View>
 
       <Text style={styles.sectionTitle}>{t.stats.recentGames}</Text>
@@ -418,6 +541,36 @@ const styles = StyleSheet.create({
   rateValue: { color: colors.positive, fontSize: 16, fontWeight: "800" },
   rateLabel: { color: colors.textDim, fontSize: 10, marginTop: 2 },
   chevron: { color: colors.goldDim, fontSize: 25, marginStart: spacing.sm },
+  summaryRow: {
+    flexDirection: "row",
+    marginHorizontal: -spacing.xs,
+    marginBottom: spacing.md,
+  },
+  summaryTile: {
+    flex: 1,
+    backgroundColor: colors.card,
+    borderColor: colors.cardBorder,
+    borderWidth: 1,
+    borderRadius: radius.md,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.xs,
+    marginHorizontal: spacing.xs,
+    alignItems: "center",
+  },
+  summaryIcon: { fontSize: 20, lineHeight: 24 },
+  summaryValue: {
+    color: colors.gold,
+    fontSize: 20,
+    fontWeight: "800",
+    marginTop: 2,
+  },
+  summaryLabel: {
+    color: colors.textDim,
+    fontSize: 10,
+    textAlign: "center",
+    marginTop: 3,
+    lineHeight: 13,
+  },
   recordGrid: { marginHorizontal: -spacing.xs },
   recordCard: {
     backgroundColor: colors.card,

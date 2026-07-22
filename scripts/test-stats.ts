@@ -612,5 +612,84 @@ eq("in-progress game has no awards", gameAwards(unfinishedAwards).length, 0);
 eq("empty-player game has no awards", gameAwards(noPlayers).length, 0);
 doesNotThrow("degenerate awards do not throw", () => gameAwards(noPlayers));
 
+section("Extended crew stats, records, and summary");
+// Three finished games among Anne, Bea and Cal, chosen so every new metric has
+// a single, hand-checkable holder. Card counts: g1 = [1, 2], g2/g3 = [1].
+const crewOne = fixtureGame(
+  "crew_g1",
+  100,
+  [
+    { id: "anne_1", name: "Anne" },
+    { id: "bea_1", name: "Bea" },
+    { id: "cal_1", name: "Cal" },
+  ],
+  [
+    { anne_1: E(1, 1), bea_1: E(0, 0), cal_1: E(1, 0) },
+    { anne_1: E(2, 2), bea_1: E(0, 0), cal_1: E(0, 1) },
+  ],
+  { cardsDealt: [1, 2] }
+);
+const crewTwo = fixtureGame(
+  "crew_g2",
+  200,
+  [
+    { id: "anne_2", name: "Anne" },
+    { id: "bea_2", name: "Bea" },
+    { id: "cal_2", name: "Cal" },
+  ],
+  [{ anne_2: E(1, 1), bea_2: E(0, 0), cal_2: E(0, 1) }],
+  { cardsDealt: [1] }
+);
+const crewThree = fixtureGame(
+  "crew_g3",
+  300,
+  [
+    { id: "anne_3", name: "Anne" },
+    { id: "bea_3", name: "Bea" },
+    { id: "cal_3", name: "Cal" },
+  ],
+  [{ anne_3: E(0, 1), bea_3: E(1, 1), cal_3: E(1, 1) }],
+  { cardsDealt: [1] }
+);
+const crew = aggregateStats([crewOne, crewTwo, crewThree]);
+const crewPlayer = (identity: string) =>
+  crew.players.find((player) => player.identity === identity);
+const anne = crewPlayer("anne");
+const bea = crewPlayer("bea");
+const cal = crewPlayer("cal");
+
+eq("summary counts finished games", crew.summary.totalGames, 3);
+eq("summary sums rounds played", crew.summary.totalRounds, 4);
+eq("summary sums every final score", crew.summary.totalPlunder, 110);
+
+eq("longest win streak spans games", anne?.longestWinStreak, 2);
+eq("podium finishes are counted", anne?.podiums, 3);
+approx("podium rate is a fraction", anne?.podiumRate ?? -1, 1);
+approx("average rank averages positions", anne?.averageRank ?? -1, 5 / 3);
+eq("best single round is tracked", anne?.bestRound, 40);
+approx("average bid gauges recklessness", anne?.averageBid ?? -1, 1);
+eq("last-place finishes feed kraken bait", cal?.lastPlaces, 2);
+eq("zero-bid attempts accumulate", bea?.zeroBids.attempts, 3);
+
+eq("biggest round holder", crew.records.biggestRound?.identity, "anne");
+eq("biggest round score", crew.records.biggestRound?.score, 40);
+eq("biggest round retains its number", crew.records.biggestRound?.roundNumber, 2);
+eq("longest streak holder", crew.records.longestStreak?.identity, "anne");
+eq("longest streak length", crew.records.longestStreak?.streak, 2);
+eq("most reckless holder", crew.records.mostReckless?.identity, "anne");
+approx("most reckless average bid", crew.records.mostReckless?.averageBid ?? -1, 1);
+eq("kraken bait holder", crew.records.krakenBait?.identity, "cal");
+eq("kraken bait count", crew.records.krakenBait?.count, 2);
+eq("zero-bid master needs a real sample", crew.records.zeroBidMaster?.identity, "bea");
+eq("zero-bid master attempts", crew.records.zeroBidMaster?.attempts, 3);
+
+const emptyExtended = aggregateStats([]);
+eq("empty input has no summary games", emptyExtended.summary.totalGames, 0);
+eq("empty input has no plunder", emptyExtended.summary.totalPlunder, 0);
+eq("empty input has no biggest round", emptyExtended.records.biggestRound, null);
+eq("empty input has no streak record", emptyExtended.records.longestStreak, null);
+eq("empty input has no kraken bait", emptyExtended.records.krakenBait, null);
+eq("empty input has no zero-bid master", emptyExtended.records.zeroBidMaster, null);
+
 console.log(`\n${passed} passed, ${failed} failed`);
 if (failed > 0) process.exit(1);

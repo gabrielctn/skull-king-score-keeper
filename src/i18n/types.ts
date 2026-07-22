@@ -97,6 +97,34 @@ export interface Strings {
     feedbackTitle: string;
     feedbackHint: string;
     feedbackButton: string;
+    /** "Install the app" section: one-tap button plus manual per-OS guides. */
+    install: {
+      title: string;
+      /** Shown once the app is installed / added to the home screen. */
+      installedTitle: string;
+      installedBody: string;
+      /** Hint above the one-tap install button (Android/Chromium). */
+      promptHint: string;
+      /** Hint shown when only the manual guide is available (e.g. iOS). */
+      manualHint: string;
+      button: string;
+      error: string;
+      /** Toggle that reveals the step-by-step manual guide. */
+      guideTitle: string;
+      iosTitle: string;
+      iosSteps: string[];
+      androidTitle: string;
+      androidSteps: string[];
+    };
+    /** Storage-durability controls that keep saved games from being evicted. */
+    durability: {
+      protectedTitle: string;
+      protectedBody: string;
+      atRiskTitle: string;
+      atRiskBody: string;
+      protect: string;
+      protecting: string;
+    };
   };
 
   setup: {
@@ -265,6 +293,12 @@ export interface Strings {
     identityHint: string;
     /** Section title above the dealer / play-order banner. */
     turnTitle: string;
+    /** Label before the standings-order control. */
+    sortLabel: string;
+    /** Order options: alphabetical, seating/game order, and rank. */
+    sortName: string;
+    sortGameOrder: string;
+    sortRank: string;
     /** Chip marking the remembered "this is me" row in the standings. */
     you: string;
     openApp: string;
@@ -311,6 +345,21 @@ export interface Strings {
     bestFinalScore: string;
     worstRound: string;
     bestExactBid: string;
+    /** Crew-total tiles at the top of the group stats. */
+    totalGames: string;
+    totalRounds: string;
+    totalPlunder: string;
+    /** Extra group-record labels. */
+    biggestRound: string;
+    longestStreak: string;
+    mostReckless: string;
+    krakenBait: string;
+    zeroBidMaster: string;
+    /** Extra per-player metric labels. */
+    longestWinStreak: string;
+    podiumRate: string;
+    averageRank: string;
+    bestRoundScore: string;
     unavailable: string;
     chartLabel: (leader: string, rounds: number) => string;
     playerSummary: (games: number, wins: number) => string;
@@ -328,6 +377,12 @@ export interface Strings {
       successes: number,
       attempts: number
     ) => string;
+    /** "{name} · {streak} wins in a row" */
+    streakRecordHolder: (name: string, streak: number) => string;
+    /** "{name} · {averageBid} avg bid" (averageBid is already formatted) */
+    recklessRecordHolder: (name: string, averageBid: string) => string;
+    /** "{name} · {count}×" */
+    countRecordHolder: (name: string, count: number) => string;
     recentGame: (date: string, rank: number, score: number) => string;
   };
 
