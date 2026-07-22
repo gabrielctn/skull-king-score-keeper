@@ -55,9 +55,10 @@ export const fr: Strings = {
     automaticUpdatesBody:
       "Les applications installées téléchargent désormais chaque nouvelle version automatiquement et l'activent dès que l'appareil est en ligne.",
     items: [
-      "Nouveau bouton ▦ sur l'écran de jeu : partagez les scores pour que chaque joueur suive la partie sur son propre téléphone.",
-      "Démarrez une session en direct et les joueurs qui scannent le QR code voient les scores se mettre à jour en temps réel — chaque mise, pli et bonus, sans rien actualiser.",
-      "Pas de connexion à la table ? L'instantané QR hors ligne fonctionne toujours : les joueurs le re-scannent pour consulter leur score détaillé quand ils veulent.",
+      "Installez l'appli en un geste : un nouveau bouton dans les Paramètres l'ajoute à votre écran d'accueil, avec des guides pas à pas pour iPhone et Android si votre navigateur en a besoin.",
+      "Vous suivez les scores sur votre téléphone ? Classez les joueurs de A à Z ou par place à table pour qu'un nom ne saute plus quand les scores changent.",
+      "Votre tableau des scores, vos stats et votre historique sont désormais conservés en stockage durable : ils survivent au nettoyage habituel du cache.",
+      "De nouveaux records et stats d'équipage : plus grosse manche, plus longue série, capitaine le plus casse-cou, appât à Kraken, taux de podium et plus encore.",
     ],
     close: "Compris",
   },
@@ -87,6 +88,44 @@ export const fr: Strings = {
     feedbackTitle: "Votre avis",
     feedbackHint: "Un bug ou une idée ? N'hésitez pas à m'écrire.",
     feedbackButton: "Envoyer un retour",
+    install: {
+      title: "Installer l'application",
+      installedTitle: "Application installée 🎉",
+      installedBody:
+        "Le compteur de scores est sur votre appareil — il s'ouvre comme une appli et fonctionne entièrement hors ligne.",
+      promptHint:
+        "Ajoutez le compteur de scores à votre écran d'accueil pour un accès en un geste et le jeu hors ligne.",
+      manualHint:
+        "Ajoutez le compteur de scores à votre écran d'accueil pour un accès en un geste et le jeu hors ligne. Suivez les étapes correspondant à votre téléphone ci-dessous.",
+      button: "Installer maintenant",
+      error:
+        "L'installation n'a pas pu démarrer. Suivez les étapes manuelles ci-dessous.",
+      guideTitle: "Comment l'installer à la main",
+      iosTitle: "iPhone et iPad (Safari)",
+      iosSteps: [
+        "Ouvrez cette page dans Safari.",
+        "Touchez le bouton Partager (un carré surmonté d'une flèche) en bas de l'écran.",
+        "Faites défiler et touchez « Sur l'écran d'accueil ».",
+        "Touchez « Ajouter » en haut à droite — l'icône apparaît sur votre écran d'accueil.",
+      ],
+      androidTitle: "Android (Chrome)",
+      androidSteps: [
+        "Ouvrez cette page dans Chrome.",
+        "Touchez le menu ⋮ en haut à droite.",
+        "Touchez « Installer l'application » (ou « Ajouter à l'écran d'accueil »).",
+        "Confirmez avec « Installer » — l'icône apparaît sur votre écran d'accueil.",
+      ],
+    },
+    durability: {
+      protectedTitle: "Vos parties sont protégées",
+      protectedBody:
+        "Cet appareil marque vos parties comme stockage durable : elles survivent au nettoyage habituel du cache.",
+      atRiskTitle: "Protégez vos parties enregistrées",
+      atRiskBody:
+        "Les navigateurs peuvent effacer les données de l'appli pour récupérer de l'espace, supprimant votre tableau des scores, vos stats et votre historique. Demandez au navigateur de les conserver.",
+      protect: "Protéger mes parties",
+      protecting: "Protection…",
+    },
   },
 
   setup: {
@@ -255,6 +294,10 @@ export const fr: Strings = {
     identityHint:
       "Choisissez votre nom une fois pour suivre vos propres scores. Ce choix reste fixe pour cette partie.",
     turnTitle: "Ordre du tour",
+    sortLabel: "Ordre",
+    sortName: "A → Z",
+    sortGameOrder: "Places",
+    sortRank: "Rang",
     you: "Vous",
     openApp: "Ouvrir l'appli pour mes propres parties",
     invalidTitle: "Code illisible",
@@ -303,6 +346,18 @@ export const fr: Strings = {
     bestFinalScore: "Meilleur score final",
     worstRound: "Pire manche",
     bestExactBid: "Meilleur taux de mises réussies",
+    totalGames: "Parties jouées",
+    totalRounds: "Manches jouées",
+    totalPlunder: "Points amassés",
+    biggestRound: "Plus grosse manche",
+    longestStreak: "Plus longue série",
+    mostReckless: "Le plus casse-cou",
+    krakenBait: "Appât à Kraken",
+    zeroBidMaster: "Maître du zéro",
+    longestWinStreak: "Plus longue série de victoires",
+    podiumRate: "Taux de podium",
+    averageRank: "Rang moyen",
+    bestRoundScore: "Meilleure manche",
     unavailable: "Indisponible",
     chartLabel: (leader, rounds) =>
       `Évolution des scores après ${rounds} ${
@@ -319,6 +374,11 @@ export const fr: Strings = {
       `${name} · ${score} points à la manche ${round} · ${date}`,
     rateRecordHolder: (name, rate, successes, attempts) =>
       `${name} · ${rate} (${successes}/${attempts})`,
+    streakRecordHolder: (name, streak) =>
+      `${name} · ${streak} ${streak === 1 ? "victoire" : "victoires"} d'affilée`,
+    recklessRecordHolder: (name, averageBid) =>
+      `${name} · ${averageBid} de mise moyenne`,
+    countRecordHolder: (name, count) => `${name} · ${count} fois`,
     recentGame: (date, rank, score) =>
       `${date} · ${rank === 1 ? "1er" : `${rank}e`} · ${score} points`,
   },

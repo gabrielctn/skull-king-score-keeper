@@ -56,9 +56,10 @@ export const es: Strings = {
     automaticUpdatesBody:
       "Las aplicaciones instaladas ahora descargan automáticamente cada nueva versión y la activan en cuanto el dispositivo se conecta a internet.",
     items: [
-      "Nuevo botón ▦ en la pantalla de juego: comparte los puntos para que cada jugador siga la partida en su propio teléfono.",
-      "Inicia una sesión en directo y los jugadores que escaneen el código QR ven los puntos actualizarse en tiempo real — cada apuesta, baza y bonus, sin actualizar nada.",
-      "¿Sin conexión en la mesa? La instantánea QR sin conexión sigue funcionando: los jugadores la vuelven a escanear para consultar su puntuación detallada cuando quieran.",
+      "Instala la app con un toque: un nuevo botón en Ajustes la añade a tu pantalla de inicio, con guías paso a paso para iPhone y Android cuando el navegador lo necesita.",
+      "¿Sigues los puntos en tu teléfono? Ordena a los jugadores de la A a la Z o por asiento para que un nombre no salte cuando cambian los puntos.",
+      "Tu marcador, estadísticas e historial ahora se guardan como almacenamiento duradero, así sobreviven a la limpieza habitual de la caché.",
+      "Nuevos récords y estadísticas de la tripulación: mayor ronda, mejor racha, capitán más temerario, cebo del kraken, tasas de podio y más.",
     ],
     close: "Entendido",
   },
@@ -90,6 +91,44 @@ export const es: Strings = {
     feedbackHint:
       "¿Has encontrado un error o tienes una idea? Me encantará saber de ti.",
     feedbackButton: "Enviar comentarios",
+    install: {
+      title: "Instalar la aplicación",
+      installedTitle: "Aplicación instalada 🎉",
+      installedBody:
+        "El marcador está en tu dispositivo — se abre como cualquier app y funciona totalmente sin conexión.",
+      promptHint:
+        "Añade el marcador a tu pantalla de inicio para acceder con un toque y jugar sin conexión.",
+      manualHint:
+        "Añade el marcador a tu pantalla de inicio para acceder con un toque y jugar sin conexión. Sigue los pasos de tu teléfono más abajo.",
+      button: "Instalar ahora",
+      error:
+        "No se pudo iniciar la instalación. Sigue los pasos manuales de abajo.",
+      guideTitle: "Cómo instalarla a mano",
+      iosTitle: "iPhone y iPad (Safari)",
+      iosSteps: [
+        "Abre esta página en Safari.",
+        "Toca el botón Compartir (un cuadrado con una flecha hacia arriba) en la parte inferior de la pantalla.",
+        "Desplázate y toca «Añadir a pantalla de inicio».",
+        "Toca «Añadir» arriba a la derecha — el icono aparece en tu pantalla de inicio.",
+      ],
+      androidTitle: "Android (Chrome)",
+      androidSteps: [
+        "Abre esta página en Chrome.",
+        "Toca el menú ⋮ arriba a la derecha.",
+        "Toca «Instalar aplicación» (o «Añadir a la pantalla de inicio»).",
+        "Confirma con «Instalar» — el icono aparece en tu pantalla de inicio.",
+      ],
+    },
+    durability: {
+      protectedTitle: "Tus partidas están protegidas",
+      protectedBody:
+        "Este dispositivo marca tus partidas como almacenamiento duradero, así sobreviven a la limpieza habitual de la caché.",
+      atRiskTitle: "Protege tus partidas guardadas",
+      atRiskBody:
+        "Los navegadores pueden borrar los datos de la app para liberar espacio, eliminando tu marcador, estadísticas e historial. Pide al navegador que los conserve.",
+      protect: "Proteger mis partidas",
+      protecting: "Protegiendo…",
+    },
   },
 
   setup: {
@@ -260,6 +299,10 @@ export const es: Strings = {
     identityHint:
       "Elige tu nombre una vez para seguir tus propias puntuaciones. Queda fijo para esta partida.",
     turnTitle: "Orden de juego",
+    sortLabel: "Orden",
+    sortName: "A → Z",
+    sortGameOrder: "Asientos",
+    sortRank: "Puesto",
     you: "Tú",
     openApp: "Abrir la app para mis propias partidas",
     invalidTitle: "No se pudo leer este código",
@@ -310,6 +353,18 @@ export const es: Strings = {
     bestFinalScore: "Mejor puntuación final",
     worstRound: "Peor ronda",
     bestExactBid: "Mejor porcentaje de apuestas exactas",
+    totalGames: "Partidas",
+    totalRounds: "Rondas",
+    totalPlunder: "Botín",
+    biggestRound: "Mayor ronda",
+    longestStreak: "Mejor racha",
+    mostReckless: "El más temerario",
+    krakenBait: "Cebo del kraken",
+    zeroBidMaster: "Maestro del cero",
+    longestWinStreak: "Mayor racha de victorias",
+    podiumRate: "Tasa de podio",
+    averageRank: "Puesto medio",
+    bestRoundScore: "Mejor ronda",
     unavailable: "No disponible",
     chartLabel: (leader, rounds) =>
       `Evolución de la puntuación tras ${rounds} ${rounds === 1 ? "ronda" : "rondas"}; ${leader} va en cabeza.`,
@@ -324,6 +379,12 @@ export const es: Strings = {
       `${name} · ${score} puntos en la ronda ${round} · ${date}`,
     rateRecordHolder: (name, rate, successes, attempts) =>
       `${name} · ${rate} (${successes}/${attempts})`,
+    streakRecordHolder: (name, streak) =>
+      `${name} · ${streak} ${streak === 1 ? "victoria" : "victorias"} seguidas`,
+    recklessRecordHolder: (name, averageBid) =>
+      `${name} · ${averageBid} de apuesta media`,
+    countRecordHolder: (name, count) =>
+      `${name} · ${count} ${count === 1 ? "vez" : "veces"}`,
     recentGame: (date, rank, score) =>
       `${date} · puesto ${rank} · ${score} puntos`,
   },

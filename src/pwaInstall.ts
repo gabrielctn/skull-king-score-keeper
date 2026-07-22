@@ -9,6 +9,7 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 let deferredPrompt: BeforeInstallPromptEvent | null = null;
+let installedThisSession = false;
 let initialized = false;
 const listeners = new Set<() => void>();
 
@@ -37,6 +38,7 @@ export function initializePwaInstallPrompt(): void {
 
   window.addEventListener("appinstalled", () => {
     deferredPrompt = null;
+    installedThisSession = true;
     notify();
   });
 }
@@ -59,7 +61,16 @@ export function canPromptPwaInstall(): boolean {
   return deferredPrompt !== null && !isPwaInstalled();
 }
 
-function isIosBrowser(): boolean {
+/**
+ * True once the browser has fired `appinstalled` in this session. The current
+ * tab keeps running as a normal browser tab after an install, so `display-mode`
+ * stays non-standalone here — this flag lets the UI confirm success anyway.
+ */
+export function wasAppInstalled(): boolean {
+  return installedThisSession;
+}
+
+export function isIosBrowser(): boolean {
   if (Platform.OS !== "web" || typeof navigator === "undefined") return false;
   const userAgent = navigator.userAgent;
   const classicIos = /iPad|iPhone|iPod/.test(userAgent);

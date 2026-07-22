@@ -371,6 +371,42 @@ export async function saveSpectatorIdentity(
   }
 }
 
+const SPECTATOR_SORT_KEY = "skullking:spectatorSort";
+
+/**
+ * How a spectator (a player following the live/QR scores on their own phone)
+ * wants the standings list ordered:
+ * - `name`: alphabetical, so a name never jumps around as scores change;
+ * - `gameOrder`: seating order, matching the physical table;
+ * - `rank`: classic high-to-low leaderboard order.
+ * The rank badge always shows the true standing regardless of this choice.
+ */
+export type SpectatorSort = "name" | "gameOrder" | "rank";
+
+export const DEFAULT_SPECTATOR_SORT: SpectatorSort = "name";
+
+function isSpectatorSort(value: unknown): value is SpectatorSort {
+  return value === "name" || value === "gameOrder" || value === "rank";
+}
+
+export async function loadSpectatorSort(): Promise<SpectatorSort> {
+  try {
+    const stored = await AsyncStorage.getItem(SPECTATOR_SORT_KEY);
+    return isSpectatorSort(stored) ? stored : DEFAULT_SPECTATOR_SORT;
+  } catch (e) {
+    console.warn("Failed to load spectator sort", e);
+    return DEFAULT_SPECTATOR_SORT;
+  }
+}
+
+export async function saveSpectatorSort(sort: SpectatorSort): Promise<void> {
+  try {
+    await AsyncStorage.setItem(SPECTATOR_SORT_KEY, sort);
+  } catch (e) {
+    console.warn("Failed to save spectator sort", e);
+  }
+}
+
 /** Last changelog release acknowledged by this device. */
 export async function loadSeenRelease(): Promise<string | null> {
   try {

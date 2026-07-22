@@ -54,9 +54,10 @@ export const de: Strings = {
     automaticUpdatesBody:
       "Installierte Apps laden jede neue Version automatisch und wechseln zu ihr, sobald das Gerät online ist.",
     items: [
-      "Neuer ▦-Knopf im Spielbildschirm: Teile die Punkte, damit jeder Spieler auf dem eigenen Handy mitverfolgen kann.",
-      "Starte eine Live-Sitzung und wer den QR-Code scannt, sieht die Punkte in Echtzeit — jede Ansage, jeder Stich und jeder Bonus, ganz ohne Aktualisieren.",
-      "Keine Verbindung am Tisch? Die Offline-QR-Momentaufnahme funktioniert weiterhin: Spieler scannen erneut, um jederzeit ihre detaillierten Punkte zu prüfen.",
+      "Installiere die App mit einem Tipp: ein neuer Knopf in den Einstellungen fügt sie zum Startbildschirm hinzu — mit Schritt-für-Schritt-Anleitungen für iPhone und Android, falls dein Browser sie braucht.",
+      "Verfolgst du die Punkte auf deinem Handy? Ordne die Spieler von A–Z oder nach Sitzplatz, damit ein Name nicht mehr springt, wenn sich die Punkte ändern.",
+      "Punktetafel, Statistiken und Verlauf werden jetzt als dauerhafter Speicher gehalten und überstehen so das übliche Leeren des Caches.",
+      "Neue Crew-Rekorde und -Statistiken: größte Runde, beste Serie, tollkühnster Kapitän, Kraken-Köder, Podestquoten und mehr.",
     ],
     close: "Verstanden",
   },
@@ -86,6 +87,44 @@ export const de: Strings = {
     feedbackTitle: "Feedback",
     feedbackHint: "Fehler gefunden oder eine Idee? Ich freue mich über Nachricht.",
     feedbackButton: "Feedback senden",
+    install: {
+      title: "App installieren",
+      installedTitle: "App installiert 🎉",
+      installedBody:
+        "Der Punktezähler ist auf deinem Gerät — er öffnet sich wie jede App und funktioniert komplett offline.",
+      promptHint:
+        "Füge den Punktezähler zum Startbildschirm hinzu für Zugriff mit einem Tipp und Offline-Spiel.",
+      manualHint:
+        "Füge den Punktezähler zum Startbildschirm hinzu für Zugriff mit einem Tipp und Offline-Spiel. Folge unten den Schritten für dein Telefon.",
+      button: "Jetzt installieren",
+      error:
+        "Die Installation konnte nicht starten. Nutze die manuellen Schritte unten.",
+      guideTitle: "So installierst du sie von Hand",
+      iosTitle: "iPhone & iPad (Safari)",
+      iosSteps: [
+        "Öffne diese Seite in Safari.",
+        "Tippe unten auf die Teilen-Schaltfläche (ein Quadrat mit Pfeil nach oben).",
+        "Scrolle nach unten und tippe auf „Zum Home-Bildschirm“.",
+        "Tippe oben rechts auf „Hinzufügen“ — das App-Symbol erscheint auf dem Startbildschirm.",
+      ],
+      androidTitle: "Android (Chrome)",
+      androidSteps: [
+        "Öffne diese Seite in Chrome.",
+        "Tippe oben rechts auf das Menü ⋮.",
+        "Tippe auf „App installieren“ (oder „Zum Startbildschirm hinzufügen“).",
+        "Bestätige mit „Installieren“ — das App-Symbol erscheint auf dem Startbildschirm.",
+      ],
+    },
+    durability: {
+      protectedTitle: "Deine Spiele sind geschützt",
+      protectedBody:
+        "Dieses Gerät markiert deine gespeicherten Spiele als dauerhaften Speicher, sodass sie das übliche Leeren des Caches überstehen.",
+      atRiskTitle: "Schütze deine gespeicherten Spiele",
+      atRiskBody:
+        "Browser können die Daten der App löschen, um Platz zu schaffen — das würde Punktetafel, Statistiken und Verlauf löschen. Bitte den Browser, sie zu behalten.",
+      protect: "Meine Spiele schützen",
+      protecting: "Wird geschützt…",
+    },
   },
 
   setup: {
@@ -254,6 +293,10 @@ export const de: Strings = {
     identityHint:
       "Wähle einmal deinen Namen, um deine eigenen Punkte zu verfolgen. Das bleibt für dieses Spiel fest.",
     turnTitle: "Zugreihenfolge",
+    sortLabel: "Reihenfolge",
+    sortName: "A → Z",
+    sortGameOrder: "Sitzplatz",
+    sortRank: "Rang",
     you: "Du",
     openApp: "App für meine eigenen Partien öffnen",
     invalidTitle: "Code nicht lesbar",
@@ -302,6 +345,18 @@ export const de: Strings = {
     bestFinalScore: "Bestes Endergebnis",
     worstRound: "Schlechteste Runde",
     bestExactBid: "Beste Ansagequote",
+    totalGames: "Partien",
+    totalRounds: "Runden",
+    totalPlunder: "Beute",
+    biggestRound: "Größte Runde",
+    longestStreak: "Beste Serie",
+    mostReckless: "Am tollkühnsten",
+    krakenBait: "Kraken-Köder",
+    zeroBidMaster: "Meister der Null",
+    longestWinStreak: "Längste Siegesserie",
+    podiumRate: "Podestquote",
+    averageRank: "Ø Platz",
+    bestRoundScore: "Beste Runde",
     unavailable: "Nicht verfügbar",
     chartLabel: (leader, rounds) =>
       `Punkteverlauf nach ${rounds} ${
@@ -318,6 +373,11 @@ export const de: Strings = {
       `${name} · ${score} Punkte in Runde ${round} · ${date}`,
     rateRecordHolder: (name, rate, successes, attempts) =>
       `${name} · ${rate} (${successes}/${attempts})`,
+    streakRecordHolder: (name, streak) =>
+      `${name} · ${streak} ${streak === 1 ? "Sieg" : "Siege"} in Folge`,
+    recklessRecordHolder: (name, averageBid) =>
+      `${name} · ${averageBid} Ansage im Schnitt`,
+    countRecordHolder: (name, count) => `${name} · ${count}-mal`,
     recentGame: (date, rank, score) =>
       `${date} · Platz ${rank} · ${score} Punkte`,
   },

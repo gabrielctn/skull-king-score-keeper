@@ -54,9 +54,10 @@ export const en: Strings = {
     automaticUpdatesBody:
       "Installed apps now download each new release automatically and switch to it as soon as the device is online.",
     items: [
-      "New ▦ button on the game screen: share the scores so every player can follow along on their own phone.",
-      "Start a live session and players who scan the QR code see the scores update in real time — every bid, trick and bonus, no refresh needed.",
-      "No connection at the table? The offline QR snapshot still works: players re-scan to check their own detailed score whenever they want.",
+      "Install the app in one tap: a new Settings button adds it to your home screen, with step-by-step guides for iPhone and Android when your browser needs them.",
+      "Following the scores on your phone? Order players A→Z or by seating so a name never jumps around as scores change.",
+      "Your scoreboard, stats and history are now kept as durable storage, so they survive routine cache cleaning.",
+      "New crew records and stats: biggest single round, hottest streak, most reckless captain, kraken bait, podium rates and more.",
     ],
     close: "Got it",
   },
@@ -86,6 +87,43 @@ export const en: Strings = {
     feedbackTitle: "Feedback",
     feedbackHint: "Found a bug or have an idea? I'd love to hear from you.",
     feedbackButton: "Send feedback",
+    install: {
+      title: "Install the app",
+      installedTitle: "App installed 🎉",
+      installedBody:
+        "The score keeper is on your device — it opens like any app and works fully offline.",
+      promptHint:
+        "Add the score keeper to your home screen for one-tap access and offline play.",
+      manualHint:
+        "Add the score keeper to your home screen for one-tap access and offline play. Follow the steps for your phone below.",
+      button: "Install now",
+      error: "Installation could not start. Try the manual steps below.",
+      guideTitle: "How to install it by hand",
+      iosTitle: "iPhone & iPad (Safari)",
+      iosSteps: [
+        "Open this page in Safari.",
+        "Tap the Share button (a square with an upward arrow) at the bottom of the screen.",
+        "Scroll down and tap “Add to Home Screen”.",
+        "Tap “Add” at the top right — the app icon appears on your home screen.",
+      ],
+      androidTitle: "Android (Chrome)",
+      androidSteps: [
+        "Open this page in Chrome.",
+        "Tap the ⋮ menu at the top right.",
+        "Tap “Install app” (or “Add to Home screen”).",
+        "Confirm with “Install” — the app icon appears on your home screen.",
+      ],
+    },
+    durability: {
+      protectedTitle: "Your games are protected",
+      protectedBody:
+        "This device marks your saved games as durable storage, so they survive routine cache cleaning.",
+      atRiskTitle: "Protect your saved games",
+      atRiskBody:
+        "Browsers can clear this app's data to reclaim space, wiping your scoreboard, stats and history. Ask your browser to keep them safe.",
+      protect: "Protect my games",
+      protecting: "Protecting…",
+    },
   },
 
   setup: {
@@ -253,6 +291,10 @@ export const en: Strings = {
     identityHint:
       "Pick your name once to follow your own scores. It stays fixed for this game.",
     turnTitle: "Turn order",
+    sortLabel: "Order",
+    sortName: "A → Z",
+    sortGameOrder: "Seating",
+    sortRank: "Rank",
     you: "You",
     openApp: "Open the app for my own games",
     invalidTitle: "This code could not be read",
@@ -300,6 +342,18 @@ export const en: Strings = {
     bestFinalScore: "Best final score",
     worstRound: "Worst round",
     bestExactBid: "Best exact-bid rate",
+    totalGames: "Games logged",
+    totalRounds: "Rounds played",
+    totalPlunder: "Points plundered",
+    biggestRound: "Biggest single round",
+    longestStreak: "Hottest streak",
+    mostReckless: "Most reckless",
+    krakenBait: "Kraken bait",
+    zeroBidMaster: "Master of nothing",
+    longestWinStreak: "Longest win streak",
+    podiumRate: "Podium rate",
+    averageRank: "Average rank",
+    bestRoundScore: "Best round",
     unavailable: "Not available",
     chartLabel: (leader, rounds) =>
       `Score evolution after ${rounds} ${rounds === 1 ? "round" : "rounds"}; ${leader} leads.`,
@@ -314,6 +368,11 @@ export const en: Strings = {
       `${name} · ${score} points in round ${round} · ${date}`,
     rateRecordHolder: (name, rate, successes, attempts) =>
       `${name} · ${rate} (${successes}/${attempts})`,
+    streakRecordHolder: (name, streak) =>
+      `${name} · ${streak} ${streak === 1 ? "win" : "wins"} in a row`,
+    recklessRecordHolder: (name, averageBid) => `${name} · ${averageBid} avg bid`,
+    countRecordHolder: (name, count) =>
+      `${name} · ${count} ${count === 1 ? "time" : "times"}`,
     recentGame: (date, rank, score) =>
       `${date} · rank ${rank} · ${score} points`,
   },

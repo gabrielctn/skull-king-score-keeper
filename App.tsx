@@ -46,6 +46,7 @@ import { liveConfigured } from "./src/liveConfig";
 import { registerServiceWorker } from "./src/registerServiceWorker";
 import { createGame } from "./src/scoring";
 import { initializePwaInstallPrompt } from "./src/pwaInstall";
+import { requestPersistentStorage } from "./src/storagePersistence";
 import {
   deduplicateGames,
   downloadBackupJson,
@@ -271,6 +272,11 @@ export default function App() {
       if (saved && history.every((item) => item.id !== saved.id)) {
         queueHistorySave(migratedHistory, true);
       }
+      // Once there are games worth keeping, ask the browser to make the local
+      // data durable so it survives cache eviction. Gated on having data so a
+      // brand-new visitor is never prompted (some browsers show a permission
+      // dialog); Settings also exposes an explicit button.
+      if (saved || migratedHistory.length > 0) void requestPersistentStorage();
       setLang(savedLang ?? detectLang());
       setSettings(savedSettings);
       setLoading(false);
