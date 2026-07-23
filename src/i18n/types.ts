@@ -116,14 +116,25 @@ export interface Strings {
       androidTitle: string;
       androidSteps: string[];
     };
-    /** Storage-durability controls that keep saved games from being evicted. */
-    durability: {
-      protectedTitle: string;
-      protectedBody: string;
-      atRiskTitle: string;
-      atRiskBody: string;
-      protect: string;
-      protecting: string;
+    /** Automatic cloud backup that keeps each scorekeeper's games private. */
+    cloud: {
+      title: string;
+      /** Configured but no sync has happened yet this session. */
+      statusIdle: string;
+      statusSynced: string;
+      statusSyncing: string;
+      statusOffline: string;
+      statusUnavailable: string;
+      linkTitle: string;
+      linkHint: string;
+      codeLabel: string;
+      copy: string;
+      copied: string;
+      pasteLabel: string;
+      linkButton: string;
+      linking: string;
+      linkError: string;
+      linkSuccess: string;
     };
   };
 

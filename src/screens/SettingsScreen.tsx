@@ -6,6 +6,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
   useWindowDimensions,
@@ -27,10 +28,10 @@ import {
 import { CURRENT_RELEASE, CURRENT_RELEASE_DATE } from "../releases";
 import { isWakeLockSupported } from "../wakeLock";
 import {
-  isPersistentStorageSupported,
-  isStoragePersisted,
-  requestPersistentStorage,
-} from "../storagePersistence";
+  cloudBackupManager,
+  cloudConfigured,
+  CloudStatus,
+} from "../cloudSync";
 import ToggleSwitch from "../components/ToggleSwitch";
 import WhatsNewModal from "../components/WhatsNewModal";
 import InstallAppSection from "../components/InstallAppSection";
@@ -46,6 +47,8 @@ interface Props {
   onExportBackup: () => Promise<void>;
   onImportBackup: () => Promise<number | null>;
   onDeleteAllGames: () => Promise<void>;
+  /** Adopt another device's sync code, merge its games, return the new count. */
+  onLinkDevice: (code: string) => Promise<number | null>;
 }
 
 export default function SettingsScreen({
@@ -56,6 +59,7 @@ export default function SettingsScreen({
   onExportBackup,
   onImportBackup,
   onDeleteAllGames,
+  onLinkDevice,
 }: Props) {
   const { t, lang, setLang } = useI18n();
   const { width } = useWindowDimensions();
@@ -68,9 +72,18 @@ export default function SettingsScreen({
   const [deleteAllOpen, setDeleteAllOpen] = React.useState(false);
   const [whatsNewOpen, setWhatsNewOpen] = React.useState(false);
   const [releaseSeen, setReleaseSeen] = React.useState(true);
-  const [storageSupported, setStorageSupported] = React.useState(false);
-  const [storagePersisted, setStoragePersisted] = React.useState(false);
-  const [storageBusy, setStorageBusy] = React.useState(false);
+  const [cloudStatus, setCloudStatus] = React.useState<CloudStatus>(() =>
+    cloudBackupManager().getStatus()
+  );
+  const [linkOpen, setLinkOpen] = React.useState(false);
+  const [syncCode, setSyncCode] = React.useState<string | null>(null);
+  const [codeCopied, setCodeCopied] = React.useState(false);
+  const [pasteCode, setPasteCode] = React.useState("");
+  const [linkBusy, setLinkBusy] = React.useState(false);
+  const [linkMessage, setLinkMessage] = React.useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
 
   React.useEffect(() => {
     let active = true;
@@ -83,23 +96,60 @@ export default function SettingsScreen({
   }, []);
 
   React.useEffect(() => {
+    const cloud = cloudBackupManager();
+    setCloudStatus(cloud.getStatus());
+    return cloud.subscribe(setCloudStatus);
+  }, []);
+
+  // Fetch this device's sync code lazily, only once the link panel is opened.
+  React.useEffect(() => {
+    if (!linkOpen || syncCode || !cloudConfigured()) return;
     let active = true;
-    setStorageSupported(isPersistentStorageSupported());
-    void isStoragePersisted().then((persisted) => {
-      if (active) setStoragePersisted(persisted);
-    });
+    void cloudBackupManager()
+      .syncCode()
+      .then((code) => {
+        if (active) setSyncCode(code);
+      });
     return () => {
       active = false;
     };
-  }, []);
+  }, [linkOpen, syncCode]);
 
-  const protectStorage = async () => {
-    setStorageBusy(true);
+  const copySyncCode = async () => {
+    if (!syncCode) return;
     try {
-      setStoragePersisted(await requestPersistentStorage());
-    } finally {
-      setStorageBusy(false);
+      await navigator.clipboard.writeText(syncCode);
+      setCodeCopied(true);
+      setTimeout(() => setCodeCopied(false), 2000);
+    } catch {
+      // Clipboard unavailable: the code is selectable in the field instead.
     }
+  };
+
+  const linkDevice = async () => {
+    const code = pasteCode.trim();
+    if (!code || linkBusy) return;
+    setLinkBusy(true);
+    setLinkMessage(null);
+    try {
+      await onLinkDevice(code);
+      setPasteCode("");
+      // Adopting a code changes this device's identity, so its own code changes.
+      setSyncCode(null);
+      setLinkMessage({ type: "success", text: t.settings.cloud.linkSuccess });
+    } catch {
+      setLinkMessage({ type: "error", text: t.settings.cloud.linkError });
+    } finally {
+      setLinkBusy(false);
+    }
+  };
+
+  const cloudStatusText: Record<CloudStatus, string> = {
+    unavailable: t.settings.cloud.statusUnavailable,
+    idle: t.settings.cloud.statusIdle,
+    syncing: t.settings.cloud.statusSyncing,
+    synced: t.settings.cloud.statusSynced,
+    offline: t.settings.cloud.statusOffline,
   };
 
   const releaseDate = new Date(
@@ -258,42 +308,109 @@ export default function SettingsScreen({
           {t.settings.dataTitle}
         </Text>
         <Text style={styles.dataHint}>{t.settings.dataHint}</Text>
-        {storageSupported ? (
-          <View style={styles.durabilityCard}>
-            <Text style={styles.durabilityIcon}>
-              {storagePersisted ? "🛡️" : "⚠️"}
-            </Text>
-            <View style={styles.durabilityCopy}>
-              <Text style={styles.durabilityTitle}>
-                {storagePersisted
-                  ? t.settings.durability.protectedTitle
-                  : t.settings.durability.atRiskTitle}
+        {cloudConfigured() ? (
+          <>
+            <View style={styles.cloudCard}>
+              <Text style={styles.cloudIcon}>
+                {cloudStatus === "synced"
+                  ? "☁️"
+                  : cloudStatus === "offline"
+                    ? "⚠️"
+                    : "🔄"}
               </Text>
-              <Text style={styles.durabilityBody}>
-                {storagePersisted
-                  ? t.settings.durability.protectedBody
-                  : t.settings.durability.atRiskBody}
+              <View style={styles.cloudCopy}>
+                <Text style={styles.cloudTitle}>{t.settings.cloud.title}</Text>
+                <Text style={styles.cloudBody}>
+                  {cloudStatusText[cloudStatus]}
+                </Text>
+              </View>
+            </View>
+
+            <TouchableOpacity
+              style={styles.linkToggle}
+              onPress={() => setLinkOpen((open) => !open)}
+              accessibilityRole="button"
+              accessibilityState={{ expanded: linkOpen }}
+            >
+              <Text style={styles.linkToggleText}>
+                {t.settings.cloud.linkTitle}
               </Text>
-              {!storagePersisted ? (
+              <Text style={styles.linkChevron}>{linkOpen ? "⌃" : "⌄"}</Text>
+            </TouchableOpacity>
+
+            {linkOpen ? (
+              <View style={styles.linkPanel}>
+                <Text style={styles.linkHint}>{t.settings.cloud.linkHint}</Text>
+
+                <Text style={styles.codeLabel}>{t.settings.cloud.codeLabel}</Text>
+                <View style={styles.codeRow}>
+                  <TextInput
+                    style={styles.codeValue}
+                    value={syncCode ?? "…"}
+                    editable={false}
+                    selectTextOnFocus
+                    multiline
+                  />
+                  <TouchableOpacity
+                    style={styles.codeCopy}
+                    onPress={() => void copySyncCode()}
+                    disabled={!syncCode}
+                    accessibilityRole="button"
+                    accessibilityLabel={t.settings.cloud.copy}
+                  >
+                    <Text style={styles.codeCopyText}>
+                      {codeCopied
+                        ? t.settings.cloud.copied
+                        : t.settings.cloud.copy}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+
+                <Text style={[styles.codeLabel, styles.pasteLabel]}>
+                  {t.settings.cloud.pasteLabel}
+                </Text>
+                <TextInput
+                  style={styles.pasteInput}
+                  value={pasteCode}
+                  onChangeText={setPasteCode}
+                  placeholder="SKC1.…"
+                  placeholderTextColor={colors.textDim}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  multiline
+                />
                 <TouchableOpacity
                   style={[
-                    styles.durabilityButton,
-                    storageBusy && styles.durabilityButtonDisabled,
+                    styles.linkButton,
+                    (linkBusy || pasteCode.trim().length === 0) &&
+                      styles.linkButtonDisabled,
                   ]}
-                  onPress={() => void protectStorage()}
-                  disabled={storageBusy}
+                  onPress={() => void linkDevice()}
+                  disabled={linkBusy || pasteCode.trim().length === 0}
                   accessibilityRole="button"
-                  accessibilityState={{ disabled: storageBusy }}
                 >
-                  <Text style={styles.durabilityButtonText}>
-                    {storageBusy
-                      ? t.settings.durability.protecting
-                      : t.settings.durability.protect}
+                  <Text style={styles.linkButtonText}>
+                    {linkBusy
+                      ? t.settings.cloud.linking
+                      : t.settings.cloud.linkButton}
                   </Text>
                 </TouchableOpacity>
-              ) : null}
-            </View>
-          </View>
+                {linkMessage ? (
+                  <Text
+                    style={[
+                      styles.linkMessage,
+                      linkMessage.type === "success"
+                        ? styles.linkMessageSuccess
+                        : styles.linkMessageError,
+                    ]}
+                    accessibilityRole="alert"
+                  >
+                    {linkMessage.text}
+                  </Text>
+                ) : null}
+              </View>
+            ) : null}
+          </>
         ) : null}
         <View style={styles.dataActions}>
           <TouchableOpacity
@@ -497,36 +614,106 @@ const styles = StyleSheet.create({
     lineHeight: 17,
     marginBottom: spacing.md,
   },
-  durabilityCard: {
+  cloudCard: {
     flexDirection: "row",
-    alignItems: "flex-start",
+    alignItems: "center",
     backgroundColor: colors.bgElevated,
+    borderColor: colors.cardBorder,
+    borderWidth: 1,
+    borderRadius: radius.md,
+    padding: spacing.md,
+    marginBottom: spacing.sm,
+  },
+  cloudIcon: { fontSize: 18, marginEnd: spacing.sm, lineHeight: 22 },
+  cloudCopy: { flex: 1 },
+  cloudTitle: { color: colors.text, fontSize: 14, fontWeight: "800" },
+  cloudBody: {
+    color: colors.textDim,
+    fontSize: 12,
+    lineHeight: 17,
+    marginTop: 2,
+  },
+  linkToggle: {
+    minHeight: 44,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderColor: colors.cardBorder,
+    borderWidth: 1,
+    borderRadius: radius.md,
+    paddingHorizontal: spacing.md,
+    marginBottom: spacing.md,
+  },
+  linkToggleText: { color: colors.gold, fontSize: 14, fontWeight: "800" },
+  linkChevron: { color: colors.gold, fontSize: 16, fontWeight: "800" },
+  linkPanel: {
     borderColor: colors.cardBorder,
     borderWidth: 1,
     borderRadius: radius.md,
     padding: spacing.md,
     marginBottom: spacing.md,
   },
-  durabilityIcon: { fontSize: 18, marginEnd: spacing.sm, lineHeight: 22 },
-  durabilityCopy: { flex: 1 },
-  durabilityTitle: { color: colors.text, fontSize: 14, fontWeight: "800" },
-  durabilityBody: {
+  linkHint: {
     color: colors.textDim,
     fontSize: 12,
     lineHeight: 17,
-    marginTop: 2,
+    marginBottom: spacing.md,
   },
-  durabilityButton: {
-    alignSelf: "flex-start",
-    minHeight: 40,
+  codeLabel: {
+    color: colors.gold,
+    fontSize: 11,
+    fontWeight: "800",
+    textTransform: "uppercase",
+    letterSpacing: 0.6,
+    marginBottom: spacing.xs,
+  },
+  pasteLabel: { marginTop: spacing.md },
+  codeRow: { flexDirection: "row", alignItems: "stretch" },
+  codeValue: {
+    flex: 1,
+    color: colors.text,
+    fontSize: 12,
+    backgroundColor: colors.bg,
+    borderColor: colors.cardBorder,
+    borderWidth: 1,
+    borderRadius: radius.sm,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.sm,
+    marginEnd: spacing.sm,
+  },
+  codeCopy: {
+    minWidth: 72,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.gold,
+    borderRadius: radius.sm,
+    paddingHorizontal: spacing.sm,
+  },
+  codeCopyText: { color: colors.bg, fontSize: 13, fontWeight: "800" },
+  pasteInput: {
+    color: colors.text,
+    fontSize: 13,
+    backgroundColor: colors.bg,
+    borderColor: colors.cardBorder,
+    borderWidth: 1,
+    borderRadius: radius.sm,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.sm,
+    minHeight: 44,
+  },
+  linkButton: {
+    minHeight: 44,
+    alignItems: "center",
     justifyContent: "center",
     backgroundColor: colors.gold,
     borderRadius: radius.md,
-    paddingHorizontal: spacing.md,
     marginTop: spacing.sm,
   },
-  durabilityButtonDisabled: { opacity: 0.5 },
-  durabilityButtonText: { color: colors.bg, fontSize: 13, fontWeight: "800" },
+  linkButtonDisabled: { opacity: 0.5 },
+  linkButtonText: { color: colors.bg, fontSize: 14, fontWeight: "800" },
+  linkMessage: { fontSize: 12, marginTop: spacing.sm },
+  linkMessageSuccess: { color: colors.positive },
+  linkMessageError: { color: colors.negative },
   dataActions: { flexDirection: "row" },
   dataButton: {
     flex: 1,

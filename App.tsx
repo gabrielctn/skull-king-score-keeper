@@ -47,7 +47,9 @@ import { registerServiceWorker } from "./src/registerServiceWorker";
 import { createGame } from "./src/scoring";
 import { initializePwaInstallPrompt } from "./src/pwaInstall";
 import { requestPersistentStorage } from "./src/storagePersistence";
+import { cloudBackupManager, cloudConfigured } from "./src/cloudSync";
 import {
+  BackupData,
   deduplicateGames,
   downloadBackupJson,
   mergeBackupData,
@@ -139,6 +141,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [storageError, setStorageError] = useState(false);
   const historyRef = useRef<Game[]>([]);
+  const gameRef = useRef<Game | null>(null);
   const pendingCurrentSave = useRef<PendingCurrentGame>(undefined);
   const currentSaveWorker = useRef<Promise<void> | null>(null);
   const pendingHistorySave = useRef<Game[] | null>(null);
@@ -219,6 +222,28 @@ export default function App() {
     while (historySaveWorker.current) await historySaveWorker.current;
   };
 
+  // Mirror every game change to this device's private cloud backup.
+  const pushCloud = (currentGame: Game | null, history: Game[]) => {
+    if (cloudConfigured()) cloudBackupManager().push({ currentGame, history });
+  };
+
+  // Apply a reconciled backup (from the cloud on launch, or a linked device)
+  // to both the live UI state and the local store.
+  const applyBackupData = (data: BackupData) => {
+    historyRef.current = data.history;
+    setGameHistory(data.history);
+    queueHistorySave(data.history, true);
+    gameRef.current = data.currentGame;
+    setGame(data.currentGame);
+    queueCurrentSave(data.currentGame);
+  };
+
+  // Keep a synchronous mirror of the current game so cloud reconciles that run
+  // after an await merge against the latest local state.
+  useEffect(() => {
+    gameRef.current = game;
+  }, [game]);
+
   // A QR code scanned while the app is already open navigates to the same
   // page with a new share payload in the hash; pick it up without a reload.
   useEffect(() => {
@@ -262,6 +287,9 @@ export default function App() {
         loadSettings(),
       ]);
       if (saved) setGame(saved);
+      // Populate the ref synchronously (the [game] effect runs later, after the
+      // background cloud reconcile below may have already read it).
+      gameRef.current = saved;
       const migratedHistory = saved
         ? [saved, ...history.filter((item) => item.id !== saved.id)].sort(
             (a, b) => b.updatedAt - a.updatedAt
@@ -272,14 +300,39 @@ export default function App() {
       if (saved && history.every((item) => item.id !== saved.id)) {
         queueHistorySave(migratedHistory, true);
       }
-      // Once there are games worth keeping, ask the browser to make the local
-      // data durable so it survives cache eviction. Gated on having data so a
-      // brand-new visitor is never prompted (some browsers show a permission
-      // dialog); Settings also exposes an explicit button.
+      // Once there are games worth keeping, quietly ask the browser to make the
+      // local data durable too (belt and braces alongside the cloud backup).
       if (saved || migratedHistory.length > 0) void requestPersistentStorage();
       setLang(savedLang ?? detectLang());
       setSettings(savedSettings);
       setLoading(false);
+
+      // Reconcile with this device's private cloud backup in the background:
+      // pull the stored snapshot, merge it with what's local (newest wins per
+      // game), apply the result, and push it back. Falls back to local-only on
+      // any failure, so nothing blocks or breaks offline.
+      if (cloudConfigured()) {
+        void (async () => {
+          const cloud = cloudBackupManager();
+          const remote = await cloud.pull();
+          const localData: BackupData = {
+            currentGame: gameRef.current,
+            history: historyRef.current,
+          };
+          if (!remote) {
+            cloud.push(localData);
+            return;
+          }
+          let merged = localData;
+          try {
+            merged = mergeBackupData(localData, remote);
+          } catch {
+            merged = localData;
+          }
+          applyBackupData(merged);
+          cloud.push(merged);
+        })();
+      }
     })();
   }, []);
 
@@ -297,6 +350,7 @@ export default function App() {
 
   const persist = (g: Game, historyImmediate = false) => {
     setGame(g);
+    gameRef.current = g;
     queueCurrentSave(g);
     const next = [
       g,
@@ -307,6 +361,7 @@ export default function App() {
     queueHistorySave(next, historyImmediate);
     // Mirror the change to any live session sharing this game.
     if (liveConfigured()) liveSessionManager().notifyGameChanged(g);
+    pushCloud(g, next);
   };
 
   const handleNewGame = () => setScreen("setup");
@@ -319,6 +374,7 @@ export default function App() {
   const handleOpenHistory = (selectedGame: Game) => {
     setGame(selectedGame);
     queueCurrentSave(selectedGame);
+    pushCloud(selectedGame, historyRef.current);
     setScreen(selectedGame.status === "finished" ? "results" : "game");
   };
 
@@ -327,10 +383,27 @@ export default function App() {
     historyRef.current = next;
     setGameHistory(next);
     queueHistorySave(next, true);
+    const nextCurrent = game?.id === gameId ? null : game;
     if (game?.id === gameId) {
       setGame(null);
       queueCurrentSave(null);
     }
+    pushCloud(nextCurrent, next);
+  };
+
+  const handleLinkDevice = async (code: string): Promise<number | null> => {
+    const remote = await cloudBackupManager().adopt(code);
+    const localData: BackupData = {
+      currentGame: gameRef.current,
+      history: historyRef.current,
+    };
+    const merged = mergeBackupData(
+      localData,
+      remote ?? { currentGame: null, history: [] }
+    );
+    applyBackupData(merged);
+    cloudBackupManager().push(merged);
+    return merged.history.length;
   };
 
   const handleExportBackup = async () => {
@@ -357,6 +430,7 @@ export default function App() {
     historyRef.current = merged.history;
     setGame(merged.currentGame);
     setGameHistory(merged.history);
+    pushCloud(merged.currentGame, merged.history);
 
     return deduplicateGames([
       ...imported.history,
@@ -375,6 +449,7 @@ export default function App() {
     historyRef.current = [];
     setGame(null);
     setGameHistory([]);
+    pushCloud(null, []);
   };
 
   const handleFinish = (g: Game) => {
@@ -389,6 +464,7 @@ export default function App() {
   const handleNewFromResults = () => {
     queueCurrentSave(null);
     setGame(null);
+    pushCloud(null, historyRef.current);
     setScreen("setup");
   };
 
@@ -457,6 +533,7 @@ export default function App() {
             onExportBackup={handleExportBackup}
             onImportBackup={handleImportBackup}
             onDeleteAllGames={handleDeleteAllGames}
+            onLinkDevice={handleLinkDevice}
           />
         )}
         {!spectatorActive && screen === "setup" && (

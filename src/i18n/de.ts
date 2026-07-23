@@ -54,10 +54,8 @@ export const de: Strings = {
     automaticUpdatesBody:
       "Installierte Apps laden jede neue Version automatisch und wechseln zu ihr, sobald das Gerät online ist.",
     items: [
-      "Installiere die App mit einem Tipp: ein neuer Knopf in den Einstellungen fügt sie zum Startbildschirm hinzu — mit Schritt-für-Schritt-Anleitungen für iPhone und Android, falls dein Browser sie braucht.",
-      "Verfolgst du die Punkte auf deinem Handy? Ordne die Spieler von A–Z oder nach Sitzplatz, damit ein Name nicht mehr springt, wenn sich die Punkte ändern.",
-      "Punktetafel, Statistiken und Verlauf werden jetzt als dauerhafter Speicher gehalten und überstehen so das übliche Leeren des Caches.",
-      "Neue Crew-Rekorde und -Statistiken: größte Runde, beste Serie, tollkühnster Kapitän, Kraken-Köder, Podestquoten und mehr.",
+      "Deine Spiele werden jetzt automatisch und privat in der Cloud gesichert — Punktetafel, Rangliste und Statistiken kehren zurück, selbst wenn die Daten dieses Geräts gelöscht werden.",
+      "Spielst du auf einem anderen Handy? Kopiere deinen Sync-Code aus den Einstellungen und füge ihn dort ein, um all deine Spiele zu laden.",
     ],
     close: "Verstanden",
   },
@@ -115,15 +113,25 @@ export const de: Strings = {
         "Bestätige mit „Installieren“ — das App-Symbol erscheint auf dem Startbildschirm.",
       ],
     },
-    durability: {
-      protectedTitle: "Deine Spiele sind geschützt",
-      protectedBody:
-        "Dieses Gerät markiert deine gespeicherten Spiele als dauerhaften Speicher, sodass sie das übliche Leeren des Caches überstehen.",
-      atRiskTitle: "Schütze deine gespeicherten Spiele",
-      atRiskBody:
-        "Browser können die Daten der App löschen, um Platz zu schaffen — das würde Punktetafel, Statistiken und Verlauf löschen. Bitte den Browser, sie zu behalten.",
-      protect: "Meine Spiele schützen",
-      protecting: "Wird geschützt…",
+    cloud: {
+      title: "Cloud-Sicherung",
+      statusIdle: "Cloud-Sicherung ist aktiv.",
+      statusSynced:
+        "Gesichert — deine Spiele werden automatisch in der Cloud gespeichert und kehren zurück, falls die Daten dieses Geräts gelöscht werden.",
+      statusSyncing: "Wird in der Cloud gespeichert…",
+      statusOffline: "Offline — Änderungen werden synchronisiert, sobald du wieder online bist.",
+      statusUnavailable: "Cloud-Sicherung ist für diese App nicht eingerichtet.",
+      linkTitle: "Deine Spiele auf einem anderen Handy nutzen",
+      linkHint:
+        "Kopiere den Code dieses Geräts und füge ihn auf dem anderen Handy ein, um dieselben Spiele dort zu laden. Halte ihn geheim — wer ihn hat, kann deine Spiele sehen.",
+      codeLabel: "Code dieses Geräts",
+      copy: "Kopieren",
+      copied: "Kopiert",
+      pasteLabel: "Code eines anderen Geräts einfügen",
+      linkButton: "Diese Spiele hier laden",
+      linking: "Wird geladen…",
+      linkError: "Dieser Code konnte nicht gelesen werden.",
+      linkSuccess: "Fertig — Spiele auf diesem Gerät zusammengeführt.",
     },
   },
 
