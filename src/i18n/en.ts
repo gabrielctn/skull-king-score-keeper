@@ -56,7 +56,6 @@ export const en: Strings = {
     items: [
       "Your games now back up to the cloud automatically and privately — your scoreboard, leaderboard and stats come back even after this device's data is cleared.",
       "Playing on another phone? Copy your sync code from Settings and paste it there to load all your games.",
-      "Clearer install help, including a note for Xiaomi/MIUI phones where the new icon can hide in the app drawer.",
     ],
     close: "Got it",
   },
@@ -112,8 +111,6 @@ export const en: Strings = {
         "Tap “Install app” (or “Add to Home screen”).",
         "Confirm with “Install” — the app icon appears on your home screen.",
       ],
-      androidNote:
-        "On Xiaomi/Redmi (MIUI) and some other phones the icon can land in the app drawer instead of the home screen, or you may first need to allow Chrome to create home-screen shortcuts in the system settings.",
     },
     cloud: {
       title: "Cloud backup",

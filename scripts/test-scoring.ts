@@ -818,7 +818,7 @@ for (const [locale, strings] of Object.entries({ en, fr, es, de, ar, zh })) {
 }
 
 console.log("\ni18n: every locale's rules and release notes stay in sync");
-eq("English release-note entries", en.whatsNew.items.length, 3);
+eq("English release-note entries", en.whatsNew.items.length, 2);
 for (const [locale, strings] of Object.entries({ fr, es, de, ar, zh })) {
   eq(`${locale} scoring entries`, strings.rules.scoring.length, en.rules.scoring.length);
   eq(`${locale} rascal entries`, (strings.rules.rascal ?? []).length, en.rules.rascal?.length ?? -1);

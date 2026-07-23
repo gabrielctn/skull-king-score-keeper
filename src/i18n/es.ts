@@ -58,7 +58,6 @@ export const es: Strings = {
     items: [
       "Tus partidas ahora se respaldan en la nube automáticamente y en privado: tu marcador, clasificación y estadísticas vuelven incluso tras borrar los datos de este dispositivo.",
       "¿Juegas en otro teléfono? Copia tu código de sincronización desde Ajustes y pégalo allí para cargar todas tus partidas.",
-      "Ayuda de instalación más clara, con una nota para los teléfonos Xiaomi/MIUI donde el icono nuevo puede esconderse en el cajón de aplicaciones.",
     ],
     close: "Entendido",
   },
@@ -117,8 +116,6 @@ export const es: Strings = {
         "Toca «Instalar aplicación» (o «Añadir a la pantalla de inicio»).",
         "Confirma con «Instalar» — el icono aparece en tu pantalla de inicio.",
       ],
-      androidNote:
-        "En Xiaomi/Redmi (MIUI) y algunos otros teléfonos, el icono puede acabar en el cajón de aplicaciones en lugar de la pantalla de inicio, o quizá debas permitir primero que Chrome cree accesos directos en los ajustes del sistema.",
     },
     cloud: {
       title: "Copia en la nube",

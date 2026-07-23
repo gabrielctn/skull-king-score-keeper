@@ -111,7 +111,6 @@ export default function InstallAppSection() {
               <PlatformGuide
                 title={copy.androidTitle}
                 steps={copy.androidSteps}
-                note={copy.androidNote}
                 last
               />
             </View>
@@ -125,12 +124,10 @@ export default function InstallAppSection() {
 function PlatformGuide({
   title,
   steps,
-  note,
   last,
 }: {
   title: string;
   steps: string[];
-  note?: string;
   last?: boolean;
 }) {
   return (
@@ -144,7 +141,6 @@ function PlatformGuide({
           <Text style={styles.stepText}>{step}</Text>
         </View>
       ))}
-      {note ? <Text style={styles.platformNote}>{note}</Text> : null}
     </View>
   );
 }
@@ -253,12 +249,5 @@ const styles = StyleSheet.create({
     color: colors.textDim,
     fontSize: 13,
     lineHeight: 19,
-  },
-  platformNote: {
-    color: colors.textDim,
-    fontSize: 12,
-    lineHeight: 17,
-    fontStyle: "italic",
-    marginTop: spacing.sm,
   },
 });

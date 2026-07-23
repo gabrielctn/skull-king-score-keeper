@@ -56,7 +56,6 @@ export const de: Strings = {
     items: [
       "Deine Spiele werden jetzt automatisch und privat in der Cloud gesichert — Punktetafel, Rangliste und Statistiken kehren zurück, selbst wenn die Daten dieses Geräts gelöscht werden.",
       "Spielst du auf einem anderen Handy? Kopiere deinen Sync-Code aus den Einstellungen und füge ihn dort ein, um all deine Spiele zu laden.",
-      "Klarere Installationshilfe, mit einem Hinweis für Xiaomi/MIUI-Handys, bei denen sich das neue Symbol in der App-Übersicht verstecken kann.",
     ],
     close: "Verstanden",
   },
@@ -113,8 +112,6 @@ export const de: Strings = {
         "Tippe auf „App installieren“ (oder „Zum Startbildschirm hinzufügen“).",
         "Bestätige mit „Installieren“ — das App-Symbol erscheint auf dem Startbildschirm.",
       ],
-      androidNote:
-        "Auf Xiaomi/Redmi (MIUI) und einigen anderen Handys landet das Symbol eventuell in der App-Übersicht statt auf dem Startbildschirm, oder du musst Chrome in den Systemeinstellungen erst erlauben, Verknüpfungen anzulegen.",
     },
     cloud: {
       title: "Cloud-Sicherung",

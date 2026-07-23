@@ -115,8 +115,6 @@ export interface Strings {
       iosSteps: string[];
       androidTitle: string;
       androidSteps: string[];
-      /** Note for phones (e.g. Xiaomi/MIUI) that hide the new icon. */
-      androidNote: string;
     };
     /** Automatic cloud backup that keeps each scorekeeper's games private. */
     cloud: {

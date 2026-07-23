@@ -57,7 +57,6 @@ export const fr: Strings = {
     items: [
       "Vos parties sont désormais sauvegardées dans le cloud automatiquement et en privé — votre tableau des scores, votre classement et vos stats reviennent même après l'effacement des données de cet appareil.",
       "Vous jouez sur un autre téléphone ? Copiez votre code de synchro depuis les Paramètres et collez-le là-bas pour charger toutes vos parties.",
-      "Aide à l'installation plus claire, avec une note pour les téléphones Xiaomi/MIUI où la nouvelle icône peut se cacher dans le tiroir d'applications.",
     ],
     close: "Compris",
   },
@@ -114,8 +113,6 @@ export const fr: Strings = {
         "Touchez « Installer l'application » (ou « Ajouter à l'écran d'accueil »).",
         "Confirmez avec « Installer » — l'icône apparaît sur votre écran d'accueil.",
       ],
-      androidNote:
-        "Sur Xiaomi/Redmi (MIUI) et certains autres téléphones, l'icône peut arriver dans le tiroir d'applications au lieu de l'écran d'accueil, ou vous devrez d'abord autoriser Chrome à créer des raccourcis dans les réglages du système.",
     },
     cloud: {
       title: "Sauvegarde cloud",
