@@ -287,6 +287,9 @@ export default function App() {
         loadSettings(),
       ]);
       if (saved) setGame(saved);
+      // Populate the ref synchronously (the [game] effect runs later, after the
+      // background cloud reconcile below may have already read it).
+      gameRef.current = saved;
       const migratedHistory = saved
         ? [saved, ...history.filter((item) => item.id !== saved.id)].sort(
             (a, b) => b.updatedAt - a.updatedAt
@@ -347,6 +350,7 @@ export default function App() {
 
   const persist = (g: Game, historyImmediate = false) => {
     setGame(g);
+    gameRef.current = g;
     queueCurrentSave(g);
     const next = [
       g,

@@ -142,6 +142,7 @@ const decoded = decodeSyncCode(code);
 check("round-trips the owner id", decoded?.ownerId === owner.ownerId);
 check("round-trips the writer key", decoded?.writerKey === owner.writerKey);
 check("code carries the versioned prefix", code.startsWith("SKC1."));
+check("code strips base64 padding", !code.includes("="));
 check("rejects an unprefixed code", decodeSyncCode("nope") === null);
 check("rejects malformed base64", decodeSyncCode("SKC1.$$$$") === null);
 check(
@@ -219,7 +220,24 @@ async function run() {
   const adopted = await manager.adopt(encodeSyncCode(foreign));
   eq("adopt returns the foreign games", adopted?.history[0]?.id, "shared");
   check("adopt switches this device's owner", store.owner?.ownerId === foreign.ownerId);
-  await check("adopt rejects a bad code", await rejects(() => manager.adopt("garbage")));
+
+  const ownerBeforeBadAdopt = store.owner?.ownerId;
+  check(
+    "adopt rejects a well-formed but unknown code",
+    await rejects(() =>
+      manager.adopt(
+        encodeSyncCode({
+          ownerId: "22222222-2222-4222-8222-222222222222",
+          writerKey: "e".repeat(48),
+        })
+      )
+    )
+  );
+  check(
+    "a rejected adopt leaves the working owner unchanged",
+    store.owner?.ownerId === ownerBeforeBadAdopt
+  );
+  check("adopt rejects a bad code", await rejects(() => manager.adopt("garbage")));
 
   console.log(`\n${passed} passed, ${failed} failed`);
   if (failed > 0) process.exit(1);

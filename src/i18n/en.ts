@@ -117,6 +117,7 @@ export const en: Strings = {
     },
     cloud: {
       title: "Cloud backup",
+      statusIdle: "Cloud backup is on.",
       statusSynced:
         "Backed up — your games save to the cloud automatically and come back if this device's data is cleared.",
       statusSyncing: "Saving to the cloud…",

@@ -122,6 +122,7 @@ export const es: Strings = {
     },
     cloud: {
       title: "Copia en la nube",
+      statusIdle: "La copia en la nube está activada.",
       statusSynced:
         "Guardado — tus partidas se guardan en la nube automáticamente y vuelven si se borran los datos de este dispositivo.",
       statusSyncing: "Guardando en la nube…",

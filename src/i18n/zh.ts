@@ -111,6 +111,7 @@ export const zh: Strings = {
     },
     cloud: {
       title: "云端备份",
+      statusIdle: "云端备份已开启。",
       statusSynced: "已备份——你的对局会自动保存到云端，即使清除本设备数据也能找回。",
       statusSyncing: "正在保存到云端…",
       statusOffline: "离线——恢复联网后将自动同步。",

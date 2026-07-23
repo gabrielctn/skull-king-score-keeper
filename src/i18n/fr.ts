@@ -119,6 +119,7 @@ export const fr: Strings = {
     },
     cloud: {
       title: "Sauvegarde cloud",
+      statusIdle: "La sauvegarde cloud est activée.",
       statusSynced:
         "Sauvegardé — vos parties sont enregistrées dans le cloud automatiquement et reviennent si les données de cet appareil sont effacées.",
       statusSyncing: "Enregistrement dans le cloud…",

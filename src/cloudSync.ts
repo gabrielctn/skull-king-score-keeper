@@ -56,7 +56,12 @@ function base64UrlEncode(input: string): string {
 }
 
 function base64UrlDecode(input: string): string {
-  const base64 = input.replace(/-/g, "+").replace(/_/g, "/");
+  const normalized = input.replace(/-/g, "+").replace(/_/g, "/");
+  // Restore the "=" padding that encoding strips: browser atob() requires the
+  // base64 length to be a multiple of 4, and a remainder of 1 is never valid.
+  const remainder = normalized.length % 4;
+  if (remainder === 1) throw new Error("invalid base64");
+  const base64 = remainder === 0 ? normalized : normalized + "=".repeat(4 - remainder);
   return typeof atob !== "undefined"
     ? atob(base64)
     : Buffer.from(base64, "base64").toString("utf8");
@@ -340,6 +345,12 @@ export class CloudBackupManager {
     } catch {
       this.setStatus("offline");
       throw new Error("cloud unreachable");
+    }
+    // get_user_backup returns null for an unknown owner or a wrong key (a real
+    // owner always has at least its initial "{}" state), so a well-formed but
+    // wrong code must never overwrite this device's working identity.
+    if (state === null || state === undefined) {
+      throw new Error("unknown sync code");
     }
     this.owner = owner;
     this.ownerChecked = true;

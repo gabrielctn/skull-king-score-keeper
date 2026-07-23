@@ -118,6 +118,7 @@ export const de: Strings = {
     },
     cloud: {
       title: "Cloud-Sicherung",
+      statusIdle: "Cloud-Sicherung ist aktiv.",
       statusSynced:
         "Gesichert — deine Spiele werden automatisch in der Cloud gespeichert und kehren zurück, falls die Daten dieses Geräts gelöscht werden.",
       statusSyncing: "Wird in der Cloud gespeichert…",

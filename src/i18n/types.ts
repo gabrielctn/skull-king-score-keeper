@@ -121,6 +121,8 @@ export interface Strings {
     /** Automatic cloud backup that keeps each scorekeeper's games private. */
     cloud: {
       title: string;
+      /** Configured but no sync has happened yet this session. */
+      statusIdle: string;
       statusSynced: string;
       statusSyncing: string;
       statusOffline: string;

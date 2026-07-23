@@ -146,7 +146,7 @@ export default function SettingsScreen({
 
   const cloudStatusText: Record<CloudStatus, string> = {
     unavailable: t.settings.cloud.statusUnavailable,
-    idle: t.settings.cloud.statusSyncing,
+    idle: t.settings.cloud.statusIdle,
     syncing: t.settings.cloud.statusSyncing,
     synced: t.settings.cloud.statusSynced,
     offline: t.settings.cloud.statusOffline,
