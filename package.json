@@ -1,13 +1,13 @@
 {
   "name": "skull-king-scorekeeper",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "main": "index.ts",
   "scripts": {
     "start": "expo start --web",
     "web": "expo start --web",
     "build:web": "expo export -p web && node scripts/build-pwa.mjs",
     "serve:web": "npx serve dist -l 8080",
-    "test": "npm run typecheck && npm run test:scoring && npm run test:stats && npm run test:storage && npm run test:backup && npm run test:sharelink && npm run test:livesession && npm run test:responsive && npm run test:assets && npm run test:branding",
+    "test": "npm run typecheck && npm run test:scoring && npm run test:stats && npm run test:storage && npm run test:backup && npm run test:sharelink && npm run test:livesession && npm run test:cloudsync && npm run test:responsive && npm run test:assets && npm run test:branding",
     "typecheck": "tsc --noEmit",
     "test:scoring": "node --import tsx scripts/test-scoring.ts",
     "test:stats": "node --import tsx scripts/test-stats.ts",
@@ -15,6 +15,7 @@
     "test:backup": "node --import tsx scripts/test-backup.ts",
     "test:sharelink": "node --import tsx scripts/test-sharelink.ts",
     "test:livesession": "node --import tsx scripts/test-livesession.ts",
+    "test:cloudsync": "node --import tsx scripts/test-cloudsync.ts",
     "test:responsive": "node --import tsx scripts/test-responsive-layout.ts",
     "test:assets": "node --import tsx scripts/test-assets.ts",
     "test:branding": "node --import tsx scripts/test-branding.ts"

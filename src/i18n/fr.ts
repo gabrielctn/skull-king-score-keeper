@@ -55,10 +55,9 @@ export const fr: Strings = {
     automaticUpdatesBody:
       "Les applications installées téléchargent désormais chaque nouvelle version automatiquement et l'activent dès que l'appareil est en ligne.",
     items: [
-      "Installez l'appli en un geste : un nouveau bouton dans les Paramètres l'ajoute à votre écran d'accueil, avec des guides pas à pas pour iPhone et Android si votre navigateur en a besoin.",
-      "Vous suivez les scores sur votre téléphone ? Classez les joueurs de A à Z ou par place à table pour qu'un nom ne saute plus quand les scores changent.",
-      "Votre tableau des scores, vos stats et votre historique sont désormais conservés en stockage durable : ils survivent au nettoyage habituel du cache.",
-      "De nouveaux records et stats d'équipage : plus grosse manche, plus longue série, capitaine le plus casse-cou, appât à Kraken, taux de podium et plus encore.",
+      "Vos parties sont désormais sauvegardées dans le cloud automatiquement et en privé — votre tableau des scores, votre classement et vos stats reviennent même après l'effacement des données de cet appareil.",
+      "Vous jouez sur un autre téléphone ? Copiez votre code de synchro depuis les Paramètres et collez-le là-bas pour charger toutes vos parties.",
+      "Aide à l'installation plus claire, avec une note pour les téléphones Xiaomi/MIUI où la nouvelle icône peut se cacher dans le tiroir d'applications.",
     ],
     close: "Compris",
   },
@@ -115,16 +114,27 @@ export const fr: Strings = {
         "Touchez « Installer l'application » (ou « Ajouter à l'écran d'accueil »).",
         "Confirmez avec « Installer » — l'icône apparaît sur votre écran d'accueil.",
       ],
+      androidNote:
+        "Sur Xiaomi/Redmi (MIUI) et certains autres téléphones, l'icône peut arriver dans le tiroir d'applications au lieu de l'écran d'accueil, ou vous devrez d'abord autoriser Chrome à créer des raccourcis dans les réglages du système.",
     },
-    durability: {
-      protectedTitle: "Vos parties sont protégées",
-      protectedBody:
-        "Cet appareil marque vos parties comme stockage durable : elles survivent au nettoyage habituel du cache.",
-      atRiskTitle: "Protégez vos parties enregistrées",
-      atRiskBody:
-        "Les navigateurs peuvent effacer les données de l'appli pour récupérer de l'espace, supprimant votre tableau des scores, vos stats et votre historique. Demandez au navigateur de les conserver.",
-      protect: "Protéger mes parties",
-      protecting: "Protection…",
+    cloud: {
+      title: "Sauvegarde cloud",
+      statusSynced:
+        "Sauvegardé — vos parties sont enregistrées dans le cloud automatiquement et reviennent si les données de cet appareil sont effacées.",
+      statusSyncing: "Enregistrement dans le cloud…",
+      statusOffline: "Hors ligne — les changements se synchroniseront une fois de retour en ligne.",
+      statusUnavailable: "La sauvegarde cloud n'est pas configurée pour cette appli.",
+      linkTitle: "Utiliser vos parties sur un autre téléphone",
+      linkHint:
+        "Copiez le code de cet appareil, puis collez-le sur l'autre téléphone pour y charger les mêmes parties. Gardez-le privé — quiconque l'a peut voir vos parties.",
+      codeLabel: "Code de cet appareil",
+      copy: "Copier",
+      copied: "Copié",
+      pasteLabel: "Coller un code d'un autre appareil",
+      linkButton: "Charger ces parties ici",
+      linking: "Chargement…",
+      linkError: "Ce code n'a pas pu être lu.",
+      linkSuccess: "Terminé — parties fusionnées sur cet appareil.",
     },
   },
 

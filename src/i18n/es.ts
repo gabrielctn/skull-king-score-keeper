@@ -56,10 +56,9 @@ export const es: Strings = {
     automaticUpdatesBody:
       "Las aplicaciones instaladas ahora descargan automáticamente cada nueva versión y la activan en cuanto el dispositivo se conecta a internet.",
     items: [
-      "Instala la app con un toque: un nuevo botón en Ajustes la añade a tu pantalla de inicio, con guías paso a paso para iPhone y Android cuando el navegador lo necesita.",
-      "¿Sigues los puntos en tu teléfono? Ordena a los jugadores de la A a la Z o por asiento para que un nombre no salte cuando cambian los puntos.",
-      "Tu marcador, estadísticas e historial ahora se guardan como almacenamiento duradero, así sobreviven a la limpieza habitual de la caché.",
-      "Nuevos récords y estadísticas de la tripulación: mayor ronda, mejor racha, capitán más temerario, cebo del kraken, tasas de podio y más.",
+      "Tus partidas ahora se respaldan en la nube automáticamente y en privado: tu marcador, clasificación y estadísticas vuelven incluso tras borrar los datos de este dispositivo.",
+      "¿Juegas en otro teléfono? Copia tu código de sincronización desde Ajustes y pégalo allí para cargar todas tus partidas.",
+      "Ayuda de instalación más clara, con una nota para los teléfonos Xiaomi/MIUI donde el icono nuevo puede esconderse en el cajón de aplicaciones.",
     ],
     close: "Entendido",
   },
@@ -118,16 +117,27 @@ export const es: Strings = {
         "Toca «Instalar aplicación» (o «Añadir a la pantalla de inicio»).",
         "Confirma con «Instalar» — el icono aparece en tu pantalla de inicio.",
       ],
+      androidNote:
+        "En Xiaomi/Redmi (MIUI) y algunos otros teléfonos, el icono puede acabar en el cajón de aplicaciones en lugar de la pantalla de inicio, o quizá debas permitir primero que Chrome cree accesos directos en los ajustes del sistema.",
     },
-    durability: {
-      protectedTitle: "Tus partidas están protegidas",
-      protectedBody:
-        "Este dispositivo marca tus partidas como almacenamiento duradero, así sobreviven a la limpieza habitual de la caché.",
-      atRiskTitle: "Protege tus partidas guardadas",
-      atRiskBody:
-        "Los navegadores pueden borrar los datos de la app para liberar espacio, eliminando tu marcador, estadísticas e historial. Pide al navegador que los conserve.",
-      protect: "Proteger mis partidas",
-      protecting: "Protegiendo…",
+    cloud: {
+      title: "Copia en la nube",
+      statusSynced:
+        "Guardado — tus partidas se guardan en la nube automáticamente y vuelven si se borran los datos de este dispositivo.",
+      statusSyncing: "Guardando en la nube…",
+      statusOffline: "Sin conexión — los cambios se sincronizarán al volver a estar en línea.",
+      statusUnavailable: "La copia en la nube no está configurada en esta app.",
+      linkTitle: "Usar tus partidas en otro teléfono",
+      linkHint:
+        "Copia el código de este dispositivo y pégalo en el otro teléfono para cargar allí las mismas partidas. Mantenlo privado: cualquiera que lo tenga puede ver tus partidas.",
+      codeLabel: "Código de este dispositivo",
+      copy: "Copiar",
+      copied: "Copiado",
+      pasteLabel: "Pega un código de otro dispositivo",
+      linkButton: "Cargar esas partidas aquí",
+      linking: "Cargando…",
+      linkError: "No se pudo leer ese código.",
+      linkSuccess: "Listo — partidas combinadas en este dispositivo.",
     },
   },
 

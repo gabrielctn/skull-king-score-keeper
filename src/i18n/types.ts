@@ -115,15 +115,26 @@ export interface Strings {
       iosSteps: string[];
       androidTitle: string;
       androidSteps: string[];
+      /** Note for phones (e.g. Xiaomi/MIUI) that hide the new icon. */
+      androidNote: string;
     };
-    /** Storage-durability controls that keep saved games from being evicted. */
-    durability: {
-      protectedTitle: string;
-      protectedBody: string;
-      atRiskTitle: string;
-      atRiskBody: string;
-      protect: string;
-      protecting: string;
+    /** Automatic cloud backup that keeps each scorekeeper's games private. */
+    cloud: {
+      title: string;
+      statusSynced: string;
+      statusSyncing: string;
+      statusOffline: string;
+      statusUnavailable: string;
+      linkTitle: string;
+      linkHint: string;
+      codeLabel: string;
+      copy: string;
+      copied: string;
+      pasteLabel: string;
+      linkButton: string;
+      linking: string;
+      linkError: string;
+      linkSuccess: string;
     };
   };
 

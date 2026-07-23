@@ -54,10 +54,9 @@ export const en: Strings = {
     automaticUpdatesBody:
       "Installed apps now download each new release automatically and switch to it as soon as the device is online.",
     items: [
-      "Install the app in one tap: a new Settings button adds it to your home screen, with step-by-step guides for iPhone and Android when your browser needs them.",
-      "Following the scores on your phone? Order players A→Z or by seating so a name never jumps around as scores change.",
-      "Your scoreboard, stats and history are now kept as durable storage, so they survive routine cache cleaning.",
-      "New crew records and stats: biggest single round, hottest streak, most reckless captain, kraken bait, podium rates and more.",
+      "Your games now back up to the cloud automatically and privately — your scoreboard, leaderboard and stats come back even after this device's data is cleared.",
+      "Playing on another phone? Copy your sync code from Settings and paste it there to load all your games.",
+      "Clearer install help, including a note for Xiaomi/MIUI phones where the new icon can hide in the app drawer.",
     ],
     close: "Got it",
   },
@@ -113,16 +112,27 @@ export const en: Strings = {
         "Tap “Install app” (or “Add to Home screen”).",
         "Confirm with “Install” — the app icon appears on your home screen.",
       ],
+      androidNote:
+        "On Xiaomi/Redmi (MIUI) and some other phones the icon can land in the app drawer instead of the home screen, or you may first need to allow Chrome to create home-screen shortcuts in the system settings.",
     },
-    durability: {
-      protectedTitle: "Your games are protected",
-      protectedBody:
-        "This device marks your saved games as durable storage, so they survive routine cache cleaning.",
-      atRiskTitle: "Protect your saved games",
-      atRiskBody:
-        "Browsers can clear this app's data to reclaim space, wiping your scoreboard, stats and history. Ask your browser to keep them safe.",
-      protect: "Protect my games",
-      protecting: "Protecting…",
+    cloud: {
+      title: "Cloud backup",
+      statusSynced:
+        "Backed up — your games save to the cloud automatically and come back if this device's data is cleared.",
+      statusSyncing: "Saving to the cloud…",
+      statusOffline: "Offline — changes will sync once you're back online.",
+      statusUnavailable: "Cloud backup isn't set up for this app.",
+      linkTitle: "Use your games on another phone",
+      linkHint:
+        "Copy this device's code, then paste it on the other phone to load the same games there. Keep it private — anyone with it can see your games.",
+      codeLabel: "This device's code",
+      copy: "Copy",
+      copied: "Copied",
+      pasteLabel: "Paste a code from another device",
+      linkButton: "Load those games here",
+      linking: "Loading…",
+      linkError: "That code could not be read.",
+      linkSuccess: "Done — games merged onto this device.",
     },
   },
 
