@@ -1,6 +1,7 @@
 import React from "react";
 import { Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { colors, radius, spacing } from "../theme";
+import DisclosureChevron from "./DisclosureChevron";
 import { useI18n } from "../i18n/context";
 import {
   getPwaInstallMode,
@@ -103,7 +104,7 @@ export default function InstallAppSection() {
             accessibilityState={{ expanded: guideOpen }}
           >
             <Text style={styles.guideToggleText}>{copy.guideTitle}</Text>
-            <Text style={styles.guideChevron}>{guideOpen ? "⌃" : "⌄"}</Text>
+            <DisclosureChevron expanded={guideOpen} />
           </TouchableOpacity>
 
           {guideOpen ? (
@@ -217,7 +218,6 @@ const styles = StyleSheet.create({
     marginTop: spacing.sm,
   },
   guideToggleText: { color: colors.gold, fontSize: 14, fontWeight: "800" },
-  guideChevron: { color: colors.gold, fontSize: 16, fontWeight: "800" },
   guideBody: { marginTop: spacing.sm },
   platformCard: {
     backgroundColor: colors.card,

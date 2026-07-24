@@ -35,6 +35,7 @@ import {
 import ToggleSwitch from "../components/ToggleSwitch";
 import WhatsNewModal from "../components/WhatsNewModal";
 import InstallAppSection from "../components/InstallAppSection";
+import DisclosureChevron from "../components/DisclosureChevron";
 
 const FEEDBACK_EMAIL = "gabrielcretin@gmail.com";
 
@@ -335,7 +336,7 @@ export default function SettingsScreen({
               <Text style={styles.linkToggleText}>
                 {t.settings.cloud.linkTitle}
               </Text>
-              <Text style={styles.linkChevron}>{linkOpen ? "⌃" : "⌄"}</Text>
+              <DisclosureChevron expanded={linkOpen} />
             </TouchableOpacity>
 
             {linkOpen ? (
@@ -645,7 +646,6 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   linkToggleText: { color: colors.gold, fontSize: 14, fontWeight: "800" },
-  linkChevron: { color: colors.gold, fontSize: 16, fontWeight: "800" },
   linkPanel: {
     borderColor: colors.cardBorder,
     borderWidth: 1,

@@ -93,7 +93,7 @@ export const es: Strings = {
     feedbackButton: "Enviar comentarios",
     install: {
       title: "Instalar la aplicación",
-      installedTitle: "Aplicación instalada 🎉",
+      installedTitle: "Aplicación instalada",
       installedBody:
         "El marcador está en tu dispositivo — se abre como cualquier app y funciona totalmente sin conexión.",
       promptHint:
