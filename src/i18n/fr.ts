@@ -90,7 +90,7 @@ export const fr: Strings = {
     feedbackButton: "Envoyer un retour",
     install: {
       title: "Installer l'application",
-      installedTitle: "Application installée 🎉",
+      installedTitle: "Application installée",
       installedBody:
         "Le compteur de scores est sur votre appareil — il s'ouvre comme une appli et fonctionne entièrement hors ligne.",
       promptHint:

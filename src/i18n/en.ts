@@ -89,7 +89,7 @@ export const en: Strings = {
     feedbackButton: "Send feedback",
     install: {
       title: "Install the app",
-      installedTitle: "App installed 🎉",
+      installedTitle: "App installed",
       installedBody:
         "The score keeper is on your device — it opens like any app and works fully offline.",
       promptHint:

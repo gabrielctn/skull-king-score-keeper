@@ -85,7 +85,7 @@ export const zh: Strings = {
     feedbackButton: "发送反馈",
     install: {
       title: "安装应用",
-      installedTitle: "应用已安装 🎉",
+      installedTitle: "应用已安装",
       installedBody: "计分器已在你的设备上——像普通应用一样打开，并可完全离线使用。",
       promptHint: "将计分器添加到主屏幕，一触即达并可离线游戏。",
       manualHint:

@@ -20,6 +20,7 @@ import { getResponsiveLayout } from "../responsive";
 import { CURRENT_RELEASE } from "../releases";
 import { loadSeenRelease, saveSeenRelease } from "../storage";
 import WhatsNewModal from "../components/WhatsNewModal";
+import DisclosureChevron from "../components/DisclosureChevron";
 
 const SUPPORT_URL = "https://buymeacoffee.com/gabrielctn";
 
@@ -260,9 +261,7 @@ export default function HomeScreen({
                       ? t.home.historyShowLess
                       : t.home.historyShowAll(gameHistory.length)}
                   </Text>
-                  <Text style={styles.historyToggleChevron}>
-                    {showAllHistory ? "⌃" : "⌄"}
-                  </Text>
+                  <DisclosureChevron expanded={showAllHistory} />
                 </TouchableOpacity>
               ) : null}
             </View>
@@ -464,12 +463,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginTop: spacing.sm,
   },
-  historyToggleText: { color: colors.gold, fontSize: 14, fontWeight: "800" },
-  historyToggleChevron: {
+  historyToggleText: {
     color: colors.gold,
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "800",
-    marginStart: spacing.sm,
+    marginEnd: spacing.sm,
   },
   support: {
     marginTop: spacing.xl,

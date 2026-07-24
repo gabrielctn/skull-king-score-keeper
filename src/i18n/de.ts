@@ -89,7 +89,7 @@ export const de: Strings = {
     feedbackButton: "Feedback senden",
     install: {
       title: "App installieren",
-      installedTitle: "App installiert 🎉",
+      installedTitle: "App installiert",
       installedBody:
         "Der Punktezähler ist auf deinem Gerät — er öffnet sich wie jede App und funktioniert komplett offline.",
       promptHint:

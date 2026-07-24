@@ -125,17 +125,14 @@ export default function StatsScreen({ gameHistory, onBack }: Props) {
 
             <View style={styles.summaryRow}>
               <SummaryTile
-                icon="🗺️"
                 value={String(snapshot.summary.totalGames)}
                 label={t.stats.totalGames}
               />
               <SummaryTile
-                icon="🎴"
                 value={String(snapshot.summary.totalRounds)}
                 label={t.stats.totalRounds}
               />
               <SummaryTile
-                icon="💰"
                 value={number(snapshot.summary.totalPlunder)}
                 label={t.stats.totalPlunder}
               />
@@ -321,18 +318,9 @@ function RecordCard({
   );
 }
 
-function SummaryTile({
-  icon,
-  value,
-  label,
-}: {
-  icon: string;
-  value: string;
-  label: string;
-}) {
+function SummaryTile({ value, label }: { value: string; label: string }) {
   return (
     <View style={styles.summaryTile}>
-      <Text style={styles.summaryIcon}>{icon}</Text>
       <Text style={styles.summaryValue} numberOfLines={1} adjustsFontSizeToFit>
         {value}
       </Text>
@@ -557,12 +545,10 @@ const styles = StyleSheet.create({
     marginHorizontal: spacing.xs,
     alignItems: "center",
   },
-  summaryIcon: { fontSize: 20, lineHeight: 24 },
   summaryValue: {
     color: colors.gold,
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: "800",
-    marginTop: 2,
   },
   summaryLabel: {
     color: colors.textDim,

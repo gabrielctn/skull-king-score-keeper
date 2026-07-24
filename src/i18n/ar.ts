@@ -87,7 +87,7 @@ export const ar: Strings = {
     feedbackButton: "إرسال ملاحظة",
     install: {
       title: "تثبيت التطبيق",
-      installedTitle: "تم تثبيت التطبيق 🎉",
+      installedTitle: "تم تثبيت التطبيق",
       installedBody:
         "عدّاد النقاط الآن على جهازك — يفتح مثل أي تطبيق ويعمل دون اتصال تمامًا.",
       promptHint:
