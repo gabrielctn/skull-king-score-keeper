@@ -23,6 +23,9 @@ import WhatsNewModal from "../components/WhatsNewModal";
 
 const SUPPORT_URL = "https://buymeacoffee.com/gabrielctn";
 
+/** Games listed before the "show all" toggle takes over. */
+const HISTORY_PREVIEW_COUNT = 3;
+
 interface Props {
   gameHistory: Game[];
   currentGameId: string | null;
@@ -47,6 +50,10 @@ export default function HomeScreen({
   const layout = getResponsiveLayout(width);
   const [pendingDelete, setPendingDelete] = React.useState<Game | null>(null);
   const [whatsNewOpen, setWhatsNewOpen] = React.useState(false);
+  const [showAllHistory, setShowAllHistory] = React.useState(false);
+  const visibleHistory = showAllHistory
+    ? gameHistory
+    : gameHistory.slice(0, HISTORY_PREVIEW_COUNT);
   const activeGame =
     gameHistory.find(
       (historyGame) =>
@@ -106,7 +113,12 @@ export default function HomeScreen({
           accessibilityRole="button"
           accessibilityLabel={t.settings.open}
         >
-          <Text style={styles.topActionIcon}>{"⚙︎"}</Text>
+          {/*
+            Emoji presentation (U+FE0F), not the text one: the text gear is
+            drawn from the system UI font, whose glyph box does not match the
+            emoji metrics, so it sat off-centre in the button next to 🏆.
+          */}
+          <Text style={styles.topActionIcon}>⚙️</Text>
         </TouchableOpacity>
       </View>
       <ScrollView
@@ -176,7 +188,7 @@ export default function HomeScreen({
               <Text style={styles.historyTitle}>{t.home.history}</Text>
               <Text style={styles.historyHint}>{t.home.historyHint}</Text>
               <View style={styles.historyList}>
-                {gameHistory.map((historyGame, index) => {
+                {visibleHistory.map((historyGame, index) => {
                   const gameLeader = historyGame.players.length
                     ? standings(historyGame)[0]
                     : null;
@@ -186,7 +198,8 @@ export default function HomeScreen({
                       key={historyGame.id}
                       style={[
                         styles.historyRow,
-                        index < gameHistory.length - 1 && styles.historyRowBorder,
+                        index < visibleHistory.length - 1 &&
+                          styles.historyRowBorder,
                       ]}
                     >
                       <TouchableOpacity
@@ -235,6 +248,23 @@ export default function HomeScreen({
                   );
                 })}
               </View>
+              {gameHistory.length > HISTORY_PREVIEW_COUNT ? (
+                <TouchableOpacity
+                  style={styles.historyToggle}
+                  onPress={() => setShowAllHistory((shown) => !shown)}
+                  accessibilityRole="button"
+                  accessibilityState={{ expanded: showAllHistory }}
+                >
+                  <Text style={styles.historyToggleText}>
+                    {showAllHistory
+                      ? t.home.historyShowLess
+                      : t.home.historyShowAll(gameHistory.length)}
+                  </Text>
+                  <Text style={styles.historyToggleChevron}>
+                    {showAllHistory ? "⌃" : "⌄"}
+                  </Text>
+                </TouchableOpacity>
+              ) : null}
             </View>
           ) : null}
 
@@ -312,7 +342,12 @@ const styles = StyleSheet.create({
     marginEnd: spacing.sm,
   },
   iconButtonLast: { marginEnd: 0 },
-  topActionIcon: { color: colors.gold, fontSize: 21, lineHeight: 24 },
+  topActionIcon: {
+    color: colors.gold,
+    fontSize: 21,
+    lineHeight: 24,
+    textAlign: "center",
+  },
   container: {
     flex: 1,
     width: "100%",
@@ -422,6 +457,20 @@ const styles = StyleSheet.create({
     borderLeftColor: colors.cardBorder,
   },
   deleteIcon: { color: colors.textDim, fontSize: 28, fontWeight: "300" },
+  historyToggle: {
+    minHeight: 44,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: spacing.sm,
+  },
+  historyToggleText: { color: colors.gold, fontSize: 14, fontWeight: "800" },
+  historyToggleChevron: {
+    color: colors.gold,
+    fontSize: 16,
+    fontWeight: "800",
+    marginStart: spacing.sm,
+  },
   support: {
     marginTop: spacing.xl,
     paddingTop: spacing.lg,

@@ -15,9 +15,10 @@ import {
  * Settings block that helps players keep the app on their phone.
  *
  * On browsers that expose the install prompt (Android Chrome/Edge…) it offers a
- * one-tap install button. Everywhere else — notably iOS Safari, where the
- * prompt does not exist — it shows a step-by-step guide for both iPhone and
- * Android so even non-technical players can add the app to their home screen.
+ * one-tap install button. Everywhere else — notably iOS, where the prompt does
+ * not exist in any browser — it shows a step-by-step guide for iPhone (Safari
+ * and Chrome, whose share sheets differ) and Android, so even non-technical
+ * players can add the app to their home screen.
  */
 export default function InstallAppSection() {
   const { t } = useI18n();
@@ -107,7 +108,14 @@ export default function InstallAppSection() {
 
           {guideOpen ? (
             <View style={styles.guideBody}>
-              <PlatformGuide title={copy.iosTitle} steps={copy.iosSteps} />
+              <PlatformGuide
+                title={copy.iosSafariTitle}
+                steps={copy.iosSafariSteps}
+              />
+              <PlatformGuide
+                title={copy.iosChromeTitle}
+                steps={copy.iosChromeSteps}
+              />
               <PlatformGuide
                 title={copy.androidTitle}
                 steps={copy.androidSteps}

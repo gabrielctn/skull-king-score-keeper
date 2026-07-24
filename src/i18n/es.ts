@@ -27,6 +27,8 @@ export const es: Strings = {
     resume: "Continuar partida",
     history: "Partidas recientes",
     historyHint: "Toca una partida para continuarla o ver su clasificación.",
+    historyShowAll: (count) => `Ver las ${count} partidas`,
+    historyShowLess: "Ver menos",
     inProgress: "En curso",
     finished: "Terminada",
     openGame: (date) => `Abrir la partida del ${date}`,
@@ -102,12 +104,19 @@ export const es: Strings = {
       error:
         "No se pudo iniciar la instalación. Sigue los pasos manuales de abajo.",
       guideTitle: "Cómo instalarla a mano",
-      iosTitle: "iPhone y iPad (Safari)",
-      iosSteps: [
+      iosSafariTitle: "iPhone y iPad (Safari)",
+      iosSafariSteps: [
         "Abre esta página en Safari.",
         "Toca el botón Compartir (un cuadrado con una flecha hacia arriba) en la parte inferior de la pantalla.",
         "Desplázate y toca «Añadir a pantalla de inicio».",
         "Toca «Añadir» arriba a la derecha — el icono aparece en tu pantalla de inicio.",
+      ],
+      iosChromeTitle: "iPhone y iPad (Chrome)",
+      iosChromeSteps: [
+        "Abre esta página en Chrome.",
+        "Toca el pequeño botón Compartir (un cuadrado con una flecha hacia arriba) en la barra de direcciones.",
+        "Toca la flecha «⌄» («Ver más») para mostrar todas las opciones.",
+        "Toca el botón «+» llamado «Añadir a pantalla de inicio» — el icono aparece en tu pantalla de inicio.",
       ],
       androidTitle: "Android (Chrome)",
       androidSteps: [
@@ -330,7 +339,7 @@ export const es: Strings = {
     installHint:
       "Instala la aplicación para acceder rápidamente y jugar sin conexión.",
     installIosHint:
-      "Abre esta página en Safari si es necesario, toca Compartir y después «Añadir a pantalla de inicio».",
+      "Toca Compartir y después «Añadir a pantalla de inicio» — en Chrome, abre antes «Ver más».",
     installError:
       "No se ha podido iniciar la instalación. Puedes volver a intentarlo más tarde.",
     install: "Instalar aplicación",

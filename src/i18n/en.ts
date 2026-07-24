@@ -27,6 +27,8 @@ export const en: Strings = {
     resume: "Resume game",
     history: "Recent games",
     historyHint: "Tap a game to resume it or view its standings.",
+    historyShowAll: (count) => `Show all ${count} games`,
+    historyShowLess: "Show fewer",
     inProgress: "In progress",
     finished: "Finished",
     openGame: (date) => `Open game from ${date}`,
@@ -97,12 +99,19 @@ export const en: Strings = {
       button: "Install now",
       error: "Installation could not start. Try the manual steps below.",
       guideTitle: "How to install it by hand",
-      iosTitle: "iPhone & iPad (Safari)",
-      iosSteps: [
+      iosSafariTitle: "iPhone & iPad (Safari)",
+      iosSafariSteps: [
         "Open this page in Safari.",
         "Tap the Share button (a square with an upward arrow) at the bottom of the screen.",
         "Scroll down and tap “Add to Home Screen”.",
         "Tap “Add” at the top right — the app icon appears on your home screen.",
+      ],
+      iosChromeTitle: "iPhone & iPad (Chrome)",
+      iosChromeSteps: [
+        "Open this page in Chrome.",
+        "Tap the small Share button (a square with an upward arrow) in the address bar.",
+        "Tap the “⌄” chevron (“See more”) to show every option.",
+        "Tap the “+” button named “Add to Home Screen” — the app icon appears on your home screen.",
       ],
       androidTitle: "Android (Chrome)",
       androidSteps: [
@@ -321,7 +330,7 @@ export const en: Strings = {
     installTitle: "Keep the score keeper aboard",
     installHint: "Install the app for quick access and fully offline play.",
     installIosHint:
-      "Open this page in Safari if needed, then tap Share and “Add to Home Screen”.",
+      "Tap Share and “Add to Home Screen” — in Chrome, open “See more” first.",
     installError: "Installation could not start. You can try again later.",
     install: "Install app",
     installDismiss: "Later",

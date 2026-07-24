@@ -27,6 +27,8 @@ export const fr: Strings = {
     resume: "Reprendre la partie",
     history: "Parties récentes",
     historyHint: "Touchez une partie pour la reprendre ou consulter son classement.",
+    historyShowAll: (count) => `Afficher les ${count} parties`,
+    historyShowLess: "Afficher moins",
     inProgress: "En cours",
     finished: "Terminée",
     openGame: (date) => `Ouvrir la partie du ${date}`,
@@ -99,12 +101,19 @@ export const fr: Strings = {
       error:
         "L'installation n'a pas pu démarrer. Suivez les étapes manuelles ci-dessous.",
       guideTitle: "Comment l'installer à la main",
-      iosTitle: "iPhone et iPad (Safari)",
-      iosSteps: [
+      iosSafariTitle: "iPhone et iPad (Safari)",
+      iosSafariSteps: [
         "Ouvrez cette page dans Safari.",
         "Touchez le bouton Partager (un carré surmonté d'une flèche) en bas de l'écran.",
         "Faites défiler et touchez « Sur l'écran d'accueil ».",
         "Touchez « Ajouter » en haut à droite — l'icône apparaît sur votre écran d'accueil.",
+      ],
+      iosChromeTitle: "iPhone et iPad (Chrome)",
+      iosChromeSteps: [
+        "Ouvrez cette page dans Chrome.",
+        "Touchez le petit bouton Partager (un carré surmonté d'une flèche) dans la barre de recherche.",
+        "Touchez le chevron « ⌄ » (« En voir plus ») pour afficher toutes les options.",
+        "Touchez le bouton « + » nommé « Sur l'écran d'accueil » — l'icône apparaît sur votre écran d'accueil.",
       ],
       androidTitle: "Android (Chrome)",
       androidSteps: [
@@ -324,7 +333,7 @@ export const fr: Strings = {
     installTitle: "Gardez le compteur à bord",
     installHint: "Installez l’app pour la retrouver rapidement et jouer hors ligne.",
     installIosHint:
-      "Ouvrez cette page dans Safari si nécessaire, puis touchez Partager et « Sur l’écran d’accueil ».",
+      "Touchez Partager puis « Sur l’écran d’accueil » — dans Chrome, ouvrez d’abord « En voir plus ».",
     installError: "L’installation n’a pas pu démarrer. Vous pourrez réessayer plus tard.",
     install: "Installer l’app",
     installDismiss: "Plus tard",

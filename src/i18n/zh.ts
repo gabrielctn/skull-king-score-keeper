@@ -26,6 +26,8 @@ export const zh: Strings = {
     resume: "继续游戏",
     history: "最近的游戏",
     historyHint: "点击一局游戏以继续或查看排名。",
+    historyShowAll: (count) => `显示全部 ${count} 局`,
+    historyShowLess: "收起",
     inProgress: "进行中",
     finished: "已结束",
     openGame: (date) => `打开 ${date} 的游戏`,
@@ -91,12 +93,19 @@ export const zh: Strings = {
       button: "立即安装",
       error: "无法开始安装。请按下方的手动步骤操作。",
       guideTitle: "如何手动安装",
-      iosTitle: "iPhone 与 iPad（Safari）",
-      iosSteps: [
+      iosSafariTitle: "iPhone 与 iPad（Safari）",
+      iosSafariSteps: [
         "在 Safari 中打开此页面。",
         "点按屏幕底部的分享按钮（带向上箭头的方框）。",
         "向下滚动并点按「添加到主屏幕」。",
         "点按右上角的「添加」——应用图标即出现在主屏幕上。",
+      ],
+      iosChromeTitle: "iPhone 与 iPad（Chrome）",
+      iosChromeSteps: [
+        "在 Chrome 中打开此页面。",
+        "点按地址栏中的小分享按钮（带向上箭头的方框）。",
+        "点按「⌄」箭头（「查看更多」）以显示全部选项。",
+        "点按名为「添加到主屏幕」的「+」按钮——应用图标即出现在主屏幕上。",
       ],
       androidTitle: "Android（Chrome）",
       androidSteps: [
@@ -303,7 +312,7 @@ export const zh: Strings = {
     installTitle: "把计分器留在船上",
     installHint: "安装应用，快速打开并完全离线游玩。",
     installIosHint:
-      "如有需要，请先在 Safari 中打开此页面，再点按“共享”和“添加到主屏幕”。",
+      "点按“共享”再点按“添加到主屏幕”——在 Chrome 中请先展开“查看更多”。",
     installError: "无法开始安装，你可以稍后重试。",
     install: "安装应用",
     installDismiss: "稍后",

@@ -43,6 +43,9 @@ export interface Strings {
     resume: string;
     history: string;
     historyHint: string;
+    /** Reveals the games hidden below the three most recent ones. */
+    historyShowAll: (count: number) => string;
+    historyShowLess: string;
     inProgress: string;
     finished: string;
     openGame: (date: string) => string;
@@ -111,8 +114,11 @@ export interface Strings {
       error: string;
       /** Toggle that reveals the step-by-step manual guide. */
       guideTitle: string;
-      iosTitle: string;
-      iosSteps: string[];
+      iosSafariTitle: string;
+      iosSafariSteps: string[];
+      /** Chrome on iOS hides "Add to Home Screen" behind its own share sheet. */
+      iosChromeTitle: string;
+      iosChromeSteps: string[];
       androidTitle: string;
       androidSteps: string[];
     };
