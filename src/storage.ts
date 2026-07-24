@@ -320,6 +320,55 @@ export async function clearLiveSessionFor(gameId: string): Promise<void> {
   }
 }
 
+const CLOUD_OWNER_KEY = "skullking:cloudOwner";
+
+/**
+ * This device's credentials for its private cloud backup: an unguessable
+ * owner id (the row to read) and a secret writer key (required to read or
+ * write it). Generated once and kept locally; the same pair, shared as a
+ * "sync code", lets another device load the same games. Isolation between
+ * different scorekeepers is simply that each holds a different pair.
+ */
+export interface CloudOwner {
+  ownerId: string;
+  writerKey: string;
+}
+
+export async function loadCloudOwner(): Promise<CloudOwner | null> {
+  try {
+    const stored = await AsyncStorage.getItem(CLOUD_OWNER_KEY);
+    if (!stored) return null;
+    const raw = JSON.parse(stored);
+    if (
+      raw &&
+      typeof raw.ownerId === "string" &&
+      typeof raw.writerKey === "string"
+    ) {
+      return { ownerId: raw.ownerId, writerKey: raw.writerKey };
+    }
+    return null;
+  } catch (e) {
+    console.warn("Failed to load cloud owner", e);
+    return null;
+  }
+}
+
+export async function saveCloudOwner(owner: CloudOwner): Promise<void> {
+  try {
+    await AsyncStorage.setItem(CLOUD_OWNER_KEY, JSON.stringify(owner));
+  } catch (e) {
+    console.warn("Failed to save cloud owner", e);
+  }
+}
+
+export async function clearCloudOwner(): Promise<void> {
+  try {
+    await AsyncStorage.removeItem(CLOUD_OWNER_KEY);
+  } catch (e) {
+    console.warn("Failed to clear cloud owner", e);
+  }
+}
+
 const SPECTATOR_IDENTITY_KEY = "skullking:spectatorIdentity";
 
 /**
