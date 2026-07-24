@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import {
   Image,
   KeyboardAvoidingView,
@@ -54,6 +54,7 @@ export default function SetupScreen({ gameHistory, onStart, onBack }: Props) {
   const [twoPlayerGhost, setTwoPlayerGhost] = useState(true);
   const [customizationVisible, setCustomizationVisible] = useState(false);
   const [focusedPlayerId, setFocusedPlayerId] = useState<string | null>(null);
+  const inputRefs = useRef<Record<string, TextInput | null>>({});
 
   const suggestions = useMemo(
     () => playerNameSuggestions(gameHistory, players.map((player) => player.name)),
@@ -63,9 +64,26 @@ export default function SetupScreen({ gameHistory, onStart, onBack }: Props) {
   const setName = (id: string, name: string) =>
     setPlayers((prev) => prev.map((p) => (p.id === id ? { ...p, name } : p)));
 
-  const chooseSuggestion = (id: string, name: string) => {
+  // Naming one player almost always means the next one is up, so hop straight
+  // to the first seat still waiting for a name instead of making the host aim
+  // at it. When the whole crew is named there is nothing left to fill, so the
+  // keyboard and the suggestion list get out of the way.
+  const focusNextEmpty = (fromIndex: number) => {
+    const next = players.find(
+      (p, i) => i > fromIndex && p.name.trim().length === 0
+    );
+    if (!next) {
+      inputRefs.current[players[fromIndex]?.id ?? ""]?.blur();
+      setFocusedPlayerId(null);
+      return;
+    }
+    setFocusedPlayerId(next.id);
+    inputRefs.current[next.id]?.focus();
+  };
+
+  const chooseSuggestion = (index: number, id: string, name: string) => {
     setName(id, name);
-    setFocusedPlayerId(null);
+    focusNextEmpty(index);
   };
 
   const addPlayer = () =>
@@ -163,103 +181,115 @@ export default function SetupScreen({ gameHistory, onStart, onBack }: Props) {
 
           <Text style={styles.section}>{t.setup.players}</Text>
           <Text style={styles.seatingHint}>{t.setup.seatingHint}</Text>
-          {players.map((p, i) => (
-            <View key={p.id} style={styles.playerBlock}>
-              <View style={styles.playerRow}>
-                <Text style={styles.playerNum}>{i + 1}</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder={t.setup.playerPlaceholder(i + 1)}
-                  placeholderTextColor={colors.textDim}
-                  value={p.name}
-                  onChangeText={(value) => setName(p.id, value)}
-                  onFocus={() => setFocusedPlayerId(p.id)}
-                  returnKeyType="done"
-                  maxLength={20}
-                  accessibilityLabel={t.setup.playerPlaceholder(i + 1)}
-                />
-                <View
-                  style={[
-                    styles.reorder,
-                    width <= 360 && styles.reorderNarrow,
-                  ]}
-                >
-                  <TouchableOpacity
-                    onPress={() => movePlayer(i, -1)}
-                    disabled={i === 0}
+          {players.map((p, i) => {
+            const hasNextEmpty = players.some(
+              (other, j) => j > i && other.name.trim().length === 0
+            );
+            return (
+              <View key={p.id} style={styles.playerBlock}>
+                <View style={styles.playerRow}>
+                  <Text style={styles.playerNum}>{i + 1}</Text>
+                  <TextInput
+                    ref={(input) => {
+                      if (input) inputRefs.current[p.id] = input;
+                      else delete inputRefs.current[p.id];
+                    }}
+                    style={styles.input}
+                    placeholder={t.setup.playerPlaceholder(i + 1)}
+                    placeholderTextColor={colors.textDim}
+                    value={p.name}
+                    onChangeText={(value) => setName(p.id, value)}
+                    onFocus={() => setFocusedPlayerId(p.id)}
+                    onSubmitEditing={() => focusNextEmpty(i)}
+                    // Keep the keyboard up while it hands off to the next seat.
+                    blurOnSubmit={!hasNextEmpty}
+                    returnKeyType={hasNextEmpty ? "next" : "done"}
+                    maxLength={20}
+                    accessibilityLabel={t.setup.playerPlaceholder(i + 1)}
+                  />
+                  <View
                     style={[
-                      styles.reorderBtn,
-                      i === 0 && styles.reorderBtnDisabled,
+                      styles.reorder,
+                      width <= 360 && styles.reorderNarrow,
+                    ]}
+                  >
+                    <TouchableOpacity
+                      onPress={() => movePlayer(i, -1)}
+                      disabled={i === 0}
+                      style={[
+                        styles.reorderBtn,
+                        i === 0 && styles.reorderBtnDisabled,
+                      ]}
+                      accessibilityRole="button"
+                      accessibilityLabel={t.setup.movePlayerUp(
+                        p.name.trim() || t.setup.playerPlaceholder(i + 1)
+                      )}
+                      accessibilityState={{ disabled: i === 0 }}
+                    >
+                      <Text style={styles.reorderText}>▲</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => movePlayer(i, 1)}
+                      disabled={i === players.length - 1}
+                      style={[
+                        styles.reorderBtn,
+                        i === players.length - 1 && styles.reorderBtnDisabled,
+                      ]}
+                      accessibilityRole="button"
+                      accessibilityLabel={t.setup.movePlayerDown(
+                        p.name.trim() || t.setup.playerPlaceholder(i + 1)
+                      )}
+                      accessibilityState={{ disabled: i === players.length - 1 }}
+                    >
+                      <Text style={styles.reorderText}>▼</Text>
+                    </TouchableOpacity>
+                  </View>
+                  <TouchableOpacity
+                    onPress={() => removePlayer(p.id)}
+                    disabled={players.length <= 2}
+                    style={[
+                      styles.removeBtn,
+                      players.length <= 2 && styles.removeBtnDisabled,
                     ]}
                     accessibilityRole="button"
-                    accessibilityLabel={t.setup.movePlayerUp(
+                    accessibilityLabel={t.setup.removePlayer(
                       p.name.trim() || t.setup.playerPlaceholder(i + 1)
                     )}
-                    accessibilityState={{ disabled: i === 0 }}
+                    accessibilityState={{ disabled: players.length <= 2 }}
                   >
-                    <Text style={styles.reorderText}>▲</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={() => movePlayer(i, 1)}
-                    disabled={i === players.length - 1}
-                    style={[
-                      styles.reorderBtn,
-                      i === players.length - 1 && styles.reorderBtnDisabled,
-                    ]}
-                    accessibilityRole="button"
-                    accessibilityLabel={t.setup.movePlayerDown(
-                      p.name.trim() || t.setup.playerPlaceholder(i + 1)
-                    )}
-                    accessibilityState={{ disabled: i === players.length - 1 }}
-                  >
-                    <Text style={styles.reorderText}>▼</Text>
+                    <Text style={styles.removeText}>✕</Text>
                   </TouchableOpacity>
                 </View>
-                <TouchableOpacity
-                  onPress={() => removePlayer(p.id)}
-                  disabled={players.length <= 2}
-                  style={[
-                    styles.removeBtn,
-                    players.length <= 2 && styles.removeBtnDisabled,
-                  ]}
-                  accessibilityRole="button"
-                  accessibilityLabel={t.setup.removePlayer(
-                    p.name.trim() || t.setup.playerPlaceholder(i + 1)
-                  )}
-                  accessibilityState={{ disabled: players.length <= 2 }}
-                >
-                  <Text style={styles.removeText}>✕</Text>
-                </TouchableOpacity>
+                {focusedPlayerId === p.id && suggestions.length > 0 ? (
+                  <View style={styles.suggestions}>
+                    <Text style={styles.suggestionsLabel}>
+                      {t.setup.knownPlayers}
+                    </Text>
+                    <ScrollView
+                      horizontal
+                      showsHorizontalScrollIndicator={false}
+                      keyboardShouldPersistTaps="always"
+                      contentContainerStyle={styles.suggestionsRow}
+                    >
+                      {suggestions.map((suggestion) => (
+                        <TouchableOpacity
+                          key={suggestion}
+                          style={styles.suggestionChip}
+                          onPress={() => chooseSuggestion(i, p.id, suggestion)}
+                          accessibilityRole="button"
+                          accessibilityLabel={t.setup.useKnownPlayer(suggestion)}
+                        >
+                          <Text style={styles.suggestionText} numberOfLines={1}>
+                            {suggestion}
+                          </Text>
+                        </TouchableOpacity>
+                      ))}
+                    </ScrollView>
+                  </View>
+                ) : null}
               </View>
-              {focusedPlayerId === p.id && suggestions.length > 0 ? (
-                <View style={styles.suggestions}>
-                  <Text style={styles.suggestionsLabel}>
-                    {t.setup.knownPlayers}
-                  </Text>
-                  <ScrollView
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    keyboardShouldPersistTaps="always"
-                    contentContainerStyle={styles.suggestionsRow}
-                  >
-                    {suggestions.map((suggestion) => (
-                      <TouchableOpacity
-                        key={suggestion}
-                        style={styles.suggestionChip}
-                        onPress={() => chooseSuggestion(p.id, suggestion)}
-                        accessibilityRole="button"
-                        accessibilityLabel={t.setup.useKnownPlayer(suggestion)}
-                      >
-                        <Text style={styles.suggestionText} numberOfLines={1}>
-                          {suggestion}
-                        </Text>
-                      </TouchableOpacity>
-                    ))}
-                  </ScrollView>
-                </View>
-              ) : null}
-            </View>
-          ))}
+            );
+          })}
 
           <TouchableOpacity
             style={styles.addBtn}
