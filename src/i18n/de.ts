@@ -27,6 +27,8 @@ export const de: Strings = {
     resume: "Spiel fortsetzen",
     history: "Letzte Spiele",
     historyHint: "Tippe auf ein Spiel, um es fortzusetzen oder den Stand anzusehen.",
+    historyShowAll: (count) => `Alle ${count} Spiele anzeigen`,
+    historyShowLess: "Weniger anzeigen",
     inProgress: "Läuft",
     finished: "Beendet",
     openGame: (date) => `Spiel vom ${date} öffnen`,
@@ -98,12 +100,19 @@ export const de: Strings = {
       error:
         "Die Installation konnte nicht starten. Nutze die manuellen Schritte unten.",
       guideTitle: "So installierst du sie von Hand",
-      iosTitle: "iPhone & iPad (Safari)",
-      iosSteps: [
+      iosSafariTitle: "iPhone & iPad (Safari)",
+      iosSafariSteps: [
         "Öffne diese Seite in Safari.",
         "Tippe unten auf die Teilen-Schaltfläche (ein Quadrat mit Pfeil nach oben).",
         "Scrolle nach unten und tippe auf „Zum Home-Bildschirm“.",
         "Tippe oben rechts auf „Hinzufügen“ — das App-Symbol erscheint auf dem Startbildschirm.",
+      ],
+      iosChromeTitle: "iPhone & iPad (Chrome)",
+      iosChromeSteps: [
+        "Öffne diese Seite in Chrome.",
+        "Tippe in der Adressleiste auf die kleine Teilen-Schaltfläche (ein Quadrat mit Pfeil nach oben).",
+        "Tippe auf den Pfeil „⌄“ („Mehr anzeigen“), um alle Optionen zu sehen.",
+        "Tippe auf die Schaltfläche „+“ mit dem Namen „Zum Home-Bildschirm“ — das App-Symbol erscheint auf dem Startbildschirm.",
       ],
       androidTitle: "Android (Chrome)",
       androidSteps: [
@@ -323,7 +332,7 @@ export const de: Strings = {
     installTitle: "Punktezähler an Bord behalten",
     installHint: "Installiere die App für schnellen Zugriff und vollständig offline spielbare Partien.",
     installIosHint:
-      "Öffne diese Seite bei Bedarf in Safari und tippe dann auf Teilen und „Zum Home-Bildschirm“.",
+      "Tippe auf Teilen und „Zum Home-Bildschirm“ — in Chrome zuerst „Mehr anzeigen“ öffnen.",
     installError: "Die Installation konnte nicht gestartet werden. Versuche es später erneut.",
     install: "App installieren",
     installDismiss: "Später",
