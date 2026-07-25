@@ -27,6 +27,8 @@ export interface PlayerStats {
   zeroBids: Rate;
   averagePoints: number;
   bestFinalScore: number | null;
+  /** Lowest final score this player has ever posted. */
+  worstFinalScore: number | null;
   currentWinStreak: number;
   /** Longest run of consecutive wins ever, not just the current one. */
   longestWinStreak: number;
@@ -39,6 +41,8 @@ export interface PlayerStats {
   lastPlaces: number;
   /** Highest single-round score this player has ever posted. */
   bestRound: number | null;
+  /** Lowest single-round score this player has ever posted. */
+  worstRound: number | null;
   /** Mean tricks bid per recorded round — the recklessness gauge. */
   averageBid: number;
   recentGames: RecentPlayerGame[];
@@ -87,6 +91,8 @@ export interface CountRecord {
 
 export interface GroupRecords {
   bestFinalScore: FinalScoreRecord | null;
+  /** Lowest score anyone has ever finished a game with. */
+  worstFinalScore: FinalScoreRecord | null;
   worstRound: RoundScoreRecord | null;
   bestExactBidRate: ExactBidRecord | null;
   /** Highest single-round haul anyone has ever scored. */
@@ -155,10 +161,12 @@ interface PlayerBucket {
   zeroAttempts: number;
   totalPoints: number;
   bestFinalScore: number | null;
+  worstFinalScore: number | null;
   podiums: number;
   rankSum: number;
   lastPlaces: number;
   bestRound: number | null;
+  worstRound: number | null;
   bidSum: number;
   recentGames: RecentPlayerGame[];
 }
@@ -329,6 +337,19 @@ function compareBestFinal(
   return compareText(a.playerId, b.playerId);
 }
 
+function compareWorstFinal(
+  a: FinalRecordCandidate,
+  b: FinalRecordCandidate
+): number {
+  if (a.score !== b.score) return a.score - b.score;
+  if (a.playedAt !== b.playedAt) return b.playedAt - a.playedAt;
+  const identityDifference = compareText(a.identity, b.identity);
+  if (identityDifference !== 0) return identityDifference;
+  const gameDifference = compareText(a.gameId, b.gameId);
+  if (gameDifference !== 0) return gameDifference;
+  return compareText(a.playerId, b.playerId);
+}
+
 function compareWorstRound(
   a: RoundRecordCandidate,
   b: RoundRecordCandidate
@@ -424,10 +445,12 @@ export function aggregateStats(games: readonly Game[]): StatsSnapshot {
           zeroAttempts: 0,
           totalPoints: 0,
           bestFinalScore: null,
+          worstFinalScore: null,
           podiums: 0,
           rankSum: 0,
           lastPlaces: 0,
           bestRound: null,
+          worstRound: null,
           bidSum: 0,
           recentGames: [],
         };
@@ -443,6 +466,10 @@ export function aggregateStats(games: readonly Game[]): StatsSnapshot {
         bucket.bestFinalScore === null
           ? finalStanding.total
           : Math.max(bucket.bestFinalScore, finalStanding.total);
+      bucket.worstFinalScore =
+        bucket.worstFinalScore === null
+          ? finalStanding.total
+          : Math.min(bucket.worstFinalScore, finalStanding.total);
       bucket.podiums += finalStanding.rank <= 3 ? 1 : 0;
       bucket.rankSum += finalStanding.rank;
       if (lastRank !== null && finalStanding.rank === lastRank) {
@@ -455,6 +482,13 @@ export function aggregateStats(games: readonly Game[]): StatsSnapshot {
         bucket.bestRound === null
           ? bestRoundThisGame
           : Math.max(bucket.bestRound, bestRoundThisGame);
+      const worstRoundThisGame = Math.min(
+        ...history.map((round) => round.total)
+      );
+      bucket.worstRound =
+        bucket.worstRound === null
+          ? worstRoundThisGame
+          : Math.min(bucket.worstRound, worstRoundThisGame);
       bucket.bidSum += history.reduce((sum, round) => sum + round.bid, 0);
       bucket.exactAttempts += history.length;
       bucket.exactSuccesses += history.filter((round) => round.madeBid).length;
@@ -508,6 +542,7 @@ export function aggregateStats(games: readonly Game[]): StatsSnapshot {
       averagePoints:
         bucket.gamesPlayed > 0 ? bucket.totalPoints / bucket.gamesPlayed : 0,
       bestFinalScore: bucket.bestFinalScore,
+      worstFinalScore: bucket.worstFinalScore,
       currentWinStreak: currentStreak(bucket.recentGames),
       longestWinStreak: longestStreak(bucket.recentGames),
       podiums: bucket.podiums,
@@ -516,6 +551,7 @@ export function aggregateStats(games: readonly Game[]): StatsSnapshot {
         bucket.gamesPlayed > 0 ? bucket.rankSum / bucket.gamesPlayed : 0,
       lastPlaces: bucket.lastPlaces,
       bestRound: bucket.bestRound,
+      worstRound: bucket.worstRound,
       averageBid:
         bucket.exactAttempts > 0 ? bucket.bidSum / bucket.exactAttempts : 0,
       recentGames: [...bucket.recentGames],
@@ -530,6 +566,7 @@ export function aggregateStats(games: readonly Game[]): StatsSnapshot {
   );
 
   const bestFinalCandidate = [...finalCandidates].sort(compareBestFinal)[0];
+  const worstFinalCandidate = [...finalCandidates].sort(compareWorstFinal)[0];
   const worstRoundCandidate = [...roundCandidates].sort(compareWorstRound)[0];
   const bestExactPlayer = players
     .filter((player) => player.exactBids.rate !== null)
@@ -555,6 +592,17 @@ export function aggregateStats(games: readonly Game[]): StatsSnapshot {
         score: bestFinalCandidate.score,
         gameId: bestFinalCandidate.gameId,
         playedAt: bestFinalCandidate.playedAt,
+      }
+    : null;
+  const worstFinalScore: FinalScoreRecord | null = worstFinalCandidate
+    ? {
+        identity: worstFinalCandidate.identity,
+        name:
+          displayNameByIdentity.get(worstFinalCandidate.identity) ??
+          worstFinalCandidate.name,
+        score: worstFinalCandidate.score,
+        gameId: worstFinalCandidate.gameId,
+        playedAt: worstFinalCandidate.playedAt,
       }
     : null;
   const worstRound: RoundScoreRecord | null = worstRoundCandidate
@@ -674,6 +722,7 @@ export function aggregateStats(games: readonly Game[]): StatsSnapshot {
     players,
     records: {
       bestFinalScore,
+      worstFinalScore,
       worstRound,
       bestExactBidRate,
       biggestRound,

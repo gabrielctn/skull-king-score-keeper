@@ -353,9 +353,11 @@ export interface Strings {
     zeroBidRate: string;
     averagePoints: string;
     bestScore: string;
+    worstScore: string;
     winStreak: string;
     recentGames: string;
     bestFinalScore: string;
+    worstFinalScore: string;
     worstRound: string;
     bestExactBid: string;
     /** Crew-total tiles at the top of the group stats. */
@@ -373,6 +375,7 @@ export interface Strings {
     podiumRate: string;
     averageRank: string;
     bestRoundScore: string;
+    worstRoundScore: string;
     unavailable: string;
     chartLabel: (leader: string, rounds: number) => string;
     playerSummary: (games: number, wins: number) => string;

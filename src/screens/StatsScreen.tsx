@@ -204,6 +204,19 @@ export default function StatsScreen({ gameHistory, onBack }: Props) {
                 }
               />
               <RecordCard
+                icon="💀"
+                label={t.stats.worstFinalScore}
+                value={
+                  snapshot.records.worstFinalScore
+                    ? t.stats.scoreRecordHolder(
+                        snapshot.records.worstFinalScore.name,
+                        snapshot.records.worstFinalScore.score,
+                        date(snapshot.records.worstFinalScore.playedAt)
+                      )
+                    : t.stats.unavailable
+                }
+              />
+              <RecordCard
                 icon="🎯"
                 label={t.stats.bestExactBid}
                 value={
@@ -386,6 +399,14 @@ function PlayerDetail({
               : String(player.bestFinalScore)
           }
         />
+        <Metric
+          label={t.stats.worstScore}
+          value={
+            player.worstFinalScore === null
+              ? t.stats.unavailable
+              : String(player.worstFinalScore)
+          }
+        />
         <Metric label={t.stats.winStreak} value={String(player.currentWinStreak)} />
         <Metric
           label={t.stats.longestWinStreak}
@@ -404,6 +425,14 @@ function PlayerDetail({
             player.bestRound === null
               ? t.stats.unavailable
               : String(player.bestRound)
+          }
+        />
+        <Metric
+          label={t.stats.worstRoundScore}
+          value={
+            player.worstRound === null
+              ? t.stats.unavailable
+              : String(player.worstRound)
           }
         />
       </View>
