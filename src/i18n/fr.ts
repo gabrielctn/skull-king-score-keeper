@@ -57,6 +57,8 @@ export const fr: Strings = {
     automaticUpdatesBody:
       "Les applications installées téléchargent désormais chaque nouvelle version automatiquement et l'activent dès que l'appareil est en ligne.",
     items: [
+      "Nouveau dans les statistiques : la pire manche et le pire score final de chaque joueur, ainsi qu'un record d'équipage pour le plus bas score final.",
+      "L'écran de résultats affiche désormais la durée de la partie.",
       "Vos parties sont désormais sauvegardées dans le cloud automatiquement et en privé — votre tableau des scores, votre classement et vos stats reviennent même après l'effacement des données de cet appareil.",
       "Vous jouez sur un autre téléphone ? Copiez votre code de synchro depuis les Paramètres et collez-le là-bas pour charger toutes vos parties.",
     ],
