@@ -182,6 +182,9 @@ export interface Strings {
     /** Toggle for the Rascal optional rules (Chevrotine / Boulet de canon). */
     rascalBetsTitle: string;
     rascalBetsHint: string;
+    /** Toggle for the "capture bonuses need an exact bid" house rule. */
+    bonusesRequireBidTitle: string;
+    bonusesRequireBidHint: string;
     expansion: string;
     advancedTitle: string;
     advancedHint: string;
@@ -497,6 +500,10 @@ export interface Strings {
     secondCaptured: string;
     /** Suffix meaning "each", appended after "+{points}". */
     each: string;
+    /** Reminder shown when the game requires an exact bid for bonuses. */
+    requiresBidHint: string;
+    /** Same reminder once the entered bid is missed and bonuses are voided. */
+    requiresBidMissed: string;
     /** "Card bonus: +{n}" */
     cardBonus: (n: number) => string;
   };

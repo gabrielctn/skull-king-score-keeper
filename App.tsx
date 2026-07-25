@@ -478,7 +478,8 @@ export default function App() {
       game.newExpansion,
       game.cardsDealt,
       game.scoringMode,
-      game.rascalBets
+      game.rascalBets,
+      game.bonusesRequireBid
     );
     persist(rematch, true);
     setScreen("game");

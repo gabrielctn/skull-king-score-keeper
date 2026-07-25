@@ -58,6 +58,7 @@ export const es: Strings = {
     automaticUpdatesBody:
       "Las aplicaciones instaladas ahora descargan automáticamente cada nueva versión y la activan en cuanto el dispositivo se conecta a internet.",
     items: [
+      "Nueva opción al crear la partida: conceder los bonus por captura solo si la apuesta es exacta, la variante que juegan muchas mesas. Desactivada por defecto, así que el reglamento no cambia.",
       "Novedad en Estadísticas: la peor ronda y la peor puntuación final de cada jugador, además de un récord de equipo para la puntuación final más baja.",
       "La pantalla de resultados ahora muestra cuánto duró la partida.",
       "Tus partidas ahora se respaldan en la nube automáticamente y en privado: tu marcador, clasificación y estadísticas vuelven incluso tras borrar los datos de este dispositivo.",
@@ -202,6 +203,9 @@ export const es: Strings = {
     rascalBetsTitle: "Reglas opcionales de Rascal ✊",
     rascalBetsHint:
       "Tras apostar, todos declaran Perdigón (mano abierta: niveles normales) o Bala de cañón (puño cerrado: 15 puntos por carta repartida con una apuesta exacta y nada en caso contrario, bonus incluidos).",
+    bonusesRequireBidTitle: "Bonus solo con apuesta exacta",
+    bonusesRequireBidHint:
+      "Variante habitual: los bonus por captura (14, sirenas, piratas, Skull King…) se pierden si fallas la apuesta. Desactivado, la app sigue el reglamento y los conserva sea cual sea la apuesta.",
     expansion: "Cartas de expansión",
     advancedTitle: "Botín y apuesta Rascal",
     advancedHint:
@@ -535,6 +539,10 @@ export const es: Strings = {
     davyJonesLeviathans: "Leviatán destruido por Davy Jones",
     secondCaptured: "El Segundo capturado por Skull King / Sirena",
     each: "c/u",
+    requiresBidHint:
+      "Esta partida solo concede los bonus por captura si la apuesta es exacta.",
+    requiresBidMissed:
+      "Apuesta fallada: en esta partida los bonus por captura no cuentan.",
     cardBonus: (n) => `Bonus de cartas: ${n >= 0 ? "+" : ""}${n}`,
   },
 
@@ -641,7 +649,7 @@ export const es: Strings = {
       },
       {
         title: "Los bonus cuentan sin importar tu apuesta",
-        body: "Conservas los bonus por captura aunque falles tu apuesta. Se los lleva quien captura la carta, sin importar quién la haya jugado.",
+        body: "Según el reglamento conservas los bonus por captura aunque falles tu apuesta. Se los lleva quien captura la carta, sin importar quién la haya jugado. Una opción al crear la partida permite jugar la variante contraria: apuesta fallada, sin bonus por captura.",
       },
     ],
     expansion: [

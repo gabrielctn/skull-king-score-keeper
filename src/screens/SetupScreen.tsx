@@ -51,6 +51,7 @@ export default function SetupScreen({ gameHistory, onStart, onBack }: Props) {
   const [newExpansion, setNewExpansion] = useState(false);
   const [scoringMode, setScoringMode] = useState<ScoringMode>("classic");
   const [rascalBets, setRascalBets] = useState(false);
+  const [bonusesRequireBid, setBonusesRequireBid] = useState(false);
   const [twoPlayerGhost, setTwoPlayerGhost] = useState(true);
   const [customizationVisible, setCustomizationVisible] = useState(false);
   const [focusedPlayerId, setFocusedPlayerId] = useState<string | null>(null);
@@ -129,7 +130,8 @@ export default function SetupScreen({ gameHistory, onStart, onBack }: Props) {
         newExpansion,
         cardsPerRound,
         scoringMode,
-        scoringMode === "rascal" && rascalBets
+        scoringMode === "rascal" && rascalBets,
+        scoringMode === "classic" && bonusesRequireBid
       )
     );
   };
@@ -397,7 +399,25 @@ export default function SetupScreen({ gameHistory, onStart, onBack }: Props) {
                 accessibilityLabel={t.setup.rascalBetsTitle}
               />
             </View>
-          ) : null}
+          ) : (
+            // Rascal scoring already ties bonuses to bid accuracy, so this
+            // house rule is only offered with classic scoring.
+            <View style={[styles.advancedRow, { marginBottom: spacing.sm }]}>
+              <View style={{ flex: 1, marginEnd: spacing.md }}>
+                <Text style={styles.advancedTitle}>
+                  {t.setup.bonusesRequireBidTitle}
+                </Text>
+                <Text style={styles.advancedHint}>
+                  {t.setup.bonusesRequireBidHint}
+                </Text>
+              </View>
+              <ToggleSwitch
+                value={bonusesRequireBid}
+                onValueChange={setBonusesRequireBid}
+                accessibilityLabel={t.setup.bonusesRequireBidTitle}
+              />
+            </View>
+          )}
 
           <Text style={[styles.section, { marginTop: spacing.lg }]}>
             {t.setup.rounds}

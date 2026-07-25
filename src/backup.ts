@@ -323,6 +323,7 @@ function validateRawGame(value: unknown, path: string): Record<string, unknown> 
     "newExpansion",
     "twoPlayerGhost",
     "rascalBets",
+    "bonusesRequireBid",
   ]) {
     assertOptionalBoolean(value[field], `${path}.${field}`);
   }
@@ -427,6 +428,7 @@ function normalizeBackupGame(value: unknown, path: string): Game {
     cardsDealt: [...normalized.cardsDealt],
     scoringMode: normalized.scoringMode,
     rascalBets: normalized.rascalBets,
+    bonusesRequireBid: normalized.bonusesRequireBid,
     advancedCards: normalized.advancedCards,
     newExpansion: normalized.newExpansion,
     twoPlayerGhost: normalized.twoPlayerGhost,

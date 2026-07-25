@@ -109,7 +109,27 @@ check(
     decoded.advancedCards &&
     decoded.newExpansion &&
     !decoded.twoPlayerGhost &&
+    !decoded.bonusesRequireBid &&
     decoded.status === "in_progress"
+);
+
+const houseRuleGame = createGame(
+  [
+    { id: "anne", name: "Anne" },
+    { id: "bonny", name: "Bonny" },
+  ],
+  2,
+  true,
+  false,
+  true,
+  undefined,
+  "classic",
+  false,
+  true
+);
+check(
+  "the bonus house rule survives a round trip",
+  decodeShareCode(encodeShareCode(houseRuleGame)).bonusesRequireBid === true
 );
 
 const entriesMatch = original.players.every((player, seat) =>

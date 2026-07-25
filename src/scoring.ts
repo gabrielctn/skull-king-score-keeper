@@ -18,7 +18,9 @@ import {
  *   - Bid 0, won 0 tricks:          +10 x cards dealt this round
  *   - Bid 0, won >= 1 trick:        -10 x cards dealt this round
  *
- * Bonus points (capturing special cards) are added REGARDLESS of bid accuracy:
+ * Bonus points (capturing special cards) are added regardless of bid accuracy,
+ * unless the game turns on the `bonusesRequireBid` house rule, which drops them
+ * entirely for a player who missed their bid:
  *   - colored 14 (yellow/purple/green): +10 each
  *   - black 14 (Jolly Roger / trump):   +20
  *   - mermaid captured by a pirate:     +20 each
@@ -141,6 +143,20 @@ function rascalCaptureScale(entry: RoundEntry): 0 | 0.5 | 1 {
   return outcome === "directHit" ? 1 : outcome === "glancingBlow" ? 0.5 : 0;
 }
 
+/**
+ * Multiplier applied to a round's capture bonuses: Rascal scales them by
+ * accuracy, classic keeps them whole unless the `bonusesRequireBid` house rule
+ * voids them for a missed bid.
+ */
+export function captureBonusScale(
+  entry: RoundEntry,
+  mode: ScoringMode,
+  bonusesRequireBid: boolean
+): 0 | 0.5 | 1 {
+  if (mode === "rascal") return rascalCaptureScale(entry);
+  return bonusesRequireBid && !madeBid(entry) ? 0 : 1;
+}
+
 /** Points from the bid alone (no bonuses). */
 export function bidScore(
   cardsDealt: number,
@@ -169,7 +185,7 @@ export function bidScore(
     : -10 * Math.abs(entry.tricks - entry.bid);
 }
 
-/** Points from captured special cards (always counted). */
+/** Points from captured special cards (before any bid condition). */
 export function captureBonus(b: BonusInput): number {
   return (
     b.colored14 * BONUS_VALUES.colored14 +
@@ -278,6 +294,9 @@ function lootEventsForPlayer(
  *
  * `lootAttempts` lets history views surface failed alliances as explicit
  * zero-point lines. Callers that only have a verified Loot total can omit it.
+ *
+ * `bonusesRequireBid` is the house rule that voids capture bonuses on a missed
+ * bid; it only applies to classic scoring.
  */
 export function scoreRoundBreakdown(
   cardsDealt: number,
@@ -285,12 +304,14 @@ export function scoreRoundBreakdown(
   lootBonus = 0,
   lootAttempts = Math.floor(lootBonus / BONUS_VALUES.loot),
   lootSelfWins = 0,
-  mode: ScoringMode = "classic"
+  mode: ScoringMode = "classic",
+  bonusesRequireBid = false
 ): RoundScoreBreakdown {
   const exact = madeBid(entry);
   // Rascal scoring scales capture bonuses by accuracy; classic keeps them
-  // whole. Every base value is even, so the half tier stays an integer.
-  const captureScale = mode === "rascal" ? rascalCaptureScale(entry) : 1;
+  // whole, or drops them on a missed bid under the house rule. Every base
+  // value is even, so the half tier stays an integer.
+  const captureScale = captureBonusScale(entry, mode, bonusesRequireBid);
   const items: ScoreBreakdownItem[] = [
     {
       key: "bid",
@@ -393,7 +414,8 @@ export function scoreRound(
   cardsDealt: number,
   entry: RoundEntry,
   lootBonus = 0,
-  mode: ScoringMode = "classic"
+  mode: ScoringMode = "classic",
+  bonusesRequireBid = false
 ): number {
   return scoreRoundBreakdown(
     cardsDealt,
@@ -401,7 +423,8 @@ export function scoreRound(
     lootBonus,
     Math.floor(lootBonus / BONUS_VALUES.loot),
     0,
-    mode
+    mode,
+    bonusesRequireBid
   ).total;
 }
 
@@ -456,7 +479,8 @@ export function playerScoreHistory(
         loot,
         lootEvents.alliances,
         lootEvents.selfWins,
-        game.scoringMode
+        game.scoringMode,
+        game.bonusesRequireBid
       );
       runningTotal += breakdown.total;
       history.push({ ...breakdown, roundNumber: r, runningTotal });
@@ -562,7 +586,9 @@ export function createGame(
   cardsPerRound?: number[],
   scoringMode: ScoringMode = "classic",
   /** Rascal optional rules (Chevrotine / Boulet de canon declarations). */
-  rascalBets = false
+  rascalBets = false,
+  /** House rule: capture bonuses only count on an exact bid (classic only). */
+  bonusesRequireBid = false
 ): Game {
   const now = Date.now();
   // An empty structure would create a game with zero rounds but a
@@ -583,6 +609,9 @@ export function createGame(
       : Array.from({ length: roundCount }, (_, i) => i + 1),
     scoringMode,
     rascalBets: scoringMode === "rascal" && rascalBets,
+    // Rascal scoring already ties bonuses to bid accuracy, so the house rule
+    // is only ever stored for classic games.
+    bonusesRequireBid: scoringMode === "classic" && bonusesRequireBid,
     advancedCards,
     newExpansion,
     twoPlayerGhost,

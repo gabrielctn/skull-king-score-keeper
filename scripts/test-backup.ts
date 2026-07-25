@@ -143,6 +143,29 @@ check(
   rascalParsed.currentGame?.rounds[0].a.rascalBet === "cannonball"
 );
 
+const houseRuleGame = createGame(
+  players,
+  2,
+  true,
+  false,
+  true,
+  undefined,
+  "classic",
+  false,
+  true
+);
+houseRuleGame.id = "houseRule";
+houseRuleGame.createdAt = 90;
+houseRuleGame.updatedAt = 100;
+const houseRuleJson = serializeBackup(
+  { currentGame: houseRuleGame, history: [] },
+  1
+);
+check(
+  "the bonus house rule survives a backup round trip",
+  parseBackup(houseRuleJson).currentGame?.bonusesRequireBid === true
+);
+
 console.log("Defensive parsing");
 {
   const tamperedMode = JSON.parse(rascalJson);

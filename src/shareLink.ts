@@ -23,7 +23,8 @@ import { emptyBonus, emptyEntry } from "./scoring";
  *
  *   u8      codec version (SHARE_CODEC_VERSION)
  *   u8      game flags (rascal scoring, rascal bets, advanced cards,
- *           new expansion, two-player ghost, finished)
+ *           new expansion, two-player ghost, finished, bonuses require an
+ *           exact bid)
  *   varint  currentRound (1-based)
  *   varint  createdAt, updatedAt (seconds since epoch)
  *   varint  player count, then per player: varint name byte length + UTF-8
@@ -288,6 +289,7 @@ const GAME_FLAG_ADVANCED_CARDS = 4;
 const GAME_FLAG_NEW_EXPANSION = 8;
 const GAME_FLAG_TWO_PLAYER_GHOST = 16;
 const GAME_FLAG_FINISHED = 32;
+const GAME_FLAG_BONUSES_REQUIRE_BID = 64;
 
 const ENTRY_FLAG_RECORDED = 1;
 const ENTRY_FLAG_CANNONBALL = 2;
@@ -402,7 +404,8 @@ export function encodeShareCode(game: Game): string {
       (game.advancedCards ? GAME_FLAG_ADVANCED_CARDS : 0) |
       (game.newExpansion ? GAME_FLAG_NEW_EXPANSION : 0) |
       (game.twoPlayerGhost ? GAME_FLAG_TWO_PLAYER_GHOST : 0) |
-      (game.status === "finished" ? GAME_FLAG_FINISHED : 0)
+      (game.status === "finished" ? GAME_FLAG_FINISHED : 0) |
+      (game.bonusesRequireBid ? GAME_FLAG_BONUSES_REQUIRE_BID : 0)
   );
   writer.varint(Math.min(Math.max(game.currentRound, 1), game.rounds.length));
   writer.varint(Math.floor(game.createdAt / 1000));
@@ -540,6 +543,7 @@ export function decodeShareCode(code: string): Game {
     scoringMode:
       (flags & GAME_FLAG_RASCAL_SCORING) !== 0 ? "rascal" : "classic",
     rascalBets: (flags & GAME_FLAG_RASCAL_BETS) !== 0,
+    bonusesRequireBid: (flags & GAME_FLAG_BONUSES_REQUIRE_BID) !== 0,
     advancedCards: (flags & GAME_FLAG_ADVANCED_CARDS) !== 0,
     newExpansion: (flags & GAME_FLAG_NEW_EXPANSION) !== 0,
     twoPlayerGhost: (flags & GAME_FLAG_TWO_PLAYER_GHOST) !== 0,
