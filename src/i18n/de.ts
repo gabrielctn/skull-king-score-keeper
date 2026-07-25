@@ -355,9 +355,11 @@ export const de: Strings = {
     zeroBidRate: "Erfolgreiche Nullansagen",
     averagePoints: "Punktedurchschnitt",
     bestScore: "Bestes Ergebnis",
+    worstScore: "Schlechtestes Ergebnis",
     winStreak: "Aktuelle Siegesserie",
     recentGames: "Letzte Partien",
     bestFinalScore: "Bestes Endergebnis",
+    worstFinalScore: "Schlechtestes Endergebnis",
     worstRound: "Schlechteste Runde",
     bestExactBid: "Beste Ansagequote",
     totalGames: "Partien",
@@ -372,6 +374,7 @@ export const de: Strings = {
     podiumRate: "Podestquote",
     averageRank: "Ø Platz",
     bestRoundScore: "Beste Runde",
+    worstRoundScore: "Schlechteste Runde",
     unavailable: "Nicht verfügbar",
     chartLabel: (leader, rounds) =>
       `Punkteverlauf nach ${rounds} ${

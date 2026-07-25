@@ -356,9 +356,11 @@ export const fr: Strings = {
     zeroBidRate: "Mises à zéro réussies",
     averagePoints: "Points moyens",
     bestScore: "Meilleur score",
+    worstScore: "Pire score",
     winStreak: "Victoires d’affilée",
     recentGames: "Parties récentes",
     bestFinalScore: "Meilleur score final",
+    worstFinalScore: "Pire score final",
     worstRound: "Pire manche",
     bestExactBid: "Meilleur taux de mises réussies",
     totalGames: "Parties jouées",
@@ -373,6 +375,7 @@ export const fr: Strings = {
     podiumRate: "Taux de podium",
     averageRank: "Rang moyen",
     bestRoundScore: "Meilleure manche",
+    worstRoundScore: "Pire manche",
     unavailable: "Indisponible",
     chartLabel: (leader, rounds) =>
       `Évolution des scores après ${rounds} ${
