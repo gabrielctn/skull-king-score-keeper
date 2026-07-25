@@ -328,6 +328,14 @@ export const es: Strings = {
   results: {
     gameOver: "Fin de la partida",
     winner: (name, total) => `¡${name} gana con ${total} puntos!`,
+    duration: (hours, minutes) =>
+      hours > 0 && minutes > 0
+        ? `Partida jugada en ${hours} h ${String(minutes).padStart(2, "0")}`
+        : hours > 0
+          ? `Partida jugada en ${hours} h`
+          : minutes > 0
+            ? `Partida jugada en ${minutes} min`
+            : "Partida jugada en menos de un minuto",
     podiumTitle: "Podio",
     podiumPlace: (rank, name, total) =>
       `Puesto ${rank}, ${name}, ${total} puntos`,

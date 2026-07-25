@@ -7,6 +7,7 @@ import {
   aggregateStats,
   cumulativeScoreSeries,
   gameAwards,
+  gameDuration,
   normalizePlayerName,
   playerNameSuggestions,
 } from "../src/stats";
@@ -703,6 +704,63 @@ eq("empty input has no worst final score", emptyExtended.records.worstFinalScore
 eq("empty input has no streak record", emptyExtended.records.longestStreak, null);
 eq("empty input has no kraken bait", emptyExtended.records.krakenBait, null);
 eq("empty input has no zero-bid master", emptyExtended.records.zeroBidMaster, null);
+
+section("Game duration");
+const MINUTE = 60_000;
+function timedGame(
+  createdAt: number,
+  finishedAt: number | null,
+  status: Game["status"] = "finished"
+): Game {
+  const value = fixtureGame(
+    "timed",
+    createdAt,
+    [
+      { id: "timed_a", name: "Timed A" },
+      { id: "timed_b", name: "Timed B" },
+    ],
+    [{ timed_a: E(1, 1), timed_b: E(0, 1) }],
+    { status, createdAt }
+  );
+  value.finishedAt = finishedAt;
+  return value;
+}
+
+deepEq(
+  "hours and minutes split",
+  gameDuration(timedGame(0, 90 * MINUTE)),
+  { hours: 1, minutes: 30 }
+);
+deepEq(
+  "sub-hour games report only minutes",
+  gameDuration(timedGame(0, 45 * MINUTE)),
+  { hours: 0, minutes: 45 }
+);
+deepEq(
+  "duration is measured from the first deal",
+  gameDuration(timedGame(10 * MINUTE, 70 * MINUTE)),
+  { hours: 1, minutes: 0 }
+);
+deepEq(
+  "seconds round to the nearest minute",
+  gameDuration(timedGame(0, 20_000)),
+  { hours: 0, minutes: 0 }
+);
+eq(
+  "in-progress games have no duration",
+  gameDuration(timedGame(0, null, "in_progress")),
+  null
+);
+eq(
+  "pre-v8 finished saves have no duration",
+  gameDuration(timedGame(0, null)),
+  null
+);
+eq(
+  "a finish before the deal is rejected",
+  gameDuration(timedGame(90 * MINUTE, 10 * MINUTE)),
+  null
+);
 
 console.log(`\n${passed} passed, ${failed} failed`);
 if (failed > 0) process.exit(1);

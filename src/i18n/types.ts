@@ -323,6 +323,11 @@ export interface Strings {
     gameOver: string;
     /** "{name} wins with {total}!" */
     winner: (name: string, total: number) => string;
+    /**
+     * How long the game lasted, already split into whole hours and the
+     * remaining minutes. Both are 0 for a game shorter than a minute.
+     */
+    duration: (hours: number, minutes: number) => string;
     podiumTitle: string;
     podiumPlace: (rank: number, name: string, total: number) => string;
     review: string;

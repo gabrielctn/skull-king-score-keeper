@@ -18,7 +18,7 @@ import { getResponsiveLayout } from "../responsive";
 import ScoreBreakdownModal from "../components/ScoreBreakdownModal";
 import ScoreChart from "../components/ScoreChart";
 import Podium from "../components/Podium";
-import { gameAwards } from "../stats";
+import { gameAwards, gameDuration } from "../stats";
 import {
   prepareShareRecap,
   renderShareRecapPng,
@@ -55,6 +55,7 @@ export default function ResultsScreen({
   const layout = getResponsiveLayout(width);
   const rows = useMemo(() => standings(game), [game]);
   const awards = useMemo(() => gameAwards(game), [game]);
+  const duration = useMemo(() => gameDuration(game), [game]);
   const winner = rows[0];
   const [scorePlayerId, setScorePlayerId] = useState<string | null>(null);
   const [installMode, setInstallMode] = useState<PwaInstallMode>(
@@ -167,8 +168,15 @@ export default function ResultsScreen({
         </View>
         <Text style={styles.title}>{t.results.gameOver}</Text>
         {winner ? (
-          <Text style={styles.winner}>
+          <Text
+            style={[styles.winner, duration !== null && styles.winnerTight]}
+          >
             {t.results.winner(winner.player.name, winner.total)}
+          </Text>
+        ) : null}
+        {duration ? (
+          <Text style={styles.duration}>
+            {t.results.duration(duration.hours, duration.minutes)}
           </Text>
         ) : null}
 
@@ -340,6 +348,13 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontSize: 18,
     marginTop: spacing.sm,
+    marginBottom: spacing.md,
+    textAlign: "center",
+  },
+  winnerTight: { marginBottom: spacing.xs },
+  duration: {
+    color: colors.textDim,
+    fontSize: 13,
     marginBottom: spacing.md,
     textAlign: "center",
   },

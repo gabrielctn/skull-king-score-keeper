@@ -389,6 +389,9 @@ export default function GameScreen({
     if (nextRound === null) {
       next.status = "finished";
       next.currentRound = next.totalRounds;
+      // Only the first completion counts: later corrections must not stretch
+      // the reported duration by however long the review took.
+      next.finishedAt = current.finishedAt ?? next.updatedAt;
       onUpdateGame(next);
       onFinish(next);
       return;

@@ -588,6 +588,7 @@ export function createGame(
     twoPlayerGhost,
     status: "in_progress",
     createdAt: now,
+    finishedAt: null,
     updatedAt: now,
   };
 }

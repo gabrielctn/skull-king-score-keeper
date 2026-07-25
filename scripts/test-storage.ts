@@ -197,6 +197,25 @@ check(
   badMode?.scoringMode === "classic" && badMode.rascalBets === false
 );
 
+console.log("Finish timestamp migration (schema v8)");
+check("pre-v8 saves have no finish time", legacy?.finishedAt === null);
+check(
+  "a stamped finish time survives JSON persistence",
+  normalizeGame(
+    JSON.parse(JSON.stringify({ ...current, finishedAt: 1_700_000_000_000 }))
+  )?.finishedAt === 1_700_000_000_000
+);
+check(
+  "a corrupt finish time falls back to none",
+  normalizeGame({
+    id: "bad_finish",
+    players,
+    totalRounds: 1,
+    rounds: [{}],
+    finishedAt: "yesterday",
+  })?.finishedAt === null
+);
+
 console.log("App settings normalization");
 check(
   "missing settings fall back to keep-awake on",

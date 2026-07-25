@@ -123,6 +123,12 @@ export interface StatsSnapshot {
   summary: StatsSummary;
 }
 
+/** How long a finished game took, already split for display. */
+export interface GameDuration {
+  hours: number;
+  minutes: number;
+}
+
 export interface ScorePoint {
   roundNumber: number;
   total: number;
@@ -272,6 +278,27 @@ function toRate(successes: number, attempts: number): Rate {
     successes,
     attempts,
     rate: attempts > 0 ? successes / attempts : null,
+  };
+}
+
+/**
+ * Wall-clock time between the first deal and the last recorded round, or null
+ * when the game never finished or was saved before finish times were stamped.
+ * Rounded to the nearest minute, which is all the results screen shows.
+ */
+export function gameDuration(game: Game): GameDuration | null {
+  if (game?.status !== "finished") return null;
+
+  const start = finiteNumber(game.createdAt, NaN);
+  const end = finiteNumber(game.finishedAt, NaN);
+  if (!Number.isFinite(start) || !Number.isFinite(end) || end < start) {
+    return null;
+  }
+
+  const totalMinutes = Math.round((end - start) / 60_000);
+  return {
+    hours: Math.floor(totalMinutes / 60),
+    minutes: totalMinutes % 60,
   };
 }
 
