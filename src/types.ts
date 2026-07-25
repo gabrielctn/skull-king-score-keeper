@@ -124,8 +124,16 @@ export interface Game {
   twoPlayerGhost: boolean;
   status: "in_progress" | "finished";
   createdAt: number;
+  /**
+   * When the game first had every round recorded, i.e. how long the table
+   * actually played. Kept separate from `updatedAt`, which moves again
+   * whenever a finished game is reviewed and corrected, and deliberately
+   * preserved through those corrections so the duration stays stable. Null
+   * for games that never completed, and on saves predating this field.
+   */
+  finishedAt: number | null;
   updatedAt: number;
 }
 
 /** Current persisted-game schema version (for save migrations). */
-export const GAME_SCHEMA_VERSION = 7;
+export const GAME_SCHEMA_VERSION = 8;

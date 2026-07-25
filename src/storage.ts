@@ -44,6 +44,8 @@ export function normalizeSettings(raw: unknown): AppSettings {
  * Schema v6 records tricks destroyed by a Kraken; older saves default to 0.
  * Schema v7 adds Rascal scoring (mode, optional-rules flag and per-entry
  * declarations); older saves stay on classic scoring.
+ * Schema v8 stamps `finishedAt` when a game completes; older saves keep null
+ * and simply show no duration.
  */
 export function normalizeGame(raw: any): Game | null {
   if (!raw || !Array.isArray(raw.players) || !Array.isArray(raw.rounds)) {
@@ -151,6 +153,9 @@ export function normalizeGame(raw: any): Game | null {
     twoPlayerGhost: raw.twoPlayerGhost ?? false,
     status: raw.status === "finished" ? "finished" : "in_progress",
     createdAt: raw.createdAt ?? Date.now(),
+    // v7 saves predate finish timestamps. Leaving them null keeps the duration
+    // hidden rather than inventing one from an unrelated `updatedAt`.
+    finishedAt: typeof raw.finishedAt === "number" ? raw.finishedAt : null,
     updatedAt: raw.updatedAt ?? Date.now(),
   };
 }

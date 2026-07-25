@@ -1,5 +1,34 @@
 import { Strings } from "./types";
 
+/**
+ * Arabic counted-noun agreement: one and two have their own forms and carry no
+ * digit, 3-10 take the plural, and 11 and up return to the singular.
+ */
+function counted(
+  value: number,
+  forms: { one: string; two: string; few: string; many: string }
+): string {
+  if (value === 1) return forms.one;
+  if (value === 2) return forms.two;
+  return `${value} ${value <= 10 ? forms.few : forms.many}`;
+}
+
+const hoursText = (value: number) =>
+  counted(value, {
+    one: "ساعة",
+    two: "ساعتان",
+    few: "ساعات",
+    many: "ساعة",
+  });
+
+const minutesText = (value: number) =>
+  counted(value, {
+    one: "دقيقة",
+    two: "دقيقتان",
+    few: "دقائق",
+    many: "دقيقة",
+  });
+
 export const ar: Strings = {
   langLabel: "عربي",
 
@@ -318,6 +347,14 @@ export const ar: Strings = {
   results: {
     gameOver: "انتهت اللعبة",
     winner: (name, total) => `فاز ${name} بمجموع ${total}!`,
+    duration: (hours, minutes) =>
+      hours > 0 && minutes > 0
+        ? `استغرقت المباراة ${hoursText(hours)} و${minutesText(minutes)}`
+        : hours > 0
+          ? `استغرقت المباراة ${hoursText(hours)}`
+          : minutes > 0
+            ? `استغرقت المباراة ${minutesText(minutes)}`
+            : "استغرقت المباراة أقل من دقيقة",
     podiumTitle: "منصة التتويج",
     podiumPlace: (rank, name, total) =>
       `المركز ${rank}، ${name}، ${total} نقطة`,

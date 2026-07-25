@@ -302,6 +302,14 @@ export const zh: Strings = {
   results: {
     gameOver: "游戏结束",
     winner: (name, total) => `${name} 以 ${total} 分获胜！`,
+    duration: (hours, minutes) =>
+      hours > 0 && minutes > 0
+        ? `本局用时 ${hours} 小时 ${minutes} 分钟`
+        : hours > 0
+          ? `本局用时 ${hours} 小时`
+          : minutes > 0
+            ? `本局用时 ${minutes} 分钟`
+            : "本局用时不到 1 分钟",
     podiumTitle: "领奖台",
     podiumPlace: (rank, name, total) =>
       `第 ${rank} 名，${name}，${total} 分`,

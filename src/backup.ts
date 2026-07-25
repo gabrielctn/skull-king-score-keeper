@@ -342,6 +342,9 @@ function validateRawGame(value: unknown, path: string): Record<string, unknown> 
   }
   assertOptionalTimestamp(value.createdAt, `${path}.createdAt`);
   assertOptionalTimestamp(value.updatedAt, `${path}.updatedAt`);
+  if (value.finishedAt !== null) {
+    assertOptionalTimestamp(value.finishedAt, `${path}.finishedAt`);
+  }
 
   return value;
 }
@@ -429,6 +432,7 @@ function normalizeBackupGame(value: unknown, path: string): Game {
     twoPlayerGhost: normalized.twoPlayerGhost,
     status: normalized.status,
     createdAt: normalized.createdAt,
+    finishedAt: normalized.finishedAt,
     updatedAt: normalized.updatedAt,
   };
 }

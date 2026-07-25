@@ -320,6 +320,14 @@ export const en: Strings = {
   results: {
     gameOver: "Game Over",
     winner: (name, total) => `${name} wins with ${total}!`,
+    duration: (hours, minutes) =>
+      hours > 0 && minutes > 0
+        ? `Played in ${hours} hr ${minutes} min`
+        : hours > 0
+          ? `Played in ${hours} hr`
+          : minutes > 0
+            ? `Played in ${minutes} min`
+            : "Played in under a minute",
     podiumTitle: "Podium",
     podiumPlace: (rank, name, total) =>
       `Rank ${rank}, ${name}, ${total} points`,

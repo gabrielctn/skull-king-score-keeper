@@ -79,6 +79,7 @@ current.discardedTricks[1] = 1;
 const finished = game("finished", 100);
 finished.status = "finished";
 finished.currentRound = 2;
+finished.finishedAt = 95;
 
 const json = serializeBackup(
   { currentGame: current, history: [finished, clone(current)] },
@@ -99,6 +100,14 @@ check(
   "special-card state survives",
   parsed.currentGame?.lootUses[0][0]?.boundToId === "b" &&
     parsed.currentGame.discardedTricks[1] === 1
+);
+check(
+  "finish timestamp survives",
+  parsed.history.find((entry) => entry.id === "finished")?.finishedAt === 95
+);
+check(
+  "unfinished games keep a null finish timestamp",
+  parsed.currentGame?.finishedAt === null
 );
 check(
   "history round trip is deterministic",
@@ -148,6 +157,13 @@ console.log("Defensive parsing");
   expectBackupError(
     "invalid bet declarations are rejected",
     () => parseBackup(JSON.stringify(tamperedBet)),
+    "invalid_game"
+  );
+  const tamperedFinishedAt = JSON.parse(rascalJson);
+  tamperedFinishedAt.currentGame.finishedAt = -5;
+  expectBackupError(
+    "invalid finish timestamps are rejected",
+    () => parseBackup(JSON.stringify(tamperedFinishedAt)),
     "invalid_game"
   );
 }
@@ -276,6 +292,10 @@ check(
 check(
   "missing timestamps normalize deterministically",
   migrated.createdAt === 0 && migrated.updatedAt === 0
+);
+check(
+  "pre-v8 saves import without an invented finish time",
+  migrated.finishedAt === null
 );
 check(
   "unknown legacy fields do not leak into current bonus",
