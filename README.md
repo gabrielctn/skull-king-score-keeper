@@ -92,6 +92,13 @@ and they go to whoever *captures* the card, no matter who played it:
 - Leviathan destroyed by Davy Jones' Locker: **+20** each
 - The Second captured by Skull King or a Mermaid: **+30**
 
+A setup option, **"Bonuses only on an exact bid"**, switches those capture
+bonuses to the widespread house rule instead: miss your bid and you score
+nothing for the cards you captured. It is off by default (the rulebook keeps
+them), applies to classic scoring only — Rascal already scales bonuses by
+accuracy — and is stored per game, so existing games keep the scores they were
+played with.
+
 New expansion color cards — **only applied when you hit your exact bid**:
 
 - Each new 7 captured: **-5**

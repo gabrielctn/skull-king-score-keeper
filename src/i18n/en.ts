@@ -56,6 +56,7 @@ export const en: Strings = {
     automaticUpdatesBody:
       "Installed apps now download each new release automatically and switch to it as soon as the device is online.",
     items: [
+      "New setup option: award capture bonuses only when a player makes their bid exactly — the house rule many tables play. Off by default, so the rulebook's scoring is unchanged.",
       "New in Stats: each player's worst round and worst final score, plus a crew record for the lowest final score of all.",
       "The results screen now shows how long the game lasted.",
       "Your games now back up to the cloud automatically and privately — your scoreboard, leaderboard and stats come back even after this device's data is cleared.",
@@ -197,6 +198,9 @@ export const en: Strings = {
     rascalBetsTitle: "Rascal's optional rules ✊",
     rascalBetsHint:
       "After bidding, everyone declares Buckshot (open hand: the standard tiers) or Cannonball (closed fist: 15 points per card dealt on an exact bid, nothing otherwise — bonuses included).",
+    bonusesRequireBidTitle: "Bonuses only on an exact bid",
+    bonusesRequireBidHint:
+      "A common variant: capture bonuses (14s, mermaids, pirates, Skull King…) are lost when the bid is missed. Left off, the app follows the rulebook and keeps them whatever the bid.",
     expansion: "Expansion cards",
     advancedTitle: "Loot & Rascal wager",
     advancedHint:
@@ -520,6 +524,10 @@ export const en: Strings = {
     davyJonesLeviathans: "Leviathan destroyed by Davy Jones",
     secondCaptured: "Second taken by Skull King / Mermaid",
     each: "ea.",
+    requiresBidHint:
+      "This game only awards capture bonuses when the bid is made exactly.",
+    requiresBidMissed:
+      "Bid missed: capture bonuses do not count in this game.",
     cardBonus: (n) => `Card bonus: ${n >= 0 ? "+" : ""}${n}`,
   },
 
@@ -624,7 +632,7 @@ export const en: Strings = {
       },
       {
         title: "Bonuses count regardless of your bid",
-        body: "You keep capture bonuses even if you missed your bid. They go to whoever captures the card, no matter who played it.",
+        body: "By the rulebook you keep capture bonuses even if you missed your bid. They go to whoever captures the card, no matter who played it. A setup option lets you play the opposite variant: miss the bid, lose the capture bonuses.",
       },
     ],
     expansion: [

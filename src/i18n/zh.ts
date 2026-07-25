@@ -55,6 +55,7 @@ export const zh: Strings = {
     automaticUpdatesBody:
       "已安装的应用会自动下载每个新版本，并在设备联网后立即切换到新版本。",
     items: [
+      "新建对局时新增选项：仅在叫牌准确时给予俘获奖励——许多牌桌采用的变体玩法。默认关闭，规则书的计分方式保持不变。",
       "统计页新增：每位玩家的最差回合与最差终局得分，以及全员最低终局得分的队伍纪录。",
       "结算画面现在会显示本局游戏耗时。",
       "你的对局现在会自动、私密地备份到云端——即使清除了本设备的数据，你的计分板、排行榜与统计也能找回。",
@@ -186,6 +187,9 @@ export const zh: Strings = {
     rascalBetsTitle: "Rascal 可选规则 ✊",
     rascalBetsHint:
       "叫牌后，每人宣布散弹（张开手掌：按常规档位计分）或炮弹（握紧拳头：叫牌准确时每张发牌得 15 分，否则一分不得——奖励分同样如此）。",
+    bonusesRequireBidTitle: "仅在叫牌准确时计奖励",
+    bonusesRequireBidHint:
+      "常见变体：叫牌失败时失去俘获奖励（14、美人鱼、海盗、Skull King 等）。关闭时，应用遵循规则书，无论叫牌结果都保留奖励。",
     expansion: "扩展牌",
     advancedTitle: "战利品与 Rascal 赌注",
     advancedHint:
@@ -479,6 +483,8 @@ export const zh: Strings = {
     davyJonesLeviathans: "戴维·琼斯摧毁利维坦",
     secondCaptured: "Skull King / 美人鱼俘获“副手”",
     each: "每张",
+    requiresBidHint: "本局仅在叫牌准确时给予俘获奖励。",
+    requiresBidMissed: "叫牌失败：本局不计俘获奖励。",
     cardBonus: (n) => `卡牌奖励：${n >= 0 ? "+" : ""}${n}`,
   },
 
@@ -543,7 +549,7 @@ export const zh: Strings = {
       { title: "海盗俘获美人鱼（每张 +20）", body: "你的海盗赢得含有美人鱼的墩。" },
       { title: "Skull King 俘获海盗（每张 +30）", body: "你的 Skull King 赢得含有一张或多张海盗的墩。" },
       { title: "美人鱼俘获 Skull King（+40）", body: "你的美人鱼赢得含 Skull King 的墩。（美人鱼胜 Skull King，Skull King 胜海盗，海盗胜美人鱼。）" },
-      { title: "奖励与叫牌结果无关", body: "即使叫牌失败，俘获奖励仍然保留。奖励归俘获该牌的玩家，无论谁打出了它。" },
+      { title: "奖励与叫牌结果无关", body: "按规则书，即使叫牌失败，俘获奖励仍然保留。奖励归俘获该牌的玩家，无论谁打出了它。创建游戏时也可选择相反的变体：叫牌失败即失去俘获奖励。" },
     ],
     expansion: [
       { title: "新 7 和新 8（每张 -5 / +5）", body: "它们与普通花色牌相同。俘获新 7 的玩家失去 5 分，俘获新 8 的玩家获得 5 分，但仅在准确完成叫牌时生效。获胜点数相同则先出的牌获胜。" },

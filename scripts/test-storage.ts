@@ -197,6 +197,43 @@ check(
   badMode?.scoringMode === "classic" && badMode.rascalBets === false
 );
 
+console.log("Bonus house rule migration (schema v9)");
+check(
+  "pre-v9 saves keep bonuses unconditional",
+  legacy?.bonusesRequireBid === false
+);
+check(
+  "the house rule survives on a classic save",
+  normalizeGame({
+    id: "houseRule",
+    players,
+    totalRounds: 1,
+    rounds: [{}],
+    bonusesRequireBid: true,
+  })?.bonusesRequireBid === true
+);
+check(
+  "the house rule is dropped on a rascal save",
+  normalizeGame({
+    id: "rascalHouseRule",
+    players,
+    totalRounds: 1,
+    rounds: [{}],
+    scoringMode: "rascal",
+    bonusesRequireBid: true,
+  })?.bonusesRequireBid === false
+);
+check(
+  "a non-boolean house rule falls back to off",
+  normalizeGame({
+    id: "badHouseRule",
+    players,
+    totalRounds: 1,
+    rounds: [{}],
+    bonusesRequireBid: "yes",
+  })?.bonusesRequireBid === false
+);
+
 console.log("Finish timestamp migration (schema v8)");
 check("pre-v8 saves have no finish time", legacy?.finishedAt === null);
 check(

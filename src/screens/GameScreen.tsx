@@ -558,7 +558,8 @@ export default function GameScreen({
             cards,
             entry,
             lootBonusForPlayer(draft, lootUses, p.id),
-            game.scoringMode
+            game.scoringMode,
+            game.bonusesRequireBid
           );
           const open = !!expanded[p.id];
           const b = entry.bonus;
@@ -686,6 +687,7 @@ export default function GameScreen({
                   advanced={game.advancedCards}
                   newExpansion={game.newExpansion}
                   bidMade={madeBid(entry)}
+                  bonusesRequireBid={game.bonusesRequireBid}
                   onChange={(b) => updateBonus(p.id, b)}
                 />
               ) : null}

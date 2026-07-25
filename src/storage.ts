@@ -46,6 +46,8 @@ export function normalizeSettings(raw: unknown): AppSettings {
  * declarations); older saves stay on classic scoring.
  * Schema v8 stamps `finishedAt` when a game completes; older saves keep null
  * and simply show no duration.
+ * Schema v9 adds the "bonuses require an exact bid" house rule; older saves
+ * keep it off so their recorded scores stay exactly as they were played.
  */
 export function normalizeGame(raw: any): Game | null {
   if (!raw || !Array.isArray(raw.players) || !Array.isArray(raw.rounds)) {
@@ -76,6 +78,10 @@ export function normalizeGame(raw: any): Game | null {
   // in a Rascal game with bets on; reset it everywhere else so stale values
   // can never change a score.
   const rascalBets = scoringMode === "rascal" && raw.rascalBets === true;
+  // Same reasoning for the bonus house rule, which classic scoring alone uses:
+  // a stale flag on a Rascal save must never change a score.
+  const bonusesRequireBid =
+    scoringMode === "classic" && raw.bonusesRequireBid === true;
 
   const rounds: RoundEntries[] = raw.rounds.map((round: any) => {
     const out: RoundEntries = {};
@@ -146,6 +152,7 @@ export function normalizeGame(raw: any): Game | null {
     cardsDealt,
     scoringMode,
     rascalBets,
+    bonusesRequireBid,
     advancedCards: raw.advancedCards ?? true,
     newExpansion: raw.newExpansion ?? false,
     // v2 saves predate the 2-player ghost; default off to keep their strict

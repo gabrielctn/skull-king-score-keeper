@@ -57,6 +57,7 @@ export const fr: Strings = {
     automaticUpdatesBody:
       "Les applications installées téléchargent désormais chaque nouvelle version automatiquement et l'activent dès que l'appareil est en ligne.",
     items: [
+      "Nouvelle option à la création : n'accorder les bonus de capture que si la mise est réussie — la variante que beaucoup de tables jouent. Désactivée par défaut, le décompte du livret ne change pas.",
       "Nouveau dans les statistiques : la pire manche et le pire score final de chaque joueur, ainsi qu'un record d'équipage pour le plus bas score final.",
       "L'écran de résultats affiche désormais la durée de la partie.",
       "Vos parties sont désormais sauvegardées dans le cloud automatiquement et en privé — votre tableau des scores, votre classement et vos stats reviennent même après l'effacement des données de cet appareil.",
@@ -199,6 +200,9 @@ export const fr: Strings = {
     rascalBetsTitle: "Règles optionnelles de Rascal ✊",
     rascalBetsHint:
       "Après la mise, chacun déclare Chevrotine (main ouverte : barème habituel) ou Boulet de canon (poing fermé : 15 points par carte distribuée si la mise est exacte, sinon rien — bonus compris).",
+    bonusesRequireBidTitle: "Bonus seulement si la mise est réussie",
+    bonusesRequireBidHint:
+      "Variante courante : les bonus de capture (14, sirènes, pirates, Skull King…) sont perdus si la mise est ratée. Désactivé, l'app suit le livret : les bonus sont gardés quelle que soit la mise.",
     expansion: "Cartes d'extension",
     advancedTitle: "Butin & pari Rascal",
     advancedHint:
@@ -529,6 +533,10 @@ export const fr: Strings = {
     davyJonesLeviathans: "Léviathan détruit par Davy Jones",
     secondCaptured: "Second pris par Skull King / Sirène",
     each: "ch.",
+    requiresBidHint:
+      "Cette partie n'accorde les bonus de capture que si la mise est réussie.",
+    requiresBidMissed:
+      "Mise ratée : les bonus de capture ne comptent pas dans cette partie.",
     cardBonus: (n) => `Bonus de cartes : ${n >= 0 ? "+" : ""}${n}`,
   },
 
@@ -635,7 +643,7 @@ export const fr: Strings = {
       },
       {
         title: "Les bonus comptent quelle que soit votre mise",
-        body: "Vous gardez les bonus de capture même si vous ratez votre mise. Ils vont à celui qui capture la carte, peu importe qui l'a jouée.",
+        body: "Selon le livret, vous gardez les bonus de capture même si vous ratez votre mise. Ils vont à celui qui capture la carte, peu importe qui l'a jouée. Une option à la création de la partie permet de jouer la variante inverse : mise ratée, aucun bonus de capture.",
       },
     ],
     expansion: [

@@ -56,6 +56,7 @@ export const de: Strings = {
     automaticUpdatesBody:
       "Installierte Apps laden jede neue Version automatisch und wechseln zu ihr, sobald das Gerät online ist.",
     items: [
+      "Neue Option beim Erstellen: Fangboni nur bei exakt getroffener Ansage vergeben — die Hausregel vieler Runden. Standardmäßig aus, die Wertung der Anleitung bleibt unverändert.",
       "Neu in den Statistiken: die schlechteste Runde und das schlechteste Endergebnis jedes Spielers sowie ein Crew-Rekord für das niedrigste Endergebnis.",
       "Der Ergebnisbildschirm zeigt jetzt, wie lange die Partie gedauert hat.",
       "Deine Spiele werden jetzt automatisch und privat in der Cloud gesichert — Punktetafel, Rangliste und Statistiken kehren zurück, selbst wenn die Daten dieses Geräts gelöscht werden.",
@@ -198,6 +199,9 @@ export const de: Strings = {
     rascalBetsTitle: "Optionale Rascal-Regeln ✊",
     rascalBetsHint:
       "Nach der Ansage erklärt jede Person Schrotladung (offene Hand: übliche Stufen) oder Kanonenkugel (geschlossene Faust: 15 Punkte pro Karte bei exakter Ansage, sonst nichts — Boni eingeschlossen).",
+    bonusesRequireBidTitle: "Boni nur bei exakter Ansage",
+    bonusesRequireBidHint:
+      "Verbreitete Variante: Fangboni (14er, Meerjungfrauen, Piraten, Skull King …) verfallen bei verfehlter Ansage. Ausgeschaltet folgt die App der Anleitung und behält sie unabhängig von der Ansage.",
     expansion: "Erweiterungskarten",
     advancedTitle: "Beute & Rascal-Wette",
     advancedHint:
@@ -512,6 +516,10 @@ export const de: Strings = {
     davyJonesLeviathans: "Leviathan von Davy Jones zerstört",
     secondCaptured: "Zweiter von Skull King / Meerjungfrau gefangen",
     each: "je",
+    requiresBidHint:
+      "In dieser Partie gibt es Fangboni nur bei exakt getroffener Ansage.",
+    requiresBidMissed:
+      "Ansage verfehlt: Fangboni zählen in dieser Partie nicht.",
     cardBonus: (n) => `Kartenbonus: ${n >= 0 ? "+" : ""}${n}`,
   },
 
@@ -576,7 +584,7 @@ export const de: Strings = {
       { title: "Meerjungfrau durch Pirat  (+20 je)", body: "Dein Pirat gewinnt einen Stich mit einer Meerjungfrau." },
       { title: "Pirat durch Skull King  (+30 je)", body: "Dein Skull King gewinnt einen Stich mit einem oder mehreren Piraten." },
       { title: "Meerjungfrau fängt Skull King  (+40)", body: "Deine Meerjungfrau gewinnt einen Stich mit dem Skull King. (Meerjungfrau schlägt Skull King, Skull King schlägt Piraten, Piraten schlagen Meerjungfrau.)" },
-      { title: "Boni zählen unabhängig von der Ansage", body: "Fangboni bleiben auch bei verfehlter Ansage erhalten. Sie gehen an die Person, die die Karte fängt, unabhängig davon, wer sie gespielt hat." },
+      { title: "Boni zählen unabhängig von der Ansage", body: "Laut Anleitung bleiben Fangboni auch bei verfehlter Ansage erhalten. Sie gehen an die Person, die die Karte fängt, unabhängig davon, wer sie gespielt hat. Beim Erstellen der Partie lässt sich die umgekehrte Variante wählen: verfehlte Ansage, keine Fangboni." },
     ],
     expansion: [
       { title: "Neue 7er und 8er  (-5 / +5 je)", body: "Sie werden wie normale Farbkarten gespielt. Wer eine neue 7 fängt, verliert 5 Punkte; wer eine neue 8 fängt, erhält 5 Punkte — nur bei exakt getroffener Ansage. Bei Gleichstand gewinnt die zuerst gespielte Karte." },

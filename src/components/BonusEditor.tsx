@@ -16,6 +16,8 @@ interface Props {
   advanced: boolean;
   newExpansion: boolean;
   bidMade: boolean;
+  /** House rule: capture bonuses are voided when the bid is missed. */
+  bonusesRequireBid: boolean;
   onChange: (next: BonusInput) => void;
 }
 
@@ -78,9 +80,12 @@ export default function BonusEditor({
   advanced,
   newExpansion,
   bidMade,
+  bonusesRequireBid,
   onChange,
 }: Props) {
   const { t } = useI18n();
+  const capturePoints =
+    bonusesRequireBid && !bidMade ? 0 : captureBonus(bonus);
   const set = <K extends keyof BonusInput>(key: K, value: BonusInput[K]) =>
     onChange({ ...bonus, [key]: value });
 
@@ -185,10 +190,14 @@ export default function BonusEditor({
         </>
       ) : null}
 
+      {bonusesRequireBid ? (
+        <Text style={styles.ruleHint}>
+          {bidMade ? t.bonus.requiresBidHint : t.bonus.requiresBidMissed}
+        </Text>
+      ) : null}
+
       <Text style={styles.sum}>
-        {t.bonus.cardBonus(
-          captureBonus(bonus) + expansionColorBonus(bonus, bidMade)
-        )}
+        {t.bonus.cardBonus(capturePoints + expansionColorBonus(bonus, bidMade))}
       </Text>
     </View>
   );
@@ -248,6 +257,12 @@ const styles = StyleSheet.create({
     color: colors.textDim,
     fontSize: 12,
     textAlign: "right",
+    marginTop: spacing.xs,
+  },
+  ruleHint: {
+    color: colors.gold,
+    fontSize: 11,
+    lineHeight: 15,
     marginTop: spacing.xs,
   },
 });
