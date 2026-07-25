@@ -58,6 +58,8 @@ export const es: Strings = {
     automaticUpdatesBody:
       "Las aplicaciones instaladas ahora descargan automáticamente cada nueva versión y la activan en cuanto el dispositivo se conecta a internet.",
     items: [
+      "Novedad en Estadísticas: la peor ronda y la peor puntuación final de cada jugador, además de un récord de equipo para la puntuación final más baja.",
+      "La pantalla de resultados ahora muestra cuánto duró la partida.",
       "Tus partidas ahora se respaldan en la nube automáticamente y en privado: tu marcador, clasificación y estadísticas vuelven incluso tras borrar los datos de este dispositivo.",
       "¿Juegas en otro teléfono? Copia tu código de sincronización desde Ajustes y pégalo allí para cargar todas tus partidas.",
     ],

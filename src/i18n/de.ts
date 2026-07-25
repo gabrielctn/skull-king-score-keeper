@@ -56,6 +56,8 @@ export const de: Strings = {
     automaticUpdatesBody:
       "Installierte Apps laden jede neue Version automatisch und wechseln zu ihr, sobald das Gerät online ist.",
     items: [
+      "Neu in den Statistiken: die schlechteste Runde und das schlechteste Endergebnis jedes Spielers sowie ein Crew-Rekord für das niedrigste Endergebnis.",
+      "Der Ergebnisbildschirm zeigt jetzt, wie lange die Partie gedauert hat.",
       "Deine Spiele werden jetzt automatisch und privat in der Cloud gesichert — Punktetafel, Rangliste und Statistiken kehren zurück, selbst wenn die Daten dieses Geräts gelöscht werden.",
       "Spielst du auf einem anderen Handy? Kopiere deinen Sync-Code aus den Einstellungen und füge ihn dort ein, um all deine Spiele zu laden.",
     ],

@@ -56,6 +56,8 @@ export const en: Strings = {
     automaticUpdatesBody:
       "Installed apps now download each new release automatically and switch to it as soon as the device is online.",
     items: [
+      "New in Stats: each player's worst round and worst final score, plus a crew record for the lowest final score of all.",
+      "The results screen now shows how long the game lasted.",
       "Your games now back up to the cloud automatically and privately — your scoreboard, leaderboard and stats come back even after this device's data is cleared.",
       "Playing on another phone? Copy your sync code from Settings and paste it there to load all your games.",
     ],
