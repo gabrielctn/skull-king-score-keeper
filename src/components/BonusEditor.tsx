@@ -70,7 +70,14 @@ function CountRow({
           {signedPoints(points)} {t.bonus.each}
         </Text>
       </Text>
-      <Stepper value={value} onChange={onChange} min={0} max={max} compact />
+      <Stepper
+        value={value}
+        onChange={onChange}
+        min={0}
+        max={max}
+        accessibilityLabel={label}
+        compact
+      />
     </View>
   );
 }
@@ -165,7 +172,11 @@ export default function BonusEditor({
           <View style={styles.divider} />
           <View style={styles.row}>
             <Text style={styles.label}>{t.bonus.rascal}</Text>
-            <View style={styles.segment}>
+            <View
+              style={styles.segment}
+              accessibilityRole="radiogroup"
+              accessibilityLabel={t.bonus.rascal}
+            >
               {([0, 10, 20] as const).map((w) => (
                 <TouchableOpacity
                   key={w}
@@ -174,6 +185,10 @@ export default function BonusEditor({
                     bonus.rascalWager === w && styles.segBtnOn,
                   ]}
                   onPress={() => set("rascalWager", w)}
+                  accessibilityRole="radio"
+                  accessibilityLabel={`${t.bonus.rascal}: ${w}`}
+                  accessibilityState={{ checked: bonus.rascalWager === w }}
+                  aria-checked={bonus.rascalWager === w}
                 >
                   <Text
                     style={[
@@ -241,10 +256,11 @@ const styles = StyleSheet.create({
   segment: { flexDirection: "row" },
   segBtn: {
     minWidth: 40,
-    paddingVertical: 6,
+    minHeight: 44,
+    justifyContent: "center",
     paddingHorizontal: spacing.sm,
     borderWidth: 1,
-    borderColor: colors.cardBorder,
+    borderColor: colors.controlBorder,
     backgroundColor: colors.bgElevated,
     alignItems: "center",
     marginLeft: 6,

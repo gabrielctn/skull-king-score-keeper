@@ -112,11 +112,7 @@ export default function CookieConsentBanner() {
 
 const styles = StyleSheet.create({
   positioner: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 100,
+    width: "100%",
     alignItems: "center",
     paddingHorizontal: 12,
     paddingBottom: 12,
@@ -163,7 +159,7 @@ const styles = StyleSheet.create({
   },
   button: {
     minWidth: 92,
-    minHeight: 40,
+    minHeight: 44,
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 15,
@@ -172,7 +168,7 @@ const styles = StyleSheet.create({
   declineButton: {
     marginEnd: spacing.sm,
     borderWidth: 1,
-    borderColor: colors.cardBorder,
+    borderColor: colors.controlBorder,
   },
   acceptButton: {
     backgroundColor: colors.gold,

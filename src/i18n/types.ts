@@ -209,6 +209,7 @@ export interface Strings {
     won: string;
     bonus: string;
     roundPoints: string;
+    roundPointsPreview: string;
     /** "{n} total" */
     total: (n: number) => string;
     /** "Tricks recorded: {x} / {y}" */

@@ -403,6 +403,77 @@ export default function GameScreen({
   };
 
   const board = standings(game);
+  const roundNavigation = (
+    <View style={[styles.roundNav, !layout.isTablet && styles.roundNavMobile]}>
+      <TouchableOpacity
+        style={styles.roundArrow}
+        onPress={() => setDisplayRound((r) => Math.max(1, r - 1))}
+        disabled={displayRound <= 1}
+        accessibilityRole="button"
+        accessibilityLabel={t.game.round(Math.max(1, displayRound - 1))}
+        accessibilityState={{ disabled: displayRound <= 1 }}
+      >
+        <Text style={[styles.chevron, displayRound <= 1 && styles.disabled]}>
+          ‹
+        </Text>
+      </TouchableOpacity>
+      <View style={styles.roundInfo}>
+        <Text style={styles.roundTitle}>{t.game.round(displayRound)}</Text>
+        <Text style={styles.roundCards}>{t.game.cardsDealt}</Text>
+        <Stepper
+          value={cards}
+          onChange={setCards}
+          min={1}
+          max={20}
+          accessibilityLabel={t.game.cardsDealt}
+          compact
+        />
+      </View>
+      <TouchableOpacity
+        style={styles.roundArrow}
+        onPress={() =>
+          setDisplayRound((r) => Math.min(game.totalRounds, r + 1))
+        }
+        disabled={displayRound >= game.totalRounds}
+        accessibilityRole="button"
+        accessibilityLabel={t.game.round(
+          Math.min(game.totalRounds, displayRound + 1)
+        )}
+        accessibilityState={{ disabled: displayRound >= game.totalRounds }}
+      >
+        <Text
+          style={[
+            styles.chevron,
+            displayRound >= game.totalRounds && styles.disabled,
+          ]}
+        >
+          ›
+        </Text>
+      </TouchableOpacity>
+    </View>
+  );
+  const scoreButton = (
+    <TouchableOpacity
+      style={[
+        styles.scoreBtn,
+        layout.isTablet && !layout.isDesktop && styles.scoreBtnWide,
+        (!roundReady || lootIncomplete) && styles.scoreBtnDisabled,
+      ]}
+      onPress={() => commitRound()}
+      disabled={!roundReady || lootIncomplete}
+      accessibilityRole="button"
+      accessibilityState={{ disabled: !roundReady || lootIncomplete }}
+      aria-disabled={!roundReady || lootIncomplete}
+    >
+      <Text style={styles.scoreBtnText}>
+        {displayRound === game.totalRounds && !alreadyRecorded
+          ? t.game.finish
+          : alreadyRecorded
+            ? t.game.updateRound
+            : t.game.scoreRound}
+      </Text>
+    </TouchableOpacity>
+  );
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -415,68 +486,36 @@ export default function GameScreen({
           },
         ]}
       >
-        <TouchableOpacity
-          onPress={onExit}
-          style={styles.sideBtn}
-          accessibilityRole="button"
-          accessibilityLabel={t.common.home}
-        >
-          <Text style={styles.headerBtn}>‹ {t.common.home}</Text>
-        </TouchableOpacity>
-        <View style={styles.roundNav}>
+        <View style={styles.headerTopRow}>
           <TouchableOpacity
-            onPress={() => setDisplayRound((r) => Math.max(1, r - 1))}
-            disabled={displayRound <= 1}
+            onPress={onExit}
+            style={styles.sideBtn}
             accessibilityRole="button"
-            accessibilityLabel={t.game.round(Math.max(1, displayRound - 1))}
-            accessibilityState={{ disabled: displayRound <= 1 }}
+            accessibilityLabel={t.common.home}
           >
-            <Text style={[styles.chevron, displayRound <= 1 && styles.disabled]}>
-              ‹
-            </Text>
+            <Text style={styles.headerBtn}>‹ {t.common.home}</Text>
           </TouchableOpacity>
-          <View style={styles.roundInfo}>
-            <Text style={styles.roundTitle}>{t.game.round(displayRound)}</Text>
-            <Text style={styles.roundCards}>{t.game.cardsDealt}</Text>
-            <Stepper value={cards} onChange={setCards} min={1} max={20} compact />
-          </View>
-          <TouchableOpacity
-            onPress={() =>
-              setDisplayRound((r) => Math.min(game.totalRounds, r + 1))
-            }
-            disabled={displayRound >= game.totalRounds}
-            accessibilityRole="button"
-            accessibilityLabel={t.game.round(
-              Math.min(game.totalRounds, displayRound + 1)
-            )}
-            accessibilityState={{ disabled: displayRound >= game.totalRounds }}
-          >
-            <Text
-              style={[
-                styles.chevron,
-                displayRound >= game.totalRounds && styles.disabled,
-              ]}
+          {layout.isTablet ? roundNavigation : null}
+          <View style={styles.sideActions}>
+            <TouchableOpacity
+              style={styles.headerIconButton}
+              onPress={() => setShareOpen(true)}
+              accessibilityRole="button"
+              accessibilityLabel={t.liveShare.open}
             >
-              ›
-            </Text>
-          </TouchableOpacity>
+              <Text style={styles.help}>▦</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.headerIconButton}
+              onPress={() => setRulesOpen(true)}
+              accessibilityRole="button"
+              accessibilityLabel={t.rules.title}
+            >
+              <Text style={styles.help}>?</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-        <View style={styles.sideActions}>
-          <TouchableOpacity
-            onPress={() => setShareOpen(true)}
-            accessibilityRole="button"
-            accessibilityLabel={t.liveShare.open}
-          >
-            <Text style={styles.help}>▦</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => setRulesOpen(true)}
-            accessibilityRole="button"
-            accessibilityLabel={t.rules.title}
-          >
-            <Text style={styles.help}>?</Text>
-          </TouchableOpacity>
-        </View>
+        {!layout.isTablet ? roundNavigation : null}
       </View>
 
       <View
@@ -578,7 +617,19 @@ export default function GameScreen({
             b.expansion8 > 0 ||
             b.davyJonesLeviathans > 0 ||
             b.secondCaptured;
-          const showRoundScore = alreadyRecorded || roundReady || entryTouched;
+          const bonusCount =
+            b.colored14 +
+            Number(b.black14) +
+            b.mermaidByPirate +
+            b.pirateBySkullKing +
+            Number(b.mermaidCapturesSkullKing) +
+            Number(b.rascalWager > 0) +
+            b.expansion7 +
+            b.expansion8 +
+            b.davyJonesLeviathans +
+            Number(b.secondCaptured);
+          const showRoundScore =
+            alreadyRecorded || roundTouched || entryTouched;
           return (
             <View
               key={p.id}
@@ -593,7 +644,9 @@ export default function GameScreen({
                 </Text>
                 <View style={styles.playerScores}>
                   <Text style={styles.roundScoreLabel}>
-                    {t.game.roundPoints}
+                    {alreadyRecorded
+                      ? t.game.roundPoints
+                      : t.game.roundPointsPreview}
                   </Text>
                   {showRoundScore ? (
                     <Text
@@ -616,6 +669,7 @@ export default function GameScreen({
               <View style={styles.steppers}>
                 <Stepper
                   label={t.game.bid}
+                  accessibilityLabel={`${p.name} · ${t.game.bid}`}
                   value={Math.min(entry.bid, cards)}
                   min={0}
                   max={cards}
@@ -624,6 +678,7 @@ export default function GameScreen({
                 />
                 <Stepper
                   label={t.game.won}
+                  accessibilityLabel={`${p.name} · ${t.game.won}`}
                   value={Math.min(entry.tricks, cards)}
                   min={0}
                   max={cards}
@@ -637,11 +692,20 @@ export default function GameScreen({
                   }
                   accessibilityRole="button"
                   accessibilityState={{ expanded: open }}
-                  accessibilityLabel={`${t.game.bonus} · ${p.name}`}
+                  accessibilityLabel={`${t.game.bonus} · ${p.name}${
+                    bonusCount > 0 ? ` · ${bonusCount}` : ""
+                  }`}
                 >
-                  <Text style={styles.bonusToggleText}>
-                    {t.game.bonus} {open ? "▾" : "▸"}
-                  </Text>
+                  <View style={styles.bonusToggleContent}>
+                    <Text style={styles.bonusToggleText}>
+                      {t.game.bonus} {open ? "▾" : "▸"}
+                    </Text>
+                    {bonusCount > 0 ? (
+                      <View style={styles.bonusBadge}>
+                        <Text style={styles.bonusBadgeText}>{bonusCount}</Text>
+                      </View>
+                    ) : null}
+                  </View>
                 </TouchableOpacity>
               </View>
 
@@ -776,38 +840,26 @@ export default function GameScreen({
           </View>
           <ScoreChart game={game} />
         </View>
+        {layout.isDesktop ? (
+          <View style={[styles.footer, styles.footerDesktop, styles.fullWidth]}>
+            {scoreButton}
+          </View>
+        ) : null}
       </ScrollView>
 
-      <View
-        style={[
-          styles.footer,
-          {
-            maxWidth: layout.gameContentMaxWidth,
-            paddingHorizontal: layout.screenPadding,
-          },
-        ]}
-      >
-        <TouchableOpacity
+      {!layout.isDesktop ? (
+        <View
           style={[
-            styles.scoreBtn,
-            layout.isTablet && styles.scoreBtnWide,
-            (!roundReady || lootIncomplete) && styles.scoreBtnDisabled,
+            styles.footer,
+            {
+              maxWidth: layout.gameContentMaxWidth,
+              paddingHorizontal: layout.screenPadding,
+            },
           ]}
-          onPress={() => commitRound()}
-          disabled={!roundReady || lootIncomplete}
-          accessibilityRole="button"
-          accessibilityState={{ disabled: !roundReady || lootIncomplete }}
-          aria-disabled={!roundReady || lootIncomplete}
         >
-          <Text style={styles.scoreBtnText}>
-            {displayRound === game.totalRounds && !alreadyRecorded
-              ? t.game.finish
-              : alreadyRecorded
-                ? t.game.updateRound
-                : t.game.scoreRound}
-          </Text>
-        </TouchableOpacity>
-      </View>
+          {scoreButton}
+        </View>
+      ) : null}
 
       <RulesModal visible={rulesOpen} onClose={() => setRulesOpen(false)} />
       <ShareLiveModal
@@ -880,39 +932,50 @@ const styles = StyleSheet.create({
   header: {
     width: "100%",
     alignSelf: "center",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
     paddingHorizontal: spacing.md,
     paddingTop: spacing.sm,
   },
-  sideBtn: { width: 64 },
+  headerTopRow: {
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  sideBtn: { flex: 1, minHeight: 44, justifyContent: "center" },
   sideActions: {
+    flex: 1,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-end",
     columnGap: spacing.sm,
-    minWidth: 64,
   },
   headerBtn: { color: colors.gold, fontSize: 17 },
+  headerIconButton: {
+    width: 44,
+    height: 44,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: colors.controlBorder,
+    borderRadius: 22,
+  },
   help: {
     color: colors.gold,
     fontSize: 20,
     fontWeight: "800",
-    width: 30,
-    height: 30,
     textAlign: "center",
-    lineHeight: 28,
-    borderWidth: 1,
-    borderColor: colors.cardBorder,
-    borderRadius: 15,
-    overflow: "hidden",
   },
   roundNav: { flexDirection: "row", alignItems: "center" },
+  roundNavMobile: { alignSelf: "center", marginTop: spacing.xs },
+  roundArrow: {
+    width: 44,
+    height: 44,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   chevron: {
     color: colors.gold,
     fontSize: 34,
-    paddingHorizontal: spacing.sm,
     fontWeight: "700",
   },
   disabled: { opacity: 0.25 },
@@ -1018,14 +1081,28 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   bonusToggle: {
-    paddingVertical: spacing.sm,
+    minHeight: 44,
+    justifyContent: "center",
+    paddingVertical: spacing.xs,
     paddingHorizontal: spacing.sm,
     borderRadius: radius.sm,
     borderWidth: 1,
-    borderColor: colors.cardBorder,
+    borderColor: colors.controlBorder,
     backgroundColor: colors.bgElevated,
   },
+  bonusToggleContent: { flexDirection: "row", alignItems: "center" },
   bonusToggleText: { color: colors.gold, fontWeight: "700", fontSize: 13 },
+  bonusBadge: {
+    minWidth: 20,
+    height: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.gold,
+    borderRadius: 10,
+    marginStart: spacing.xs,
+    paddingHorizontal: 5,
+  },
+  bonusBadgeText: { color: colors.bg, fontSize: 11, fontWeight: "900" },
   betRow: {
     flexDirection: "row",
     marginTop: spacing.sm,
@@ -1033,11 +1110,11 @@ const styles = StyleSheet.create({
   },
   betChip: {
     flex: 1,
-    minHeight: 40,
+    minHeight: 44,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
-    borderColor: colors.cardBorder,
+    borderColor: colors.controlBorder,
     borderRadius: radius.sm,
     backgroundColor: colors.bgElevated,
     paddingHorizontal: spacing.sm,
@@ -1059,7 +1136,7 @@ const styles = StyleSheet.create({
   krakenButton: {
     minHeight: 44,
     borderWidth: 1,
-    borderColor: colors.cardBorder,
+    borderColor: colors.controlBorder,
     borderRadius: radius.sm,
     backgroundColor: colors.bgElevated,
     paddingHorizontal: spacing.md,
@@ -1137,6 +1214,11 @@ const styles = StyleSheet.create({
   },
   boardInfo: { color: colors.gold, fontSize: 12, marginLeft: 4 },
   footer: { width: "100%", alignSelf: "center", padding: spacing.md },
+  footerDesktop: {
+    paddingHorizontal: 0,
+    paddingTop: 0,
+    paddingBottom: spacing.md,
+  },
   scoreBtn: {
     backgroundColor: colors.gold,
     borderRadius: radius.lg,

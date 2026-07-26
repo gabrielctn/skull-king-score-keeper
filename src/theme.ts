@@ -4,6 +4,7 @@ export const colors = {
   bgElevated: "#13283a",
   card: "#173347",
   cardBorder: "#23475f",
+  controlBorder: "#557f98",
   gold: "#e8b84b",
   goldDim: "#9c7b2e",
   text: "#f3f7fa",

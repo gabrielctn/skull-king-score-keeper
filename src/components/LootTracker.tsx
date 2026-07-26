@@ -110,10 +110,10 @@ export default function LootTracker({
             <View style={styles.useHeader}>
               <Text style={styles.useTitle}>{t.loot.useNumber(index + 1)}</Text>
               <TouchableOpacity
+                style={styles.removeButton}
                 onPress={() => removeUse(lootUse.id)}
                 accessibilityRole="button"
                 accessibilityLabel={t.loot.removeLabel(index + 1)}
-                hitSlop={8}
               >
                 <Text style={styles.removeText}>{t.loot.remove}</Text>
               </TouchableOpacity>
@@ -265,6 +265,8 @@ const styles = StyleSheet.create({
     marginTop: spacing.xs,
   },
   addButton: {
+    minHeight: 44,
+    justifyContent: "center",
     backgroundColor: colors.gold,
     borderRadius: radius.sm,
     paddingHorizontal: spacing.sm,
@@ -296,17 +298,23 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
     letterSpacing: 0.7,
   },
+  removeButton: {
+    minHeight: 44,
+    justifyContent: "center",
+    paddingHorizontal: spacing.sm,
+  },
   removeText: { color: colors.negative, fontSize: 12, fontWeight: "700" },
   prompt: { color: colors.text, fontSize: 13, marginBottom: spacing.sm },
   playerChoices: { flexDirection: "row", flexWrap: "wrap" },
   playerChoice: {
+    minHeight: 44,
+    justifyContent: "center",
     maxWidth: 140,
     backgroundColor: colors.card,
-    borderColor: colors.cardBorder,
+    borderColor: colors.controlBorder,
     borderWidth: 1,
     borderRadius: radius.sm,
     paddingHorizontal: spacing.sm,
-    paddingVertical: 7,
     marginRight: 6,
     marginBottom: 6,
   },
@@ -332,7 +340,13 @@ const styles = StyleSheet.create({
   statusSuccess: { color: colors.positive },
   statusFailed: { color: colors.negative },
   statusNeutral: { color: colors.textDim },
-  changeButton: { alignSelf: "flex-start", marginTop: spacing.sm },
+  changeButton: {
+    minHeight: 44,
+    justifyContent: "center",
+    alignSelf: "flex-start",
+    marginTop: spacing.sm,
+    paddingHorizontal: spacing.sm,
+  },
   changeText: { color: colors.gold, fontSize: 12, fontWeight: "700" },
   incomplete: {
     color: colors.negative,
