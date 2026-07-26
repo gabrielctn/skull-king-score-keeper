@@ -63,8 +63,8 @@ export const zh: Strings = {
     automaticUpdatesBody:
       "已安装的应用会自动下载每个新版本，并在设备联网后立即切换到新版本。",
     items: [
-      "首页现在会显示待继续游戏的当前回合、上次活动、领先者以及全部参与玩家。",
-      "现在可以在首页确认后放弃进行中的游戏，已结束的游戏不会受到影响。",
+      "计分控件现在会在“奖励”按钮前保留清晰间距，即使小屏幕上显示计数徽标也不会相贴。",
+      "所有可见文本现在都使用更自然的标点，不再使用长破折号或短破折号。",
     ],
     close: "知道了",
   },
@@ -94,7 +94,7 @@ export const zh: Strings = {
     install: {
       title: "安装应用",
       installedTitle: "应用已安装",
-      installedBody: "计分器已在你的设备上——像普通应用一样打开，并可完全离线使用。",
+      installedBody: "计分器已在你的设备上。它像普通应用一样打开，并可完全离线使用。",
       promptHint: "将计分器添加到主屏幕，一触即达并可离线游戏。",
       manualHint:
         "将计分器添加到主屏幕，一触即达并可离线游戏。请按下方对应你手机的步骤操作。",
@@ -106,33 +106,33 @@ export const zh: Strings = {
         "在 Safari 中打开此页面。",
         "点按屏幕底部的分享按钮（带向上箭头的方框）。",
         "向下滚动并点按「添加到主屏幕」。",
-        "点按右上角的「添加」——应用图标即出现在主屏幕上。",
+        "点按右上角的「添加」，应用图标即出现在主屏幕上。",
       ],
       iosChromeTitle: "iPhone 与 iPad（Chrome）",
       iosChromeSteps: [
         "在 Chrome 中打开此页面。",
         "点按地址栏中的小分享按钮（带向上箭头的方框）。",
         "点按「⌄」箭头（「查看更多」）以显示全部选项。",
-        "点按名为「添加到主屏幕」的「+」按钮——应用图标即出现在主屏幕上。",
+        "点按名为「添加到主屏幕」的「+」按钮，应用图标即出现在主屏幕上。",
       ],
       androidTitle: "Android（Chrome）",
       androidSteps: [
         "在 Chrome 中打开此页面。",
         "点按右上角的 ⋮ 菜单。",
         "点按「安装应用」（或「添加到主屏幕」）。",
-        "确认「安装」——应用图标即出现在主屏幕上。",
+        "确认「安装」，应用图标即出现在主屏幕上。",
       ],
     },
     cloud: {
       title: "云端备份",
       statusIdle: "云端备份已开启。",
-      statusSynced: "已备份——你的对局会自动保存到云端，即使清除本设备数据也能找回。",
+      statusSynced: "已备份。你的对局会自动保存到云端，即使清除本设备数据也能找回。",
       statusSyncing: "正在保存到云端…",
-      statusOffline: "离线——恢复联网后将自动同步。",
+      statusOffline: "离线，恢复联网后将自动同步。",
       statusUnavailable: "此应用未配置云端备份。",
       linkTitle: "在另一部手机上使用你的对局",
       linkHint:
-        "复制本设备的代码，然后在另一部手机上粘贴，即可在那里加载相同的对局。请妥善保管——任何持有它的人都能看到你的对局。",
+        "复制本设备的代码，然后在另一部手机上粘贴，即可在那里加载相同的对局。请妥善保管，任何持有它的人都能看到你的对局。",
       codeLabel: "本设备代码",
       copy: "复制",
       copied: "已复制",
@@ -140,7 +140,7 @@ export const zh: Strings = {
       linkButton: "在此加载那些对局",
       linking: "正在加载…",
       linkError: "无法读取该代码。",
-      linkSuccess: "完成——对局已合并到本设备。",
+      linkSuccess: "完成，对局已合并到本设备。",
     },
   },
 
@@ -149,7 +149,7 @@ export const zh: Strings = {
     crew: "召集你的船员",
     players: "玩家",
     seatingHint:
-      "请按顺时针座位顺序输入玩家——玩家 1 在第一回合发牌。使用箭头调整座位顺序。",
+      "请按顺时针座位顺序输入玩家。玩家 1 在第一回合发牌。使用箭头调整座位顺序。",
     playerPlaceholder: (n) => `玩家 ${n}`,
     addPlayer: "+ 添加玩家",
     quickTitle: "快速游戏",
@@ -162,7 +162,7 @@ export const zh: Strings = {
     twoPlayers: "双人游戏",
     ghostTitle: "灰胡子幽灵 👻",
     ghostHint:
-      "规则书中的双人变体：为灰胡子幽灵发第三手牌。他会出牌，但从不叫牌或得分，因此会抢走部分墩——两位玩家赢得的墩数之和可能少于发牌数。",
+      "规则书中的双人变体：为灰胡子幽灵发第三手牌。他会出牌，但从不叫牌或得分，因此会抢走部分墩，两位玩家赢得的墩数之和可能少于发牌数。",
     rounds: "回合数",
     roundsHint: "标准 Skull King 游戏共 10 回合。",
     structureHint: "规则书提供多种发牌方式。请选择本局的回合结构。",
@@ -187,11 +187,11 @@ export const zh: Strings = {
     scoringHints: {
       classic: "经典计分：叫牌准确每墩得 20 分，叫错则会扣分。",
       rascal:
-        "每回合的赌注为每张发牌 10 分。叫牌准确：全部获得。相差 1：获得一半。相差 2 或以上：一无所获——永远不会扣分。",
+        "每回合的赌注为每张发牌 10 分。叫牌准确：全部获得。相差 1：获得一半。相差 2 或以上：一无所获，永远不会扣分。",
     },
     rascalBetsTitle: "Rascal 可选规则 ✊",
     rascalBetsHint:
-      "叫牌后，每人宣布散弹（张开手掌：按常规档位计分）或炮弹（握紧拳头：叫牌准确时每张发牌得 15 分，否则一分不得——奖励分同样如此）。",
+      "叫牌后，每人宣布散弹（张开手掌：按常规档位计分）或炮弹（握紧拳头：叫牌准确时每张发牌得 15 分，否则一分不得，奖励分同样如此）。",
     bonusesRequireBidTitle: "仅在叫牌准确时计奖励",
     bonusesRequireBidHint:
       "常见变体：叫牌失败时失去俘获奖励（14、美人鱼、海盗、Skull King 等）。关闭时，应用遵循规则书，无论叫牌结果都保留奖励。",
@@ -224,7 +224,7 @@ export const zh: Strings = {
     tricksOk: "  ✓",
     tricksWarnNormal: "  （必须等于发牌数）",
     ghostTook: (n) => `  ·  灰胡子 👻 赢了 ${n} 墩`,
-    tricksWarnOver: "  （超过发牌数——请检查输入）",
+    tricksWarnOver: "  （超过发牌数，请检查输入）",
     krakenRecord: "+ 克拉肯摧毁的墩",
     krakenRecorded: "已记录克拉肯墩",
     krakenUndo: "撤销",
@@ -252,7 +252,7 @@ export const zh: Strings = {
     title: "跟踪比分",
     subtitle: "每位玩家都可以在自己的手机上跟踪比分。",
     liveHint:
-      "开启实时会话：扫码的玩家将实时跟踪比分——你记录的每次叫牌、每一墩和每项奖励都会立即出现在他们手机上，无需刷新。",
+      "开启实时会话。扫码的玩家将实时跟踪比分，你记录的每次叫牌、每一墩和每项奖励都会立即出现在他们手机上，无需刷新。",
     start: "开启实时跟踪",
     starting: "正在开启…",
     stop: "停止实时跟踪",
@@ -261,12 +261,12 @@ export const zh: Strings = {
     statusLive: "实时 · 自动更新",
     statusSyncing: "正在保存…",
     statusOffline: "正在重新连接…",
-    liveError: "实时同步出现问题——正在持续重试。请检查网络，或停止后重新开启。",
+    liveError: "实时同步出现问题，正在持续重试。请检查网络，或停止后重新开启。",
     snapshotTitle: "牌桌旁没有网络？",
     snapshotToggleShow: "显示离线快照",
     snapshotToggleHide: "隐藏离线快照",
     scanHint:
-      "此二维码包含本局的只读快照——目前记录的每次叫牌、每一墩和每项奖励。",
+      "此二维码包含本局的只读快照，其中包括目前记录的每次叫牌、每一墩和每项奖励。",
     updateHint:
       "它无需服务器，但不会自动更新：玩家再次扫描即可获取最新比分。",
     networkHint:
@@ -287,16 +287,16 @@ export const zh: Strings = {
     roundProgress: (scored, total) =>
       `第 ${scored} / ${total} 回合后的比分`,
     noRounds: "尚未结算任何回合。",
-    finished: "最终比分——对局已结束。",
+    finished: "最终比分，对局已结束。",
     snapshotAt: (time) => `记分员的比分 · 读取于 ${time}`,
     liveUpdatedAt: (time) => `实时更新 · ${time}`,
     refreshHint: "这是一份快照。要刷新，请再次扫描记分员的二维码。",
     connecting: "正在连接实时对局…",
-    reconnecting: "连接已断开——正在重新连接…",
+    reconnecting: "连接已断开，正在重新连接…",
     endedTitle: "实时会话已结束",
     endedBody: "记分员已停止分享。下方显示你收到的最新比分。",
     standingsTitle: "排名",
-    tapHint: "点击任意玩家查看其逐回合完整明细——叫牌、墩数和每项奖励。",
+    tapHint: "点击任意玩家查看其逐回合完整明细，包括叫牌、墩数和每项奖励。",
     identityTitle: "你是哪位玩家？",
     identityHint: "选择一次你的名字即可跟踪自己的得分，本局游戏中保持不变。",
     turnTitle: "出牌顺序",
@@ -330,7 +330,7 @@ export const zh: Strings = {
     installTitle: "把计分器留在船上",
     installHint: "安装应用，快速打开并完全离线游玩。",
     installIosHint:
-      "点按“共享”再点按“添加到主屏幕”——在 Chrome 中请先展开“查看更多”。",
+      "点按“共享”再点按“添加到主屏幕”，在 Chrome 中请先展开“查看更多”。",
     installError: "无法开始安装，你可以稍后重试。",
     install: "安装应用",
     installDismiss: "稍后",
@@ -406,7 +406,7 @@ export const zh: Strings = {
     summaryTitle: "Skull King 对局战报",
     awardsHeading: "船员称号",
     gameDate: (date) => `对局日期：${date}`,
-    rankingLine: (medal, name, score) => `${medal} ${name} — ${score} 分`,
+    rankingLine: (medal, name, score) => `${medal} ${name}：${score} 分`,
     awardLine: (award, name) => `${award}：${name}`,
     cancelled: "已取消分享。",
   },
@@ -544,10 +544,10 @@ export const zh: Strings = {
       { title: "叫零", body: "赢 0 墩：本回合每张发牌 +10。赢任何一墩：本回合每张发牌 -10。" },
     ],
     rascal: [
-      { title: "官方的另一种计分方式", body: "在创建对局时选择。每回合所有玩家的潜在得分相同——每张发牌 10 分，与叫牌数无关——最终拿到多少取决于叫牌的准确度。分数永远不会变成负数。" },
+      { title: "官方的另一种计分方式", body: "在创建对局时选择。每回合所有玩家的潜在得分相同，即每张发牌 10 分，与叫牌数无关。最终拿到多少取决于叫牌的准确度。分数永远不会变成负数。" },
       { title: "正中目标 · 擦身而过 · 完全落空", body: "叫牌准确：赢得全部赌注。相差 1：获得一半。相差 2 或以上：一无所获。" },
       { title: "奖励分遵循同样的档位", body: "俘获奖励在正中目标时全额计入，擦身而过时减半，完全落空时不计。战利品、特殊 7/8 与 Rascal 海盗赌注仍保留各自“叫牌必须准确”的条件。" },
-      { title: "可选规则：散弹或炮弹", body: "若在设置中启用，每人在叫牌后做出选择并同时亮出：张开手掌（散弹）按常规档位计分；握紧拳头（炮弹）在叫牌准确时每张发牌得 15 分，否则一分不得——奖励分同样如此。" },
+      { title: "可选规则：散弹或炮弹", body: "若在设置中启用，每人在叫牌后做出选择并同时亮出：张开手掌（散弹）按常规档位计分；握紧拳头（炮弹）在叫牌准确时每张发牌得 15 分，否则一分不得，奖励分同样如此。" },
     ],
     bonusEntries: [
       { title: "彩色 14（每张 +10）", body: "回合结束时，你俘获的每张黄色 / 紫色 / 绿色 14（即赢得含有该牌的墩）。" },

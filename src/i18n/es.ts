@@ -66,8 +66,8 @@ export const es: Strings = {
     automaticUpdatesBody:
       "Las aplicaciones instaladas ahora descargan automáticamente cada nueva versión y la activan en cuanto el dispositivo se conecta a internet.",
     items: [
-      "Inicio ahora muestra la ronda actual, la última actividad, quién va en cabeza y todos los jugadores de la partida pendiente de continuar.",
-      "Ahora se puede abandonar una partida en curso desde Inicio tras confirmarlo, sin afectar a las partidas terminadas.",
+      "Los controles de puntuación ahora mantienen un espacio claro antes de Bonus, incluso cuando el contador aparece en pantallas pequeñas.",
+      "Todos los textos visibles usan ahora una puntuación más limpia, sin rayas ni semirrayas.",
     ],
     close: "Entendido",
   },
@@ -91,7 +91,7 @@ export const es: Strings = {
     deleteAll: "Eliminar todas las partidas",
     deleteAllTitle: "¿Eliminar todas las partidas?",
     deleteAllMessage:
-      "Todas las partidas —incluida cualquier partida en curso— se eliminarán permanentemente. Te recomendamos exportar antes una copia de seguridad.",
+      "Todas las partidas, incluida cualquier partida en curso, se eliminarán permanentemente. Te recomendamos exportar antes una copia de seguridad.",
     deleteAllCancel: "Cancelar",
     deleteAllConfirm: "Eliminar todo",
     deleteAllSuccess: "Se han eliminado todas las partidas.",
@@ -103,7 +103,7 @@ export const es: Strings = {
       title: "Instalar la aplicación",
       installedTitle: "Aplicación instalada",
       installedBody:
-        "El marcador está en tu dispositivo — se abre como cualquier app y funciona totalmente sin conexión.",
+        "El marcador está en tu dispositivo. Se abre como cualquier app y funciona totalmente sin conexión.",
       promptHint:
         "Añade el marcador a tu pantalla de inicio para acceder con un toque y jugar sin conexión.",
       manualHint:
@@ -117,30 +117,30 @@ export const es: Strings = {
         "Abre esta página en Safari.",
         "Toca el botón Compartir (un cuadrado con una flecha hacia arriba) en la parte inferior de la pantalla.",
         "Desplázate y toca «Añadir a pantalla de inicio».",
-        "Toca «Añadir» arriba a la derecha — el icono aparece en tu pantalla de inicio.",
+        "Toca «Añadir» arriba a la derecha. El icono aparece en tu pantalla de inicio.",
       ],
       iosChromeTitle: "iPhone y iPad (Chrome)",
       iosChromeSteps: [
         "Abre esta página en Chrome.",
         "Toca el pequeño botón Compartir (un cuadrado con una flecha hacia arriba) en la barra de direcciones.",
         "Toca la flecha «⌄» («Ver más») para mostrar todas las opciones.",
-        "Toca el botón «+» llamado «Añadir a pantalla de inicio» — el icono aparece en tu pantalla de inicio.",
+        "Toca el botón «+» llamado «Añadir a pantalla de inicio». El icono aparece en tu pantalla de inicio.",
       ],
       androidTitle: "Android (Chrome)",
       androidSteps: [
         "Abre esta página en Chrome.",
         "Toca el menú ⋮ arriba a la derecha.",
         "Toca «Instalar aplicación» (o «Añadir a la pantalla de inicio»).",
-        "Confirma con «Instalar» — el icono aparece en tu pantalla de inicio.",
+        "Confirma con «Instalar». El icono aparece en tu pantalla de inicio.",
       ],
     },
     cloud: {
       title: "Copia en la nube",
       statusIdle: "La copia en la nube está activada.",
       statusSynced:
-        "Guardado — tus partidas se guardan en la nube automáticamente y vuelven si se borran los datos de este dispositivo.",
+        "Guardado. Tus partidas se guardan en la nube automáticamente y vuelven si se borran los datos de este dispositivo.",
       statusSyncing: "Guardando en la nube…",
-      statusOffline: "Sin conexión — los cambios se sincronizarán al volver a estar en línea.",
+      statusOffline: "Sin conexión. Los cambios se sincronizarán al volver a estar en línea.",
       statusUnavailable: "La copia en la nube no está configurada en esta app.",
       linkTitle: "Usar tus partidas en otro teléfono",
       linkHint:
@@ -152,7 +152,7 @@ export const es: Strings = {
       linkButton: "Cargar esas partidas aquí",
       linking: "Cargando…",
       linkError: "No se pudo leer ese código.",
-      linkSuccess: "Listo — partidas combinadas en este dispositivo.",
+      linkSuccess: "Listo. Las partidas se han combinado en este dispositivo.",
     },
   },
 
@@ -271,7 +271,7 @@ export const es: Strings = {
     title: "Seguir los puntos",
     subtitle: "Cada jugador puede seguir los puntos en su propio teléfono.",
     liveHint:
-      "Inicia una sesión en directo: los jugadores que escaneen el código siguen los puntos en tiempo real — cada apuesta, baza y bonus aparece en su teléfono en cuanto lo registras, sin actualizar nada.",
+      "Inicia una sesión en directo. Los jugadores que escaneen el código siguen los puntos en tiempo real; cada apuesta, baza y bonus aparece en su teléfono en cuanto lo registras, sin actualizar nada.",
     start: "Iniciar seguimiento en directo",
     starting: "Iniciando…",
     stop: "Detener seguimiento en directo",
@@ -282,12 +282,12 @@ export const es: Strings = {
     statusSyncing: "Guardando…",
     statusOffline: "Reconectando…",
     liveError:
-      "La sincronización en directo tuvo un problema — sigue reintentando. Comprueba tu conexión, o detén e inicia de nuevo.",
+      "La sincronización en directo tuvo un problema. Sigue reintentando. Comprueba tu conexión, o detén e inicia de nuevo.",
     snapshotTitle: "¿Sin conexión en la mesa?",
     snapshotToggleShow: "Mostrar instantánea sin conexión",
     snapshotToggleHide: "Ocultar instantánea sin conexión",
     scanHint:
-      "Este código QR contiene una instantánea de solo lectura de la partida — cada apuesta, baza y bonus registrados hasta ahora.",
+      "Este código QR contiene una instantánea de solo lectura de la partida: cada apuesta, baza y bonus registrados hasta ahora.",
     updateHint:
       "Funciona sin servidor, pero no se actualiza solo: los jugadores lo vuelven a escanear para obtener los últimos puntos.",
     networkHint:
@@ -309,19 +309,19 @@ export const es: Strings = {
     roundProgress: (scored, total) =>
       `Puntos tras la ronda ${scored} de ${total}`,
     noRounds: "Todavía no se ha puntuado ninguna ronda.",
-    finished: "Puntuación final — la partida ha terminado.",
+    finished: "Puntuación final. La partida ha terminado.",
     snapshotAt: (time) => `Puntos del anotador · leídos a las ${time}`,
     liveUpdatedAt: (time) => `Actualizado en directo · ${time}`,
     refreshHint:
       "Esto es una instantánea. Para actualizarla, vuelve a escanear el código QR del anotador.",
     connecting: "Conectando con la partida en directo…",
-    reconnecting: "Conexión perdida — reconectando…",
+    reconnecting: "Conexión perdida. Reconectando…",
     endedTitle: "Sesión en directo finalizada",
     endedBody:
       "El anotador dejó de compartir. Debajo se muestran los últimos puntos recibidos.",
     standingsTitle: "Clasificación",
     tapHint:
-      "Toca cualquier jugador para ver su detalle completo ronda a ronda — apuestas, bazas y cada bonus.",
+      "Toca cualquier jugador para ver su detalle completo ronda a ronda: apuestas, bazas y cada bonus.",
     identityTitle: "¿Qué jugador eres?",
     identityHint:
       "Elige tu nombre una vez para seguir tus propias puntuaciones. Queda fijo para esta partida.",
@@ -357,7 +357,7 @@ export const es: Strings = {
     installHint:
       "Instala la aplicación para acceder rápidamente y jugar sin conexión.",
     installIosHint:
-      "Toca Compartir y después «Añadir a pantalla de inicio» — en Chrome, abre antes «Ver más».",
+      "Toca Compartir y después «Añadir a pantalla de inicio». En Chrome, abre antes «Ver más».",
     installError:
       "No se ha podido iniciar la instalación. Puedes volver a intentarlo más tarde.",
     install: "Instalar aplicación",
@@ -441,7 +441,7 @@ export const es: Strings = {
     awardsHeading: "Premios de la tripulación",
     gameDate: (date) => `Jugado el ${date}`,
     rankingLine: (medal, name, score) =>
-      `${medal} ${name} — ${score} puntos`,
+      `${medal} ${name}, ${score} puntos`,
     awardLine: (award, name) => `${award}: ${name}`,
     cancelled: "Se ha cancelado el uso compartido.",
   },
@@ -617,7 +617,7 @@ export const es: Strings = {
     rascal: [
       {
         title: "Un sistema de puntuación alternativo oficial",
-        body: "Se elige al crear la partida. Todos los jugadores tienen el mismo potencial en cada ronda —10 puntos por carta repartida, independientemente de la apuesta— y la precisión decide qué parte obtienen. La puntuación nunca es negativa.",
+        body: "Se elige al crear la partida. Todos los jugadores tienen el mismo potencial en cada ronda: 10 puntos por carta repartida, independientemente de la apuesta. La precisión decide qué parte obtienen. La puntuación nunca es negativa.",
       },
       {
         title: "Impacto directo · impacto parcial · fallo total",

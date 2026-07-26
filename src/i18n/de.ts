@@ -64,8 +64,8 @@ export const de: Strings = {
     automaticUpdatesBody:
       "Installierte Apps laden jede neue Version automatisch und wechseln zu ihr, sobald das Gerät online ist.",
     items: [
-      "Die Startseite zeigt nun die aktuelle Runde, die letzte Aktivität, die Führung und alle Mitspieler des fortzusetzenden Spiels.",
-      "Ein laufendes Spiel kann nun nach Bestätigung auf der Startseite aufgegeben werden, ohne beendete Spiele zu löschen.",
+      "Die Punkteingabe hält nun einen klaren Abstand vor Bonus ein, auch wenn der Zähler auf kleinen Bildschirmen sichtbar ist.",
+      "Alle sichtbaren Texte verwenden jetzt eine flüssigere Zeichensetzung ohne Halbgeviertstriche oder Geviertstriche.",
     ],
     close: "Verstanden",
   },
@@ -88,7 +88,7 @@ export const de: Strings = {
     deleteAll: "Alle Spiele löschen",
     deleteAllTitle: "Alle Spiele löschen?",
     deleteAllMessage:
-      "Alle Spiele — auch ein laufendes — werden dauerhaft gelöscht. Exportiere vorher am besten eine Sicherung.",
+      "Alle Spiele, auch ein laufendes, werden dauerhaft gelöscht. Exportiere vorher am besten eine Sicherung.",
     deleteAllCancel: "Abbrechen",
     deleteAllConfirm: "Alle löschen",
     deleteAllSuccess: "Alle Spiele wurden gelöscht.",
@@ -99,7 +99,7 @@ export const de: Strings = {
       title: "App installieren",
       installedTitle: "App installiert",
       installedBody:
-        "Der Punktezähler ist auf deinem Gerät — er öffnet sich wie jede App und funktioniert komplett offline.",
+        "Der Punktezähler ist auf deinem Gerät. Er öffnet sich wie jede App und funktioniert komplett offline.",
       promptHint:
         "Füge den Punktezähler zum Startbildschirm hinzu für Zugriff mit einem Tipp und Offline-Spiel.",
       manualHint:
@@ -113,34 +113,34 @@ export const de: Strings = {
         "Öffne diese Seite in Safari.",
         "Tippe unten auf die Teilen-Schaltfläche (ein Quadrat mit Pfeil nach oben).",
         "Scrolle nach unten und tippe auf „Zum Home-Bildschirm“.",
-        "Tippe oben rechts auf „Hinzufügen“ — das App-Symbol erscheint auf dem Startbildschirm.",
+        "Tippe oben rechts auf „Hinzufügen“. Das App-Symbol erscheint auf dem Startbildschirm.",
       ],
       iosChromeTitle: "iPhone & iPad (Chrome)",
       iosChromeSteps: [
         "Öffne diese Seite in Chrome.",
         "Tippe in der Adressleiste auf die kleine Teilen-Schaltfläche (ein Quadrat mit Pfeil nach oben).",
         "Tippe auf den Pfeil „⌄“ („Mehr anzeigen“), um alle Optionen zu sehen.",
-        "Tippe auf die Schaltfläche „+“ mit dem Namen „Zum Home-Bildschirm“ — das App-Symbol erscheint auf dem Startbildschirm.",
+        "Tippe auf die Schaltfläche „+“ mit dem Namen „Zum Home-Bildschirm“. Das App-Symbol erscheint auf dem Startbildschirm.",
       ],
       androidTitle: "Android (Chrome)",
       androidSteps: [
         "Öffne diese Seite in Chrome.",
         "Tippe oben rechts auf das Menü ⋮.",
         "Tippe auf „App installieren“ (oder „Zum Startbildschirm hinzufügen“).",
-        "Bestätige mit „Installieren“ — das App-Symbol erscheint auf dem Startbildschirm.",
+        "Bestätige mit „Installieren“. Das App-Symbol erscheint auf dem Startbildschirm.",
       ],
     },
     cloud: {
       title: "Cloud-Sicherung",
       statusIdle: "Cloud-Sicherung ist aktiv.",
       statusSynced:
-        "Gesichert — deine Spiele werden automatisch in der Cloud gespeichert und kehren zurück, falls die Daten dieses Geräts gelöscht werden.",
+        "Gesichert. Deine Spiele werden automatisch in der Cloud gespeichert und kehren zurück, falls die Daten dieses Geräts gelöscht werden.",
       statusSyncing: "Wird in der Cloud gespeichert…",
-      statusOffline: "Offline — Änderungen werden synchronisiert, sobald du wieder online bist.",
+      statusOffline: "Offline. Änderungen werden synchronisiert, sobald du wieder online bist.",
       statusUnavailable: "Cloud-Sicherung ist für diese App nicht eingerichtet.",
       linkTitle: "Deine Spiele auf einem anderen Handy nutzen",
       linkHint:
-        "Kopiere den Code dieses Geräts und füge ihn auf dem anderen Handy ein, um dieselben Spiele dort zu laden. Halte ihn geheim — wer ihn hat, kann deine Spiele sehen.",
+        "Kopiere den Code dieses Geräts und füge ihn auf dem anderen Handy ein, um dieselben Spiele dort zu laden. Halte ihn geheim, denn wer ihn hat, kann deine Spiele sehen.",
       codeLabel: "Code dieses Geräts",
       copy: "Kopieren",
       copied: "Kopiert",
@@ -148,7 +148,7 @@ export const de: Strings = {
       linkButton: "Diese Spiele hier laden",
       linking: "Wird geladen…",
       linkError: "Dieser Code konnte nicht gelesen werden.",
-      linkSuccess: "Fertig — Spiele auf diesem Gerät zusammengeführt.",
+      linkSuccess: "Fertig. Die Spiele wurden auf diesem Gerät zusammengeführt.",
     },
   },
 
@@ -157,7 +157,7 @@ export const de: Strings = {
     crew: "Stelle deine Mannschaft zusammen",
     players: "Spieler",
     seatingHint:
-      "Gib die Spieler im Uhrzeigersinn ein — Spieler 1 gibt in der ersten Runde. Mit den Pfeilen kannst du die Sitzordnung ändern.",
+      "Gib die Spieler im Uhrzeigersinn ein. Spieler 1 gibt in der ersten Runde. Mit den Pfeilen kannst du die Sitzordnung ändern.",
     playerPlaceholder: (n) => `Spieler ${n}`,
     addPlayer: "+ Spieler hinzufügen",
     quickTitle: "Schnelles Spiel",
@@ -171,7 +171,7 @@ export const de: Strings = {
     twoPlayers: "Zwei Spieler",
     ghostTitle: "Graubart-Geist 👻",
     ghostHint:
-      "Die Zwei-Spieler-Variante aus der Anleitung: Teile eine dritte Hand für den Graubart-Geist aus. Er spielt, bietet und punktet aber nie. So stiehlt er Stiche — die Summe eurer Stiche kann kleiner als die Zahl der ausgeteilten Karten sein.",
+      "Die Zwei-Spieler-Variante aus der Anleitung: Teile eine dritte Hand für den Graubart-Geist aus. Er spielt, bietet und punktet aber nie. So stiehlt er Stiche. Die Summe eurer Stiche kann kleiner als die Zahl der ausgeteilten Karten sein.",
     rounds: "Runden",
     roundsHint: "Eine Standardpartie Skull King hat 10 Runden.",
     structureHint:
@@ -199,11 +199,11 @@ export const de: Strings = {
       classic:
         "Die klassische Wertung: Eine exakte Ansage bringt 20 pro Stich, Fehler kosten Punkte.",
       rascal:
-        "Jede Runde stehen 10 Punkte pro ausgeteilter Karte auf dem Spiel. Exakte Ansage: alles. 1 daneben: die Hälfte. 2 oder mehr daneben: nichts — nie Minuspunkte.",
+        "Jede Runde stehen 10 Punkte pro ausgeteilter Karte auf dem Spiel. Exakte Ansage: alles. 1 daneben: die Hälfte. 2 oder mehr daneben: nichts. Es gibt nie Minuspunkte.",
     },
     rascalBetsTitle: "Optionale Rascal-Regeln ✊",
     rascalBetsHint:
-      "Nach der Ansage erklärt jede Person Schrotladung (offene Hand: übliche Stufen) oder Kanonenkugel (geschlossene Faust: 15 Punkte pro Karte bei exakter Ansage, sonst nichts — Boni eingeschlossen).",
+      "Nach der Ansage erklärt jede Person Schrotladung (offene Hand: übliche Stufen) oder Kanonenkugel (geschlossene Faust: 15 Punkte pro Karte bei exakter Ansage, sonst nichts, Boni eingeschlossen).",
     bonusesRequireBidTitle: "Boni nur bei exakter Ansage",
     bonusesRequireBidHint:
       "Verbreitete Variante: Fangboni (14er, Meerjungfrauen, Piraten, Skull King …) verfallen bei verfehlter Ansage. Ausgeschaltet folgt die App der Anleitung und behält sie unabhängig von der Ansage.",
@@ -236,7 +236,7 @@ export const de: Strings = {
     tricksOk: "  ✓",
     tricksWarnNormal: "  (muss den ausgeteilten Karten entsprechen)",
     ghostTook: (n) => `  ·  Graubart 👻 nahm ${n}`,
-    tricksWarnOver: "  (mehr als ausgeteilte Karten — Eingaben prüfen)",
+    tricksWarnOver: "  (mehr als ausgeteilte Karten; Eingaben prüfen)",
     krakenRecord: "+ Vom Kraken verworfener Stich",
     krakenRecorded: "Kraken-Stich erfasst",
     krakenUndo: "Rückgängig",
@@ -265,7 +265,7 @@ export const de: Strings = {
     title: "Punkte mitverfolgen",
     subtitle: "Alle Spieler können die Punkte auf dem eigenen Handy verfolgen.",
     liveHint:
-      "Starte eine Live-Sitzung: Wer den Code scannt, verfolgt die Punkte in Echtzeit — jede Ansage, jeder Stich und jeder Bonus erscheint auf dem Handy, sobald du ihn einträgst, ganz ohne Aktualisieren.",
+      "Starte eine Live-Sitzung. Wer den Code scannt, verfolgt die Punkte in Echtzeit; jede Ansage, jeder Stich und jeder Bonus erscheint auf dem Handy, sobald du ihn einträgst, ganz ohne Aktualisieren.",
     start: "Live-Verfolgung starten",
     starting: "Wird gestartet…",
     stop: "Live-Verfolgung beenden",
@@ -276,12 +276,12 @@ export const de: Strings = {
     statusSyncing: "Wird gespeichert…",
     statusOffline: "Neuverbindung…",
     liveError:
-      "Bei der Live-Synchronisierung gab es ein Problem — sie versucht es weiter. Prüfe deine Verbindung, oder beende und starte neu.",
+      "Bei der Live-Synchronisierung gab es ein Problem. Sie versucht es weiter. Prüfe deine Verbindung, oder beende und starte neu.",
     snapshotTitle: "Keine Verbindung am Tisch?",
     snapshotToggleShow: "Offline-Momentaufnahme anzeigen",
     snapshotToggleHide: "Offline-Momentaufnahme ausblenden",
     scanHint:
-      "Dieser QR-Code enthält eine reine Lese-Momentaufnahme der Partie — jede bislang erfasste Ansage, jeder Stich und jeder Bonus.",
+      "Dieser QR-Code enthält eine reine Lese-Momentaufnahme der Partie: jede bislang erfasste Ansage, jeder Stich und jeder Bonus.",
     updateHint:
       "Sie kommt ohne Server aus, aktualisiert sich aber nicht von selbst: Spieler scannen erneut, um die neuesten Punkte zu erhalten.",
     networkHint:
@@ -303,19 +303,19 @@ export const de: Strings = {
     roundProgress: (scored, total) =>
       `Punktestand nach Runde ${scored} von ${total}`,
     noRounds: "Es wurde noch keine Runde gewertet.",
-    finished: "Endstand — die Partie ist beendet.",
+    finished: "Endstand. Die Partie ist beendet.",
     snapshotAt: (time) => `Punkte des Spielleiters · abgelesen um ${time}`,
     liveUpdatedAt: (time) => `Live aktualisiert · ${time}`,
     refreshHint:
       "Dies ist eine Momentaufnahme. Zum Aktualisieren scanne den QR-Code des Spielleiters erneut.",
     connecting: "Verbindung zur Live-Partie…",
-    reconnecting: "Verbindung verloren — Neuverbindung…",
+    reconnecting: "Verbindung verloren. Neuverbindung…",
     endedTitle: "Live-Sitzung beendet",
     endedBody:
       "Der Spielleiter hat das Teilen beendet. Unten stehen die zuletzt empfangenen Punkte.",
     standingsTitle: "Rangliste",
     tapHint:
-      "Tippe auf einen beliebigen Spieler für dessen vollständige Details Runde für Runde — Ansagen, Stiche und jeder Bonus.",
+      "Tippe auf einen beliebigen Spieler für dessen vollständige Details Runde für Runde: Ansagen, Stiche und jeder Bonus.",
     identityTitle: "Welcher Spieler bist du?",
     identityHint:
       "Wähle einmal deinen Namen, um deine eigenen Punkte zu verfolgen. Das bleibt für dieses Spiel fest.",
@@ -350,7 +350,7 @@ export const de: Strings = {
     installTitle: "Punktezähler an Bord behalten",
     installHint: "Installiere die App für schnellen Zugriff und vollständig offline spielbare Partien.",
     installIosHint:
-      "Tippe auf Teilen und „Zum Home-Bildschirm“ — in Chrome zuerst „Mehr anzeigen“ öffnen.",
+      "Tippe auf Teilen und „Zum Home-Bildschirm“. In Chrome zuerst „Mehr anzeigen“ öffnen.",
     installError: "Die Installation konnte nicht gestartet werden. Versuche es später erneut.",
     install: "App installieren",
     installDismiss: "Später",
@@ -434,7 +434,7 @@ export const de: Strings = {
     awardsHeading: "Auszeichnungen der Crew",
     gameDate: (date) => `Gespielt am ${date}`,
     rankingLine: (medal, name, score) =>
-      `${medal} ${name} — ${score} Punkte`,
+      `${medal} ${name}: ${score} Punkte`,
     awardLine: (award, name) => `${award}: ${name}`,
     cancelled: "Teilen abgebrochen.",
   },
@@ -579,10 +579,10 @@ export const de: Strings = {
       { title: "Nullansage", body: "0 Stiche: +10 × ausgeteilte Karten dieser Runde. Mindestens 1 Stich: -10 × ausgeteilte Karten dieser Runde." },
     ],
     rascal: [
-      { title: "Eine offizielle Alternativwertung", body: "Wird beim Erstellen der Partie gewählt. Alle haben in jeder Runde dasselbe Potenzial — 10 Punkte pro ausgeteilter Karte, egal wie hoch die Ansage — und die Genauigkeit entscheidet, wie viel davon du bekommst. Die Punktzahl wird nie negativ." },
+      { title: "Eine offizielle Alternativwertung", body: "Wird beim Erstellen der Partie gewählt. Alle haben in jeder Runde dasselbe Potenzial: 10 Punkte pro ausgeteilter Karte, egal wie hoch die Ansage. Die Genauigkeit entscheidet, wie viel davon du bekommst. Die Punktzahl wird nie negativ." },
       { title: "Volltreffer · Streifschuss · Fehlschlag", body: "Exakte Ansage: alle Punkte im Spiel. 1 daneben: die Hälfte. 2 oder mehr daneben: nichts." },
       { title: "Boni folgen denselben Stufen", body: "Fangboni zählen bei einem Volltreffer voll, bei einem Streifschuss zur Hälfte und bei einem Fehlschlag gar nicht. Beute, die besonderen 7er/8er und die Rascal-Piratenwette behalten ihre eigene Bedingung der exakten Ansage." },
-      { title: "Optional: Schrotladung oder Kanonenkugel", body: "Falls aktiviert, wählt jede Person nach der Ansage und alle zeigen gleichzeitig. Offene Hand (Schrotladung): übliche Stufen; geschlossene Faust (Kanonenkugel): 15 Punkte pro Karte bei exakter Ansage, sonst nichts — Boni eingeschlossen." },
+      { title: "Optional: Schrotladung oder Kanonenkugel", body: "Falls aktiviert, wählt jede Person nach der Ansage und alle zeigen gleichzeitig. Offene Hand (Schrotladung): übliche Stufen; geschlossene Faust (Kanonenkugel): 15 Punkte pro Karte bei exakter Ansage, sonst nichts, Boni eingeschlossen." },
     ],
     bonusEntries: [
       { title: "Farbige 14  (+10 je)", body: "Jede gelbe / violette / grüne 14, die du am Rundenende fängst (den Stich mit ihr gewinnst)." },
@@ -593,7 +593,7 @@ export const de: Strings = {
       { title: "Boni zählen unabhängig von der Ansage", body: "Laut Anleitung bleiben Fangboni auch bei verfehlter Ansage erhalten. Sie gehen an die Person, die die Karte fängt, unabhängig davon, wer sie gespielt hat. Beim Erstellen der Partie lässt sich die umgekehrte Variante wählen: verfehlte Ansage, keine Fangboni." },
     ],
     expansion: [
-      { title: "Neue 7er und 8er  (-5 / +5 je)", body: "Sie werden wie normale Farbkarten gespielt. Wer eine neue 7 fängt, verliert 5 Punkte; wer eine neue 8 fängt, erhält 5 Punkte — nur bei exakt getroffener Ansage. Bei Gleichstand gewinnt die zuerst gespielte Karte." },
+      { title: "Neue 7er und 8er  (-5 / +5 je)", body: "Sie werden wie normale Farbkarten gespielt. Wer eine neue 7 fängt, verliert 5 Punkte; wer eine neue 8 fängt, erhält 5 Punkte, allerdings nur bei exakt getroffener Ansage. Bei Gleichstand gewinnt die zuerst gespielte Karte." },
       { title: "0/14-Karten", body: "Sage beim Ausspielen sofort an, ob die Karte als 0 oder 14 zählt. Sie gibt keinen Bonus." },
       { title: "Wilde 15", body: "Sie zählt als gelbe, violette oder grüne 15. Wähle ihre Farbe, wenn noch keine festgelegt ist. Ist bereits eine nicht-schwarze Farbe vorgegeben, muss sie dieser folgen. Bei Schwarz muss keine Farbe angesagt werden." },
       { title: "Mary Throne (Pirat)", body: "Sie wird wie ein normaler Pirat gespielt. Mit erweiterten Piratenkräften ziehst du ungesehen zufällig eine Karte aus der Hand eines Gegners; diese muss im nächsten Stich unabhängig von den bereits gespielten Karten gespielt werden." },

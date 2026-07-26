@@ -64,8 +64,8 @@ export const en: Strings = {
     automaticUpdatesBody:
       "Installed apps now download each new release automatically and switch to it as soon as the device is online.",
     items: [
-      "Home now shows the current round, last activity, leader and every player in the game waiting to be resumed.",
-      "An in-progress game can now be abandoned from Home after confirmation, without affecting finished games.",
+      "Score controls now keep a clear gap before Bonus, including when its counter is visible on compact screens.",
+      "All player-facing text now uses cleaner punctuation without en or em dashes.",
     ],
     close: "Got it",
   },
@@ -88,7 +88,7 @@ export const en: Strings = {
     deleteAll: "Delete all games",
     deleteAllTitle: "Delete all games?",
     deleteAllMessage:
-      "Every game — including one in progress — will be permanently deleted. Consider exporting a backup first.",
+      "Every game, including one in progress, will be permanently deleted. Consider exporting a backup first.",
     deleteAllCancel: "Cancel",
     deleteAllConfirm: "Delete all",
     deleteAllSuccess: "All games have been deleted.",
@@ -99,7 +99,7 @@ export const en: Strings = {
       title: "Install the app",
       installedTitle: "App installed",
       installedBody:
-        "The score keeper is on your device — it opens like any app and works fully offline.",
+        "The score keeper is on your device. It opens like any app and works fully offline.",
       promptHint:
         "Add the score keeper to your home screen for one-tap access and offline play.",
       manualHint:
@@ -112,34 +112,34 @@ export const en: Strings = {
         "Open this page in Safari.",
         "Tap the Share button (a square with an upward arrow) at the bottom of the screen.",
         "Scroll down and tap “Add to Home Screen”.",
-        "Tap “Add” at the top right — the app icon appears on your home screen.",
+        "Tap “Add” at the top right. The app icon appears on your home screen.",
       ],
       iosChromeTitle: "iPhone & iPad (Chrome)",
       iosChromeSteps: [
         "Open this page in Chrome.",
         "Tap the small Share button (a square with an upward arrow) in the address bar.",
         "Tap the “⌄” chevron (“See more”) to show every option.",
-        "Tap the “+” button named “Add to Home Screen” — the app icon appears on your home screen.",
+        "Tap the “+” button named “Add to Home Screen”. The app icon appears on your home screen.",
       ],
       androidTitle: "Android (Chrome)",
       androidSteps: [
         "Open this page in Chrome.",
         "Tap the ⋮ menu at the top right.",
         "Tap “Install app” (or “Add to Home screen”).",
-        "Confirm with “Install” — the app icon appears on your home screen.",
+        "Confirm with “Install”. The app icon appears on your home screen.",
       ],
     },
     cloud: {
       title: "Cloud backup",
       statusIdle: "Cloud backup is on.",
       statusSynced:
-        "Backed up — your games save to the cloud automatically and come back if this device's data is cleared.",
+        "Backed up. Your games save to the cloud automatically and come back if this device's data is cleared.",
       statusSyncing: "Saving to the cloud…",
-      statusOffline: "Offline — changes will sync once you're back online.",
+      statusOffline: "Offline. Changes will sync once you're back online.",
       statusUnavailable: "Cloud backup isn't set up for this app.",
       linkTitle: "Use your games on another phone",
       linkHint:
-        "Copy this device's code, then paste it on the other phone to load the same games there. Keep it private — anyone with it can see your games.",
+        "Copy this device's code, then paste it on the other phone to load the same games there. Keep it private; anyone with it can see your games.",
       codeLabel: "This device's code",
       copy: "Copy",
       copied: "Copied",
@@ -147,7 +147,7 @@ export const en: Strings = {
       linkButton: "Load those games here",
       linking: "Loading…",
       linkError: "That code could not be read.",
-      linkSuccess: "Done — games merged onto this device.",
+      linkSuccess: "Done. Games merged onto this device.",
     },
   },
 
@@ -156,7 +156,7 @@ export const en: Strings = {
     crew: "Gather your crew",
     players: "Players",
     seatingHint:
-      "Enter players in clockwise seating order — player 1 deals the first round. Use the arrows to rearrange the table.",
+      "Enter players in clockwise seating order. Player 1 deals the first round. Use the arrows to rearrange the table.",
     playerPlaceholder: (n) => `Player ${n}`,
     addPlayer: "+ Add player",
     quickTitle: "Quick game",
@@ -170,7 +170,7 @@ export const en: Strings = {
     twoPlayers: "Two players",
     ghostTitle: "Greybeard ghost 👻",
     ghostHint:
-      "The two-player variant described in the rulebook: deal a third hand for the Greybeard ghost. He plays but never bids or scores, so he steals some tricks — your two trick counts can total less than the cards dealt.",
+      "The two-player variant described in the rulebook: deal a third hand for the Greybeard ghost. He plays but never bids or scores, so he steals some tricks. Your two trick counts can total less than the cards dealt.",
     rounds: "Rounds",
     roundsHint: "Standard Skull King is 10 rounds.",
     structureHint:
@@ -198,11 +198,11 @@ export const en: Strings = {
       classic:
         "The classic risk-and-reward system: exact bids pay 20 per trick, misses cost points.",
       rascal:
-        "Each round puts 10 points per card dealt at stake. Exact bid: all of it. Off by one: half. Off by two or more: nothing — never negative.",
+        "Each round puts 10 points per card dealt at stake. Exact bid: all of it. Off by one: half. Off by two or more: nothing. Scores are never negative.",
     },
     rascalBetsTitle: "Rascal's optional rules ✊",
     rascalBetsHint:
-      "After bidding, everyone declares Buckshot (open hand: the standard tiers) or Cannonball (closed fist: 15 points per card dealt on an exact bid, nothing otherwise — bonuses included).",
+      "After bidding, everyone declares Buckshot (open hand: the standard tiers) or Cannonball (closed fist: 15 points per card dealt on an exact bid, nothing otherwise, bonuses included).",
     bonusesRequireBidTitle: "Bonuses only on an exact bid",
     bonusesRequireBidHint:
       "A common variant: capture bonuses (14s, mermaids, pirates, Skull King…) are lost when the bid is missed. Left off, the app follows the rulebook and keeps them whatever the bid.",
@@ -235,7 +235,7 @@ export const en: Strings = {
     tricksOk: "  ✓",
     tricksWarnNormal: "  (must equal cards dealt)",
     ghostTook: (n) => `  ·  Greybeard 👻 took ${n}`,
-    tricksWarnOver: "  (more than the cards dealt — check your counts)",
+    tricksWarnOver: "  (more than the cards dealt; check your counts)",
     krakenRecord: "+ Trick discarded by Kraken",
     krakenRecorded: "Kraken trick counted",
     krakenUndo: "Undo",
@@ -264,7 +264,7 @@ export const en: Strings = {
     title: "Follow the scores",
     subtitle: "Every player can track the scores on their own phone.",
     liveHint:
-      "Start a live session: players who scan the code follow the scores in real time — every bid, trick and bonus appears on their phone as you record it, no refresh needed.",
+      "Start a live session. Players who scan the code follow the scores in real time; every bid, trick and bonus appears on their phone as you record it, no refresh needed.",
     start: "Start live follow",
     starting: "Starting…",
     stop: "Stop live follow",
@@ -275,12 +275,12 @@ export const en: Strings = {
     statusSyncing: "Saving…",
     statusOffline: "Reconnecting…",
     liveError:
-      "Live sync hit a problem — it keeps retrying. Check your connection, or stop and start again.",
+      "Live sync hit a problem. It keeps retrying. Check your connection, or stop and start again.",
     snapshotTitle: "No connection at the table?",
     snapshotToggleShow: "Show offline snapshot",
     snapshotToggleHide: "Hide offline snapshot",
     scanHint:
-      "This QR code carries a read-only snapshot of the game — every bid, trick and bonus recorded so far.",
+      "This QR code carries a read-only snapshot of the game: every bid, trick and bonus recorded so far.",
     updateHint:
       "It works with no server, but does not update on its own: players re-scan to get the latest scores.",
     networkHint:
@@ -301,19 +301,19 @@ export const en: Strings = {
     roundProgress: (scored, total) =>
       `Scores after round ${scored} of ${total}`,
     noRounds: "No round has been scored yet.",
-    finished: "Final scores — the game is over.",
+    finished: "Final scores. The game is over.",
     snapshotAt: (time) => `Game master's scores · read at ${time}`,
     liveUpdatedAt: (time) => `Updated live · ${time}`,
     refreshHint:
       "This is a snapshot. To refresh it, scan the game master's QR code again.",
     connecting: "Connecting to the live game…",
-    reconnecting: "Connection lost — reconnecting…",
+    reconnecting: "Connection lost. Reconnecting…",
     endedTitle: "Live session ended",
     endedBody:
       "The game master stopped sharing. The last scores you received are shown below.",
     standingsTitle: "Standings",
     tapHint:
-      "Tap any player for their full round-by-round details — bids, tricks and every bonus.",
+      "Tap any player for their full round-by-round details: bids, tricks and every bonus.",
     identityTitle: "Which player are you?",
     identityHint:
       "Pick your name once to follow your own scores. It stays fixed for this game.",
@@ -348,7 +348,7 @@ export const en: Strings = {
     installTitle: "Keep the score keeper aboard",
     installHint: "Install the app for quick access and fully offline play.",
     installIosHint:
-      "Tap Share and “Add to Home Screen” — in Chrome, open “See more” first.",
+      "Tap Share and “Add to Home Screen”. In Chrome, open “See more” first.",
     installError: "Installation could not start. You can try again later.",
     install: "Install app",
     installDismiss: "Later",
@@ -429,7 +429,7 @@ export const en: Strings = {
     awardsHeading: "Crew awards",
     gameDate: (date) => `Played ${date}`,
     rankingLine: (medal, name, score) =>
-      `${medal} ${name} — ${score} points`,
+      `${medal} ${name}, ${score} points`,
     awardLine: (award, name) => `${award}: ${name}`,
     cancelled: "Sharing cancelled.",
   },
@@ -600,7 +600,7 @@ export const en: Strings = {
     rascal: [
       {
         title: "An official alternate scoring",
-        body: "Chosen when creating the game. Every player has the same potential each round — 10 points per card dealt, whatever the bid — and accuracy decides how much of it you take. Scores never go negative.",
+        body: "Chosen when creating the game. Every player has the same potential each round: 10 points per card dealt, whatever the bid. Accuracy decides how much of it you take. Scores never go negative.",
       },
       {
         title: "Direct hit · glancing blow · total whiff",
@@ -612,7 +612,7 @@ export const en: Strings = {
       },
       {
         title: "Optional: Buckshot or Cannonball",
-        body: "If enabled at setup, everyone declares after bidding, then reveals simultaneously. Open hand (Buckshot) keeps the standard tiers; closed fist (Cannonball) pays 15 points per card dealt on an exact bid and nothing otherwise — bonuses included.",
+        body: "If enabled at setup, everyone declares after bidding, then reveals simultaneously. Open hand (Buckshot) keeps the standard tiers; closed fist (Cannonball) pays 15 points per card dealt on an exact bid and nothing otherwise, bonuses included.",
       },
     ],
     bonusEntries: [
