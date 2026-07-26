@@ -255,7 +255,7 @@ export default function ScoreBreakdownModal({
 
             {history.length === 0 ? (
               <View style={styles.emptyState}>
-                <Text style={styles.emptyMark}>—</Text>
+                <Text style={styles.emptyMark}>…</Text>
                 <Text style={styles.emptyText}>{t.scoreBreakdown.noRounds}</Text>
               </View>
             ) : (

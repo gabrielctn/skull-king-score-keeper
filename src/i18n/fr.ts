@@ -65,8 +65,8 @@ export const fr: Strings = {
     automaticUpdatesBody:
       "Les applications installées téléchargent désormais chaque nouvelle version automatiquement et l'activent dès que l'appareil est en ligne.",
     items: [
-      "L'accueil affiche désormais la manche en cours, la dernière activité, le joueur en tête et tous les participants de la partie à reprendre.",
-      "Une partie en cours peut désormais être abandonnée depuis l'accueil après confirmation, sans affecter les parties terminées.",
+      "Les commandes de score gardent désormais un espace net avant Bonus, même lorsque son compteur est visible sur un petit écran.",
+      "Tous les textes utilisent désormais une ponctuation plus fluide, sans tirets cadratins ni demi-cadratins.",
     ],
     close: "Compris",
   },
@@ -89,7 +89,7 @@ export const fr: Strings = {
     deleteAll: "Supprimer toutes les parties",
     deleteAllTitle: "Supprimer toutes les parties ?",
     deleteAllMessage:
-      "Toutes les parties — y compris une éventuelle partie en cours — seront définitivement supprimées. Pensez à exporter une sauvegarde avant.",
+      "Toutes les parties, y compris une éventuelle partie en cours, seront définitivement supprimées. Pensez à exporter une sauvegarde avant.",
     deleteAllCancel: "Annuler",
     deleteAllConfirm: "Tout supprimer",
     deleteAllSuccess: "Toutes les parties ont été supprimées.",
@@ -100,7 +100,7 @@ export const fr: Strings = {
       title: "Installer l'application",
       installedTitle: "Application installée",
       installedBody:
-        "Le compteur de scores est sur votre appareil — il s'ouvre comme une appli et fonctionne entièrement hors ligne.",
+        "Le compteur de scores est sur votre appareil. Il s'ouvre comme une appli et fonctionne entièrement hors ligne.",
       promptHint:
         "Ajoutez le compteur de scores à votre écran d'accueil pour un accès en un geste et le jeu hors ligne.",
       manualHint:
@@ -114,34 +114,34 @@ export const fr: Strings = {
         "Ouvrez cette page dans Safari.",
         "Touchez le bouton Partager (un carré surmonté d'une flèche) en bas de l'écran.",
         "Faites défiler et touchez « Sur l'écran d'accueil ».",
-        "Touchez « Ajouter » en haut à droite — l'icône apparaît sur votre écran d'accueil.",
+        "Touchez « Ajouter » en haut à droite. L'icône apparaît sur votre écran d'accueil.",
       ],
       iosChromeTitle: "iPhone et iPad (Chrome)",
       iosChromeSteps: [
         "Ouvrez cette page dans Chrome.",
         "Touchez le petit bouton Partager (un carré surmonté d'une flèche) dans la barre de recherche.",
         "Touchez le chevron « ⌄ » (« En voir plus ») pour afficher toutes les options.",
-        "Touchez le bouton « + » nommé « Sur l'écran d'accueil » — l'icône apparaît sur votre écran d'accueil.",
+        "Touchez le bouton « + » nommé « Sur l'écran d'accueil ». L'icône apparaît sur votre écran d'accueil.",
       ],
       androidTitle: "Android (Chrome)",
       androidSteps: [
         "Ouvrez cette page dans Chrome.",
         "Touchez le menu ⋮ en haut à droite.",
         "Touchez « Installer l'application » (ou « Ajouter à l'écran d'accueil »).",
-        "Confirmez avec « Installer » — l'icône apparaît sur votre écran d'accueil.",
+        "Confirmez avec « Installer ». L'icône apparaît sur votre écran d'accueil.",
       ],
     },
     cloud: {
       title: "Sauvegarde cloud",
       statusIdle: "La sauvegarde cloud est activée.",
       statusSynced:
-        "Sauvegardé — vos parties sont enregistrées dans le cloud automatiquement et reviennent si les données de cet appareil sont effacées.",
+        "Sauvegardé. Vos parties sont enregistrées dans le cloud automatiquement et reviennent si les données de cet appareil sont effacées.",
       statusSyncing: "Enregistrement dans le cloud…",
-      statusOffline: "Hors ligne — les changements se synchroniseront une fois de retour en ligne.",
+      statusOffline: "Hors ligne. Les changements se synchroniseront une fois de retour en ligne.",
       statusUnavailable: "La sauvegarde cloud n'est pas configurée pour cette appli.",
       linkTitle: "Utiliser vos parties sur un autre téléphone",
       linkHint:
-        "Copiez le code de cet appareil, puis collez-le sur l'autre téléphone pour y charger les mêmes parties. Gardez-le privé — quiconque l'a peut voir vos parties.",
+        "Copiez le code de cet appareil, puis collez-le sur l'autre téléphone pour y charger les mêmes parties. Gardez-le privé, car quiconque l'a peut voir vos parties.",
       codeLabel: "Code de cet appareil",
       copy: "Copier",
       copied: "Copié",
@@ -149,7 +149,7 @@ export const fr: Strings = {
       linkButton: "Charger ces parties ici",
       linking: "Chargement…",
       linkError: "Ce code n'a pas pu être lu.",
-      linkSuccess: "Terminé — parties fusionnées sur cet appareil.",
+      linkSuccess: "Terminé. Les parties ont été fusionnées sur cet appareil.",
     },
   },
 
@@ -158,7 +158,7 @@ export const fr: Strings = {
     crew: "Rassemblez votre équipage",
     players: "Joueurs",
     seatingHint:
-      "Saisissez les joueurs dans l'ordre des places, sens horaire — le joueur 1 distribue la 1re manche. Utilisez les flèches pour réorganiser la table.",
+      "Saisissez les joueurs dans l'ordre des places, sens horaire. Le joueur 1 distribue la 1re manche. Utilisez les flèches pour réorganiser la table.",
     playerPlaceholder: (n) => `Joueur ${n}`,
     addPlayer: "+ Ajouter un joueur",
     quickTitle: "Configuration rapide (classique)",
@@ -172,7 +172,7 @@ export const fr: Strings = {
     twoPlayers: "Deux joueurs",
     ghostTitle: "Fantôme Barbe Grise 👻",
     ghostHint:
-      "La variante à 2 joueurs décrite dans le livret : distribuez une troisième main pour le fantôme Barbe Grise. Il joue mais ne mise jamais et ne marque pas, il vous vole donc des plis — vos deux totaux de plis peuvent être inférieurs au nombre de cartes distribuées.",
+      "La variante à 2 joueurs décrite dans le livret : distribuez une troisième main pour le fantôme Barbe Grise. Il joue mais ne mise jamais et ne marque pas. Comme il vous vole certains plis, vos deux totaux peuvent être inférieurs au nombre de cartes distribuées.",
     rounds: "Manches",
     roundsHint: "Une partie standard de Skull King compte 10 manches.",
     structureHint:
@@ -200,11 +200,11 @@ export const fr: Strings = {
       classic:
         "Le décompte classique : une mise exacte rapporte 20 par pli, une erreur coûte des points.",
       rascal:
-        "Chaque manche met en jeu 10 points par carte distribuée. Mise exacte : la totalité. Écart de 1 : la moitié. Écart de 2 ou plus : rien — jamais de points négatifs.",
+        "Chaque manche met en jeu 10 points par carte distribuée. Mise exacte : la totalité. Écart de 1 : la moitié. Écart de 2 ou plus : rien. Les scores ne sont jamais négatifs.",
     },
     rascalBetsTitle: "Règles optionnelles de Rascal ✊",
     rascalBetsHint:
-      "Après la mise, chacun déclare Chevrotine (main ouverte : barème habituel) ou Boulet de canon (poing fermé : 15 points par carte distribuée si la mise est exacte, sinon rien — bonus compris).",
+      "Après la mise, chacun déclare Chevrotine (main ouverte : barème habituel) ou Boulet de canon (poing fermé : 15 points par carte distribuée si la mise est exacte, sinon rien, bonus compris).",
     bonusesRequireBidTitle: "Bonus seulement si la mise est réussie",
     bonusesRequireBidHint:
       "Variante courante : les bonus de capture (14, sirènes, pirates, Skull King…) sont perdus si la mise est ratée. Désactivé, l'app suit le livret : les bonus sont gardés quelle que soit la mise.",
@@ -237,7 +237,7 @@ export const fr: Strings = {
     tricksOk: "  ✓",
     tricksWarnNormal: "  (doit égaler les cartes distribuées)",
     ghostTook: (n) => `  ·  Barbe Grise 👻 en a pris ${n}`,
-    tricksWarnOver: "  (plus que les cartes distribuées — vérifiez vos comptes)",
+    tricksWarnOver: "  (plus que les cartes distribuées ; vérifiez vos comptes)",
     krakenRecord: "+ Pli défaussé par le Kraken",
     krakenRecorded: "Pli du Kraken comptabilisé",
     krakenUndo: "Annuler",
@@ -267,7 +267,7 @@ export const fr: Strings = {
     title: "Suivre les scores",
     subtitle: "Chaque joueur peut suivre les scores sur son propre téléphone.",
     liveHint:
-      "Démarrez une session en direct : les joueurs qui scannent le code suivent les scores en temps réel — chaque mise, pli et bonus apparaît sur leur téléphone au moment où vous l'enregistrez, sans rien actualiser.",
+      "Démarrez une session en direct. Les joueurs qui scannent le code suivent les scores en temps réel ; chaque mise, pli et bonus apparaît sur leur téléphone au moment où vous l'enregistrez, sans rien actualiser.",
     start: "Démarrer le suivi en direct",
     starting: "Démarrage…",
     stop: "Arrêter le suivi en direct",
@@ -278,12 +278,12 @@ export const fr: Strings = {
     statusSyncing: "Enregistrement…",
     statusOffline: "Reconnexion…",
     liveError:
-      "La synchro en direct a rencontré un problème — elle réessaie. Vérifiez votre connexion, ou arrêtez puis relancez.",
+      "La synchro en direct a rencontré un problème. Elle réessaie. Vérifiez votre connexion, ou arrêtez puis relancez.",
     snapshotTitle: "Pas de connexion à la table ?",
     snapshotToggleShow: "Afficher l'instantané hors ligne",
     snapshotToggleHide: "Masquer l'instantané hors ligne",
     scanHint:
-      "Ce QR code contient un instantané en lecture seule de la partie — chaque mise, pli et bonus enregistrés jusqu'ici.",
+      "Ce QR code contient un instantané en lecture seule de la partie : chaque mise, pli et bonus enregistrés jusqu'ici.",
     updateHint:
       "Il fonctionne sans serveur, mais ne se met pas à jour tout seul : les joueurs le re-scannent pour obtenir les derniers scores.",
     networkHint:
@@ -304,19 +304,19 @@ export const fr: Strings = {
     roundProgress: (scored, total) =>
       `Scores après la manche ${scored} sur ${total}`,
     noRounds: "Aucune manche n'a encore été validée.",
-    finished: "Scores finaux — la partie est terminée.",
+    finished: "Scores finaux. La partie est terminée.",
     snapshotAt: (time) => `Scores du maître du jeu · relevés à ${time}`,
     liveUpdatedAt: (time) => `Mis à jour en direct · ${time}`,
     refreshHint:
       "Ceci est un instantané. Pour l'actualiser, scannez à nouveau le QR code du maître du jeu.",
     connecting: "Connexion à la partie en direct…",
-    reconnecting: "Connexion perdue — reconnexion…",
+    reconnecting: "Connexion perdue, reconnexion…",
     endedTitle: "Session en direct terminée",
     endedBody:
       "Le maître du jeu a arrêté le partage. Les derniers scores reçus sont affichés ci-dessous.",
     standingsTitle: "Classement",
     tapHint:
-      "Touchez un joueur pour son détail complet manche par manche — mises, plis et chaque bonus.",
+      "Touchez un joueur pour son détail complet manche par manche : mises, plis et chaque bonus.",
     identityTitle: "Quel joueur êtes-vous ?",
     identityHint:
       "Choisissez votre nom une fois pour suivre vos propres scores. Ce choix reste fixe pour cette partie.",
@@ -351,7 +351,7 @@ export const fr: Strings = {
     installTitle: "Gardez le compteur à bord",
     installHint: "Installez l’app pour la retrouver rapidement et jouer hors ligne.",
     installIosHint:
-      "Touchez Partager puis « Sur l’écran d’accueil » — dans Chrome, ouvrez d’abord « En voir plus ».",
+      "Touchez Partager puis « Sur l’écran d’accueil ». Dans Chrome, ouvrez d’abord « En voir plus ».",
     installError: "L’installation n’a pas pu démarrer. Vous pourrez réessayer plus tard.",
     install: "Installer l’app",
     installDismiss: "Plus tard",
@@ -362,7 +362,7 @@ export const fr: Strings = {
     open: "Statistiques des joueurs",
     title: "Statistiques",
     groupTitle: "Palmarès de l’équipage",
-    playerTitle: (name) => `${name} — statistiques`,
+    playerTitle: (name) => `${name}, statistiques`,
     emptyTitle: "Aucune légende à raconter",
     emptyBody:
       "Terminez une partie pour commencer l’histoire de votre équipage.",
@@ -435,7 +435,7 @@ export const fr: Strings = {
     awardsHeading: "Distinctions de l’équipage",
     gameDate: (date) => `Partie du ${date}`,
     rankingLine: (medal, name, score) =>
-      `${medal} ${name} — ${score} points`,
+      `${medal} ${name}, ${score} points`,
     awardLine: (award, name) => `${award} : ${name}`,
     cancelled: "Partage annulé.",
   },
@@ -611,7 +611,7 @@ export const fr: Strings = {
     rascal: [
       {
         title: "Un décompte officiel alternatif",
-        body: "Choisi à la création de la partie. Tous les joueurs ont le même potentiel à chaque manche — 10 points par carte distribuée, quelle que soit la mise — et c'est la précision qui décide de ce que vous en gagnez. Les scores ne deviennent jamais négatifs.",
+        body: "Choisi à la création de la partie. Tous les joueurs ont le même potentiel à chaque manche : 10 points par carte distribuée, quelle que soit la mise. C'est la précision qui décide de ce que vous en gagnez. Les scores ne deviennent jamais négatifs.",
       },
       {
         title: "Coup direct · frappe à revers · échec cuisant",
@@ -623,7 +623,7 @@ export const fr: Strings = {
       },
       {
         title: "Option : Chevrotine ou Boulet de canon",
-        body: "Si l'option est activée, chacun choisit après avoir misé, puis tout le monde révèle en même temps. Main ouverte (Chevrotine) : barème habituel ; poing fermé (Boulet de canon) : 15 points par carte distribuée si la mise est exacte, sinon rien — bonus compris.",
+        body: "Si l'option est activée, chacun choisit après avoir misé, puis tout le monde révèle en même temps. Main ouverte (Chevrotine) : barème habituel ; poing fermé (Boulet de canon) : 15 points par carte distribuée si la mise est exacte, sinon rien, bonus compris.",
       },
     ],
     bonusEntries: [

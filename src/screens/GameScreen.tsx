@@ -660,7 +660,7 @@ export default function GameScreen({
                     </Text>
                   ) : (
                     <Text style={[styles.roundScore, styles.scorePlaceholder]}>
-                      —
+                      …
                     </Text>
                   )}
                 </View>
@@ -1079,12 +1079,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-end",
+    columnGap: spacing.xs,
   },
   bonusToggle: {
     minHeight: 44,
     justifyContent: "center",
     paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.sm,
+    paddingHorizontal: spacing.xs,
     borderRadius: radius.sm,
     borderWidth: 1,
     borderColor: colors.controlBorder,

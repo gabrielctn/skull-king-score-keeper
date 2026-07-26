@@ -27,7 +27,7 @@ const buildPwa = readFileSync("scripts/build-pwa.mjs", "utf8");
 
 check(
   "installed app label uses an independent identity",
-  appConfig.name === "Score Keeper — Unofficial"
+  appConfig.name === "Score Keeper, Unofficial"
 );
 check("web and manifest full names match", appConfig.web.name === manifest.name);
 check("full PWA name is explicitly unofficial", /unofficial/i.test(manifest.name));

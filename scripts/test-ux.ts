@@ -33,6 +33,20 @@ const homeSource = readFileSync("src/screens/HomeScreen.tsx", "utf8");
 const appSource = readFileSync("App.tsx", "utf8");
 const gameSource = readFileSync("src/screens/GameScreen.tsx", "utf8");
 const resultsSource = readFileSync("src/screens/ResultsScreen.tsx", "utf8");
+const scoreBreakdownSource = readFileSync(
+  "src/components/ScoreBreakdownModal.tsx",
+  "utf8"
+);
+const playerFacingTextSources = [
+  "src/i18n/en.ts",
+  "src/i18n/fr.ts",
+  "src/i18n/es.ts",
+  "src/i18n/de.ts",
+  "src/i18n/ar.ts",
+  "src/i18n/zh.ts",
+  "app.json",
+  "web/manifest.webmanifest",
+].map((path) => readFileSync(path, "utf8"));
 
 check(
   "release versions stay aligned",
@@ -83,6 +97,23 @@ check(
   "collapsed bonus editors expose recorded counts",
   gameSource.includes("const bonusCount =") &&
     gameSource.includes("styles.bonusBadge")
+);
+check(
+  "bonus control keeps a compact-screen gap when its count is visible",
+  gameSource.includes("steppers: {") &&
+    gameSource.includes("columnGap: spacing.xs") &&
+    gameSource.includes("bonusToggle: {") &&
+    gameSource.includes("paddingHorizontal: spacing.xs")
+);
+check(
+  "player-facing text contains no en or em dashes",
+  !/[–—]/u.test(
+    [
+      ...playerFacingTextSources,
+      gameSource,
+      scoreBreakdownSource,
+    ].join("\n")
+  )
 );
 check(
   "desktop round validation is rendered inside the score sheet",
