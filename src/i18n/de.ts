@@ -25,6 +25,14 @@ export const de: Strings = {
     subtitle: "für Skull King",
     unofficial: "Inoffizielle Fan-App",
     resume: "Spiel fortsetzen",
+    activeTitle: "Laufendes Spiel",
+    playing: "Mitspieler",
+    lastPlayed: (date) => `Zuletzt gespielt: ${date}`,
+    abandon: "Spiel aufgeben",
+    abandonTitle: "Dieses Spiel aufgeben?",
+    abandonMessage:
+      "Alle Punkte und Rundendetails dieses laufenden Spiels werden dauerhaft gelöscht. Beendete Spiele bleiben erhalten.",
+    abandonConfirm: "Aufgeben",
     history: "Letzte Spiele",
     historyHint: "Tippe auf ein Spiel, um es fortzusetzen oder den Stand anzusehen.",
     historyShowAll: (count) => `Alle ${count} Spiele anzeigen`,
@@ -56,11 +64,8 @@ export const de: Strings = {
     automaticUpdatesBody:
       "Installierte Apps laden jede neue Version automatisch und wechseln zu ihr, sobald das Gerät online ist.",
     items: [
-      "Die Schnelleinrichtung zeigt jetzt die tatsächlich verwendeten Regeln; die Graubart-Option für zwei Personen ist ohne Öffnen der erweiterten Einstellungen erreichbar.",
-      "Die Rundeneingabe ist klarer: unberührte Punkte bleiben verborgen, vorläufige Punkte sind gekennzeichnet und eingeklappte Bonusbereiche zeigen ihre Anzahl.",
-      "Start- und Ergebnisseite heben jetzt jeweils eine nächste Aktion hervor; am Desktop bleibt die Bestätigung direkt bei der Punktetafel.",
-      "Bedienelemente sind dank deutlicherer Ränder und aussagekräftiger Beschriftungen besser sichtbar, leichter zu treffen und für Screenreader verständlicher.",
-      "Die Analyseauswahl bleibt jetzt im Seitenlayout und verdeckt keine Spielschaltflächen mehr.",
+      "Die Startseite zeigt nun die aktuelle Runde, die letzte Aktivität, die Führung und alle Mitspieler des fortzusetzenden Spiels.",
+      "Ein laufendes Spiel kann nun nach Bestätigung auf der Startseite aufgegeben werden, ohne beendete Spiele zu löschen.",
     ],
     close: "Verstanden",
   },

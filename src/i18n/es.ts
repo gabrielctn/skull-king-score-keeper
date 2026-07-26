@@ -25,6 +25,14 @@ export const es: Strings = {
     subtitle: "para Skull King",
     unofficial: "Aplicación no oficial creada por fans",
     resume: "Continuar partida",
+    activeTitle: "Partida en curso",
+    playing: "Jugadores",
+    lastPlayed: (date) => `Última actividad: ${date}`,
+    abandon: "Abandonar partida",
+    abandonTitle: "¿Abandonar esta partida?",
+    abandonMessage:
+      "Todas las puntuaciones y detalles de las rondas de esta partida en curso se eliminarán permanentemente. Las partidas terminadas no se verán afectadas.",
+    abandonConfirm: "Abandonar",
     history: "Partidas recientes",
     historyHint: "Toca una partida para continuarla o ver su clasificación.",
     historyShowAll: (count) => `Ver las ${count} partidas`,
@@ -58,11 +66,8 @@ export const es: Strings = {
     automaticUpdatesBody:
       "Las aplicaciones instaladas ahora descargan automáticamente cada nueva versión y la activan en cuanto el dispositivo se conecta a internet.",
     items: [
-      "La configuración rápida ahora muestra las reglas exactas que se usarán, con la opción para dos jugadores de Barbagris disponible sin abrir los ajustes avanzados.",
-      "Anotar una ronda es más claro: las puntuaciones sin tocar permanecen ocultas, los puntos provisionales están identificados y los bonus plegados muestran cuántos hay.",
-      "Inicio y resultados ahora dan prioridad a una sola acción siguiente, y en escritorio la validación permanece junto a la hoja de puntuación.",
-      "Los controles son más fáciles de ver, pulsar y usar con un lector de pantalla, con bordes más definidos y etiquetas más descriptivas.",
-      "La elección de analíticas ahora permanece dentro del diseño de la página y ya no tapa los botones de juego.",
+      "Inicio ahora muestra la ronda actual, la última actividad, quién va en cabeza y todos los jugadores de la partida pendiente de continuar.",
+      "Ahora se puede abandonar una partida en curso desde Inicio tras confirmarlo, sin afectar a las partidas terminadas.",
     ],
     close: "Entendido",
   },

@@ -37,6 +37,8 @@ interface Props {
   onOpenSettings: () => void;
 }
 
+type RemovalIntent = "delete" | "abandon";
+
 export default function HomeScreen({
   gameHistory,
   currentGameId,
@@ -49,7 +51,10 @@ export default function HomeScreen({
   const { t, lang } = useI18n();
   const { width } = useWindowDimensions();
   const layout = getResponsiveLayout(width);
-  const [pendingDelete, setPendingDelete] = React.useState<Game | null>(null);
+  const [pendingRemoval, setPendingRemoval] = React.useState<{
+    game: Game;
+    intent: RemovalIntent;
+  } | null>(null);
   const [whatsNewOpen, setWhatsNewOpen] = React.useState(false);
   const [showAllHistory, setShowAllHistory] = React.useState(false);
   const activeGame =
@@ -63,6 +68,12 @@ export default function HomeScreen({
   const visibleHistory = showAllHistory
     ? historyGames
     : historyGames.slice(0, HISTORY_PREVIEW_COUNT);
+  const activeGameHasScores =
+    activeGame?.rounds.some((round) =>
+      activeGame.players.every((player) => round[player.id]?.recorded)
+    ) ?? false;
+  const activeGameLeader =
+    activeGame && activeGameHasScores ? standings(activeGame)[0] : null;
   React.useEffect(() => {
     let active = true;
     void loadSeenRelease().then((seen) => {
@@ -86,11 +97,18 @@ export default function HomeScreen({
       month: "short",
       year: "numeric",
     });
+  const formatActivity = (timestamp: number) =>
+    new Date(timestamp).toLocaleString(browserLocale(lang), {
+      day: "numeric",
+      month: "short",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
 
-  const deletePendingGame = () => {
-    if (!pendingDelete) return;
-    onDeleteGame(pendingDelete.id);
-    setPendingDelete(null);
+  const removePendingGame = () => {
+    if (!pendingRemoval) return;
+    onDeleteGame(pendingRemoval.game.id);
+    setPendingRemoval(null);
   };
   const openSupportPage = () => {
     void Linking.openURL(SUPPORT_URL).catch(() => undefined);
@@ -162,13 +180,61 @@ export default function HomeScreen({
         <View style={[styles.actions, layout.isDesktop && styles.actionsDesktop]}>
           {activeGame ? (
             <>
-              <TouchableOpacity
-                style={styles.primaryBtn}
-                onPress={() => onOpenGame(activeGame)}
-                accessibilityRole="button"
-              >
-                <Text style={styles.primaryBtnText}>{t.home.resume}</Text>
-              </TouchableOpacity>
+              <View style={styles.activeGameCard}>
+                <View style={styles.activeGameHeader}>
+                  <Text style={styles.activeGameTitle}>{t.home.activeTitle}</Text>
+                  <Text style={styles.activeGameStatus}>{t.home.inProgress}</Text>
+                </View>
+                <Text style={styles.activeGameMeta}>
+                  {t.home.playersRound(
+                    activeGame.players.length,
+                    Math.min(activeGame.currentRound, activeGame.totalRounds),
+                    activeGame.totalRounds
+                  )}
+                </Text>
+                <Text style={styles.activeGameActivity}>
+                  {t.home.lastPlayed(formatActivity(activeGame.updatedAt))}
+                </Text>
+
+                <Text style={styles.activePlayersLabel}>
+                  {t.home.playing}
+                </Text>
+                <View style={styles.activePlayers}>
+                  {activeGame.players.map((player) => (
+                    <View key={player.id} style={styles.activePlayerChip}>
+                      <Text style={styles.activePlayerName} numberOfLines={1}>
+                        {player.name}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+
+                {activeGameLeader ? (
+                  <Text style={styles.activeGameLeader} numberOfLines={1}>
+                    {t.home.leading(
+                      activeGameLeader.player.name,
+                      activeGameLeader.total
+                    )}
+                  </Text>
+                ) : null}
+
+                <TouchableOpacity
+                  style={[styles.primaryBtn, styles.activeResumeBtn]}
+                  onPress={() => onOpenGame(activeGame)}
+                  accessibilityRole="button"
+                >
+                  <Text style={styles.primaryBtnText}>{t.home.resume}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.abandonBtn}
+                  onPress={() =>
+                    setPendingRemoval({ game: activeGame, intent: "abandon" })
+                  }
+                  accessibilityRole="button"
+                >
+                  <Text style={styles.abandonBtnText}>{t.home.abandon}</Text>
+                </TouchableOpacity>
+              </View>
               <TouchableOpacity
                 style={styles.secondaryBtn}
                 onPress={onNewGame}
@@ -242,7 +308,12 @@ export default function HomeScreen({
                       </TouchableOpacity>
                       <TouchableOpacity
                         style={styles.deleteBtn}
-                        onPress={() => setPendingDelete(historyGame)}
+                        onPress={() =>
+                          setPendingRemoval({
+                            game: historyGame,
+                            intent: "delete",
+                          })
+                        }
                         accessibilityRole="button"
                         accessibilityLabel={t.home.deleteGame(date)}
                       >
@@ -289,29 +360,45 @@ export default function HomeScreen({
         </View>
       </ScrollView>
       <Modal
-        visible={pendingDelete !== null}
+        visible={pendingRemoval !== null}
         transparent
         animationType="fade"
-        onRequestClose={() => setPendingDelete(null)}
+        onRequestClose={() => setPendingRemoval(null)}
       >
         <View style={styles.modalOverlay}>
-          <View style={styles.confirmDialog} accessibilityRole="alert">
-            <Text style={styles.confirmTitle}>{t.home.deleteTitle}</Text>
-            <Text style={styles.confirmMessage}>{t.home.deleteMessage}</Text>
+          <View
+            style={styles.confirmDialog}
+            accessibilityRole="alert"
+            accessibilityViewIsModal
+          >
+            <Text style={styles.confirmTitle}>
+              {pendingRemoval?.intent === "abandon"
+                ? t.home.abandonTitle
+                : t.home.deleteTitle}
+            </Text>
+            <Text style={styles.confirmMessage}>
+              {pendingRemoval?.intent === "abandon"
+                ? t.home.abandonMessage
+                : t.home.deleteMessage}
+            </Text>
             <View style={styles.confirmActions}>
               <TouchableOpacity
                 style={styles.cancelBtn}
-                onPress={() => setPendingDelete(null)}
+                onPress={() => setPendingRemoval(null)}
                 accessibilityRole="button"
               >
                 <Text style={styles.cancelText}>{t.home.deleteCancel}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.confirmDeleteBtn}
-                onPress={deletePendingGame}
+                onPress={removePendingGame}
                 accessibilityRole="button"
               >
-                <Text style={styles.confirmDeleteText}>{t.home.deleteConfirm}</Text>
+                <Text style={styles.confirmDeleteText}>
+                  {pendingRemoval?.intent === "abandon"
+                    ? t.home.abandonConfirm
+                    : t.home.deleteConfirm}
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -396,7 +483,78 @@ const styles = StyleSheet.create({
   },
   subtitle: { color: colors.textDim, fontSize: 17, marginTop: spacing.xs },
   actions: { width: "100%", alignSelf: "center" },
-  actionsDesktop: { flex: 1, maxWidth: 380 },
+  actionsDesktop: { flex: 1, maxWidth: 420 },
+  activeGameCard: {
+    backgroundColor: colors.card,
+    borderWidth: 1,
+    borderColor: colors.controlBorder,
+    borderRadius: radius.lg,
+    padding: spacing.md,
+  },
+  activeGameHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  activeGameTitle: {
+    flex: 1,
+    color: colors.text,
+    fontSize: 19,
+    fontWeight: "800",
+  },
+  activeGameStatus: {
+    color: colors.gold,
+    backgroundColor: "rgba(232,184,75,0.12)",
+    fontSize: 11,
+    fontWeight: "800",
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 4,
+    borderRadius: radius.sm,
+    overflow: "hidden",
+  },
+  activeGameMeta: {
+    color: colors.text,
+    fontSize: 14,
+    fontWeight: "700",
+    marginTop: spacing.sm,
+  },
+  activeGameActivity: {
+    color: colors.textDim,
+    fontSize: 12,
+    marginTop: 3,
+  },
+  activePlayersLabel: {
+    color: colors.textDim,
+    fontSize: 12,
+    fontWeight: "700",
+    marginTop: spacing.md,
+    marginBottom: spacing.xs,
+  },
+  activePlayers: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+  },
+  activePlayerChip: {
+    maxWidth: "100%",
+    backgroundColor: colors.bgElevated,
+    borderWidth: 1,
+    borderColor: colors.cardBorder,
+    borderRadius: radius.md,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 6,
+    marginEnd: spacing.xs,
+    marginBottom: spacing.xs,
+  },
+  activePlayerName: {
+    color: colors.text,
+    fontSize: 13,
+    fontWeight: "700",
+  },
+  activeGameLeader: {
+    color: colors.textDim,
+    fontSize: 12,
+    marginTop: spacing.xs,
+  },
+  activeResumeBtn: { marginTop: spacing.md },
   primaryBtn: {
     backgroundColor: colors.gold,
     borderRadius: radius.lg,
@@ -414,6 +572,17 @@ const styles = StyleSheet.create({
     marginTop: spacing.sm,
   },
   secondaryBtnText: { color: colors.gold, fontSize: 16, fontWeight: "800" },
+  abandonBtn: {
+    minHeight: 44,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: spacing.xs,
+  },
+  abandonBtnText: {
+    color: colors.negative,
+    fontSize: 14,
+    fontWeight: "800",
+  },
   history: { marginTop: spacing.xl },
   historyTitle: { color: colors.text, fontSize: 19, fontWeight: "800" },
   historyHint: { color: colors.textDim, fontSize: 13, marginTop: spacing.xs },
@@ -530,11 +699,18 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     marginTop: spacing.lg,
   },
-  cancelBtn: { paddingHorizontal: spacing.md, paddingVertical: spacing.sm },
+  cancelBtn: {
+    minHeight: 44,
+    justifyContent: "center",
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+  },
   cancelText: { color: colors.text, fontSize: 15, fontWeight: "700" },
   confirmDeleteBtn: {
     backgroundColor: colors.danger,
     borderRadius: radius.md,
+    minHeight: 44,
+    justifyContent: "center",
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     marginLeft: spacing.sm,

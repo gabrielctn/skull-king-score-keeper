@@ -41,6 +41,13 @@ export interface Strings {
     subtitle: string;
     unofficial: string;
     resume: string;
+    activeTitle: string;
+    playing: string;
+    lastPlayed: (date: string) => string;
+    abandon: string;
+    abandonTitle: string;
+    abandonMessage: string;
+    abandonConfirm: string;
     history: string;
     historyHint: string;
     /** Reveals the games hidden below the three most recent ones. */
