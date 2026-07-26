@@ -12,6 +12,7 @@ import { Game } from "./src/types";
 import {
   AppSettings,
   clearGame,
+  clearLiveSessionFor,
   loadGame,
   loadGameHistory,
   loadLang,
@@ -378,15 +379,23 @@ export default function App() {
     setScreen(selectedGame.status === "finished" ? "results" : "game");
   };
 
-  const handleDeleteHistory = (gameId: string) => {
+  const handleDeleteGame = (gameId: string) => {
     const next = historyRef.current.filter((item) => item.id !== gameId);
     historyRef.current = next;
     setGameHistory(next);
     queueHistorySave(next, true);
-    const nextCurrent = game?.id === gameId ? null : game;
-    if (game?.id === gameId) {
+    const current = gameRef.current;
+    const nextCurrent = current?.id === gameId ? null : current;
+    if (current?.id === gameId) {
+      gameRef.current = null;
       setGame(null);
       queueCurrentSave(null);
+    }
+    const liveManager = liveConfigured() ? liveSessionManager() : null;
+    if (liveManager?.getState().gameId === gameId) {
+      void liveManager.stop();
+    } else {
+      void clearLiveSessionFor(gameId);
     }
     pushCloud(nextCurrent, next);
   };
@@ -517,7 +526,7 @@ export default function App() {
             currentGameId={game?.id ?? null}
             onNewGame={handleNewGame}
             onOpenGame={handleOpenHistory}
-            onDeleteGame={handleDeleteHistory}
+            onDeleteGame={handleDeleteGame}
             onOpenStats={() => setScreen("stats")}
             onOpenSettings={() => setScreen("settings")}
           />

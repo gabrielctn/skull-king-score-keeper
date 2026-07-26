@@ -25,6 +25,14 @@ export const fr: Strings = {
     subtitle: "pour Skull King",
     unofficial: "Application non officielle",
     resume: "Reprendre la partie",
+    activeTitle: "Partie en cours",
+    playing: "Participants",
+    lastPlayed: (date) => `Dernière activité : ${date}`,
+    abandon: "Abandonner la partie",
+    abandonTitle: "Abandonner cette partie ?",
+    abandonMessage:
+      "Tous les scores et détails des manches de cette partie en cours seront définitivement supprimés. Les parties terminées ne seront pas affectées.",
+    abandonConfirm: "Abandonner",
     history: "Parties récentes",
     historyHint: "Touchez une partie pour la reprendre ou consulter son classement.",
     historyShowAll: (count) => `Afficher les ${count} parties`,
@@ -57,11 +65,8 @@ export const fr: Strings = {
     automaticUpdatesBody:
       "Les applications installées téléchargent désormais chaque nouvelle version automatiquement et l'activent dès que l'appareil est en ligne.",
     items: [
-      "Le démarrage rapide affiche désormais les règles exactes qui seront utilisées, et l'option à deux joueurs Barbe Grise est accessible sans ouvrir les réglages avancés.",
-      "La saisie d'une manche est plus claire : les scores intacts restent masqués, les points provisoires sont identifiés et les bonus repliés indiquent leur nombre.",
-      "L'accueil et les résultats mettent désormais en avant une seule action suivante, tandis que la validation sur ordinateur reste près de la feuille de score.",
-      "Les commandes sont plus visibles, plus faciles à toucher et mieux décrites aux lecteurs d'écran, avec des bordures renforcées.",
-      "Le choix des statistiques reste désormais dans la mise en page au lieu de recouvrir les boutons de jeu.",
+      "L'accueil affiche désormais la manche en cours, la dernière activité, le joueur en tête et tous les participants de la partie à reprendre.",
+      "Une partie en cours peut désormais être abandonnée depuis l'accueil après confirmation, sans affecter les parties terminées.",
     ],
     close: "Compris",
   },

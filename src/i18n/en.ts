@@ -25,6 +25,14 @@ export const en: Strings = {
     subtitle: "for Skull King",
     unofficial: "Unofficial fan-made app",
     resume: "Resume game",
+    activeTitle: "Game in progress",
+    playing: "Playing",
+    lastPlayed: (date) => `Last played ${date}`,
+    abandon: "Abandon game",
+    abandonTitle: "Abandon this game?",
+    abandonMessage:
+      "All scores and round details from this in-progress game will be permanently deleted. Finished games will not be affected.",
+    abandonConfirm: "Abandon",
     history: "Recent games",
     historyHint: "Tap a game to resume it or view its standings.",
     historyShowAll: (count) => `Show all ${count} games`,
@@ -56,11 +64,8 @@ export const en: Strings = {
     automaticUpdatesBody:
       "Installed apps now download each new release automatically and switch to it as soon as the device is online.",
     items: [
-      "Quick setup now shows the exact rules that will be used, with the Greybeard two-player option available without opening advanced settings.",
-      "Round entry is clearer: untouched scores stay hidden, provisional points are labelled, and collapsed bonus editors show recorded bonus counts.",
-      "Home and results now prioritize one next action, while desktop validation stays close to the score sheet.",
-      "Controls are easier to see, tap and use with a screen reader, with stronger borders and more descriptive labels.",
-      "The analytics choice now stays in the page layout instead of covering game buttons.",
+      "Home now shows the current round, last activity, leader and every player in the game waiting to be resumed.",
+      "An in-progress game can now be abandoned from Home after confirmation, without affecting finished games.",
     ],
     close: "Got it",
   },

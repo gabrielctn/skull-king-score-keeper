@@ -30,6 +30,7 @@ const cookieSource = readFileSync(
 const stepperSource = readFileSync("src/components/Stepper.tsx", "utf8");
 const setupSource = readFileSync("src/screens/SetupScreen.tsx", "utf8");
 const homeSource = readFileSync("src/screens/HomeScreen.tsx", "utf8");
+const appSource = readFileSync("App.tsx", "utf8");
 const gameSource = readFileSync("src/screens/GameScreen.tsx", "utf8");
 const resultsSource = readFileSync("src/screens/ResultsScreen.tsx", "utf8");
 
@@ -45,6 +46,18 @@ check(
 check(
   "active game is excluded from recent history",
   homeSource.includes("historyGame.id !== activeGame.id")
+);
+check(
+  "active game summary shows progress, activity and every player",
+  homeSource.includes("t.home.playersRound(") &&
+    homeSource.includes("t.home.lastPlayed(") &&
+    homeSource.includes("activeGame.players.map((player)")
+);
+check(
+  "active game can be abandoned after a dedicated confirmation",
+  homeSource.includes('intent: "abandon"') &&
+    homeSource.includes("t.home.abandonMessage") &&
+    appSource.includes("const nextCurrent = current?.id === gameId ? null : current")
 );
 check(
   "quick setup exposes an active-rule summary",
@@ -89,7 +102,7 @@ for (const [language, strings] of Object.entries({ en, fr, es, de, ar, zh })) {
   );
   check(
     `${language} release notes describe this UX release`,
-    strings.whatsNew.items.length === 5
+    strings.whatsNew.items.length === 2
   );
 }
 
