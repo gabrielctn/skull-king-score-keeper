@@ -255,11 +255,11 @@ export default function ResultsScreen({
         </View>
 
         <TouchableOpacity
-          style={styles.secondaryBtn}
+          style={styles.reviewBtn}
           onPress={onReview}
           accessibilityRole="button"
         >
-          <Text style={styles.secondaryText}>{t.results.review}</Text>
+          <Text style={styles.reviewText}>{t.results.review}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.primaryBtn}
@@ -269,11 +269,11 @@ export default function ResultsScreen({
           <Text style={styles.primaryText}>{t.results.rematch}</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.primaryBtn}
+          style={styles.secondaryBtn}
           onPress={onNewGame}
           accessibilityRole="button"
         >
-          <Text style={styles.primaryText}>{t.common.newGame}</Text>
+          <Text style={styles.secondaryText}>{t.common.newGame}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.linkBtn}
@@ -364,19 +364,21 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.gold,
+    backgroundColor: colors.bgElevated,
+    borderColor: colors.controlBorder,
+    borderWidth: 1,
     borderRadius: radius.lg,
     paddingHorizontal: spacing.md,
     marginTop: spacing.md,
   },
   shareBtnDisabled: { opacity: 0.5 },
   shareIcon: {
-    color: colors.bg,
+    color: colors.gold,
     fontSize: 21,
     fontWeight: "800",
     marginEnd: spacing.sm,
   },
-  shareText: { color: colors.bg, fontSize: 17, fontWeight: "800" },
+  shareText: { color: colors.gold, fontSize: 17, fontWeight: "800" },
   shareStatus: {
     alignSelf: "stretch",
     color: colors.textDim,
@@ -430,13 +432,26 @@ const styles = StyleSheet.create({
   primaryText: { color: colors.bg, fontSize: 18, fontWeight: "800" },
   secondaryBtn: {
     alignSelf: "stretch",
-    borderColor: colors.cardBorder,
+    borderColor: colors.controlBorder,
     borderWidth: 1,
     borderRadius: radius.lg,
     paddingVertical: spacing.md,
     alignItems: "center",
+    marginTop: spacing.sm,
   },
   secondaryText: { color: colors.gold, fontSize: 16, fontWeight: "600" },
+  reviewBtn: {
+    minHeight: 44,
+    alignSelf: "stretch",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  reviewText: {
+    color: colors.textDim,
+    fontSize: 15,
+    fontWeight: "600",
+    textDecorationLine: "underline",
+  },
   linkBtn: { paddingVertical: spacing.md },
   linkText: { color: colors.textDim, fontSize: 15 },
   installPrompt: {

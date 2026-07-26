@@ -52,14 +52,17 @@ export default function HomeScreen({
   const [pendingDelete, setPendingDelete] = React.useState<Game | null>(null);
   const [whatsNewOpen, setWhatsNewOpen] = React.useState(false);
   const [showAllHistory, setShowAllHistory] = React.useState(false);
-  const visibleHistory = showAllHistory
-    ? gameHistory
-    : gameHistory.slice(0, HISTORY_PREVIEW_COUNT);
   const activeGame =
     gameHistory.find(
       (historyGame) =>
         historyGame.id === currentGameId && historyGame.status === "in_progress"
     ) ?? gameHistory.find((historyGame) => historyGame.status === "in_progress");
+  const historyGames = activeGame
+    ? gameHistory.filter((historyGame) => historyGame.id !== activeGame.id)
+    : gameHistory;
+  const visibleHistory = showAllHistory
+    ? historyGames
+    : historyGames.slice(0, HISTORY_PREVIEW_COUNT);
   React.useEffect(() => {
     let active = true;
     void loadSeenRelease().then((seen) => {
@@ -184,7 +187,7 @@ export default function HomeScreen({
             </TouchableOpacity>
           )}
 
-          {gameHistory.length > 0 ? (
+          {historyGames.length > 0 ? (
             <View style={styles.history}>
               <Text style={styles.historyTitle}>{t.home.history}</Text>
               <Text style={styles.historyHint}>{t.home.historyHint}</Text>
@@ -249,7 +252,7 @@ export default function HomeScreen({
                   );
                 })}
               </View>
-              {gameHistory.length > HISTORY_PREVIEW_COUNT ? (
+              {historyGames.length > HISTORY_PREVIEW_COUNT ? (
                 <TouchableOpacity
                   style={styles.historyToggle}
                   onPress={() => setShowAllHistory((shown) => !shown)}
@@ -259,7 +262,7 @@ export default function HomeScreen({
                   <Text style={styles.historyToggleText}>
                     {showAllHistory
                       ? t.home.historyShowLess
-                      : t.home.historyShowAll(gameHistory.length)}
+                      : t.home.historyShowAll(historyGames.length)}
                   </Text>
                   <DisclosureChevron expanded={showAllHistory} />
                 </TouchableOpacity>
@@ -336,7 +339,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: colors.bgElevated,
     borderWidth: 1,
-    borderColor: colors.cardBorder,
+    borderColor: colors.controlBorder,
     borderRadius: radius.md,
     marginEnd: spacing.sm,
   },
@@ -403,7 +406,7 @@ const styles = StyleSheet.create({
   primaryBtnText: { color: colors.bg, fontSize: 18, fontWeight: "800" },
   secondaryBtn: {
     minHeight: 48,
-    borderColor: colors.goldDim,
+    borderColor: colors.controlBorder,
     borderWidth: 1,
     borderRadius: radius.lg,
     alignItems: "center",

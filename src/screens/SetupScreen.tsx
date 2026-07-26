@@ -117,6 +117,22 @@ export default function SetupScreen({ gameHistory, onStart, onBack }: Props) {
     : ROUND_STRUCTURE_IDS.filter(
         (id) => id === "classic" || id === structure
       );
+  const quickCards = structureCards(structure, rounds);
+  const activeRules = [
+    `${t.setup.structureNames[structure]} · ${t.setup.structureRounds(
+      quickCards.length
+    )}`,
+    t.setup.scoringNames[scoringMode],
+    ...(advanced ? [t.setup.advancedTitle] : []),
+    ...(newExpansion ? [t.setup.newExpansionTitle] : []),
+    ...(isTwoPlayer && twoPlayerGhost ? [t.setup.ghostTitle] : []),
+    ...(scoringMode === "rascal" && rascalBets
+      ? [t.setup.rascalBetsTitle]
+      : []),
+    ...(scoringMode === "classic" && bonusesRequireBid
+      ? [t.setup.bonusesRequireBidTitle]
+      : []),
+  ];
 
   const start = () => {
     if (!canStart) return;
@@ -304,6 +320,13 @@ export default function SetupScreen({ gameHistory, onStart, onBack }: Props) {
           <View style={styles.quickIntro}>
             <Text style={styles.quickTitle}>{t.setup.quickTitle}</Text>
             <Text style={styles.quickHint}>{t.setup.quickHint}</Text>
+            <View style={styles.ruleChips}>
+              {activeRules.map((rule) => (
+                <View key={rule} style={styles.ruleChip}>
+                  <Text style={styles.ruleChipText}>{rule}</Text>
+                </View>
+              ))}
+            </View>
             <TouchableOpacity
               style={styles.customizeButton}
               onPress={() => setCustomizationVisible((visible) => !visible)}
@@ -321,27 +344,22 @@ export default function SetupScreen({ gameHistory, onStart, onBack }: Props) {
             </TouchableOpacity>
           </View>
 
-          {customizationVisible ? (
-            <>
           {isTwoPlayer ? (
-            <>
-              <Text style={[styles.section, { marginTop: spacing.lg }]}>
-                {t.setup.twoPlayers}
-              </Text>
-              <View style={styles.advancedRow}>
-                <View style={{ flex: 1, marginEnd: spacing.md }}>
-                  <Text style={styles.advancedTitle}>{t.setup.ghostTitle}</Text>
-                  <Text style={styles.advancedHint}>{t.setup.ghostHint}</Text>
-                </View>
-                <ToggleSwitch
-                  value={twoPlayerGhost}
-                  onValueChange={setTwoPlayerGhost}
-                  accessibilityLabel={t.setup.ghostTitle}
-                />
+            <View style={[styles.advancedRow, styles.ghostQuick]}>
+              <View style={{ flex: 1, marginEnd: spacing.md }}>
+                <Text style={styles.advancedTitle}>{t.setup.ghostTitle}</Text>
+                <Text style={styles.advancedHint}>{t.setup.ghostHint}</Text>
               </View>
-            </>
+              <ToggleSwitch
+                value={twoPlayerGhost}
+                onValueChange={setTwoPlayerGhost}
+                accessibilityLabel={t.setup.ghostTitle}
+              />
+            </View>
           ) : null}
 
+          {customizationVisible ? (
+            <>
           <Text style={[styles.section, { marginTop: spacing.lg }]}>
             {t.setup.scoring}
           </Text>
@@ -638,7 +656,7 @@ const styles = StyleSheet.create({
     flex: 1,
     minWidth: 0,
     backgroundColor: colors.card,
-    borderColor: colors.cardBorder,
+    borderColor: colors.controlBorder,
     borderWidth: 1,
     borderRadius: radius.md,
     paddingHorizontal: spacing.md,
@@ -673,7 +691,7 @@ const styles = StyleSheet.create({
   removeBtnDisabled: { opacity: 0.25 },
   removeText: { color: colors.negative, fontSize: 18 },
   addBtn: {
-    borderColor: colors.cardBorder,
+    borderColor: colors.controlBorder,
     borderWidth: 1,
     borderStyle: "dashed",
     borderRadius: radius.md,
@@ -696,6 +714,27 @@ const styles = StyleSheet.create({
     lineHeight: 18,
     marginTop: spacing.xs,
   },
+  ruleChips: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginTop: spacing.sm,
+    marginHorizontal: -3,
+  },
+  ruleChip: {
+    minHeight: 32,
+    justifyContent: "center",
+    backgroundColor: colors.bgElevated,
+    borderColor: colors.controlBorder,
+    borderWidth: 1,
+    borderRadius: radius.lg,
+    paddingHorizontal: spacing.sm,
+    margin: 3,
+  },
+  ruleChipText: {
+    color: colors.text,
+    fontSize: 12,
+    fontWeight: "700",
+  },
   customizeButton: {
     minHeight: 44,
     flexDirection: "row",
@@ -710,7 +749,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-start",
     backgroundColor: colors.card,
-    borderColor: colors.cardBorder,
+    borderColor: colors.controlBorder,
     borderWidth: 1,
     borderRadius: radius.md,
     padding: spacing.md,
@@ -722,7 +761,7 @@ const styles = StyleSheet.create({
     height: 20,
     borderRadius: 10,
     borderWidth: 2,
-    borderColor: colors.cardBorder,
+    borderColor: colors.controlBorder,
     alignItems: "center",
     justifyContent: "center",
     marginEnd: spacing.md,
@@ -775,11 +814,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: colors.card,
-    borderColor: colors.cardBorder,
+    borderColor: colors.controlBorder,
     borderWidth: 1,
     borderRadius: radius.md,
     padding: spacing.md,
   },
+  ghostQuick: { marginTop: spacing.sm },
   advancedTitle: { color: colors.text, fontSize: 16, fontWeight: "700" },
   advancedHint: { color: colors.textDim, fontSize: 12, marginTop: 4, lineHeight: 16 },
   footer: { width: "100%", alignSelf: "center", padding: spacing.md },

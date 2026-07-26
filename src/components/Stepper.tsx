@@ -10,6 +10,7 @@ interface Props {
   max?: number;
   step?: number;
   label?: string;
+  accessibilityLabel?: string;
   compact?: boolean;
 }
 
@@ -20,12 +21,13 @@ export default function Stepper({
   max = 99,
   step = 1,
   label,
+  accessibilityLabel,
   compact,
 }: Props) {
   const { t } = useI18n();
   const dec = () => onChange(Math.max(min, value - step));
   const inc = () => onChange(Math.min(max, value + step));
-  const a11y = label ?? "";
+  const a11y = accessibilityLabel ?? label ?? "";
 
   return (
     <View style={styles.wrap}>
@@ -41,7 +43,12 @@ export default function Stepper({
         >
           <Text style={styles.btnText}>−</Text>
         </TouchableOpacity>
-        <Text style={[styles.value, compact && styles.valueCompact]}>{value}</Text>
+        <Text
+          style={[styles.value, compact && styles.valueCompact]}
+          accessibilityLabel={`${a11y}: ${value}`}
+        >
+          {value}
+        </Text>
         <TouchableOpacity
           style={[styles.btn, value >= max && styles.btnDisabled]}
           onPress={inc}
@@ -67,7 +74,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.sm,
     backgroundColor: colors.bgElevated,
     borderWidth: 1,
-    borderColor: colors.cardBorder,
+    borderColor: colors.controlBorder,
     alignItems: "center",
     justifyContent: "center",
   },

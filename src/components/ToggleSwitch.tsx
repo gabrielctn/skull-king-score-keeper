@@ -32,7 +32,7 @@ export default function ToggleSwitch({
   });
   const borderColor = progress.interpolate({
     inputRange: [0, 1],
-    outputRange: [colors.cardBorder, colors.gold],
+    outputRange: [colors.controlBorder, colors.gold],
   });
   const thumbOffset = progress.interpolate({
     inputRange: [0, 1],
