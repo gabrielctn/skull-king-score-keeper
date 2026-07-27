@@ -37,6 +37,9 @@ const scoreBreakdownSource = readFileSync(
   "src/components/ScoreBreakdownModal.tsx",
   "utf8"
 );
+const podiumSource = readFileSync("src/components/Podium.tsx", "utf8");
+const chartSource = readFileSync("src/components/ScoreChart.tsx", "utf8");
+const ltrViewSource = readFileSync("src/components/LtrView.tsx", "utf8");
 const playerFacingTextSources = [
   "src/i18n/en.ts",
   "src/i18n/fr.ts",
@@ -124,6 +127,37 @@ check(
   "results have one primary next action",
   resultsSource.includes("style={styles.reviewBtn}") &&
     resultsSource.includes("style={styles.secondaryBtn}")
+);
+
+// React Native Web deletes `direction` from a StyleSheet and logs an error for
+// it, so a view that must not mirror under Arabic cannot ask for it that way —
+// it has to go through LtrView, which sets the DOM `dir` attribute on web.
+// Without this the podium renders bronze-gold-silver in a right-to-left locale.
+const rnStyleSources: [string, string][] = [
+  ["src/components/Podium.tsx", podiumSource],
+  ["src/components/ScoreChart.tsx", chartSource],
+  ["src/screens/GameScreen.tsx", gameSource],
+  ["src/screens/HomeScreen.tsx", homeSource],
+  ["src/screens/ResultsScreen.tsx", resultsSource],
+  ["src/screens/SetupScreen.tsx", setupSource],
+];
+for (const [name, source] of rnStyleSources) {
+  const stylesheet = source.slice(source.indexOf("StyleSheet.create("));
+  check(
+    `${name} keeps "direction" out of its StyleSheet`,
+    !/\bdirection:\s*["']/.test(stylesheet),
+    'react-native-web rejects it; wrap the view in LtrView instead'
+  );
+}
+check(
+  "the views that must not mirror in RTL go through LtrView",
+  podiumSource.includes("<LtrView style={styles.podiumRow}>") &&
+    chartSource.includes("<LtrView style={styles.legend}>")
+);
+check(
+  "LtrView sets the DOM dir attribute on web, not a direction style",
+  ltrViewSource.includes('dir: "ltr"') &&
+    ltrViewSource.includes('Platform.OS === "web"')
 );
 
 for (const [language, strings] of Object.entries({ en, fr, es, de, ar, zh })) {
