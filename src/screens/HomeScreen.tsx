@@ -13,7 +13,7 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { Game } from "../types";
-import { standings } from "../scoring";
+import { Standing, standings } from "../scoring";
 import { colors, radius, spacing } from "../theme";
 import { illustrations } from "../assets/illustrations";
 import { browserLocale, useI18n } from "../i18n/context";
@@ -58,23 +58,51 @@ export default function HomeScreen({
   } | null>(null);
   const [whatsNewOpen, setWhatsNewOpen] = React.useState(false);
   const [showAllHistory, setShowAllHistory] = React.useState(false);
-  const activeGame =
-    gameHistory.find(
-      (historyGame) =>
-        historyGame.id === currentGameId && historyGame.status === "in_progress"
-    ) ?? gameHistory.find((historyGame) => historyGame.status === "in_progress");
-  const historyGames = activeGame
-    ? gameHistory.filter((historyGame) => historyGame.id !== activeGame.id)
-    : gameHistory;
-  const visibleHistory = showAllHistory
-    ? historyGames
-    : historyGames.slice(0, HISTORY_PREVIEW_COUNT);
-  const activeGameHasScores =
-    activeGame?.rounds.some((round) =>
-      activeGame.players.every((player) => round[player.id]?.recorded)
-    ) ?? false;
-  const activeGameLeader =
-    activeGame && activeGameHasScores ? standings(activeGame)[0] : null;
+  // The game the "resume" card offers: the one the app currently points at,
+  // or failing that any other still in progress.
+  const activeGame = React.useMemo(
+    () =>
+      gameHistory.find(
+        (historyGame) =>
+          historyGame.id === currentGameId &&
+          historyGame.status === "in_progress"
+      ) ??
+      gameHistory.find((historyGame) => historyGame.status === "in_progress"),
+    [gameHistory, currentGameId]
+  );
+  const historyGames = React.useMemo(
+    () =>
+      activeGame
+        ? gameHistory.filter((historyGame) => historyGame.id !== activeGame.id)
+        : gameHistory,
+    [gameHistory, activeGame]
+  );
+  const visibleHistory = React.useMemo(
+    () =>
+      showAllHistory
+        ? historyGames
+        : historyGames.slice(0, HISTORY_PREVIEW_COUNT),
+    [historyGames, showAllHistory]
+  );
+  // Ranking a game replays every recorded round for every player, so keep both
+  // the active-game leader and the visible rows' leaders off the render path.
+  const activeGameLeader = React.useMemo(() => {
+    const hasScores =
+      activeGame?.rounds.some((round) =>
+        activeGame.players.every((player) => round[player.id]?.recorded)
+      ) ?? false;
+    return activeGame && hasScores ? standings(activeGame)[0] : null;
+  }, [activeGame]);
+  const leaderByGameId = React.useMemo(() => {
+    const leaders = new Map<string, Standing | null>();
+    for (const historyGame of visibleHistory) {
+      leaders.set(
+        historyGame.id,
+        historyGame.players.length ? standings(historyGame)[0] ?? null : null
+      );
+    }
+    return leaders;
+  }, [visibleHistory]);
   React.useEffect(() => {
     let active = true;
     void loadSeenRelease().then((seen) => {
@@ -163,208 +191,206 @@ export default function HomeScreen({
             layout.isDesktop && styles.containerDesktop,
           ]}
         >
-        <View style={[styles.hero, layout.isDesktop && styles.heroDesktop]}>
-          <View style={styles.emblemWrap}>
-            <View style={styles.emblemBg}>
+          <View style={[styles.hero, layout.isDesktop && styles.heroDesktop]}>
+            <View style={styles.emblemWrap}>
+              <View style={styles.emblemBg}>
+                <Image
+                  source={illustrations.compass}
+                  style={styles.compass}
+                  resizeMode="contain"
+                />
+              </View>
               <Image
-                source={illustrations.compass}
-                style={styles.compass}
+                source={illustrations.skullKing}
+                style={styles.skullKing}
                 resizeMode="contain"
               />
             </View>
-            <Image
-              source={illustrations.skullKing}
-              style={styles.skullKing}
-              resizeMode="contain"
-            />
+            <Text style={styles.unofficial}>{t.home.unofficial}</Text>
+            <Text style={styles.title}>{t.home.title}</Text>
+            <Text style={styles.subtitle}>{t.home.subtitle}</Text>
           </View>
-          <Text style={styles.unofficial}>{t.home.unofficial}</Text>
-          <Text style={styles.title}>{t.home.title}</Text>
-          <Text style={styles.subtitle}>{t.home.subtitle}</Text>
-        </View>
 
-        <View style={[styles.actions, layout.isDesktop && styles.actionsDesktop]}>
-          {activeGame ? (
-            <>
-              <View style={styles.activeGameCard}>
-                <View style={styles.activeGameHeader}>
-                  <Text style={styles.activeGameTitle}>{t.home.activeTitle}</Text>
-                  <Text style={styles.activeGameStatus}>{t.home.inProgress}</Text>
-                </View>
-                <Text style={styles.activeGameMeta}>
-                  {t.home.playersRound(
-                    activeGame.players.length,
-                    Math.min(activeGame.currentRound, activeGame.totalRounds),
-                    activeGame.totalRounds
-                  )}
-                </Text>
-                <Text style={styles.activeGameActivity}>
-                  {t.home.lastPlayed(formatActivity(activeGame.updatedAt))}
-                </Text>
-
-                <Text style={styles.activePlayersLabel}>
-                  {t.home.playing}
-                </Text>
-                <View style={styles.activePlayers}>
-                  {activeGame.players.map((player) => (
-                    <View key={player.id} style={styles.activePlayerChip}>
-                      <Text style={styles.activePlayerName} numberOfLines={1}>
-                        {player.name}
-                      </Text>
-                    </View>
-                  ))}
-                </View>
-
-                {activeGameLeader ? (
-                  <Text style={styles.activeGameLeader} numberOfLines={1}>
-                    {t.home.leading(
-                      activeGameLeader.player.name,
-                      activeGameLeader.total
+          <View style={[styles.actions, layout.isDesktop && styles.actionsDesktop]}>
+            {activeGame ? (
+              <>
+                <View style={styles.activeGameCard}>
+                  <View style={styles.activeGameHeader}>
+                    <Text style={styles.activeGameTitle}>{t.home.activeTitle}</Text>
+                    <Text style={styles.activeGameStatus}>{t.home.inProgress}</Text>
+                  </View>
+                  <Text style={styles.activeGameMeta}>
+                    {t.home.playersRound(
+                      activeGame.players.length,
+                      Math.min(activeGame.currentRound, activeGame.totalRounds),
+                      activeGame.totalRounds
                     )}
                   </Text>
-                ) : null}
+                  <Text style={styles.activeGameActivity}>
+                    {t.home.lastPlayed(formatActivity(activeGame.updatedAt))}
+                  </Text>
 
+                  <Text style={styles.activePlayersLabel}>
+                    {t.home.playing}
+                  </Text>
+                  <View style={styles.activePlayers}>
+                    {activeGame.players.map((player) => (
+                      <View key={player.id} style={styles.activePlayerChip}>
+                        <Text style={styles.activePlayerName} numberOfLines={1}>
+                          {player.name}
+                        </Text>
+                      </View>
+                    ))}
+                  </View>
+
+                  {activeGameLeader ? (
+                    <Text style={styles.activeGameLeader} numberOfLines={1}>
+                      {t.home.leading(
+                        activeGameLeader.player.name,
+                        activeGameLeader.total
+                      )}
+                    </Text>
+                  ) : null}
+
+                  <TouchableOpacity
+                    style={[styles.primaryBtn, styles.activeResumeBtn]}
+                    onPress={() => onOpenGame(activeGame)}
+                    accessibilityRole="button"
+                  >
+                    <Text style={styles.primaryBtnText}>{t.home.resume}</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.abandonBtn}
+                    onPress={() =>
+                      setPendingRemoval({ game: activeGame, intent: "abandon" })
+                    }
+                    accessibilityRole="button"
+                  >
+                    <Text style={styles.abandonBtnText}>{t.home.abandon}</Text>
+                  </TouchableOpacity>
+                </View>
                 <TouchableOpacity
-                  style={[styles.primaryBtn, styles.activeResumeBtn]}
-                  onPress={() => onOpenGame(activeGame)}
+                  style={styles.secondaryBtn}
+                  onPress={onNewGame}
                   accessibilityRole="button"
                 >
-                  <Text style={styles.primaryBtnText}>{t.home.resume}</Text>
+                  <Text style={styles.secondaryBtnText}>{t.common.newGame}</Text>
                 </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.abandonBtn}
-                  onPress={() =>
-                    setPendingRemoval({ game: activeGame, intent: "abandon" })
-                  }
-                  accessibilityRole="button"
-                >
-                  <Text style={styles.abandonBtnText}>{t.home.abandon}</Text>
-                </TouchableOpacity>
-              </View>
+              </>
+            ) : (
               <TouchableOpacity
-                style={styles.secondaryBtn}
+                style={styles.primaryBtn}
                 onPress={onNewGame}
                 accessibilityRole="button"
               >
-                <Text style={styles.secondaryBtnText}>{t.common.newGame}</Text>
+                <Text style={styles.primaryBtnText}>{t.common.newGame}</Text>
               </TouchableOpacity>
-            </>
-          ) : (
-            <TouchableOpacity
-              style={styles.primaryBtn}
-              onPress={onNewGame}
-              accessibilityRole="button"
-            >
-              <Text style={styles.primaryBtnText}>{t.common.newGame}</Text>
-            </TouchableOpacity>
-          )}
+            )}
 
-          {historyGames.length > 0 ? (
-            <View style={styles.history}>
-              <Text style={styles.historyTitle}>{t.home.history}</Text>
-              <Text style={styles.historyHint}>{t.home.historyHint}</Text>
-              <View style={styles.historyList}>
-                {visibleHistory.map((historyGame, index) => {
-                  const gameLeader = historyGame.players.length
-                    ? standings(historyGame)[0]
-                    : null;
-                  const date = formatDate(historyGame.updatedAt);
-                  return (
-                    <View
-                      key={historyGame.id}
-                      style={[
-                        styles.historyRow,
-                        index < visibleHistory.length - 1 &&
-                          styles.historyRowBorder,
-                      ]}
-                    >
-                      <TouchableOpacity
-                        style={styles.historyOpen}
-                        onPress={() => onOpenGame(historyGame)}
-                        accessibilityRole="button"
-                        accessibilityLabel={t.home.openGame(date)}
+            {historyGames.length > 0 ? (
+              <View style={styles.history}>
+                <Text style={styles.historyTitle}>{t.home.history}</Text>
+                <Text style={styles.historyHint}>{t.home.historyHint}</Text>
+                <View style={styles.historyList}>
+                  {visibleHistory.map((historyGame, index) => {
+                    const gameLeader = leaderByGameId.get(historyGame.id) ?? null;
+                    const date = formatDate(historyGame.updatedAt);
+                    return (
+                      <View
+                        key={historyGame.id}
+                        style={[
+                          styles.historyRow,
+                          index < visibleHistory.length - 1 &&
+                            styles.historyRowBorder,
+                        ]}
                       >
-                        <View style={styles.historyTopline}>
-                          <Text style={styles.historyDate}>{date}</Text>
-                          <Text
-                            style={[
-                              styles.historyStatus,
-                              historyGame.status === "finished"
-                                ? styles.historyStatusFinished
-                                : styles.historyStatusActive,
-                            ]}
-                          >
-                            {historyGame.status === "finished"
-                              ? t.home.finished
-                              : t.home.inProgress}
+                        <TouchableOpacity
+                          style={styles.historyOpen}
+                          onPress={() => onOpenGame(historyGame)}
+                          accessibilityRole="button"
+                          accessibilityLabel={t.home.openGame(date)}
+                        >
+                          <View style={styles.historyTopline}>
+                            <Text style={styles.historyDate}>{date}</Text>
+                            <Text
+                              style={[
+                                styles.historyStatus,
+                                historyGame.status === "finished"
+                                  ? styles.historyStatusFinished
+                                  : styles.historyStatusActive,
+                              ]}
+                            >
+                              {historyGame.status === "finished"
+                                ? t.home.finished
+                                : t.home.inProgress}
+                            </Text>
+                          </View>
+                          <Text style={styles.historyMeta} numberOfLines={1}>
+                            {t.home.playersRound(
+                              historyGame.players.length,
+                              Math.min(historyGame.currentRound, historyGame.totalRounds),
+                              historyGame.totalRounds
+                            )}
                           </Text>
-                        </View>
-                        <Text style={styles.historyMeta} numberOfLines={1}>
-                          {t.home.playersRound(
-                            historyGame.players.length,
-                            Math.min(historyGame.currentRound, historyGame.totalRounds),
-                            historyGame.totalRounds
-                          )}
-                        </Text>
-                        {gameLeader ? (
-                          <Text style={styles.historyLeader} numberOfLines={1}>
-                            {t.home.leading(gameLeader.player.name, gameLeader.total)}
-                          </Text>
-                        ) : null}
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        style={styles.deleteBtn}
-                        onPress={() =>
-                          setPendingRemoval({
-                            game: historyGame,
-                            intent: "delete",
-                          })
-                        }
-                        accessibilityRole="button"
-                        accessibilityLabel={t.home.deleteGame(date)}
-                      >
-                        <Text style={styles.deleteIcon}>×</Text>
-                      </TouchableOpacity>
-                    </View>
-                  );
-                })}
+                          {gameLeader ? (
+                            <Text style={styles.historyLeader} numberOfLines={1}>
+                              {t.home.leading(gameLeader.player.name, gameLeader.total)}
+                            </Text>
+                          ) : null}
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          style={styles.deleteBtn}
+                          onPress={() =>
+                            setPendingRemoval({
+                              game: historyGame,
+                              intent: "delete",
+                            })
+                          }
+                          accessibilityRole="button"
+                          accessibilityLabel={t.home.deleteGame(date)}
+                        >
+                          <Text style={styles.deleteIcon}>×</Text>
+                        </TouchableOpacity>
+                      </View>
+                    );
+                  })}
+                </View>
+                {historyGames.length > HISTORY_PREVIEW_COUNT ? (
+                  <TouchableOpacity
+                    style={styles.historyToggle}
+                    onPress={() => setShowAllHistory((shown) => !shown)}
+                    accessibilityRole="button"
+                    accessibilityState={{ expanded: showAllHistory }}
+                  >
+                    <Text style={styles.historyToggleText}>
+                      {showAllHistory
+                        ? t.home.historyShowLess
+                        : t.home.historyShowAll(historyGames.length)}
+                    </Text>
+                    <DisclosureChevron expanded={showAllHistory} />
+                  </TouchableOpacity>
+                ) : null}
               </View>
-              {historyGames.length > HISTORY_PREVIEW_COUNT ? (
-                <TouchableOpacity
-                  style={styles.historyToggle}
-                  onPress={() => setShowAllHistory((shown) => !shown)}
-                  accessibilityRole="button"
-                  accessibilityState={{ expanded: showAllHistory }}
-                >
-                  <Text style={styles.historyToggleText}>
-                    {showAllHistory
-                      ? t.home.historyShowLess
-                      : t.home.historyShowAll(historyGames.length)}
-                  </Text>
-                  <DisclosureChevron expanded={showAllHistory} />
-                </TouchableOpacity>
-              ) : null}
+            ) : null}
+
+            <View style={styles.support}>
+              <TouchableOpacity
+                style={styles.supportBtn}
+                onPress={openSupportPage}
+                accessibilityRole="link"
+                accessibilityLabel={t.home.support}
+                accessibilityHint={t.home.supportHint}
+              >
+                <Text style={styles.supportText}>{t.home.support}</Text>
+              </TouchableOpacity>
+              <Text style={styles.supportHint}>{t.home.supportHint}</Text>
+              <Text style={styles.disclaimer}>{t.home.disclaimer}</Text>
             </View>
-          ) : null}
 
-          <View style={styles.support}>
-            <TouchableOpacity
-              style={styles.supportBtn}
-              onPress={openSupportPage}
-              accessibilityRole="link"
-              accessibilityLabel={t.home.support}
-              accessibilityHint={t.home.supportHint}
-            >
-              <Text style={styles.supportText}>{t.home.support}</Text>
-            </TouchableOpacity>
-            <Text style={styles.supportHint}>{t.home.supportHint}</Text>
-            <Text style={styles.disclaimer}>{t.home.disclaimer}</Text>
+            {Platform.OS === "web" ? (
+              <Text style={styles.footer}>{t.home.offline}</Text>
+            ) : null}
           </View>
-
-          {Platform.OS === "web" ? (
-            <Text style={styles.footer}>{t.home.offline}</Text>
-          ) : null}
-        </View>
         </View>
       </ScrollView>
       <Modal

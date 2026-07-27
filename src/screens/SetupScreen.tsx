@@ -360,196 +360,196 @@ export default function SetupScreen({ gameHistory, onStart, onBack }: Props) {
 
           {customizationVisible ? (
             <>
-          <Text style={[styles.section, { marginTop: spacing.lg }]}>
-            {t.setup.scoring}
-          </Text>
-          <Text style={styles.seatingHint}>{t.setup.scoringHint}</Text>
-          <View
-            accessibilityRole="radiogroup"
-            accessibilityLabel={t.setup.scoring}
-          >
-            {(["classic", "rascal"] as const).map((mode) => {
-              const selected = scoringMode === mode;
-              return (
-                <TouchableOpacity
-                  key={mode}
-                  style={[
-                    styles.structureRow,
-                    selected && styles.structureRowSelected,
-                  ]}
-                  onPress={() => setScoringMode(mode)}
-                  accessibilityRole="radio"
-                  accessibilityState={{ checked: selected }}
-                  aria-checked={selected}
-                  accessibilityLabel={t.setup.scoringNames[mode]}
-                >
-                  <View
-                    style={[styles.radio, selected && styles.radioSelected]}
-                  >
-                    {selected ? <View style={styles.radioDot} /> : null}
-                  </View>
-                  <View style={{ flex: 1 }}>
-                    <Text style={styles.advancedTitle}>
-                      {mode === "classic" ? "☠️ " : "🎲 "}
-                      {t.setup.scoringNames[mode]}
-                    </Text>
-                    <Text style={styles.advancedHint}>
-                      {t.setup.scoringHints[mode]}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-          {scoringMode === "rascal" ? (
-            <View style={[styles.advancedRow, { marginBottom: spacing.sm }]}>
-              <View style={{ flex: 1, marginEnd: spacing.md }}>
-                <Text style={styles.advancedTitle}>
-                  {t.setup.rascalBetsTitle}
-                </Text>
-                <Text style={styles.advancedHint}>
-                  {t.setup.rascalBetsHint}
-                </Text>
-              </View>
-              <ToggleSwitch
-                value={rascalBets}
-                onValueChange={setRascalBets}
-                accessibilityLabel={t.setup.rascalBetsTitle}
-              />
-            </View>
-          ) : (
-            // Rascal scoring already ties bonuses to bid accuracy, so this
-            // house rule is only offered with classic scoring.
-            <View style={[styles.advancedRow, { marginBottom: spacing.sm }]}>
-              <View style={{ flex: 1, marginEnd: spacing.md }}>
-                <Text style={styles.advancedTitle}>
-                  {t.setup.bonusesRequireBidTitle}
-                </Text>
-                <Text style={styles.advancedHint}>
-                  {t.setup.bonusesRequireBidHint}
-                </Text>
-              </View>
-              <ToggleSwitch
-                value={bonusesRequireBid}
-                onValueChange={setBonusesRequireBid}
-                accessibilityLabel={t.setup.bonusesRequireBidTitle}
-              />
-            </View>
-          )}
-
-          <Text style={[styles.section, { marginTop: spacing.lg }]}>
-            {t.setup.rounds}
-          </Text>
-          <Text style={styles.seatingHint}>{t.setup.structureHint}</Text>
-          <View accessibilityRole="radiogroup" accessibilityLabel={t.setup.rounds}>
-            {visibleStructureIds.map((id) => {
-              const selected = structure === id;
-              const cards = structureCards(id, id === "classic" ? rounds : 10);
-              return (
-                <TouchableOpacity
-                  key={id}
-                  style={[
-                    styles.structureRow,
-                    selected && styles.structureRowSelected,
-                  ]}
-                  onPress={() => setStructure(id)}
-                  accessibilityRole="radio"
-                  accessibilityState={{ checked: selected }}
-                  aria-checked={selected}
-                  accessibilityLabel={`${t.setup.structureNames[id]} · ${t.setup.structureRounds(cards.length)}`}
-                >
-                  <View
-                    style={[styles.radio, selected && styles.radioSelected]}
-                  >
-                    {selected ? <View style={styles.radioDot} /> : null}
-                  </View>
-                  <View style={{ flex: 1 }}>
-                    <View style={styles.structureHeader}>
-                      <Text style={styles.advancedTitle}>
-                        {t.setup.structureNames[id]}
-                      </Text>
-                      <Text style={styles.structureRounds}>
-                        {t.setup.structureRounds(cards.length)}
-                      </Text>
-                    </View>
-                    <Text style={styles.structureCards}>
-                      {cards.join(" · ")}
-                    </Text>
-                    {id === "classic" && selected ? (
-                      <View style={styles.classicStepper}>
-                        <Stepper
-                          value={rounds}
-                          onChange={setRounds}
-                          min={1}
-                          max={10}
-                          label={t.setup.rounds}
-                        />
-                        <Text style={styles.roundsHint}>
-                          {t.setup.roundsHint}
+              <Text style={[styles.section, { marginTop: spacing.lg }]}>
+                {t.setup.scoring}
+              </Text>
+              <Text style={styles.seatingHint}>{t.setup.scoringHint}</Text>
+              <View
+                accessibilityRole="radiogroup"
+                accessibilityLabel={t.setup.scoring}
+              >
+                {(["classic", "rascal"] as const).map((mode) => {
+                  const selected = scoringMode === mode;
+                  return (
+                    <TouchableOpacity
+                      key={mode}
+                      style={[
+                        styles.structureRow,
+                        selected && styles.structureRowSelected,
+                      ]}
+                      onPress={() => setScoringMode(mode)}
+                      accessibilityRole="radio"
+                      accessibilityState={{ checked: selected }}
+                      aria-checked={selected}
+                      accessibilityLabel={t.setup.scoringNames[mode]}
+                    >
+                      <View
+                        style={[styles.radio, selected && styles.radioSelected]}
+                      >
+                        {selected ? <View style={styles.radioDot} /> : null}
+                      </View>
+                      <View style={{ flex: 1 }}>
+                        <Text style={styles.advancedTitle}>
+                          {mode === "classic" ? "☠️ " : "🎲 "}
+                          {t.setup.scoringNames[mode]}
+                        </Text>
+                        <Text style={styles.advancedHint}>
+                          {t.setup.scoringHints[mode]}
                         </Text>
                       </View>
-                    ) : null}
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+              {scoringMode === "rascal" ? (
+                <View style={[styles.advancedRow, { marginBottom: spacing.sm }]}>
+                  <View style={{ flex: 1, marginEnd: spacing.md }}>
+                    <Text style={styles.advancedTitle}>
+                      {t.setup.rascalBetsTitle}
+                    </Text>
+                    <Text style={styles.advancedHint}>
+                      {t.setup.rascalBetsHint}
+                    </Text>
                   </View>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-          <TouchableOpacity
-            style={styles.structureToggle}
-            onPress={() => setRoundVariantsVisible((visible) => !visible)}
-            accessibilityRole="button"
-            accessibilityState={{ expanded: roundVariantsVisible }}
-            accessibilityLabel={
-              roundVariantsVisible
-                ? t.setup.hideOtherStructures
-                : t.setup.showOtherStructures
-            }
-          >
-            <Text style={styles.structureToggleText}>
-              {roundVariantsVisible
-                ? t.setup.hideOtherStructures
-                : t.setup.showOtherStructures}
-            </Text>
-            <View style={styles.structureToggleIcon}>
-              <View
-                style={[
-                  styles.structureToggleChevron,
-                  roundVariantsVisible &&
-                    styles.structureToggleChevronExpanded,
-                ]}
-              />
-            </View>
-          </TouchableOpacity>
+                  <ToggleSwitch
+                    value={rascalBets}
+                    onValueChange={setRascalBets}
+                    accessibilityLabel={t.setup.rascalBetsTitle}
+                  />
+                </View>
+              ) : (
+                // Rascal scoring already ties bonuses to bid accuracy, so this
+                // house rule is only offered with classic scoring.
+                <View style={[styles.advancedRow, { marginBottom: spacing.sm }]}>
+                  <View style={{ flex: 1, marginEnd: spacing.md }}>
+                    <Text style={styles.advancedTitle}>
+                      {t.setup.bonusesRequireBidTitle}
+                    </Text>
+                    <Text style={styles.advancedHint}>
+                      {t.setup.bonusesRequireBidHint}
+                    </Text>
+                  </View>
+                  <ToggleSwitch
+                    value={bonusesRequireBid}
+                    onValueChange={setBonusesRequireBid}
+                    accessibilityLabel={t.setup.bonusesRequireBidTitle}
+                  />
+                </View>
+              )}
 
-          <Text style={[styles.section, { marginTop: spacing.lg }]}>
-            {t.setup.expansion}
-          </Text>
-          <View style={styles.advancedRow}>
-            <View style={{ flex: 1, marginEnd: spacing.md }}>
-              <Text style={styles.advancedTitle}>{t.setup.advancedTitle}</Text>
-              <Text style={styles.advancedHint}>{t.setup.advancedHint}</Text>
-            </View>
-            <ToggleSwitch
-              value={advanced}
-              onValueChange={setAdvanced}
-              accessibilityLabel={t.setup.advancedTitle}
-            />
-          </View>
-          <View style={[styles.advancedRow, { marginTop: spacing.sm }]}>
-            <View style={{ flex: 1, marginEnd: spacing.md }}>
-              <Text style={styles.advancedTitle}>
-                {t.setup.newExpansionTitle}
+              <Text style={[styles.section, { marginTop: spacing.lg }]}>
+                {t.setup.rounds}
               </Text>
-              <Text style={styles.advancedHint}>
-                {t.setup.newExpansionHint}
+              <Text style={styles.seatingHint}>{t.setup.structureHint}</Text>
+              <View accessibilityRole="radiogroup" accessibilityLabel={t.setup.rounds}>
+                {visibleStructureIds.map((id) => {
+                  const selected = structure === id;
+                  const cards = structureCards(id, id === "classic" ? rounds : 10);
+                  return (
+                    <TouchableOpacity
+                      key={id}
+                      style={[
+                        styles.structureRow,
+                        selected && styles.structureRowSelected,
+                      ]}
+                      onPress={() => setStructure(id)}
+                      accessibilityRole="radio"
+                      accessibilityState={{ checked: selected }}
+                      aria-checked={selected}
+                      accessibilityLabel={`${t.setup.structureNames[id]} · ${t.setup.structureRounds(cards.length)}`}
+                    >
+                      <View
+                        style={[styles.radio, selected && styles.radioSelected]}
+                      >
+                        {selected ? <View style={styles.radioDot} /> : null}
+                      </View>
+                      <View style={{ flex: 1 }}>
+                        <View style={styles.structureHeader}>
+                          <Text style={styles.advancedTitle}>
+                            {t.setup.structureNames[id]}
+                          </Text>
+                          <Text style={styles.structureRounds}>
+                            {t.setup.structureRounds(cards.length)}
+                          </Text>
+                        </View>
+                        <Text style={styles.structureCards}>
+                          {cards.join(" · ")}
+                        </Text>
+                        {id === "classic" && selected ? (
+                          <View style={styles.classicStepper}>
+                            <Stepper
+                              value={rounds}
+                              onChange={setRounds}
+                              min={1}
+                              max={10}
+                              label={t.setup.rounds}
+                            />
+                            <Text style={styles.roundsHint}>
+                              {t.setup.roundsHint}
+                            </Text>
+                          </View>
+                        ) : null}
+                      </View>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+              <TouchableOpacity
+                style={styles.structureToggle}
+                onPress={() => setRoundVariantsVisible((visible) => !visible)}
+                accessibilityRole="button"
+                accessibilityState={{ expanded: roundVariantsVisible }}
+                accessibilityLabel={
+                  roundVariantsVisible
+                    ? t.setup.hideOtherStructures
+                    : t.setup.showOtherStructures
+                }
+              >
+                <Text style={styles.structureToggleText}>
+                  {roundVariantsVisible
+                    ? t.setup.hideOtherStructures
+                    : t.setup.showOtherStructures}
+                </Text>
+                <View style={styles.structureToggleIcon}>
+                  <View
+                    style={[
+                      styles.structureToggleChevron,
+                      roundVariantsVisible &&
+                        styles.structureToggleChevronExpanded,
+                    ]}
+                  />
+                </View>
+              </TouchableOpacity>
+
+              <Text style={[styles.section, { marginTop: spacing.lg }]}>
+                {t.setup.expansion}
               </Text>
-            </View>
-            <ToggleSwitch
-              value={newExpansion}
-              onValueChange={setNewExpansion}
-              accessibilityLabel={t.setup.newExpansionTitle}
-            />
-          </View>
+              <View style={styles.advancedRow}>
+                <View style={{ flex: 1, marginEnd: spacing.md }}>
+                  <Text style={styles.advancedTitle}>{t.setup.advancedTitle}</Text>
+                  <Text style={styles.advancedHint}>{t.setup.advancedHint}</Text>
+                </View>
+                <ToggleSwitch
+                  value={advanced}
+                  onValueChange={setAdvanced}
+                  accessibilityLabel={t.setup.advancedTitle}
+                />
+              </View>
+              <View style={[styles.advancedRow, { marginTop: spacing.sm }]}>
+                <View style={{ flex: 1, marginEnd: spacing.md }}>
+                  <Text style={styles.advancedTitle}>
+                    {t.setup.newExpansionTitle}
+                  </Text>
+                  <Text style={styles.advancedHint}>
+                    {t.setup.newExpansionHint}
+                  </Text>
+                </View>
+                <ToggleSwitch
+                  value={newExpansion}
+                  onValueChange={setNewExpansion}
+                  accessibilityLabel={t.setup.newExpansionTitle}
+                />
+              </View>
             </>
           ) : null}
         </ScrollView>

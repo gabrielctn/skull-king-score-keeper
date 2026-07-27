@@ -7,7 +7,7 @@ import {
   ScoringMode,
 } from "./types";
 import { emptyBonus } from "./scoring";
-import { Lang } from "./i18n/types";
+import { Lang, isLang } from "./i18n/types";
 
 const CURRENT_GAME_KEY = "skullking:currentGame";
 const GAME_HISTORY_KEY = "skullking:gameHistory";
@@ -234,14 +234,7 @@ export async function saveGameHistory(games: Game[]): Promise<boolean> {
 export async function loadLang(): Promise<Lang | null> {
   try {
     const value = await AsyncStorage.getItem(LANG_KEY);
-    return value === "en" ||
-      value === "fr" ||
-      value === "es" ||
-      value === "de" ||
-      value === "ar" ||
-      value === "zh"
-      ? value
-      : null;
+    return isLang(value) ? value : null;
   } catch (e) {
     console.warn("Failed to load language", e);
     return null;

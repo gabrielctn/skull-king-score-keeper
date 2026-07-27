@@ -1,7 +1,12 @@
-import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import { Game } from "./types";
 import { normalizeUntrustedGame } from "./backup";
-import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL, liveConfigured } from "./liveConfig";
+import { stripShareHashFromLocation } from "./shareLink";
+import { liveConfigured } from "./liveConfig";
+import {
+  UUID_PATTERN,
+  getSupabaseClient,
+  rpcError,
+} from "./supabaseClient";
 import {
   StoredLiveSession,
   clearLiveSessionFor,
@@ -33,9 +38,6 @@ export const LIVE_HASH_PARAM = "live";
 
 /** sessionStorage key that keeps a scanned live session across reloads. */
 const SPECTATOR_LIVE_SESSION_KEY = "skullking:spectatorLiveId";
-
-const UUID_PATTERN =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 /** Server-side guard is 200_000 bytes; stay under it with margin. */
 const MAX_STATE_JSON_CHARS = 190_000;
@@ -80,25 +82,10 @@ const defaultLiveSessionStore: LiveSessionStore = {
   clear: clearLiveSessionFor,
 };
 
-let supabaseClient: SupabaseClient | null = null;
-
-function getClient(): SupabaseClient {
-  if (!supabaseClient) {
-    supabaseClient = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
-      auth: { persistSession: false, autoRefreshToken: false },
-    });
-  }
-  return supabaseClient;
-}
-
-function rpcError(operation: string, error: { message?: string } | null): Error {
-  return new Error(`${operation} failed: ${error?.message ?? "unknown error"}`);
-}
-
 export function supabaseLiveTransport(): LiveTransport {
   return {
     async createSession(writerKey, state) {
-      const { data, error } = await getClient().rpc("create_live_game", {
+      const { data, error } = await getSupabaseClient().rpc("create_live_game", {
         writer_key: writerKey,
         game_state: state,
       });
@@ -109,7 +96,7 @@ export function supabaseLiveTransport(): LiveTransport {
     },
 
     async updateSession(id, writerKey, state) {
-      const { error } = await getClient().rpc("update_live_game", {
+      const { error } = await getSupabaseClient().rpc("update_live_game", {
         game_id: id,
         writer_key: writerKey,
         game_state: state,
@@ -118,7 +105,7 @@ export function supabaseLiveTransport(): LiveTransport {
     },
 
     async endSession(id, writerKey) {
-      const { error } = await getClient().rpc("end_live_game", {
+      const { error } = await getSupabaseClient().rpc("end_live_game", {
         game_id: id,
         writer_key: writerKey,
       });
@@ -126,7 +113,7 @@ export function supabaseLiveTransport(): LiveTransport {
     },
 
     async fetchSession(id) {
-      const { data, error } = await getClient()
+      const { data, error } = await getSupabaseClient()
         .from("live_games")
         .select("state, updated_at")
         .eq("id", id)
@@ -137,7 +124,7 @@ export function supabaseLiveTransport(): LiveTransport {
     },
 
     subscribe(id, handlers) {
-      const channel = getClient()
+      const channel = getSupabaseClient()
         .channel(`live_game_${id}`)
         .on(
           "postgres_changes",
@@ -171,7 +158,7 @@ export function supabaseLiveTransport(): LiveTransport {
           handlers.onStatus(status === "SUBSCRIBED");
         });
       return () => {
-        void getClient().removeChannel(channel);
+        void getSupabaseClient().removeChannel(channel);
       };
     },
   };
@@ -561,21 +548,7 @@ export function consumeScannedLiveId(): string | null {
   if (typeof window === "undefined" || !window.location) return null;
   const scanned = extractLiveSessionId(window.location.hash);
   if (!scanned) return null;
-  if (window.history?.replaceState) {
-    window.history.replaceState(
-      window.history.state,
-      "",
-      `${window.location.pathname}${window.location.search}`
-    );
-  }
+  stripShareHashFromLocation();
   saveSpectatorLiveId(scanned);
   return scanned;
-}
-
-/** Live session to follow on this page load, if any. */
-export function readLiveBoot(): string | null {
-  const scanned = consumeScannedLiveId();
-  if (scanned) return scanned;
-  if (typeof window === "undefined") return null;
-  return loadSpectatorLiveId();
 }

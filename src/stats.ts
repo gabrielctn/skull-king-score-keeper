@@ -351,44 +351,130 @@ function compareLeaderboard(a: PlayerStats, b: PlayerStats): number {
   return compareText(a.identity, b.identity);
 }
 
-function compareBestFinal(
+/**
+ * The single best element under `compare`, chosen in one pass.
+ *
+ * Every record comparator below defines a total order, so this returns exactly
+ * what sorting the array and taking the first element would — without copying
+ * or sorting a list that grows with every round ever played.
+ */
+function bestBy<T>(
+  items: readonly T[],
+  compare: (a: T, b: T) => number
+): T | undefined {
+  let best: T | undefined;
+  for (const item of items) {
+    if (best === undefined || compare(item, best) < 0) best = item;
+  }
+  return best;
+}
+
+/**
+ * Tiebreak shared by every record: the most recent game wins, then stable
+ * identifiers so the same input always names the same holder.
+ */
+function compareFinalTiebreak(
   a: FinalRecordCandidate,
   b: FinalRecordCandidate
 ): number {
-  if (a.score !== b.score) return b.score - a.score;
-  if (a.playedAt !== b.playedAt) return b.playedAt - a.playedAt;
-  const identityDifference = compareText(a.identity, b.identity);
-  if (identityDifference !== 0) return identityDifference;
-  const gameDifference = compareText(a.gameId, b.gameId);
-  if (gameDifference !== 0) return gameDifference;
-  return compareText(a.playerId, b.playerId);
+  return (
+    b.playedAt - a.playedAt ||
+    compareText(a.identity, b.identity) ||
+    compareText(a.gameId, b.gameId) ||
+    compareText(a.playerId, b.playerId)
+  );
 }
 
-function compareWorstFinal(
-  a: FinalRecordCandidate,
-  b: FinalRecordCandidate
-): number {
-  if (a.score !== b.score) return a.score - b.score;
-  if (a.playedAt !== b.playedAt) return b.playedAt - a.playedAt;
-  const identityDifference = compareText(a.identity, b.identity);
-  if (identityDifference !== 0) return identityDifference;
-  const gameDifference = compareText(a.gameId, b.gameId);
-  if (gameDifference !== 0) return gameDifference;
-  return compareText(a.playerId, b.playerId);
-}
-
-function compareWorstRound(
+/** As above, but a round record also disambiguates by round number. */
+function compareRoundTiebreak(
   a: RoundRecordCandidate,
   b: RoundRecordCandidate
 ): number {
-  if (a.score !== b.score) return a.score - b.score;
-  if (a.playedAt !== b.playedAt) return b.playedAt - a.playedAt;
-  const identityDifference = compareText(a.identity, b.identity);
-  if (identityDifference !== 0) return identityDifference;
-  const gameDifference = compareText(a.gameId, b.gameId);
-  if (gameDifference !== 0) return gameDifference;
-  if (a.roundNumber !== b.roundNumber) return a.roundNumber - b.roundNumber;
-  return compareText(a.playerId, b.playerId);
+  return (
+    b.playedAt - a.playedAt ||
+    compareText(a.identity, b.identity) ||
+    compareText(a.gameId, b.gameId) ||
+    a.roundNumber - b.roundNumber ||
+    compareText(a.playerId, b.playerId)
+  );
+}
+
+const compareBestFinal = (a: FinalRecordCandidate, b: FinalRecordCandidate) =>
+  b.score - a.score || compareFinalTiebreak(a, b);
+
+const compareWorstFinal = (a: FinalRecordCandidate, b: FinalRecordCandidate) =>
+  a.score - b.score || compareFinalTiebreak(a, b);
+
+const compareBiggestRound = (a: RoundRecordCandidate, b: RoundRecordCandidate) =>
+  b.score - a.score || compareRoundTiebreak(a, b);
+
+const compareWorstRound = (a: RoundRecordCandidate, b: RoundRecordCandidate) =>
+  a.score - b.score || compareRoundTiebreak(a, b);
+
+/**
+ * Publish a record: drop the internal player id and show the display name the
+ * leaderboard settled on, so one player never appears under two spellings.
+ */
+function toFinalRecord(
+  candidate: FinalRecordCandidate | undefined,
+  displayNames: ReadonlyMap<string, string>
+): FinalScoreRecord | null {
+  if (!candidate) return null;
+  return {
+    identity: candidate.identity,
+    name: displayNames.get(candidate.identity) ?? candidate.name,
+    score: candidate.score,
+    gameId: candidate.gameId,
+    playedAt: candidate.playedAt,
+  };
+}
+
+function toRoundRecord(
+  candidate: RoundRecordCandidate | undefined,
+  displayNames: ReadonlyMap<string, string>
+): RoundScoreRecord | null {
+  const record = toFinalRecord(candidate, displayNames);
+  if (!record || !candidate) return null;
+  return { ...record, roundNumber: candidate.roundNumber };
+}
+
+/**
+ * The player leading on `rank` — a descending key vector — among those the
+ * `eligible` predicate admits. Ties fall through to the most recent player and
+ * then to a stable identity, so a record never flickers between equals.
+ */
+function topPlayer(
+  players: readonly PlayerStats[],
+  eligible: (player: PlayerStats) => boolean,
+  rank: (player: PlayerStats) => number[]
+): PlayerStats | undefined {
+  return bestBy(players.filter(eligible), (a, b) => {
+    const keysA = rank(a);
+    const keysB = rank(b);
+    for (let index = 0; index < keysA.length; index++) {
+      if (keysA[index] !== keysB[index]) return keysB[index] - keysA[index];
+    }
+    return (
+      b.lastPlayedAt - a.lastPlayedAt || compareText(a.identity, b.identity)
+    );
+  });
+}
+
+/** Publish one of a player's success rates as a record, if they have one. */
+function toRateRecord(
+  player: PlayerStats | undefined,
+  pick: (player: PlayerStats) => Rate
+): ExactBidRecord | null {
+  if (!player) return null;
+  const { rate, successes, attempts } = pick(player);
+  if (rate === null) return null;
+  return {
+    identity: player.identity,
+    name: player.name,
+    rate,
+    successes,
+    attempts,
+  };
 }
 
 function currentStreak(games: RecentPlayerGame[]): number {
@@ -409,20 +495,6 @@ function longestStreak(games: RecentPlayerGame[]): number {
     if (run > best) best = run;
   }
   return best;
-}
-
-function compareBiggestRound(
-  a: RoundRecordCandidate,
-  b: RoundRecordCandidate
-): number {
-  if (a.score !== b.score) return b.score - a.score;
-  if (a.playedAt !== b.playedAt) return b.playedAt - a.playedAt;
-  const identityDifference = compareText(a.identity, b.identity);
-  if (identityDifference !== 0) return identityDifference;
-  const gameDifference = compareText(a.gameId, b.gameId);
-  if (gameDifference !== 0) return gameDifference;
-  if (a.roundNumber !== b.roundNumber) return a.roundNumber - b.roundNumber;
-  return compareText(a.playerId, b.playerId);
 }
 
 /** Aggregate finished, recorded player appearances and group records. */
@@ -592,171 +664,81 @@ export function aggregateStats(games: readonly Game[]): StatsSnapshot {
     0
   );
 
-  const bestFinalCandidate = [...finalCandidates].sort(compareBestFinal)[0];
-  const worstFinalCandidate = [...finalCandidates].sort(compareWorstFinal)[0];
-  const worstRoundCandidate = [...roundCandidates].sort(compareWorstRound)[0];
-  const bestExactPlayer = players
-    .filter((player) => player.exactBids.rate !== null)
-    .sort((a, b) => {
-      if (a.exactBids.rate !== b.exactBids.rate) {
-        return (b.exactBids.rate ?? -1) - (a.exactBids.rate ?? -1);
-      }
-      if (a.exactBids.attempts !== b.exactBids.attempts) {
-        return b.exactBids.attempts - a.exactBids.attempts;
-      }
-      if (a.lastPlayedAt !== b.lastPlayedAt) {
-        return b.lastPlayedAt - a.lastPlayedAt;
-      }
-      return compareText(a.identity, b.identity);
-    })[0];
-
-  const bestFinalScore: FinalScoreRecord | null = bestFinalCandidate
-    ? {
-        identity: bestFinalCandidate.identity,
-        name:
-          displayNameByIdentity.get(bestFinalCandidate.identity) ??
-          bestFinalCandidate.name,
-        score: bestFinalCandidate.score,
-        gameId: bestFinalCandidate.gameId,
-        playedAt: bestFinalCandidate.playedAt,
-      }
-    : null;
-  const worstFinalScore: FinalScoreRecord | null = worstFinalCandidate
-    ? {
-        identity: worstFinalCandidate.identity,
-        name:
-          displayNameByIdentity.get(worstFinalCandidate.identity) ??
-          worstFinalCandidate.name,
-        score: worstFinalCandidate.score,
-        gameId: worstFinalCandidate.gameId,
-        playedAt: worstFinalCandidate.playedAt,
-      }
-    : null;
-  const worstRound: RoundScoreRecord | null = worstRoundCandidate
-    ? {
-        identity: worstRoundCandidate.identity,
-        name:
-          displayNameByIdentity.get(worstRoundCandidate.identity) ??
-          worstRoundCandidate.name,
-        score: worstRoundCandidate.score,
-        gameId: worstRoundCandidate.gameId,
-        playedAt: worstRoundCandidate.playedAt,
-        roundNumber: worstRoundCandidate.roundNumber,
-      }
-    : null;
-  const bestExactBidRate: ExactBidRecord | null =
-    bestExactPlayer && bestExactPlayer.exactBids.rate !== null
-      ? {
-          identity: bestExactPlayer.identity,
-          name: bestExactPlayer.name,
-          rate: bestExactPlayer.exactBids.rate,
-          successes: bestExactPlayer.exactBids.successes,
-          attempts: bestExactPlayer.exactBids.attempts,
-        }
-      : null;
-
-  const biggestRoundCandidate = [...roundCandidates].sort(compareBiggestRound)[0];
-  const biggestRound: RoundScoreRecord | null = biggestRoundCandidate
-    ? {
-        identity: biggestRoundCandidate.identity,
-        name:
-          displayNameByIdentity.get(biggestRoundCandidate.identity) ??
-          biggestRoundCandidate.name,
-        score: biggestRoundCandidate.score,
-        gameId: biggestRoundCandidate.gameId,
-        playedAt: biggestRoundCandidate.playedAt,
-        roundNumber: biggestRoundCandidate.roundNumber,
-      }
-    : null;
-
-  const streakLeader = [...players]
-    .filter((player) => player.longestWinStreak >= 2)
-    .sort((a, b) => {
-      if (a.longestWinStreak !== b.longestWinStreak) {
-        return b.longestWinStreak - a.longestWinStreak;
-      }
-      if (a.lastPlayedAt !== b.lastPlayedAt) return b.lastPlayedAt - a.lastPlayedAt;
-      return compareText(a.identity, b.identity);
-    })[0];
-  const longestStreakRecord: StreakRecord | null = streakLeader
-    ? {
-        identity: streakLeader.identity,
-        name: streakLeader.name,
-        streak: streakLeader.longestWinStreak,
-      }
-    : null;
-
-  const recklessLeader = [...players]
-    .filter((player) => player.exactBids.attempts >= 1 && player.averageBid > 0)
-    .sort((a, b) => {
-      if (a.averageBid !== b.averageBid) return b.averageBid - a.averageBid;
-      if (a.exactBids.attempts !== b.exactBids.attempts) {
-        return b.exactBids.attempts - a.exactBids.attempts;
-      }
-      if (a.lastPlayedAt !== b.lastPlayedAt) return b.lastPlayedAt - a.lastPlayedAt;
-      return compareText(a.identity, b.identity);
-    })[0];
-  const mostReckless: AverageBidRecord | null = recklessLeader
-    ? {
-        identity: recklessLeader.identity,
-        name: recklessLeader.name,
-        averageBid: recklessLeader.averageBid,
-      }
-    : null;
-
-  const krakenBaitLeader = [...players]
-    .filter((player) => player.lastPlaces >= 1)
-    .sort((a, b) => {
-      if (a.lastPlaces !== b.lastPlaces) return b.lastPlaces - a.lastPlaces;
-      if (a.lastPlayedAt !== b.lastPlayedAt) return b.lastPlayedAt - a.lastPlayedAt;
-      return compareText(a.identity, b.identity);
-    })[0];
-  const krakenBait: CountRecord | null = krakenBaitLeader
-    ? {
-        identity: krakenBaitLeader.identity,
-        name: krakenBaitLeader.name,
-        count: krakenBaitLeader.lastPlaces,
-      }
-    : null;
-
+  const bestExactPlayer = topPlayer(
+    players,
+    (player) => player.exactBids.rate !== null,
+    (player) => [player.exactBids.rate ?? -1, player.exactBids.attempts]
+  );
+  const streakLeader = topPlayer(
+    players,
+    (player) => player.longestWinStreak >= 2,
+    (player) => [player.longestWinStreak]
+  );
+  const recklessLeader = topPlayer(
+    players,
+    (player) => player.exactBids.attempts >= 1 && player.averageBid > 0,
+    (player) => [player.averageBid, player.exactBids.attempts]
+  );
+  const krakenBaitLeader = topPlayer(
+    players,
+    (player) => player.lastPlaces >= 1,
+    (player) => [player.lastPlaces]
+  );
   // A "master" needs a real sample, so a lone lucky zero bid never qualifies.
-  const zeroMasterLeader = [...players]
-    .filter(
-      (player) => player.zeroBids.rate !== null && player.zeroBids.attempts >= 3
-    )
-    .sort((a, b) => {
-      const rateA = a.zeroBids.rate ?? -1;
-      const rateB = b.zeroBids.rate ?? -1;
-      if (rateA !== rateB) return rateB - rateA;
-      if (a.zeroBids.attempts !== b.zeroBids.attempts) {
-        return b.zeroBids.attempts - a.zeroBids.attempts;
-      }
-      if (a.lastPlayedAt !== b.lastPlayedAt) return b.lastPlayedAt - a.lastPlayedAt;
-      return compareText(a.identity, b.identity);
-    })[0];
-  const zeroBidMaster: ExactBidRecord | null =
-    zeroMasterLeader && zeroMasterLeader.zeroBids.rate !== null
-      ? {
-          identity: zeroMasterLeader.identity,
-          name: zeroMasterLeader.name,
-          rate: zeroMasterLeader.zeroBids.rate,
-          successes: zeroMasterLeader.zeroBids.successes,
-          attempts: zeroMasterLeader.zeroBids.attempts,
-        }
-      : null;
+  const zeroMasterLeader = topPlayer(
+    players,
+    (player) => player.zeroBids.rate !== null && player.zeroBids.attempts >= 3,
+    (player) => [player.zeroBids.rate ?? -1, player.zeroBids.attempts]
+  );
 
   return {
     players,
     records: {
-      bestFinalScore,
-      worstFinalScore,
-      worstRound,
-      bestExactBidRate,
-      biggestRound,
-      longestStreak: longestStreakRecord,
-      mostReckless,
-      krakenBait,
-      zeroBidMaster,
+      bestFinalScore: toFinalRecord(
+        bestBy(finalCandidates, compareBestFinal),
+        displayNameByIdentity
+      ),
+      worstFinalScore: toFinalRecord(
+        bestBy(finalCandidates, compareWorstFinal),
+        displayNameByIdentity
+      ),
+      worstRound: toRoundRecord(
+        bestBy(roundCandidates, compareWorstRound),
+        displayNameByIdentity
+      ),
+      bestExactBidRate: toRateRecord(
+        bestExactPlayer,
+        (player) => player.exactBids
+      ),
+      biggestRound: toRoundRecord(
+        bestBy(roundCandidates, compareBiggestRound),
+        displayNameByIdentity
+      ),
+      longestStreak: streakLeader
+        ? {
+            identity: streakLeader.identity,
+            name: streakLeader.name,
+            streak: streakLeader.longestWinStreak,
+          }
+        : null,
+      mostReckless: recklessLeader
+        ? {
+            identity: recklessLeader.identity,
+            name: recklessLeader.name,
+            averageBid: recklessLeader.averageBid,
+          }
+        : null,
+      krakenBait: krakenBaitLeader
+        ? {
+            identity: krakenBaitLeader.identity,
+            name: krakenBaitLeader.name,
+            count: krakenBaitLeader.lastPlaces,
+          }
+        : null,
+      zeroBidMaster: toRateRecord(
+        zeroMasterLeader,
+        (player) => player.zeroBids
+      ),
     },
     summary: {
       totalGames: finishedGames.length,

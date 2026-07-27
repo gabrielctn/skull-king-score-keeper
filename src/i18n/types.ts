@@ -9,7 +9,21 @@ import type { AwardKind } from "../stats";
 import type { RascalBet, ScoringMode } from "../types";
 import type { RascalOutcome } from "../scoring";
 
-export type Lang = "en" | "fr" | "es" | "de" | "ar" | "zh";
+/**
+ * Every supported language, in the order the settings list shows them.
+ *
+ * This is the single source of truth: `Lang`, the runtime guard below, the
+ * `dictionaries` map and the settings list all derive from it, so adding a
+ * locale is one edit here plus the dictionary it now fails to compile without.
+ */
+export const LANGS = ["fr", "en", "es", "de", "ar", "zh"] as const;
+
+export type Lang = (typeof LANGS)[number];
+
+/** Narrow an untrusted value (stored preference, browser locale) to a Lang. */
+export function isLang(value: unknown): value is Lang {
+  return (LANGS as readonly unknown[]).includes(value);
+}
 
 /** A rules-modal entry: a bold title and a paragraph body. */
 export interface Entry {

@@ -441,9 +441,10 @@ export default function App() {
     return merged.history.length;
   };
 
-  const handleExportBackup = async () => {
-    const json = serializeBackup({ currentGame: game, history: gameHistory });
-    downloadBackupJson(json);
+  const handleExportBackup = () => {
+    downloadBackupJson(
+      serializeBackup({ currentGame: game, history: gameHistory })
+    );
   };
 
   const handleImportBackup = async (): Promise<number | null> => {

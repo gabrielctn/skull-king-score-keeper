@@ -18,10 +18,14 @@ import {
 } from "../types";
 import {
   RASCAL_POINTS_PER_CARD,
+  activeLootUses,
+  bonusCount,
   cardsForRound,
   emptyEntry,
+  entryHasInput,
   ghostTricks,
   isRoundComplete,
+  lootAvailable,
   lootBonusForPlayer,
   madeBid,
   scoreRound,
@@ -97,15 +101,75 @@ function roundHasInput(
   if ((game.discardedTricks[roundNumber - 1] ?? 0) > 0) return true;
   return game.players.some((player) => {
     const entry = round[player.id];
-    return Boolean(
-      entry &&
-        (entry.bid > 0 ||
-          entry.tricks > 0 ||
-          entry.legacyLoot > 0 ||
-          entry.rascalBet === "cannonball" ||
-          Object.values(entry.bonus).some(Boolean))
-    );
+    return Boolean(entry && entryHasInput(entry));
   });
+}
+
+/** Everything a round's controls and its "can this be scored?" checks need. */
+interface RoundState {
+  cards: number;
+  /** Tricks destroyed by a Kraken, clamped to what the round could hold. */
+  discardedTricks: number;
+  tricksTotal: number;
+  accountedTricks: number;
+  /** Tricks the Greybeard ghost took (0 outside the 2-player variant). */
+  ghost: number;
+  /** True when the recorded tricks are a possible outcome for this round. */
+  tricksOk: boolean;
+  lootUses: LootUse[];
+  /** A Loot card is on the table but its pair is not fully identified yet. */
+  lootIncomplete: boolean;
+  /** At least one complete alliance between two different players. */
+  hasLootAlliance: boolean;
+}
+
+/**
+ * Derive a round's state from a game and the entries being edited.
+ *
+ * Render reads this from props while the commit path reads it from the refs
+ * holding the freshest values, so it takes both sources explicitly rather than
+ * closing over either.
+ */
+function deriveRoundState(
+  game: Game,
+  entries: RoundEntries,
+  roundNumber: number
+): RoundState {
+  const cards = cardsForRound(game, roundNumber);
+  const discardedTricks = Math.min(
+    cards,
+    Math.max(0, game.discardedTricks[roundNumber - 1] ?? 0)
+  );
+  const tricksTotal = game.players.reduce(
+    (sum, player) => sum + (entries[player.id]?.tricks ?? 0),
+    0
+  );
+  const accountedTricks = tricksTotal + discardedTricks;
+  const lootUses = activeLootUses(game, roundNumber);
+
+  return {
+    cards,
+    discardedTricks,
+    tricksTotal,
+    accountedTricks,
+    ghost: ghostTricks(game, tricksTotal, cards, discardedTricks),
+    // In the 2-player variant the Greybeard ghost steals the leftover tricks,
+    // so the players' total may be below the cards dealt; only an impossible
+    // total above the cards dealt is a problem.
+    tricksOk: game.twoPlayerGhost
+      ? accountedTricks <= cards
+      : accountedTricks === cards,
+    lootUses,
+    lootIncomplete: lootUses.some(
+      (lootUse) => lootUse.playedById === null || lootUse.boundToId === null
+    ),
+    hasLootAlliance: lootUses.some(
+      (lootUse) =>
+        lootUse.playedById !== null &&
+        lootUse.boundToId !== null &&
+        lootUse.playedById !== lootUse.boundToId
+    ),
+  };
 }
 
 export default function GameScreen({
@@ -150,7 +214,6 @@ export default function GameScreen({
     roundHasInput(game, displayRound, draft)
   );
 
-  const cards = cardsForRound(game, displayRound);
   // Indicative dealer / first-trick order for the round being shown.
   const dealer = game.players[dealerIndex(game, displayRound)];
   const order = playOrder(game, displayRound);
@@ -249,37 +312,19 @@ export default function GameScreen({
     });
   };
 
-  const tricksTotal = playerIds.reduce(
-    (sum, id) => sum + (draft[id]?.tricks ?? 0),
-    0
-  );
-  const discardedTricks = Math.min(
+  const {
     cards,
-    Math.max(0, game.discardedTricks[displayRound - 1] ?? 0)
-  );
-  const accountedTricks = tricksTotal + discardedTricks;
-  // In the 2-player variant the Greybeard ghost steals the leftover tricks, so
-  // the players' total may be below the cards dealt; only an impossible total
-  // above the cards dealt is a problem.
-  const ghost = ghostTricks(game, tricksTotal, cards, discardedTricks);
-  const tricksOk = game.twoPlayerGhost
-    ? accountedTricks <= cards
-    : accountedTricks === cards;
+    discardedTricks,
+    accountedTricks,
+    ghost,
+    tricksOk,
+    lootUses,
+    lootIncomplete,
+    hasLootAlliance,
+  } = deriveRoundState(game, draft, displayRound);
   const roundReady = tricksOk;
   const alreadyRecorded = isRoundComplete(game, displayRound);
-  const lootAvailable = game.advancedCards && game.players.length > 2;
-  const lootUses = lootAvailable
-    ? (game.lootUses[displayRound - 1] ?? [])
-    : [];
-  const lootIncomplete = lootUses.some(
-    (lootUse) => lootUse.playedById === null || lootUse.boundToId === null
-  );
-  const hasLootAlliance = lootUses.some(
-    (lootUse) =>
-      lootUse.playedById !== null &&
-      lootUse.boundToId !== null &&
-      lootUse.playedById !== lootUse.boundToId
-  );
+  const showLootTracker = lootAvailable(game);
 
   useEffect(() => {
     if (
@@ -312,12 +357,11 @@ export default function GameScreen({
 
   const toggleDiscardedTrick = () => {
     const current = latestGame.current;
-    const currentCards = cardsForRound(current, displayRound);
-    const currentDiscardedTricks = Math.min(
-      currentCards,
-      Math.max(0, current.discardedTricks[displayRound - 1] ?? 0)
-    );
-    const nextCount = currentDiscardedTricks > 0 ? 0 : 1;
+    const nextCount =
+      deriveRoundState(current, latestDraft.current, displayRound)
+        .discardedTricks > 0
+        ? 0
+        : 1;
     persistDraft(latestDraft.current, {
       discardedTricks: current.discardedTricks.map((count, index) =>
         index === displayRound - 1 ? nextCount : count
@@ -328,35 +372,9 @@ export default function GameScreen({
   const commitRound = (allowUntouched = false) => {
     const current = latestGame.current;
     const currentDraft = cloneRound(latestDraft.current, playerIds);
-    const currentCards = cardsForRound(current, displayRound);
-    const currentDiscardedTricks = Math.min(
-      currentCards,
-      Math.max(0, current.discardedTricks[displayRound - 1] ?? 0)
-    );
-    const currentTricksTotal = playerIds.reduce(
-      (sum, id) => sum + (currentDraft[id]?.tricks ?? 0),
-      0
-    );
-    const currentAccountedTricks =
-      currentTricksTotal + currentDiscardedTricks;
-    const currentTricksOk = current.twoPlayerGhost
-      ? currentAccountedTricks <= currentCards
-      : currentAccountedTricks === currentCards;
-    const currentLootUses =
-      current.advancedCards && current.players.length > 2
-        ? (current.lootUses[displayRound - 1] ?? [])
-        : [];
-    const currentLootIncomplete = currentLootUses.some(
-      (lootUse) => lootUse.playedById === null || lootUse.boundToId === null
-    );
-    const currentHasLootAlliance = currentLootUses.some(
-      (lootUse) =>
-        lootUse.playedById !== null &&
-        lootUse.boundToId !== null &&
-        lootUse.playedById !== lootUse.boundToId
-    );
+    const round = deriveRoundState(current, currentDraft, displayRound);
 
-    if (!currentTricksOk || currentLootIncomplete) return;
+    if (!round.tricksOk || round.lootIncomplete) return;
     if (
       !allowUntouched &&
       !roundTouched &&
@@ -365,7 +383,7 @@ export default function GameScreen({
       setUntouchedReviewOpen(true);
       return;
     }
-    if (currentHasLootAlliance && !lootReviewed) {
+    if (round.hasLootAlliance && !lootReviewed) {
       setLootReviewOpen(true);
       return;
     }
@@ -575,7 +593,7 @@ export default function GameScreen({
           layout.gameColumns === 2 && styles.scrollDesktop,
         ]}
       >
-        {lootAvailable ? (
+        {showLootTracker ? (
           <LootTracker
             key={`${game.id}_${displayRound}`}
             players={game.players}
@@ -601,35 +619,12 @@ export default function GameScreen({
             game.bonusesRequireBid
           );
           const open = !!expanded[p.id];
-          const b = entry.bonus;
-          const entryTouched =
-            entry.recorded ||
-            entry.bid > 0 ||
-            entry.tricks > 0 ||
-            entry.rascalBet === "cannonball" ||
-            b.colored14 > 0 ||
-            b.black14 ||
-            b.mermaidByPirate > 0 ||
-            b.pirateBySkullKing > 0 ||
-            b.mermaidCapturesSkullKing ||
-            b.rascalWager > 0 ||
-            b.expansion7 > 0 ||
-            b.expansion8 > 0 ||
-            b.davyJonesLeviathans > 0 ||
-            b.secondCaptured;
-          const bonusCount =
-            b.colored14 +
-            Number(b.black14) +
-            b.mermaidByPirate +
-            b.pirateBySkullKing +
-            Number(b.mermaidCapturesSkullKing) +
-            Number(b.rascalWager > 0) +
-            b.expansion7 +
-            b.expansion8 +
-            b.davyJonesLeviathans +
-            Number(b.secondCaptured);
+          const bonuses = bonusCount(entry.bonus);
           const showRoundScore =
-            alreadyRecorded || roundTouched || entryTouched;
+            alreadyRecorded ||
+            roundTouched ||
+            entry.recorded ||
+            entryHasInput(entry);
           return (
             <View
               key={p.id}
@@ -693,16 +688,16 @@ export default function GameScreen({
                   accessibilityRole="button"
                   accessibilityState={{ expanded: open }}
                   accessibilityLabel={`${t.game.bonus} · ${p.name}${
-                    bonusCount > 0 ? ` · ${bonusCount}` : ""
+                    bonuses > 0 ? ` · ${bonuses}` : ""
                   }`}
                 >
                   <View style={styles.bonusToggleContent}>
                     <Text style={styles.bonusToggleText}>
                       {t.game.bonus} {open ? "▾" : "▸"}
                     </Text>
-                    {bonusCount > 0 ? (
+                    {bonuses > 0 ? (
                       <View style={styles.bonusBadge}>
-                        <Text style={styles.bonusBadgeText}>{bonusCount}</Text>
+                        <Text style={styles.bonusBadgeText}>{bonuses}</Text>
                       </View>
                     ) : null}
                   </View>

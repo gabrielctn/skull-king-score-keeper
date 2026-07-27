@@ -95,7 +95,7 @@ check(
 );
 check(
   "collapsed bonus editors expose recorded counts",
-  gameSource.includes("const bonusCount =") &&
+  gameSource.includes("bonusCount(entry.bonus)") &&
     gameSource.includes("styles.bonusBadge")
 );
 check(

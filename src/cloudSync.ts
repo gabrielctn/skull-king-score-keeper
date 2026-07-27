@@ -1,9 +1,9 @@
-import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import { liveConfigured } from "./liveConfig";
 import {
-  SUPABASE_PUBLISHABLE_KEY,
-  SUPABASE_URL,
-  liveConfigured,
-} from "./liveConfig";
+  UUID_PATTERN,
+  getSupabaseClient,
+  rpcError,
+} from "./supabaseClient";
 import { BackupData, createBackupPayload, parseBackup } from "./backup";
 import { generateWriterKey } from "./liveSession";
 import {
@@ -35,8 +35,6 @@ export type CloudStatus =
   | "synced" // reachable and up to date
   | "offline"; // backend unreachable; will retry
 
-const UUID_PATTERN =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const WRITER_KEY_PATTERN = /^[0-9a-f]{32,200}$/i;
 const SYNC_CODE_PREFIX = "SKC1.";
 
@@ -102,21 +100,6 @@ export interface CloudTransport {
   get(ownerId: string, writerKey: string): Promise<unknown | null>;
 }
 
-let supabaseClient: SupabaseClient | null = null;
-
-function getClient(): SupabaseClient {
-  if (!supabaseClient) {
-    supabaseClient = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
-      auth: { persistSession: false, autoRefreshToken: false },
-    });
-  }
-  return supabaseClient;
-}
-
-function rpcError(operation: string, error: { message?: string } | null): Error {
-  return new Error(`${operation} failed: ${error?.message ?? "unknown error"}`);
-}
-
 /** Where this device's cloud identity is persisted (swappable for tests). */
 export interface CloudOwnerStore {
   load(): Promise<CloudOwner | null>;
@@ -131,7 +114,7 @@ const defaultOwnerStore: CloudOwnerStore = {
 export function supabaseCloudTransport(): CloudTransport {
   return {
     async create(writerKey) {
-      const { data, error } = await getClient().rpc("create_user_backup", {
+      const { data, error } = await getSupabaseClient().rpc("create_user_backup", {
         writer_key: writerKey,
       });
       if (error || typeof data !== "string") {
@@ -140,7 +123,7 @@ export function supabaseCloudTransport(): CloudTransport {
       return data;
     },
     async put(ownerId, writerKey, state) {
-      const { error } = await getClient().rpc("put_user_backup", {
+      const { error } = await getSupabaseClient().rpc("put_user_backup", {
         owner_id: ownerId,
         writer_key: writerKey,
         game_state: state,
@@ -148,7 +131,7 @@ export function supabaseCloudTransport(): CloudTransport {
       if (error) throw rpcError("put_user_backup", error);
     },
     async get(ownerId, writerKey) {
-      const { data, error } = await getClient().rpc("get_user_backup", {
+      const { data, error } = await getSupabaseClient().rpc("get_user_backup", {
         owner_id: ownerId,
         writer_key: writerKey,
       });

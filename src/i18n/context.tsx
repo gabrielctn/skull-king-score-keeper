@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { Platform, View } from "react-native";
-import { Lang, Strings } from "./types";
+import { LANGS, Lang, Strings } from "./types";
 import { en } from "./en";
 import { fr } from "./fr";
 import { es } from "./es";
@@ -10,14 +10,7 @@ import { zh } from "./zh";
 import { saveLang } from "../storage";
 import { detectPreferredLang } from "./detection";
 
-export const SUPPORTED_LANGS: readonly Lang[] = [
-  "fr",
-  "en",
-  "es",
-  "de",
-  "ar",
-  "zh",
-];
+export const SUPPORTED_LANGS: readonly Lang[] = LANGS;
 
 const dictionaries: Record<Lang, Strings> = { en, fr, es, de, ar, zh };
 
@@ -32,10 +25,6 @@ const browserLanguageMap: Record<Lang, string> = {
 
 export function browserLocale(lang: Lang): string {
   return browserLanguageMap[lang];
-}
-
-export function languageLabel(lang: Lang): string {
-  return dictionaries[lang].langLabel;
 }
 
 /**

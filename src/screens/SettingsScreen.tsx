@@ -45,7 +45,7 @@ interface Props {
   hasGames: boolean;
   onUpdateSettings: (settings: AppSettings) => void;
   onBack: () => void;
-  onExportBackup: () => Promise<void>;
+  onExportBackup: () => void;
   onImportBackup: () => Promise<number | null>;
   onDeleteAllGames: () => Promise<void>;
   /** Adopt another device's sync code, merge its games, return the new count. */
@@ -161,15 +161,12 @@ export default function SettingsScreen({
     year: "numeric",
   });
 
-  const exportBackup = async () => {
-    setDataBusy(true);
+  const exportBackup = () => {
     setDataMessage(null);
     try {
-      await onExportBackup();
+      onExportBackup();
     } catch {
       setDataMessage({ type: "error", text: t.settings.backupError });
-    } finally {
-      setDataBusy(false);
     }
   };
 
@@ -416,7 +413,7 @@ export default function SettingsScreen({
         <View style={styles.dataActions}>
           <TouchableOpacity
             style={styles.dataButton}
-            onPress={() => void exportBackup()}
+            onPress={exportBackup}
             disabled={dataBusy}
             accessibilityRole="button"
             accessibilityState={{ disabled: dataBusy }}

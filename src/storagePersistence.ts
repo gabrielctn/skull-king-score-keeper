@@ -19,32 +19,11 @@ function storageManager(): MaybeStorageManager {
   return (navigator as Navigator & { storage?: StorageManager }).storage;
 }
 
-/** True when the browser exposes the persist/persisted durability controls. */
-export function isPersistentStorageSupported(): boolean {
-  const manager = storageManager();
-  return (
-    !!manager &&
-    typeof manager.persist === "function" &&
-    typeof manager.persisted === "function"
-  );
-}
-
-/** Whether this origin's storage is already marked durable. */
-export async function isStoragePersisted(): Promise<boolean> {
-  const manager = storageManager();
-  if (!manager || typeof manager.persisted !== "function") return false;
-  try {
-    return await manager.persisted();
-  } catch {
-    return false;
-  }
-}
-
 /**
  * Ask the browser to make this origin's storage durable. Returns whether the
  * data is persistent afterwards. Some browsers grant this automatically for
- * installed apps or engaged users; others only from a user gesture, which is
- * why Settings also exposes an explicit button.
+ * installed apps or engaged users, and others only from a user gesture — hence
+ * the best-effort call once the app holds games worth keeping.
  */
 export async function requestPersistentStorage(): Promise<boolean> {
   const manager = storageManager();

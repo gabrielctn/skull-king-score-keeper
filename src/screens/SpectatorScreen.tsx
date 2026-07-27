@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Image,
   Platform,
@@ -77,9 +77,6 @@ export default function SpectatorScreen({ game, liveSessionId, onExit }: Props) 
   const [liveStatus, setLiveStatus] = useState<SpectatorLiveStatus>(
     "connecting"
   );
-  const watcherRef = useRef<{ refresh: () => void; stop: () => void } | null>(
-    null
-  );
 
   // Follow the live session: subscribe on mount, refresh when the tab regains
   // focus (realtime channels can miss events while backgrounded).
@@ -94,7 +91,6 @@ export default function SpectatorScreen({ game, liveSessionId, onExit }: Props) 
       },
       onStatus: setLiveStatus,
     });
-    watcherRef.current = watcher;
 
     let detachVisibility: (() => void) | null = null;
     if (Platform.OS === "web" && typeof document !== "undefined") {
@@ -107,7 +103,6 @@ export default function SpectatorScreen({ game, liveSessionId, onExit }: Props) 
     }
     return () => {
       watcher.stop();
-      watcherRef.current = null;
       if (detachVisibility) detachVisibility();
     };
   }, [liveSessionId]);
