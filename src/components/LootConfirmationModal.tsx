@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "700",
     flex: 1,
-    marginRight: spacing.sm,
+    marginEnd: spacing.sm,
   },
   bidStatus: {
     borderRadius: radius.sm,

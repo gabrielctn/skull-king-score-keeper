@@ -4,7 +4,6 @@ import { browserLocale, useI18n } from "../i18n/context";
 import { standings } from "../scoring";
 import { cumulativeScoreSeries } from "../stats";
 import { colors, scoreSeriesColors, spacing } from "../theme";
-import LtrView from "./LtrView";
 import type { Game } from "../types";
 
 interface Props {
@@ -184,9 +183,10 @@ export default function ScoreChart({ game }: Props) {
         })}
       </svg>
 
-      {/* Swatch-then-name, in series order, must track the chart's own LTR
-          axis rather than mirroring with the surrounding text. */}
-      <LtrView style={styles.legend}>
+      {/* The legend is ordinary content — a list of swatch-and-name labels —
+          so it mirrors with the rest of the interface. Only the plot above
+          stays left-to-right, because its x axis is a scale. */}
+      <View style={styles.legend}>
         {series.map((player, playerIndex) => (
           <View key={player.playerId} style={styles.legendItem}>
             <View
@@ -203,7 +203,7 @@ export default function ScoreChart({ game }: Props) {
             </Text>
           </View>
         ))}
-      </LtrView>
+      </View>
     </View>
   );
 }
@@ -239,7 +239,7 @@ const styles = StyleSheet.create({
     width: 9,
     height: 9,
     borderRadius: 5,
-    marginRight: 6,
+    marginEnd: 6,
   },
   legendName: {
     flexShrink: 1,

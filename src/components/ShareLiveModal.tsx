@@ -423,7 +423,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     minWidth: 0,
   },
-  mascot: { width: 48, height: 48, marginRight: spacing.sm },
+  mascot: { width: 48, height: 48, marginEnd: spacing.sm },
   identityCopy: { flex: 1, minWidth: 0 },
   title: {
     color: colors.text,
@@ -440,7 +440,7 @@ const styles = StyleSheet.create({
   closeButton: {
     width: 38,
     height: 38,
-    marginLeft: spacing.sm,
+    marginStart: spacing.sm,
     borderRadius: 19,
     borderWidth: 1,
     borderColor: colors.cardBorder,
@@ -496,7 +496,7 @@ const styles = StyleSheet.create({
     height: 7,
     borderRadius: 4,
     backgroundColor: colors.positive,
-    marginRight: 6,
+    marginEnd: 6,
   },
   pillText: { color: colors.text, fontSize: 11, fontWeight: "800" },
   liveHint: {
@@ -562,7 +562,7 @@ const styles = StyleSheet.create({
   chevron: {
     color: colors.textDim,
     fontSize: 24,
-    marginLeft: spacing.sm,
+    marginStart: spacing.sm,
     transform: [{ rotate: "90deg" }],
   },
   chevronOpen: { transform: [{ rotate: "-90deg" }] },
@@ -594,7 +594,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     marginBottom: spacing.sm,
   },
-  hintIcon: { fontSize: 15, marginRight: spacing.sm, lineHeight: 19 },
+  hintIcon: { fontSize: 15, marginEnd: spacing.sm, lineHeight: 19 },
   hintText: {
     flex: 1,
     color: colors.textDim,

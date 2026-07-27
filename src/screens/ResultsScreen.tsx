@@ -416,9 +416,9 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.cardBorder,
   },
   rank: { width: 40, fontSize: 20, color: colors.text, textAlign: "center" },
-  name: { flex: 1, color: colors.text, fontSize: 18, marginLeft: spacing.sm },
+  name: { flex: 1, color: colors.text, fontSize: 18, marginStart: spacing.sm },
   total: { fontSize: 20, fontWeight: "800" },
-  scoreInfo: { color: colors.gold, fontSize: 13, marginLeft: spacing.sm },
+  scoreInfo: { color: colors.gold, fontSize: 13, marginStart: spacing.sm },
   pos: { color: colors.positive },
   neg: { color: colors.negative },
   primaryBtn: {

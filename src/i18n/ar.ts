@@ -387,7 +387,9 @@ export const ar: Strings = {
       "اختر اسمك مرة واحدة لمتابعة نقاطك الخاصة. يبقى ثابتًا في هذه المباراة.",
     turnTitle: "ترتيب الأدوار",
     sortLabel: "الترتيب",
-    sortName: "أ → ي",
+    // Leftward arrow: Arabic reads right to left, so alif is the right-hand
+    // end of the range and the arrow has to travel towards yaa.
+    sortName: "أ ← ي",
     sortGameOrder: "الجلوس",
     sortRank: "المركز",
     you: "أنت",

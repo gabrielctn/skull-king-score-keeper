@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
     color: colors.positive,
     fontSize: 24,
     fontWeight: "700",
-    marginRight: spacing.md,
+    marginEnd: spacing.md,
   },
   updateNoticeCopy: { flex: 1 },
   updateNoticeTitle: { color: colors.text, fontSize: 15, fontWeight: "800" },
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
   releaseBullet: {
     color: colors.gold,
     fontSize: 12,
-    marginRight: spacing.sm,
+    marginEnd: spacing.sm,
     marginTop: 3,
   },
   releaseItemText: { flex: 1, color: colors.text, fontSize: 14, lineHeight: 21 },

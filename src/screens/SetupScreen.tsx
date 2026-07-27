@@ -804,7 +804,7 @@ const styles = StyleSheet.create({
   structureToggleChevron: {
     width: 8,
     height: 8,
-    borderRightWidth: 2,
+    borderEndWidth: 2,
     borderBottomWidth: 2,
     borderColor: colors.gold,
     transform: [{ rotate: "45deg" }],

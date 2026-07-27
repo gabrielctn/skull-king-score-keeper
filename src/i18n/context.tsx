@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { Platform, View } from "react-native";
 import { LANGS, Lang, Strings } from "./types";
+import DirectionProvider from "./DirectionProvider";
 import { en } from "./en";
 import { fr } from "./fr";
 import { es } from "./es";
@@ -78,18 +78,7 @@ export function I18nProvider({
   };
   return (
     <I18nContext.Provider value={{ lang, setLang, t: dictionaries[lang] }}>
-      {Platform.OS === "web" ? (
-        children
-      ) : (
-        <View
-          style={{
-            flex: 1,
-            direction: lang === "ar" ? "rtl" : "ltr",
-          }}
-        >
-          {children}
-        </View>
-      )}
+      <DirectionProvider lang={lang}>{children}</DirectionProvider>
     </I18nContext.Provider>
   );
 }

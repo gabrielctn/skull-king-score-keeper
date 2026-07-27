@@ -449,14 +449,15 @@ const styles = StyleSheet.create({
   topActions: {
     position: "absolute",
     top: spacing.md,
-    right: spacing.md,
+    // Trailing edge, so these ride the left in a right-to-left language.
+    end: spacing.md,
     zIndex: 1,
     flexDirection: "row",
   },
   topActionsNative: {
     position: "relative",
     top: 0,
-    right: 0,
+    end: 0,
     alignSelf: "flex-end",
     marginTop: spacing.sm,
     marginEnd: spacing.md,
@@ -666,8 +667,8 @@ const styles = StyleSheet.create({
     width: 52,
     alignItems: "center",
     justifyContent: "center",
-    borderLeftWidth: StyleSheet.hairlineWidth,
-    borderLeftColor: colors.cardBorder,
+    borderStartWidth: StyleSheet.hairlineWidth,
+    borderStartColor: colors.cardBorder,
   },
   deleteIcon: { color: colors.textDim, fontSize: 28, fontWeight: "300" },
   historyToggle: {
@@ -755,7 +756,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
-    marginLeft: spacing.sm,
+    marginStart: spacing.sm,
   },
   confirmDeleteText: { color: colors.text, fontSize: 15, fontWeight: "800" },
   footer: {

@@ -1056,7 +1056,7 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: "700",
     flex: 1,
-    marginRight: spacing.sm,
+    marginEnd: spacing.sm,
   },
   playerScores: { alignItems: "flex-end" },
   roundScoreLabel: {
@@ -1151,7 +1151,7 @@ const styles = StyleSheet.create({
   krakenUndo: {
     color: colors.textDim,
     fontSize: 11,
-    marginLeft: spacing.sm,
+    marginStart: spacing.sm,
     textDecorationLine: "underline",
   },
   hintOk: { color: colors.positive },
@@ -1206,9 +1206,9 @@ const styles = StyleSheet.create({
     color: colors.gold,
     fontSize: 13,
     fontWeight: "800",
-    marginLeft: spacing.xs,
+    marginStart: spacing.xs,
   },
-  boardInfo: { color: colors.gold, fontSize: 12, marginLeft: 4 },
+  boardInfo: { color: colors.gold, fontSize: 12, marginStart: 4 },
   footer: { width: "100%", alignSelf: "center", padding: spacing.md },
   footerDesktop: {
     paddingHorizontal: 0,

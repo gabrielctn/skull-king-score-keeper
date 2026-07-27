@@ -820,7 +820,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
-    marginLeft: spacing.sm,
+    marginStart: spacing.sm,
   },
   confirmDeleteText: { color: colors.text, fontSize: 15, fontWeight: "800" },
 });

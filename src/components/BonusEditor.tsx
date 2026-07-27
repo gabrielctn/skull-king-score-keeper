@@ -231,7 +231,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginBottom: spacing.sm,
   },
-  label: { color: colors.text, fontSize: 14, flex: 1, marginRight: spacing.sm },
+  label: { color: colors.text, fontSize: 14, flex: 1, marginEnd: spacing.sm },
   pts: { color: colors.gold, fontSize: 12 },
   divider: {
     height: StyleSheet.hairlineWidth,
@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
     borderColor: colors.controlBorder,
     backgroundColor: colors.bgElevated,
     alignItems: "center",
-    marginLeft: 6,
+    marginStart: 6,
     borderRadius: radius.sm,
   },
   segBtnOn: { backgroundColor: colors.gold, borderColor: colors.gold },
