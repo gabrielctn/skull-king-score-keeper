@@ -64,7 +64,7 @@ export const de: Strings = {
     automaticUpdatesBody:
       "Installierte Apps laden jede neue Version automatisch und wechseln zu ihr, sobald das Gerät online ist.",
     items: [
-      "Die Punkteingabe hält nun einen klaren Abstand vor Bonus ein, auch wenn der Zähler auf kleinen Bildschirmen sichtbar ist.",
+      "Die Punkteingabe hält nun einen klaren Abstand vor „Bonus“ ein, auch wenn der Zähler auf kleinen Bildschirmen sichtbar ist.",
       "Alle sichtbaren Texte verwenden jetzt eine flüssigere Zeichensetzung ohne Halbgeviertstriche oder Geviertstriche.",
     ],
     close: "Verstanden",
@@ -93,21 +93,21 @@ export const de: Strings = {
     deleteAllConfirm: "Alle löschen",
     deleteAllSuccess: "Alle Spiele wurden gelöscht.",
     feedbackTitle: "Feedback",
-    feedbackHint: "Fehler gefunden oder eine Idee? Ich freue mich über Nachricht.",
+    feedbackHint: "Fehler gefunden oder eine Idee? Ich freue mich über eine Nachricht.",
     feedbackButton: "Feedback senden",
     install: {
       title: "App installieren",
       installedTitle: "App installiert",
       installedBody:
-        "Der Punktezähler ist auf deinem Gerät. Er öffnet sich wie jede App und funktioniert komplett offline.",
+        "Der Punktezähler ist auf deinem Gerät installiert. Er öffnet sich wie jede App und funktioniert komplett offline.",
       promptHint:
-        "Füge den Punktezähler zum Startbildschirm hinzu für Zugriff mit einem Tipp und Offline-Spiel.",
+        "Füge den Punktezähler zum Startbildschirm hinzu, um ihn mit einem Tipp zu öffnen und offline zu spielen.",
       manualHint:
-        "Füge den Punktezähler zum Startbildschirm hinzu für Zugriff mit einem Tipp und Offline-Spiel. Folge unten den Schritten für dein Telefon.",
+        "Füge den Punktezähler zum Startbildschirm hinzu, um ihn mit einem Tipp zu öffnen und offline zu spielen. Folge unten den Schritten für dein Telefon.",
       button: "Jetzt installieren",
       error:
         "Die Installation konnte nicht starten. Nutze die manuellen Schritte unten.",
-      guideTitle: "So installierst du sie von Hand",
+      guideTitle: "So installierst du sie manuell",
       iosSafariTitle: "iPhone & iPad (Safari)",
       iosSafariSteps: [
         "Öffne diese Seite in Safari.",
@@ -134,7 +134,7 @@ export const de: Strings = {
       title: "Cloud-Sicherung",
       statusIdle: "Cloud-Sicherung ist aktiv.",
       statusSynced:
-        "Gesichert. Deine Spiele werden automatisch in der Cloud gespeichert und kehren zurück, falls die Daten dieses Geräts gelöscht werden.",
+        "Sicherung abgeschlossen. Deine Spiele werden automatisch in der Cloud gespeichert und wiederhergestellt, falls die Daten dieses Geräts gelöscht werden.",
       statusSyncing: "Wird in der Cloud gespeichert…",
       statusOffline: "Offline. Änderungen werden synchronisiert, sobald du wieder online bist.",
       statusUnavailable: "Cloud-Sicherung ist für diese App nicht eingerichtet.",
@@ -193,7 +193,7 @@ export const de: Strings = {
       "Die Anleitung bietet zwei offizielle Wertungssysteme. Wähle das System für diese Partie.",
     scoringNames: {
       classic: "Skull-King-Wertung",
-      rascal: "Rascal-Wertung",
+      rascal: "Rascals Wertung",
     },
     scoringHints: {
       classic:
@@ -203,7 +203,7 @@ export const de: Strings = {
     },
     rascalBetsTitle: "Optionale Rascal-Regeln ✊",
     rascalBetsHint:
-      "Nach der Ansage erklärt jede Person Schrotladung (offene Hand: übliche Stufen) oder Kanonenkugel (geschlossene Faust: 15 Punkte pro Karte bei exakter Ansage, sonst nichts, Boni eingeschlossen).",
+      "Nach der Ansage wählt jede Person Grapeshot (offene Hand: übliche Stufen) oder Cannonball (geschlossene Faust: 15 Punkte pro Karte bei exakter Ansage, sonst nichts, Boni eingeschlossen).",
     bonusesRequireBidTitle: "Boni nur bei exakter Ansage",
     bonusesRequireBidHint:
       "Verbreitete Variante: Fangboni (14er, Meerjungfrauen, Piraten, Skull King …) verfallen bei verfehlter Ansage. Ausgeschaltet folgt die App der Anleitung und behält sie unabhängig von der Ansage.",
@@ -223,7 +223,7 @@ export const de: Strings = {
   game: {
     round: (n) => `Runde ${n}`,
     cardsDealt: "Karten ausgeteilt",
-    dealsVerb: "gibt",
+    dealsVerb: "teilt aus",
     playOrderHint: "Spielreihenfolge · links beginnt",
     ghostName: "Graubart",
     bid: "Ansage",
@@ -235,7 +235,8 @@ export const de: Strings = {
     tricksRecorded: (x, y) => `Erfasste Stiche: ${x} / ${y}`,
     tricksOk: "  ✓",
     tricksWarnNormal: "  (muss den ausgeteilten Karten entsprechen)",
-    ghostTook: (n) => `  ·  Graubart 👻 nahm ${n}`,
+    ghostTook: (n) =>
+      `  ·  Graubart 👻 holte ${n} ${n === 1 ? "Stich" : "Stiche"}`,
     tricksWarnOver: "  (mehr als ausgeteilte Karten; Eingaben prüfen)",
     krakenRecord: "+ Vom Kraken verworfener Stich",
     krakenRecorded: "Kraken-Stich erfasst",
@@ -252,10 +253,10 @@ export const de: Strings = {
     untouchedCancel: "Eingaben prüfen",
     untouchedConfirm: "Ja, werten",
     rascalStake: (points) =>
-      `Rascal-Wertung · ${points} Punkte im Spiel`,
+      `Rascals Wertung · ${points} Punkte im Spiel`,
     rascalBetNames: {
-      buckshot: "Schrotladung",
-      cannonball: "Kanonenkugel",
+      buckshot: "Grapeshot",
+      cannonball: "Cannonball",
     },
     rascalBetFor: (name) => `Erklärung von ${name}`,
   },
@@ -274,7 +275,7 @@ export const de: Strings = {
       "Spieler scannen diesen QR-Code, um die Punkte live auf dem eigenen Handy zu verfolgen.",
     statusLive: "Live · aktualisiert automatisch",
     statusSyncing: "Wird gespeichert…",
-    statusOffline: "Neuverbindung…",
+    statusOffline: "Verbindung wird wiederhergestellt…",
     liveError:
       "Bei der Live-Synchronisierung gab es ein Problem. Sie versucht es weiter. Prüfe deine Verbindung, oder beende und starte neu.",
     snapshotTitle: "Keine Verbindung am Tisch?",
@@ -309,13 +310,13 @@ export const de: Strings = {
     refreshHint:
       "Dies ist eine Momentaufnahme. Zum Aktualisieren scanne den QR-Code des Spielleiters erneut.",
     connecting: "Verbindung zur Live-Partie…",
-    reconnecting: "Verbindung verloren. Neuverbindung…",
+    reconnecting: "Verbindung verloren. Verbindung wird wiederhergestellt…",
     endedTitle: "Live-Sitzung beendet",
     endedBody:
       "Der Spielleiter hat das Teilen beendet. Unten stehen die zuletzt empfangenen Punkte.",
     standingsTitle: "Rangliste",
     tapHint:
-      "Tippe auf einen beliebigen Spieler für dessen vollständige Details Runde für Runde: Ansagen, Stiche und jeder Bonus.",
+      "Tippe auf einen Spieler, um alle Details Runde für Runde zu sehen: Ansagen, Stiche und sämtliche Boni.",
     identityTitle: "Welcher Spieler bist du?",
     identityHint:
       "Wähle einmal deinen Namen, um deine eigenen Punkte zu verfolgen. Das bleibt für dieses Spiel fest.",
@@ -333,7 +334,7 @@ export const de: Strings = {
 
   results: {
     gameOver: "Spiel beendet",
-    winner: (name, total) => `${name} gewinnt mit ${total}!`,
+    winner: (name, total) => `${name} gewinnt mit ${total} Punkten!`,
     duration: (hours, minutes) =>
       hours > 0 && minutes > 0
         ? `Gespielt in ${hours} Std. ${minutes} Min.`
@@ -384,15 +385,15 @@ export const de: Strings = {
     bestExactBid: "Beste Ansagequote",
     totalGames: "Partien",
     totalRounds: "Runden",
-    totalPlunder: "Beute",
-    biggestRound: "Größte Runde",
+    totalPlunder: "Erbeutete Punkte",
+    biggestRound: "Beste Einzelrunde",
     longestStreak: "Beste Serie",
     mostReckless: "Am tollkühnsten",
     krakenBait: "Kraken-Köder",
     zeroBidMaster: "Meister der Null",
     longestWinStreak: "Längste Siegesserie",
     podiumRate: "Podestquote",
-    averageRank: "Ø Platz",
+    averageRank: "Durchschnittsplatz",
     bestRoundScore: "Beste Runde",
     worstRoundScore: "Schlechteste Runde",
     unavailable: "Nicht verfügbar",
@@ -479,15 +480,15 @@ export const de: Strings = {
     outcomes: {
       directHit: "Volltreffer",
       glancingBlow: "Streifschuss",
-      whiff: "Fehlschlag",
+      whiff: "Daneben",
     },
     rascalBidDirect: (bid) =>
       `Volltreffer · Ansage ${bid} exakt · alle Punkte`,
     rascalBidGlancing: "Streifschuss · 1 daneben · halbe Punkte",
-    rascalBidWhiff: (diff) => `Fehlschlag · ${diff} daneben`,
-    rascalCannonballWon: "Kanonenkugel · exakte Ansage · 15 pro Karte",
+    rascalBidWhiff: (diff) => `Daneben · ${diff} Stiche Abweichung`,
+    rascalCannonballWon: "Cannonball · exakte Ansage · 15 pro Karte",
     rascalCannonballLost: (diff) =>
-      `Kanonenkugel verloren · ${diff} daneben`,
+      `Cannonball verfehlt · ${diff} Stiche Abweichung`,
     ignored: "Nicht gewertet",
     items: {
       colored14: (count) => `${count} farbige ${count === 1 ? "14" : "14er"} gefangen`,
@@ -568,7 +569,7 @@ export const de: Strings = {
     officialRules: "Offizielle Regeln ansehen",
     headings: {
       scoring: "Wertung",
-      rascal: "Rascal-Wertung",
+      rascal: "Rascals Wertung",
       bonus: "Bonuspunkte",
       expansion: "Neue Erweiterung",
       special: "Sonderkarten",
@@ -580,9 +581,9 @@ export const de: Strings = {
     ],
     rascal: [
       { title: "Eine offizielle Alternativwertung", body: "Wird beim Erstellen der Partie gewählt. Alle haben in jeder Runde dasselbe Potenzial: 10 Punkte pro ausgeteilter Karte, egal wie hoch die Ansage. Die Genauigkeit entscheidet, wie viel davon du bekommst. Die Punktzahl wird nie negativ." },
-      { title: "Volltreffer · Streifschuss · Fehlschlag", body: "Exakte Ansage: alle Punkte im Spiel. 1 daneben: die Hälfte. 2 oder mehr daneben: nichts." },
-      { title: "Boni folgen denselben Stufen", body: "Fangboni zählen bei einem Volltreffer voll, bei einem Streifschuss zur Hälfte und bei einem Fehlschlag gar nicht. Beute, die besonderen 7er/8er und die Rascal-Piratenwette behalten ihre eigene Bedingung der exakten Ansage." },
-      { title: "Optional: Schrotladung oder Kanonenkugel", body: "Falls aktiviert, wählt jede Person nach der Ansage und alle zeigen gleichzeitig. Offene Hand (Schrotladung): übliche Stufen; geschlossene Faust (Kanonenkugel): 15 Punkte pro Karte bei exakter Ansage, sonst nichts, Boni eingeschlossen." },
+      { title: "Volltreffer · Streifschuss · daneben", body: "Exakte Ansage: alle Punkte im Spiel. 1 daneben: die Hälfte. 2 oder mehr daneben: nichts." },
+      { title: "Boni folgen denselben Stufen", body: "Fangboni zählen bei einem Volltreffer voll, bei einem Streifschuss zur Hälfte und bei einer Abweichung von 2 oder mehr gar nicht. Beute, die besonderen 7er/8er und die Rascal-Piratenwette behalten ihre eigene Bedingung der exakten Ansage." },
+      { title: "Optional: Grapeshot oder Cannonball", body: "Falls aktiviert, wählt jede Person nach der Ansage und alle zeigen gleichzeitig. Offene Hand (Grapeshot): übliche Stufen; geschlossene Faust (Cannonball): 15 Punkte pro Karte bei exakter Ansage, sonst nichts, Boni eingeschlossen." },
     ],
     bonusEntries: [
       { title: "Farbige 14  (+10 je)", body: "Jede gelbe / violette / grüne 14, die du am Rundenende fängst (den Stich mit ihr gewinnst)." },

@@ -66,7 +66,7 @@ export const es: Strings = {
     automaticUpdatesBody:
       "Las aplicaciones instaladas ahora descargan automáticamente cada nueva versión y la activan en cuanto el dispositivo se conecta a internet.",
     items: [
-      "Los controles de puntuación ahora mantienen un espacio claro antes de Bonus, incluso cuando el contador aparece en pantallas pequeñas.",
+      "Los controles de puntuación ahora mantienen un espacio claro antes de «Bonus», incluso cuando el contador aparece en pantallas pequeñas.",
       "Todos los textos visibles usan ahora una puntuación más limpia, sin rayas ni semirrayas.",
     ],
     close: "Entendido",
@@ -175,7 +175,7 @@ export const es: Strings = {
     twoPlayers: "Dos jugadores",
     ghostTitle: "Fantasma Barbagris 👻",
     ghostHint:
-      "La variante para dos jugadores descrita en el reglamento: reparte una tercera mano para el fantasma Barbagris. Juega, pero nunca apuesta ni puntúa, así que roba algunas bazas; la suma de las bazas de los dos jugadores puede ser inferior al número de cartas repartidas.",
+      "La variante para dos jugadores descrita en el reglamento: reparte una tercera mano para el fantasma Barbagris. Juega, pero nunca hace envites ni puntúa, así que roba algunas bazas; la suma de las bazas de los dos jugadores puede ser inferior al número de cartas repartidas.",
     rounds: "Rondas",
     roundsHint: "Una partida estándar de Skull King tiene 10 rondas.",
     structureHint:
@@ -196,25 +196,25 @@ export const es: Strings = {
     scoringHint:
       "El reglamento ofrece dos formas oficiales de contar los puntos. Elige el sistema de esta partida.",
     scoringNames: {
-      classic: "Puntuación de Skull King",
-      rascal: "Puntuación de Rascal",
+      classic: "Recuento de Skull King",
+      rascal: "Recuento del Bribón",
     },
     scoringHints: {
       classic:
-        "El sistema clásico de riesgo y recompensa: las apuestas exactas dan 20 puntos por baza y los fallos restan puntos.",
+        "El sistema clásico de riesgo y recompensa: los envites exactos dan 20 puntos por baza y los fallos restan puntos.",
       rascal:
-        "En cada ronda hay en juego 10 puntos por carta repartida. Apuesta exacta: todos. Fallo por una: la mitad. Fallo por dos o más: nada; nunca se resta.",
+        "En cada ronda hay en juego 10 puntos por carta repartida. Envite exacto: todos. Fallo por una: la mitad. Fallo por dos o más: nada; nunca se resta.",
     },
-    rascalBetsTitle: "Reglas opcionales de Rascal ✊",
+    rascalBetsTitle: "Reglas opcionales del Bribón ✊",
     rascalBetsHint:
-      "Tras apostar, todos declaran Perdigón (mano abierta: niveles normales) o Bala de cañón (puño cerrado: 15 puntos por carta repartida con una apuesta exacta y nada en caso contrario, bonus incluidos).",
-    bonusesRequireBidTitle: "Bonus solo con apuesta exacta",
+      "Tras hacer el envite, todos declaran Metralla (mano abierta: niveles normales) o Bala de cañón (puño cerrado: 15 puntos por carta repartida con un envite exacto y nada en caso contrario, bonificaciones incluidas).",
+    bonusesRequireBidTitle: "Bonificaciones solo con envite exacto",
     bonusesRequireBidHint:
-      "Variante habitual: los bonus por captura (14, sirenas, piratas, Skull King…) se pierden si fallas la apuesta. Desactivado, la app sigue el reglamento y los conserva sea cual sea la apuesta.",
+      "Variante habitual: las bonificaciones por captura (14, sirenas, piratas, Skull King…) se pierden si fallas el envite. Si se desactiva, la app sigue el reglamento y las conserva sea cual sea el envite.",
     expansion: "Cartas de expansión",
-    advancedTitle: "Botín y apuesta Rascal",
+    advancedTitle: "Botín y apuesta del Bribón",
     advancedHint:
-      "Añade el seguimiento por ronda de Botín y de la apuesta del pirata Rascal. El Kraken, la Ballena Blanca y los bonus de 14/capturas siempre están disponibles.",
+      "Añade el seguimiento por ronda de Botín y de la apuesta del pirata Bribón. El Kraken, la Ballena Blanca y las bonificaciones de 14 y capturas siempre están disponibles.",
     newExpansionTitle: "Nueva expansión",
     newExpansionHint:
       "Añade la puntuación de los 7 y 8 especiales, el Cofre de Davy Jones y El Segundo. Los demás efectos de la expansión se explican en las reglas de la aplicación.",
@@ -230,7 +230,7 @@ export const es: Strings = {
     dealsVerb: "reparte",
     playOrderHint: "orden de juego · empieza quien está a la izquierda",
     ghostName: "Barbagris",
-    bid: "Apuesta",
+    bid: "Envite",
     won: "Ganadas",
     bonus: "Bonus",
     roundPoints: "Puntos de la ronda",
@@ -254,13 +254,13 @@ export const es: Strings = {
     scoreRound: "Puntuar ronda →",
     untouchedTitle: "¿Puntuar esta ronda?",
     untouchedMessage:
-      "No se han introducido apuestas ni bazas. Confirma que ambos jugadores apostaron cero y que Barbagris ganó todas las bazas.",
+      "No se han introducido envites ni bazas. Confirma que ambos jugadores envidaron cero y que Barbagris ganó todas las bazas.",
     untouchedCancel: "Revisar valores",
     untouchedConfirm: "Sí, puntuarla",
     rascalStake: (points) =>
-      `Puntuación de Rascal · ${points} puntos en juego`,
+      `Recuento del Bribón · ${points} puntos en juego`,
     rascalBetNames: {
-      buckshot: "Perdigón",
+      buckshot: "Metralla",
       cannonball: "Bala de cañón",
     },
     rascalBetFor: (name) => `Declaración de ${name}`,
@@ -271,7 +271,7 @@ export const es: Strings = {
     title: "Seguir los puntos",
     subtitle: "Cada jugador puede seguir los puntos en su propio teléfono.",
     liveHint:
-      "Inicia una sesión en directo. Los jugadores que escaneen el código siguen los puntos en tiempo real; cada apuesta, baza y bonus aparece en su teléfono en cuanto lo registras, sin actualizar nada.",
+      "Inicia una sesión en directo. Los jugadores que escaneen el código siguen los puntos en tiempo real; cada envite, baza y bonificación aparece en su teléfono en cuanto lo registras, sin actualizar nada.",
     start: "Iniciar seguimiento en directo",
     starting: "Iniciando…",
     stop: "Detener seguimiento en directo",
@@ -287,7 +287,7 @@ export const es: Strings = {
     snapshotToggleShow: "Mostrar instantánea sin conexión",
     snapshotToggleHide: "Ocultar instantánea sin conexión",
     scanHint:
-      "Este código QR contiene una instantánea de solo lectura de la partida: cada apuesta, baza y bonus registrados hasta ahora.",
+      "Este código QR contiene una instantánea de solo lectura de la partida: cada envite, baza y bonificación registrados hasta ahora.",
     updateHint:
       "Funciona sin servidor, pero no se actualiza solo: los jugadores lo vuelven a escanear para obtener los últimos puntos.",
     networkHint:
@@ -321,7 +321,7 @@ export const es: Strings = {
       "El anotador dejó de compartir. Debajo se muestran los últimos puntos recibidos.",
     standingsTitle: "Clasificación",
     tapHint:
-      "Toca cualquier jugador para ver su detalle completo ronda a ronda: apuestas, bazas y cada bonus.",
+      "Toca cualquier jugador para ver su detalle completo ronda a ronda: envites, bazas y bonificaciones.",
     identityTitle: "¿Qué jugador eres?",
     identityHint:
       "Elige tu nombre una vez para seguir tus propias puntuaciones. Queda fijo para esta partida.",
@@ -379,8 +379,8 @@ export const es: Strings = {
     gamesPlayed: "Partidas jugadas",
     wins: "Victorias",
     winRate: "Porcentaje de victorias",
-    exactBidRate: "Apuestas exactas",
-    zeroBidRate: "Éxito con apuesta cero",
+    exactBidRate: "Envites exactos",
+    zeroBidRate: "Éxito con envite cero",
     averagePoints: "Media de puntos",
     bestScore: "Mejor puntuación",
     worstScore: "Peor puntuación",
@@ -389,7 +389,7 @@ export const es: Strings = {
     bestFinalScore: "Mejor puntuación final",
     worstFinalScore: "Peor puntuación final",
     worstRound: "Peor ronda",
-    bestExactBid: "Mejor porcentaje de apuestas exactas",
+    bestExactBid: "Mejor porcentaje de envites exactos",
     totalGames: "Partidas",
     totalRounds: "Rondas",
     totalPlunder: "Botín",
@@ -420,7 +420,7 @@ export const es: Strings = {
     streakRecordHolder: (name, streak) =>
       `${name} · ${streak} ${streak === 1 ? "victoria" : "victorias"} seguidas`,
     recklessRecordHolder: (name, averageBid) =>
-      `${name} · ${averageBid} de apuesta media`,
+      `${name} · ${averageBid} de envite medio`,
     countRecordHolder: (name, count) =>
       `${name} · ${count} ${count === 1 ? "vez" : "veces"}`,
     recentGame: (date, rank, score) =>
@@ -450,7 +450,7 @@ export const es: Strings = {
     title: "Premios de la tripulación",
     names: {
       lookout: "El Vigía",
-      zeroBidRoyalty: "Realeza de la apuesta cero",
+      zeroBidRoyalty: "Realeza del envite cero",
       comeback: "La Remontada",
       reckless: "El Temerario",
       castaway: "El Náufrago",
@@ -471,33 +471,33 @@ export const es: Strings = {
     noRounds: "Todavía no se ha puntuado ninguna ronda.",
     historyTitle: "Rondas puntuadas",
     round: (n) => `Ronda ${n}`,
-    roundSummary: (bid, tricks) => `Apuesta ${bid} · ganó ${tricks}`,
-    exact: "Apuesta acertada",
-    missed: "Apuesta fallada",
+    roundSummary: (bid, tricks) => `Envite ${bid} · ganó ${tricks}`,
+    exact: "Envite acertado",
+    missed: "Envite fallado",
     runningTotal: "Total tras la ronda",
     expandRound: (n) => `Mostrar detalles de la ronda ${n}`,
     collapseRound: (n) => `Ocultar detalles de la ronda ${n}`,
-    bidSuccess: (bid) => `Apuesta ${bid} acertada exactamente`,
+    bidSuccess: (bid) => `Envite ${bid} acertado exactamente`,
     bidMissed: (bid, difference) =>
-      `Apuesta ${bid} fallada · diferencia de ${difference} ${
+      `Envite ${bid} fallado · diferencia de ${difference} ${
         difference === 1 ? "baza" : "bazas"
       }`,
     zeroBidSuccess: (cards) =>
-      `Apuesta cero acertada · ${cards} ${cards === 1 ? "carta" : "cartas"}`,
+      `Envite cero acertado · ${cards} ${cards === 1 ? "carta" : "cartas"}`,
     zeroBidMissed: (cards) =>
-      `Apuesta cero fallada · ${cards} ${cards === 1 ? "carta" : "cartas"}`,
+      `Envite cero fallado · ${cards} ${cards === 1 ? "carta" : "cartas"}`,
     outcomes: {
       directHit: "Impacto directo",
-      glancingBlow: "Impacto parcial",
-      whiff: "Fallo total",
+      glancingBlow: "Golpe de refilón",
+      whiff: "Tiro errado",
     },
     rascalBidDirect: (bid) =>
-      `Impacto directo · apuesta ${bid} exacta · todos los puntos`,
+      `Impacto directo · envite ${bid} exacto · todos los puntos`,
     rascalBidGlancing:
-      "Impacto parcial · diferencia de una · la mitad de los puntos",
-    rascalBidWhiff: (diff) => `Fallo total · diferencia de ${diff}`,
+      "Golpe de refilón · diferencia de una · la mitad de los puntos",
+    rascalBidWhiff: (diff) => `Tiro errado · diferencia de ${diff}`,
     rascalCannonballWon:
-      "Bala de cañón · apuesta exacta · 15 por carta",
+      "Bala de cañón · envite exacto · 15 por carta",
     rascalCannonballLost: (diff) =>
       `Bala de cañón perdida · diferencia de ${diff}`,
     ignored: "No contabilizado",
@@ -510,8 +510,8 @@ export const es: Strings = {
       pirateBySkullKing: (count) =>
         `${count} ${count === 1 ? "pirata capturado" : "piratas capturados"} por Skull King`,
       mermaidCapturesSkullKing: "Una sirena captura a Skull King",
-      rascalWon: "Apuesta Rascal ganada",
-      rascalLost: "Apuesta Rascal perdida",
+      rascalWon: "Apuesta del Bribón ganada",
+      rascalLost: "Apuesta del Bribón perdida",
       expansion7: (count) =>
         `${count} ${count === 1 ? "7 especial capturado" : "7 especiales capturados"}`,
       expansion8: (count) =>
@@ -520,11 +520,11 @@ export const es: Strings = {
         `${count} ${count === 1 ? "leviatán destruido" : "leviatanes destruidos"} por Davy Jones`,
       secondCaptured: "El Segundo capturado",
       legacyLoot: (count) =>
-        `${count} ${count === 1 ? "bonus de Botín antiguo" : "bonus de Botín antiguos"}`,
+        `${count} ${count === 1 ? "bonificación de Botín antigua" : "bonificaciones de Botín antiguas"}`,
       loot: (count) =>
         `${count} ${count === 1 ? "alianza de Botín conseguida" : "alianzas de Botín conseguidas"}`,
       lootMissed: (count) =>
-        `${count} ${count === 1 ? "alianza de Botín" : "alianzas de Botín"} · al menos una apuesta fallada`,
+        `${count} ${count === 1 ? "alianza de Botín" : "alianzas de Botín"} · al menos un envite fallado`,
       lootSelfWin: (count) =>
         `${count} ${count === 1 ? "carta de Botín recuperada" : "cartas de Botín recuperadas"} por quien la jugó · sin alianza`,
     },
@@ -536,26 +536,26 @@ export const es: Strings = {
     mermaidByPirate: "Sirena capturada por un pirata",
     pirateBySkullKing: "Pirata capturado por Skull King",
     mermaidCapturesSkullKing: "Sirena que captura a Skull King",
-    rascal: "Apuesta Rascal",
+    rascal: "Apuesta del Bribón",
     newExpansion: "Nueva expansión",
     expansion7: "Nuevo 7 capturado",
     expansion8: "Nuevo 8 capturado",
     expansionColorHint:
-      "Los nuevos 7 y 8 solo puntúan cuando la apuesta es exacta.",
+      "Los nuevos 7 y 8 solo puntúan cuando el envite es exacto.",
     davyJonesLeviathans: "Leviatán destruido por Davy Jones",
     secondCaptured: "El Segundo capturado por Skull King / Sirena",
     each: "c/u",
     requiresBidHint:
-      "Esta partida solo concede los bonus por captura si la apuesta es exacta.",
+      "Esta partida solo concede las bonificaciones por captura si el envite es exacto.",
     requiresBidMissed:
-      "Apuesta fallada: en esta partida los bonus por captura no cuentan.",
-    cardBonus: (n) => `Bonus de cartas: ${n >= 0 ? "+" : ""}${n}`,
+      "Envite fallado: en esta partida las bonificaciones por captura no cuentan.",
+    cardBonus: (n) => `Bonificación de cartas: ${n >= 0 ? "+" : ""}${n}`,
   },
 
   loot: {
     title: "Alianzas de Botín",
     hint:
-      "Registra cada carta de Botín en cuanto se juegue. Todas las apuestas implicadas deben confirmarse al final de la ronda.",
+      "Registra cada carta de Botín en cuanto se juegue. Todos los envites implicados deben confirmarse al final de la ronda.",
     record: "+ Registrar Botín",
     useNumber: (n) => `Botín ${n}`,
     playedByPrompt: "¿Quién jugó la carta de Botín?",
@@ -563,9 +563,9 @@ export const es: Strings = {
     playedByRole: "jugó Botín",
     winnerRole: "ganó la baza",
     pendingPair: (playedBy, boundTo) =>
-      `${playedBy} y ${boundTo} deben acertar sus apuestas.`,
-    success: "Ambos acertaron sus apuestas · +20 cada uno",
-    failed: (names) => `Sin bonus de Botín · apuesta fallada: ${names}`,
+      `${playedBy} y ${boundTo} deben acertar sus envites.`,
+    success: "Ambos acertaron sus envites · +20 cada uno",
+    failed: (names) => `Sin bonificación de Botín · envite fallado: ${names}`,
     selfWin: (name) =>
       `${name} ganó su propio Botín · no se formó ninguna alianza`,
     change: "Cambiar",
@@ -582,12 +582,12 @@ export const es: Strings = {
     eyebrow: "Comprobación obligatoria",
     title: "Confirmar alianzas de Botín",
     intro: (players) =>
-      `${players} ${players === 1 ? "jugador participa" : "jugadores participan"} en una alianza de Botín. Revisa todas las apuestas antes de continuar.`,
-    madeBid: "Apuesta acertada",
-    missedBid: "Apuesta fallada",
+      `${players} ${players === 1 ? "jugador participa" : "jugadores participan"} en una alianza de Botín. Revisa todos los envites antes de continuar.`,
+    madeBid: "Envite acertado",
+    missedBid: "Envite fallado",
     allianceBonus: "Alianza conseguida · +20 puntos cada uno",
-    noAllianceBonus: "Alianza fallida · sin bonus de Botín",
-    confirm: "Confirmar apuestas",
+    noAllianceBonus: "Alianza fallida · sin bonificación de Botín",
+    confirm: "Confirmar envites",
   },
 
   rules: {
@@ -598,38 +598,38 @@ export const es: Strings = {
     officialRules: "Ver las reglas oficiales",
     headings: {
       scoring: "Puntuación",
-      rascal: "Puntuación de Rascal",
-      bonus: "Puntos de bonus",
+      rascal: "Recuento del Bribón",
+      bonus: "Puntos de bonificación",
       expansion: "Nueva expansión",
       special: "Cartas especiales",
       twoPlayer: "Variante para dos jugadores",
     },
     scoring: [
       {
-        title: "Apuesta de 1 o más",
-        body: "Apuesta exacta: +20 por baza ganada. Fallo (por exceso o por defecto): -10 por cada baza de diferencia y ningún punto por las bazas ganadas.",
+        title: "Envite de 1 o más",
+        body: "Envite exacto: +20 por baza ganada. Fallo (por exceso o por defecto): -10 por cada baza de diferencia y ningún punto por las bazas ganadas.",
       },
       {
-        title: "Apuesta cero",
+        title: "Envite cero",
         body: "Ganar 0 bazas: +10 × cartas repartidas en esta ronda. Ganar cualquier baza: -10 × cartas repartidas en esta ronda.",
       },
     ],
     rascal: [
       {
         title: "Un sistema de puntuación alternativo oficial",
-        body: "Se elige al crear la partida. Todos los jugadores tienen el mismo potencial en cada ronda: 10 puntos por carta repartida, independientemente de la apuesta. La precisión decide qué parte obtienen. La puntuación nunca es negativa.",
+        body: "Se elige al crear la partida. Todos los jugadores tienen el mismo potencial en cada ronda: 10 puntos por carta repartida, independientemente del envite. La precisión decide qué parte obtienen. La puntuación nunca es negativa.",
       },
       {
-        title: "Impacto directo · impacto parcial · fallo total",
-        body: "Apuesta exacta: todos los puntos en juego. Fallo por una: la mitad. Fallo por dos o más: nada.",
+        title: "Impacto directo · golpe de refilón · tiro errado",
+        body: "Envite exacto: todos los puntos en juego. Fallo por una: la mitad. Fallo por dos o más: nada.",
       },
       {
-        title: "Los puntos de bonus siguen los mismos niveles",
-        body: "Los bonus por captura cuentan completos con un impacto directo, a la mitad con un impacto parcial y no cuentan con un fallo total. Botín, los 7/8 especiales y la apuesta del pirata Rascal mantienen sus propias reglas de apuesta exacta.",
+        title: "Las bonificaciones siguen los mismos niveles",
+        body: "Las bonificaciones por captura cuentan completas con un impacto directo, a la mitad con un golpe de refilón y no cuentan con un tiro errado. Botín, los 7/8 especiales y la apuesta del pirata Bribón mantienen sus propias reglas de envite exacto.",
       },
       {
-        title: "Opcional: Perdigón o Bala de cañón",
-        body: "Si se activa en la configuración, todos declaran después de apostar y revelan a la vez. La mano abierta (Perdigón) mantiene los niveles normales; el puño cerrado (Bala de cañón) da 15 puntos por carta repartida con una apuesta exacta y nada en caso contrario, bonus incluidos.",
+        title: "Opcional: Metralla o Bala de cañón",
+        body: "Si se activa en la configuración, todos declaran después de envidar y revelan a la vez. La mano abierta (Metralla) mantiene los niveles normales; el puño cerrado (Bala de cañón) da 15 puntos por carta repartida con un envite exacto y nada en caso contrario, bonificaciones incluidas.",
       },
     ],
     bonusEntries: [
@@ -654,18 +654,18 @@ export const es: Strings = {
         body: "Tu sirena gana una baza que contiene a Skull King. (La sirena gana a Skull King, Skull King gana a los piratas y los piratas ganan a la sirena).",
       },
       {
-        title: "Los bonus cuentan sin importar tu apuesta",
-        body: "Según el reglamento conservas los bonus por captura aunque falles tu apuesta. Se los lleva quien captura la carta, sin importar quién la haya jugado. Una opción al crear la partida permite jugar la variante contraria: apuesta fallada, sin bonus por captura.",
+        title: "Las bonificaciones cuentan sin importar tu envite",
+        body: "Según el reglamento conservas las bonificaciones por captura aunque falles tu envite. Se las lleva quien captura la carta, sin importar quién la haya jugado. Una opción al crear la partida permite jugar la variante contraria: envite fallado, sin bonificaciones por captura.",
       },
     ],
     expansion: [
       {
         title: "Nuevos 7 y 8  (-5 / +5 cada uno)",
-        body: "Se juegan como cartas normales de su palo. Quien captura un nuevo 7 pierde 5 puntos y quien captura un nuevo 8 gana 5, pero solo si su apuesta es exacta. Si hay empate en el valor ganador, vence la primera carta jugada.",
+        body: "Se juegan como cartas normales de su palo. Quien captura un nuevo 7 pierde 5 puntos y quien captura un nuevo 8 gana 5, pero solo si su envite es exacto. Si hay empate en el valor ganador, vence la primera carta jugada.",
       },
       {
         title: "Cartas 0/14",
-        body: "Al jugar la carta, declara inmediatamente si vale 0 o 14. No concede ningún bonus.",
+        body: "Al jugar la carta, declara inmediatamente si vale 0 o 14. No concede ninguna bonificación.",
       },
       {
         title: "15 comodín",
@@ -693,7 +693,7 @@ export const es: Strings = {
       },
       {
         title: "El Segundo  (+30 al capturarlo)",
-        body: "Gana a todas las cartas excepto a Skull King y las sirenas. Puede usar los poderes de los piratas que capture, pero no obtiene bonus de captura por ellos. Si Skull King o una sirena lo captura, su jugador obtiene 30 puntos.",
+        body: "Gana a todas las cartas excepto a Skull King y las sirenas. Puede usar los poderes de los piratas que capture, pero no obtiene bonificaciones de captura por ellos. Si Skull King o una sirena lo captura, su jugador obtiene 30 puntos.",
       },
     ],
     special: [
@@ -719,7 +719,7 @@ export const es: Strings = {
       },
       {
         title: "Ballena Blanca",
-        body: "Todas las cartas especiales quedan anuladas y pierden; la carta NUMERADA más alta gana la baza (incluido el triunfo). Si solo se jugaron cartas especiales, la baza se descarta. En una baza con la Ballena no se conceden bonus por capturar cartas especiales.",
+        body: "Todas las cartas especiales quedan anuladas y pierden; la carta NUMERADA más alta gana la baza (incluido el triunfo). Si solo se jugaron cartas especiales, la baza se descarta. En una baza con la Ballena no se conceden bonificaciones por capturar cartas especiales.",
       },
       {
         title: "Kraken contra Ballena Blanca",
@@ -727,11 +727,11 @@ export const es: Strings = {
       },
       {
         title: "Botín  (+20 por aliado)",
-        body: "Forma una alianza entre quien lo juega y quien gana esa baza. Registra a ambos jugadores cuando ocurra; si LOS DOS aciertan exactamente su apuesta, la aplicación concede +20 a cada uno.",
+        body: "Forma una alianza entre quien lo juega y quien gana esa baza. Registra a ambos jugadores cuando ocurra; si LOS DOS aciertan exactamente su envite, la aplicación concede +20 a cada uno.",
       },
       {
-        title: "Apuesta del pirata Rascal (0/10/20)",
-        body: "Una apuesta paralela: ganas su valor si aciertas tu apuesta y lo pierdes si fallas.",
+        title: "Apuesta del pirata Bribón (0/10/20)",
+        body: "Una apuesta paralela: ganas su valor si aciertas tu envite y lo pierdes si fallas.",
       },
     ],
     twoPlayer: [
@@ -741,7 +741,7 @@ export const es: Strings = {
       },
       {
         title: "Juega, pero nunca puntúa",
-        body: "Barbagris no apuesta ni obtiene puntos. Solo roba bazas (y las cartas de bonus que contengan simplemente se pierden). Cuando gana una baza, sale en la siguiente; en caso contrario, siempre juega segundo.",
+        body: "Barbagris no hace envites ni obtiene puntos. Solo roba bazas (y las cartas de bonificación que contengan simplemente se pierden). Cuando gana una baza, sale en la siguiente; en caso contrario, siempre juega segundo.",
       },
       {
         title: "El total de bazas puede ser inferior",

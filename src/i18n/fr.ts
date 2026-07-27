@@ -52,7 +52,7 @@ export const fr: Strings = {
     supportHint:
       "Contribution facultative · l’application reste entièrement gratuite.",
     disclaimer:
-      "Application créée par un joueur, sans affiliation, approbation ni sponsoring de Grandpa Beck’s Games, de ses éditeurs ou distributeurs. « Skull King » et les éléments officiels du jeu appartiennent à leurs ayants droit respectifs.",
+      "Application créée par un joueur, sans affiliation, approbation ni parrainage de Grandpa Beck’s Games, de ses éditeurs ou distributeurs. « Skull King » et les éléments officiels du jeu appartiennent à leurs ayants droit respectifs.",
     offline: "Fonctionne hors ligne · installable depuis le navigateur",
   },
 
@@ -63,9 +63,9 @@ export const fr: Strings = {
     version: (version, date) => `Version ${version} · ${date}`,
     automaticUpdatesTitle: "Toujours à jour",
     automaticUpdatesBody:
-      "Les applications installées téléchargent désormais chaque nouvelle version automatiquement et l'activent dès que l'appareil est en ligne.",
+      "Les applications installées téléchargent désormais chaque nouvelle version automatiquement et l’activent dès que l’appareil est en ligne.",
     items: [
-      "Les commandes de score gardent désormais un espace net avant Bonus, même lorsque son compteur est visible sur un petit écran.",
+      "Les commandes de score gardent désormais un espace net avant « Bonus », même lorsque son compteur est visible sur un petit écran.",
       "Tous les textes utilisent désormais une ponctuation plus fluide, sans tirets cadratins ni demi-cadratins.",
     ],
     close: "Compris",
@@ -76,9 +76,9 @@ export const fr: Strings = {
     title: "Paramètres",
     languageTitle: "Langue",
     gameTitle: "Pendant la partie",
-    keepAwakeTitle: "Garder l'écran allumé",
+    keepAwakeTitle: "Garder l’écran allumé",
     keepAwakeHint:
-      "Empêche l'appareil de se mettre en veille tant qu'un écran de partie est ouvert.",
+      "Empêche l’appareil de se mettre en veille tant qu’un écran de partie est ouvert.",
     dataTitle: "Vos données",
     dataHint: "Exportez une copie de vos parties ou restaurez-la sur cet appareil.",
     exportBackup: "Exporter",
@@ -94,61 +94,61 @@ export const fr: Strings = {
     deleteAllConfirm: "Tout supprimer",
     deleteAllSuccess: "Toutes les parties ont été supprimées.",
     feedbackTitle: "Votre avis",
-    feedbackHint: "Un bug ou une idée ? N'hésitez pas à m'écrire.",
+    feedbackHint: "Un bug ou une idée ? N’hésitez pas à m’écrire.",
     feedbackButton: "Envoyer un retour",
     install: {
-      title: "Installer l'application",
+      title: "Installer l’application",
       installedTitle: "Application installée",
       installedBody:
-        "Le compteur de scores est sur votre appareil. Il s'ouvre comme une appli et fonctionne entièrement hors ligne.",
+        "Le compteur de scores est installé sur votre appareil. Il s’ouvre comme une appli et fonctionne entièrement hors ligne.",
       promptHint:
-        "Ajoutez le compteur de scores à votre écran d'accueil pour un accès en un geste et le jeu hors ligne.",
+        "Ajoutez le compteur de scores à votre écran d’accueil pour y accéder rapidement et jouer hors ligne.",
       manualHint:
-        "Ajoutez le compteur de scores à votre écran d'accueil pour un accès en un geste et le jeu hors ligne. Suivez les étapes correspondant à votre téléphone ci-dessous.",
+        "Ajoutez le compteur de scores à votre écran d’accueil pour y accéder rapidement et jouer hors ligne. Suivez les étapes correspondant à votre téléphone ci-dessous.",
       button: "Installer maintenant",
       error:
-        "L'installation n'a pas pu démarrer. Suivez les étapes manuelles ci-dessous.",
-      guideTitle: "Comment l'installer à la main",
+        "L’installation n’a pas pu démarrer. Suivez les étapes manuelles ci-dessous.",
+      guideTitle: "Comment l’installer manuellement",
       iosSafariTitle: "iPhone et iPad (Safari)",
       iosSafariSteps: [
         "Ouvrez cette page dans Safari.",
-        "Touchez le bouton Partager (un carré surmonté d'une flèche) en bas de l'écran.",
-        "Faites défiler et touchez « Sur l'écran d'accueil ».",
-        "Touchez « Ajouter » en haut à droite. L'icône apparaît sur votre écran d'accueil.",
+        "Touchez le bouton Partager (un carré surmonté d’une flèche) en bas de l’écran.",
+        "Faites défiler et touchez « Sur l’écran d’accueil ».",
+        "Touchez « Ajouter » en haut à droite. L’icône apparaît sur votre écran d’accueil.",
       ],
       iosChromeTitle: "iPhone et iPad (Chrome)",
       iosChromeSteps: [
         "Ouvrez cette page dans Chrome.",
-        "Touchez le petit bouton Partager (un carré surmonté d'une flèche) dans la barre de recherche.",
+        "Touchez le petit bouton Partager (un carré surmonté d’une flèche) dans la barre d’adresse.",
         "Touchez le chevron « ⌄ » (« En voir plus ») pour afficher toutes les options.",
-        "Touchez le bouton « + » nommé « Sur l'écran d'accueil ». L'icône apparaît sur votre écran d'accueil.",
+        "Touchez le bouton « + » nommé « Sur l’écran d’accueil ». L’icône apparaît sur votre écran d’accueil.",
       ],
       androidTitle: "Android (Chrome)",
       androidSteps: [
         "Ouvrez cette page dans Chrome.",
         "Touchez le menu ⋮ en haut à droite.",
-        "Touchez « Installer l'application » (ou « Ajouter à l'écran d'accueil »).",
-        "Confirmez avec « Installer ». L'icône apparaît sur votre écran d'accueil.",
+        "Touchez « Installer l’application » (ou « Ajouter à l’écran d’accueil »).",
+        "Confirmez avec « Installer ». L’icône apparaît sur votre écran d’accueil.",
       ],
     },
     cloud: {
       title: "Sauvegarde cloud",
       statusIdle: "La sauvegarde cloud est activée.",
       statusSynced:
-        "Sauvegardé. Vos parties sont enregistrées dans le cloud automatiquement et reviennent si les données de cet appareil sont effacées.",
+        "Sauvegarde terminée. Vos parties sont enregistrées automatiquement dans le cloud et restaurées si les données de cet appareil sont effacées.",
       statusSyncing: "Enregistrement dans le cloud…",
       statusOffline: "Hors ligne. Les changements se synchroniseront une fois de retour en ligne.",
-      statusUnavailable: "La sauvegarde cloud n'est pas configurée pour cette appli.",
+      statusUnavailable: "La sauvegarde cloud n’est pas configurée pour cette appli.",
       linkTitle: "Utiliser vos parties sur un autre téléphone",
       linkHint:
-        "Copiez le code de cet appareil, puis collez-le sur l'autre téléphone pour y charger les mêmes parties. Gardez-le privé, car quiconque l'a peut voir vos parties.",
+        "Copiez le code de cet appareil, puis collez-le sur l’autre téléphone pour y charger les mêmes parties. Conservez-le à l’abri : toute personne qui le possède peut voir vos parties.",
       codeLabel: "Code de cet appareil",
       copy: "Copier",
       copied: "Copié",
-      pasteLabel: "Coller un code d'un autre appareil",
+      pasteLabel: "Coller un code d’un autre appareil",
       linkButton: "Charger ces parties ici",
       linking: "Chargement…",
-      linkError: "Ce code n'a pas pu être lu.",
+      linkError: "Ce code n’a pas pu être lu.",
       linkSuccess: "Terminé. Les parties ont été fusionnées sur cet appareil.",
     },
   },
@@ -158,7 +158,7 @@ export const fr: Strings = {
     crew: "Rassemblez votre équipage",
     players: "Joueurs",
     seatingHint:
-      "Saisissez les joueurs dans l'ordre des places, sens horaire. Le joueur 1 distribue la 1re manche. Utilisez les flèches pour réorganiser la table.",
+      "Saisissez les joueurs dans l’ordre des places, sens horaire. Le joueur 1 distribue la 1re manche. Utilisez les flèches pour réorganiser la table.",
     playerPlaceholder: (n) => `Joueur ${n}`,
     addPlayer: "+ Ajouter un joueur",
     quickTitle: "Configuration rapide (classique)",
@@ -179,12 +179,12 @@ export const fr: Strings = {
       "Le livret propose plusieurs façons de distribuer les cartes. Choisissez la structure des manches de cette partie.",
     structureNames: {
       classic: "Classique",
-      evenKeeled: "Pas d'impair",
+      evenKeeled: "Pas d’impair",
       brawl: "Prêt au combat",
       skirmish: "Attaque éclair",
       barrage: "Tir de barrage",
       whirlpool: "Tourbillon",
-      bedtime: "L'heure du dodo",
+      bedtime: "L’heure du dodo",
     },
     structureRounds: (n) => `${n} ${n === 1 ? "manche" : "manches"}`,
     showOtherStructures: "Afficher les autres types de manches",
@@ -207,14 +207,14 @@ export const fr: Strings = {
       "Après la mise, chacun déclare Chevrotine (main ouverte : barème habituel) ou Boulet de canon (poing fermé : 15 points par carte distribuée si la mise est exacte, sinon rien, bonus compris).",
     bonusesRequireBidTitle: "Bonus seulement si la mise est réussie",
     bonusesRequireBidHint:
-      "Variante courante : les bonus de capture (14, sirènes, pirates, Skull King…) sont perdus si la mise est ratée. Désactivé, l'app suit le livret : les bonus sont gardés quelle que soit la mise.",
-    expansion: "Cartes d'extension",
-    advancedTitle: "Butin & pari Rascal",
+      "Variante courante : les bonus de capture (14, sirènes, pirates, Skull King…) sont perdus si la mise est ratée. Si cette option est désactivée, l’app suit le livret : les bonus sont conservés quelle que soit la mise.",
+    expansion: "Cartes d’extension",
+    advancedTitle: "Butin et pari Rascal",
     advancedHint:
       "Ajoute le suivi des alliances Butin par manche et le pari du pirate Rascal. Le Kraken, la Baleine blanche et les bonus de 14/capture sont toujours disponibles.",
     newExpansionTitle: "Extension",
     newExpansionHint:
-      "Ajoute au décompte les 7 et 8 spéciaux, le Casier de Davy Jones et le Second. Les autres effets de l'extension sont détaillés dans l'aide en jeu.",
+      "Ajoute au décompte les 7 et 8 spéciaux, le Casier de Davy Jones et le Second. Les autres effets de l’extension sont détaillés dans l’aide en jeu.",
     knownPlayers: "Joueurs connus",
     useKnownPlayer: (name) => `Utiliser ${name}`,
     start: "Commencer ☠️",
@@ -225,7 +225,7 @@ export const fr: Strings = {
     round: (n) => `Manche ${n}`,
     cardsDealt: "cartes distribuées",
     dealsVerb: "distribue",
-    playOrderHint: "ordre de jeu · le meneur est à gauche",
+    playOrderHint: "ordre de jeu · la personne à gauche entame",
     ghostName: "Barbe Grise",
     bid: "Mise",
     won: "Plis",
@@ -236,7 +236,8 @@ export const fr: Strings = {
     tricksRecorded: (x, y) => `Plis enregistrés : ${x} / ${y}`,
     tricksOk: "  ✓",
     tricksWarnNormal: "  (doit égaler les cartes distribuées)",
-    ghostTook: (n) => `  ·  Barbe Grise 👻 en a pris ${n}`,
+    ghostTook: (n) =>
+      `  ·  Barbe Grise 👻 a remporté ${n} ${n === 1 ? "pli" : "plis"}`,
     tricksWarnOver: "  (plus que les cartes distribuées ; vérifiez vos comptes)",
     krakenRecord: "+ Pli défaussé par le Kraken",
     krakenRecorded: "Pli du Kraken comptabilisé",
@@ -267,7 +268,7 @@ export const fr: Strings = {
     title: "Suivre les scores",
     subtitle: "Chaque joueur peut suivre les scores sur son propre téléphone.",
     liveHint:
-      "Démarrez une session en direct. Les joueurs qui scannent le code suivent les scores en temps réel ; chaque mise, pli et bonus apparaît sur leur téléphone au moment où vous l'enregistrez, sans rien actualiser.",
+      "Démarrez une session en direct. Les joueurs qui scannent le code suivent les scores en temps réel ; chaque mise, pli et bonus apparaît sur leur téléphone au moment où vous l’enregistrez, sans rien actualiser.",
     start: "Démarrer le suivi en direct",
     starting: "Démarrage…",
     stop: "Arrêter le suivi en direct",
@@ -278,16 +279,16 @@ export const fr: Strings = {
     statusSyncing: "Enregistrement…",
     statusOffline: "Reconnexion…",
     liveError:
-      "La synchro en direct a rencontré un problème. Elle réessaie. Vérifiez votre connexion, ou arrêtez puis relancez.",
+      "La synchronisation en direct a rencontré un problème et réessaie automatiquement. Vérifiez votre connexion, ou arrêtez puis relancez le suivi.",
     snapshotTitle: "Pas de connexion à la table ?",
-    snapshotToggleShow: "Afficher l'instantané hors ligne",
-    snapshotToggleHide: "Masquer l'instantané hors ligne",
+    snapshotToggleShow: "Afficher l’instantané hors ligne",
+    snapshotToggleHide: "Masquer l’instantané hors ligne",
     scanHint:
-      "Ce QR code contient un instantané en lecture seule de la partie : chaque mise, pli et bonus enregistrés jusqu'ici.",
+      "Ce QR code contient un instantané en lecture seule de la partie : chaque mise, pli et bonus enregistrés jusqu’ici.",
     updateHint:
-      "Il fonctionne sans serveur, mais ne se met pas à jour tout seul : les joueurs le re-scannent pour obtenir les derniers scores.",
+      "Il fonctionne sans serveur, mais ne se met pas à jour tout seul : les joueurs le rescannent pour obtenir les derniers scores.",
     networkHint:
-      "Le téléphone du joueur a besoin d'une connexion à la première ouverture de l'appli ; ensuite l'instantané fonctionne entièrement hors ligne.",
+      "Le téléphone du joueur a besoin d’une connexion à la première ouverture de l’appli ; ensuite l’instantané fonctionne entièrement hors ligne.",
     copyLink: "Copier le lien",
     copied: "Lien copié !",
     copyError: "Impossible de copier le lien.",
@@ -303,12 +304,12 @@ export const fr: Strings = {
     title: "Suivi de partie",
     roundProgress: (scored, total) =>
       `Scores après la manche ${scored} sur ${total}`,
-    noRounds: "Aucune manche n'a encore été validée.",
+    noRounds: "Aucune manche n’a encore été validée.",
     finished: "Scores finaux. La partie est terminée.",
     snapshotAt: (time) => `Scores du maître du jeu · relevés à ${time}`,
     liveUpdatedAt: (time) => `Mis à jour en direct · ${time}`,
     refreshHint:
-      "Ceci est un instantané. Pour l'actualiser, scannez à nouveau le QR code du maître du jeu.",
+      "Ceci est un instantané. Pour l’actualiser, scannez à nouveau le QR code du maître du jeu.",
     connecting: "Connexion à la partie en direct…",
     reconnecting: "Connexion perdue, reconnexion…",
     endedTitle: "Session en direct terminée",
@@ -316,7 +317,7 @@ export const fr: Strings = {
       "Le maître du jeu a arrêté le partage. Les derniers scores reçus sont affichés ci-dessous.",
     standingsTitle: "Classement",
     tapHint:
-      "Touchez un joueur pour son détail complet manche par manche : mises, plis et chaque bonus.",
+      "Touchez un joueur pour consulter son détail complet, manche par manche : mises, plis et bonus.",
     identityTitle: "Quel joueur êtes-vous ?",
     identityHint:
       "Choisissez votre nom une fois pour suivre vos propres scores. Ce choix reste fixe pour cette partie.",
@@ -326,7 +327,7 @@ export const fr: Strings = {
     sortGameOrder: "Places",
     sortRank: "Rang",
     you: "Vous",
-    openApp: "Ouvrir l'appli pour mes propres parties",
+    openApp: "Ouvrir l’appli pour mes propres parties",
     invalidTitle: "Code illisible",
     invalidBody:
       "Le lien scanné ne contient pas de partie lisible. Demandez au maître du jeu de réafficher le QR code, puis scannez-le à nouveau.",
@@ -334,7 +335,7 @@ export const fr: Strings = {
 
   results: {
     gameOver: "Partie terminée",
-    winner: (name, total) => `${name} gagne avec ${total} !`,
+    winner: (name, total) => `${name} gagne avec ${total} points !`,
     duration: (hours, minutes) =>
       hours > 0 && minutes > 0
         ? `Partie jouée en ${hours} h ${String(minutes).padStart(2, "0")}`
@@ -355,14 +356,14 @@ export const fr: Strings = {
     installError: "L’installation n’a pas pu démarrer. Vous pourrez réessayer plus tard.",
     install: "Installer l’app",
     installDismiss: "Plus tard",
-    backHome: "Retour à l'accueil",
+    backHome: "Retour à l’accueil",
   },
 
   stats: {
     open: "Statistiques des joueurs",
     title: "Statistiques",
     groupTitle: "Palmarès de l’équipage",
-    playerTitle: (name) => `${name}, statistiques`,
+    playerTitle: (name) => `Statistiques de ${name}`,
     emptyTitle: "Aucune légende à raconter",
     emptyBody:
       "Terminez une partie pour commencer l’histoire de votre équipage.",
@@ -372,7 +373,7 @@ export const fr: Strings = {
     gamesPlayed: "Parties jouées",
     wins: "Victoires",
     winRate: "Taux de victoire",
-    exactBidRate: "Mises réussies",
+    exactBidRate: "Taux de mises réussies",
     zeroBidRate: "Mises à zéro réussies",
     averagePoints: "Points moyens",
     bestScore: "Meilleur score",
@@ -413,7 +414,7 @@ export const fr: Strings = {
     rateRecordHolder: (name, rate, successes, attempts) =>
       `${name} · ${rate} (${successes}/${attempts})`,
     streakRecordHolder: (name, streak) =>
-      `${name} · ${streak} ${streak === 1 ? "victoire" : "victoires"} d'affilée`,
+      `${name} · ${streak} ${streak === 1 ? "victoire" : "victoires"} d’affilée`,
     recklessRecordHolder: (name, averageBid) =>
       `${name} · ${averageBid} de mise moyenne`,
     countRecordHolder: (name, count) => `${name} · ${count} fois`,
@@ -503,7 +504,7 @@ export const fr: Strings = {
         `${count} ${count === 1 ? "sirène prise" : "sirènes prises"} par un pirate`,
       pirateBySkullKing: (count) =>
         `${count} ${count === 1 ? "pirate pris" : "pirates pris"} par le Skull King`,
-      mermaidCapturesSkullKing: "Sirène capture le Skull King",
+      mermaidCapturesSkullKing: "Une sirène capture le Skull King",
       rascalWon: "Pari Rascal réussi",
       rascalLost: "Pari Rascal perdu",
       expansion7: (count) =>
@@ -512,7 +513,7 @@ export const fr: Strings = {
         `${count} ${count === 1 ? "8 spécial capturé" : "8 spéciaux capturés"}`,
       davyJonesLeviathans: (count) =>
         `${count} ${count === 1 ? "léviathan détruit" : "léviathans détruits"} par Davy Jones`,
-      secondCaptured: "Second capturé",
+      secondCaptured: "Le Second capturé",
       legacyLoot: (count) =>
         `${count} ${count === 1 ? "ancien bonus Butin" : "anciens bonus Butin"}`,
       loot: (count) =>
@@ -529,7 +530,7 @@ export const fr: Strings = {
     black14: "14 noir (Drapeau pirate)",
     mermaidByPirate: "Sirène prise par un pirate",
     pirateBySkullKing: "Pirate pris par le Skull King",
-    mermaidCapturesSkullKing: "Sirène capture le Skull King",
+    mermaidCapturesSkullKing: "Une sirène capture le Skull King",
     rascal: "Pari Rascal",
     newExpansion: "Extension",
     expansion7: "Nouveau 7 remporté",
@@ -537,10 +538,10 @@ export const fr: Strings = {
     expansionColorHint:
       "Les nouveaux 7 et 8 ne comptent que si la mise est réussie exactement.",
     davyJonesLeviathans: "Léviathan détruit par Davy Jones",
-    secondCaptured: "Second pris par Skull King / Sirène",
+    secondCaptured: "Le Second pris par Skull King / une sirène",
     each: "ch.",
     requiresBidHint:
-      "Cette partie n'accorde les bonus de capture que si la mise est réussie.",
+      "Cette partie n’accorde les bonus de capture que si la mise est réussie.",
     requiresBidMissed:
       "Mise ratée : les bonus de capture ne comptent pas dans cette partie.",
     cardBonus: (n) => `Bonus de cartes : ${n >= 0 ? "+" : ""}${n}`,
@@ -585,7 +586,7 @@ export const fr: Strings = {
   },
 
   rules: {
-    title: "Score & Cartes",
+    title: "Décompte et cartes",
     done: "Terminé",
     unofficialNotice:
       "Résumé pratique non officiel, rédigé pour faciliter le décompte. En cas de doute, le livret de votre édition fait foi.",
@@ -601,7 +602,7 @@ export const fr: Strings = {
     scoring: [
       {
         title: "Mise de 1 ou plus",
-        body: "Réussie exactement : +20 par pli remporté. Ratée (au-dessus ou en dessous) : -10 par pli d'écart, et aucun point pour les plis faits.",
+        body: "Réussie exactement : +20 par pli remporté. Ratée (au-dessus ou en dessous) : -10 par pli d’écart, et aucun point pour les plis faits.",
       },
       {
         title: "Mise à zéro",
@@ -611,7 +612,7 @@ export const fr: Strings = {
     rascal: [
       {
         title: "Un décompte officiel alternatif",
-        body: "Choisi à la création de la partie. Tous les joueurs ont le même potentiel à chaque manche : 10 points par carte distribuée, quelle que soit la mise. C'est la précision qui décide de ce que vous en gagnez. Les scores ne deviennent jamais négatifs.",
+        body: "Choisi à la création de la partie. Tous les joueurs ont le même potentiel à chaque manche : 10 points par carte distribuée, quelle que soit la mise. C’est la précision qui décide de ce que vous en gagnez. Les scores ne deviennent jamais négatifs.",
       },
       {
         title: "Coup direct · frappe à revers · échec cuisant",
@@ -623,7 +624,7 @@ export const fr: Strings = {
       },
       {
         title: "Option : Chevrotine ou Boulet de canon",
-        body: "Si l'option est activée, chacun choisit après avoir misé, puis tout le monde révèle en même temps. Main ouverte (Chevrotine) : barème habituel ; poing fermé (Boulet de canon) : 15 points par carte distribuée si la mise est exacte, sinon rien, bonus compris.",
+        body: "Si l’option est activée, chacun choisit après avoir misé, puis tout le monde révèle en même temps. Main ouverte (Chevrotine) : barème habituel ; poing fermé (Boulet de canon) : 15 points par carte distribuée si la mise est exacte, sinon rien, bonus compris.",
       },
     ],
     bonusEntries: [
@@ -644,18 +645,18 @@ export const fr: Strings = {
         body: "Votre Skull King remporte un pli contenant un ou des pirates.",
       },
       {
-        title: "Sirène capture le Skull King  (+40)",
+        title: "Une sirène capture le Skull King  (+40)",
         body: "Votre sirène remporte un pli contenant le Skull King. (Sirène bat Skull King, qui bat les pirates, qui battent la sirène.)",
       },
       {
         title: "Les bonus comptent quelle que soit votre mise",
-        body: "Selon le livret, vous gardez les bonus de capture même si vous ratez votre mise. Ils vont à celui qui capture la carte, peu importe qui l'a jouée. Une option à la création de la partie permet de jouer la variante inverse : mise ratée, aucun bonus de capture.",
+        body: "Selon le livret, vous gardez les bonus de capture même si vous ratez votre mise. Ils vont à celui qui capture la carte, peu importe qui l’a jouée. Une option à la création de la partie permet de jouer la variante inverse : mise ratée, aucun bonus de capture.",
       },
     ],
     expansion: [
       {
         title: "Nouveaux 7 et 8  (-5 / +5 chacun)",
-        body: "Ils se jouent comme des cartes de couleur normales. Le joueur qui remporte un nouveau 7 perd 5 points et celui qui remporte un nouveau 8 gagne 5 points, seulement si sa mise est exacte. En cas d'égalité sur la valeur gagnante, la première carte jouée l'emporte.",
+        body: "Ils se jouent comme des cartes de couleur normales. Le joueur qui remporte un nouveau 7 perd 5 points et celui qui remporte un nouveau 8 gagne 5 points, seulement si sa mise est exacte. En cas d’égalité sur la valeur gagnante, la première carte jouée l’emporte.",
       },
       {
         title: "Cartes 0/14",
@@ -663,11 +664,11 @@ export const fr: Strings = {
       },
       {
         title: "15 joker",
-        body: "Il vaut 15 jaune, violet ou vert. Si aucune couleur n'est définie, choisissez-la. Si une couleur non noire est déjà définie, il doit la suivre. Face au noir, aucune couleur ne doit être annoncée.",
+        body: "Il vaut 15 jaune, violet ou vert. Si aucune couleur n’est définie, choisissez-la. Si une couleur non noire est déjà définie, il doit la suivre. Face au noir, aucune couleur ne doit être annoncée.",
       },
       {
         title: "Mary Throne (Pirate)",
-        body: "Elle se joue comme un Pirate classique. Avec les pouvoirs avancés, choisissez au hasard et sans la regarder une carte de la main d'un adversaire : il devra la jouer au prochain pli, quelles que soient les cartes déjà jouées.",
+        body: "Elle se joue comme un Pirate classique. Avec les pouvoirs avancés, choisissez au hasard et sans la regarder une carte de la main d’un adversaire : il devra la jouer au prochain pli, quelles que soient les cartes déjà jouées.",
       },
       {
         title: "Dernière salve",
@@ -679,21 +680,21 @@ export const fr: Strings = {
       },
       {
         title: "Raie tachetée",
-        body: "La carte la plus basse remporte le pli ; en cas d'égalité, la première jouée gagne. Si plusieurs léviathans sont présents (Kraken, Baleine blanche, Raie), le dernier joué détermine l'effet du pli.",
+        body: "La carte la plus basse remporte le pli ; en cas d’égalité, la première jouée gagne. Si plusieurs léviathans sont présents (Kraken, Baleine blanche, Raie), le dernier joué détermine l’effet du pli.",
       },
       {
         title: "Casier de Davy Jones  (+20 par léviathan)",
-        body: "À utiliser avec les léviathans. Il ne gagne pas le pli et détruit tous les léviathans présents ; la carte la plus forte gagne alors normalement. Le joueur du Casier marque 20 points par léviathan détruit, quel que soit l'ordre des cartes.",
+        body: "À utiliser avec les léviathans. Il ne gagne pas le pli et détruit tous les léviathans présents ; la carte la plus forte gagne alors normalement. Le joueur du Casier marque 20 points par léviathan détruit, quel que soit l’ordre des cartes.",
       },
       {
-        title: "Second  (+30 s'il est capturé)",
-        body: "Il bat tout sauf le Skull King et les Sirènes. Il peut utiliser les pouvoirs des Pirates qu'il capture, mais ne gagne aucun bonus pour eux. Si le Skull King ou une Sirène le capture, leur joueur gagne 30 points.",
+        title: "Second  (+30 s’il est capturé)",
+        body: "Il bat tout sauf le Skull King et les Sirènes. Il peut utiliser les pouvoirs des Pirates qu’il capture, mais ne gagne aucun bonus pour eux. Si le Skull King ou une Sirène le capture, leur joueur gagne 30 points.",
       },
     ],
     special: [
       {
         title: "Fuite / Tigresse en fuite",
-        body: "Perd toujours le pli. Sert à se défausser sans risque d'un pli dont vous ne voulez pas.",
+        body: "Perd toujours le pli. Sert à se défausser sans risque d’un pli dont vous ne voulez pas.",
       },
       {
         title: "Pirate (x5) & Tigresse",
@@ -705,11 +706,11 @@ export const fr: Strings = {
       },
       {
         title: "Sirène (x2)",
-        body: "Bat toutes les numérotées et bat le Skull King (+40), mais perd contre les pirates. Si un pirate, le Skull King et une sirène sont dans le même pli, la sirène l'emporte toujours.",
+        body: "Bat toutes les numérotées et bat le Skull King (+40), mais perd contre les pirates. Si un pirate, le Skull King et une sirène sont dans le même pli, la sirène l’emporte toujours.",
       },
       {
         title: "Kraken",
-        body: "Le pli est détruit : PERSONNE ne le remporte, les cartes sont mises de côté. Aucun pli ne compte et aucune capture n'a lieu. Le pli suivant est lancé par celui qui aurait dû gagner.",
+        body: "Le pli est détruit : PERSONNE ne le remporte, les cartes sont mises de côté. Aucun pli ne compte et aucune capture n’a lieu. Le pli suivant est lancé par celui qui aurait dû gagner.",
       },
       {
         title: "Baleine blanche",
@@ -717,7 +718,7 @@ export const fr: Strings = {
       },
       {
         title: "Kraken vs Baleine blanche",
-        body: "Si les deux sont dans le même pli, la deuxième jouée s'applique ; utilisez la règle de cette carte.",
+        body: "Si les deux sont dans le même pli, la deuxième jouée s’applique ; utilisez la règle de cette carte.",
       },
       {
         title: "Butin  (+20 par allié)",
@@ -735,11 +736,11 @@ export const fr: Strings = {
       },
       {
         title: "Il joue mais ne marque jamais",
-        body: "Barbe Grise ne mise pas et ne gagne aucun point. Il ne fait que voler des plis (et les cartes bonus qu'ils contiennent sont simplement perdues). Quand il remporte un pli, il lance le suivant ; sinon il est toujours deuxième.",
+        body: "Barbe Grise ne mise pas et ne gagne aucun point. Il ne fait que voler des plis (et les cartes bonus qu’ils contiennent sont simplement perdues). Quand il remporte un pli, il lance le suivant ; sinon il est toujours deuxième.",
       },
       {
         title: "Vos totaux de plis peuvent être inférieurs",
-        body: "Comme Barbe Grise remporte des plis, vos deux totaux de plis peuvent être INFÉRIEURS aux cartes distribuées. L'app indique combien de plis le fantôme a pris au lieu de vous avertir.",
+        body: "Comme Barbe Grise remporte des plis, vos deux totaux de plis peuvent être INFÉRIEURS aux cartes distribuées. L’app indique combien de plis le fantôme a pris au lieu de vous avertir.",
       },
     ],
   },

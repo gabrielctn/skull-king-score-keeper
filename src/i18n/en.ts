@@ -15,13 +15,13 @@ export const en: Strings = {
   cookies: {
     accessibilityLabel: "Analytics cookie choices",
     message:
-      "We use Google Analytics cookies to understand visits and improve the score keeper.",
+      "We use Google Analytics cookies to understand visits and improve the scorekeeper.",
     decline: "Decline",
     accept: "Accept",
   },
 
   home: {
-    title: "Score keeper",
+    title: "Scorekeeper",
     subtitle: "for Skull King",
     unofficial: "Unofficial fan-made app",
     resume: "Resume game",
@@ -64,7 +64,7 @@ export const en: Strings = {
     automaticUpdatesBody:
       "Installed apps now download each new release automatically and switch to it as soon as the device is online.",
     items: [
-      "Score controls now keep a clear gap before Bonus, including when its counter is visible on compact screens.",
+      "Score controls now keep a clear gap before “Bonus”, including when its counter is visible on compact screens.",
       "All player-facing text now uses cleaner punctuation without en or em dashes.",
     ],
     close: "Got it",
@@ -99,11 +99,11 @@ export const en: Strings = {
       title: "Install the app",
       installedTitle: "App installed",
       installedBody:
-        "The score keeper is on your device. It opens like any app and works fully offline.",
+        "The scorekeeper is installed on your device. It opens like any app and works fully offline.",
       promptHint:
-        "Add the score keeper to your home screen for one-tap access and offline play.",
+        "Add the scorekeeper to your home screen for one-tap access and offline play.",
       manualHint:
-        "Add the score keeper to your home screen for one-tap access and offline play. Follow the steps for your phone below.",
+        "Add the scorekeeper to your home screen for one-tap access and offline play. Follow the steps for your phone below.",
       button: "Install now",
       error: "Installation could not start. Try the manual steps below.",
       guideTitle: "How to install it by hand",
@@ -202,7 +202,7 @@ export const en: Strings = {
     },
     rascalBetsTitle: "Rascal's optional rules ✊",
     rascalBetsHint:
-      "After bidding, everyone declares Buckshot (open hand: the standard tiers) or Cannonball (closed fist: 15 points per card dealt on an exact bid, nothing otherwise, bonuses included).",
+      "After bidding, everyone declares Grapeshot (open hand: the standard tiers) or Cannonball (closed fist: 15 points per card dealt on an exact bid, nothing otherwise, bonuses included).",
     bonusesRequireBidTitle: "Bonuses only on an exact bid",
     bonusesRequireBidHint:
       "A common variant: capture bonuses (14s, mermaids, pirates, Skull King…) are lost when the bid is missed. Left off, the app follows the rulebook and keeps them whatever the bid.",
@@ -253,7 +253,7 @@ export const en: Strings = {
     untouchedConfirm: "Yes, score it",
     rascalStake: (points) => `Rascal's scoring · ${points} points at stake`,
     rascalBetNames: {
-      buckshot: "Buckshot",
+      buckshot: "Grapeshot",
       cannonball: "Cannonball",
     },
     rascalBetFor: (name) => `${name}'s declaration`,
@@ -265,10 +265,10 @@ export const en: Strings = {
     subtitle: "Every player can track the scores on their own phone.",
     liveHint:
       "Start a live session. Players who scan the code follow the scores in real time; every bid, trick and bonus appears on their phone as you record it, no refresh needed.",
-    start: "Start live follow",
+    start: "Start live tracking",
     starting: "Starting…",
-    stop: "Stop live follow",
-    liveOnTitle: "Live follow is on",
+    stop: "Stop live tracking",
+    liveOnTitle: "Live tracking is on",
     liveScanHint:
       "Players scan this QR code to follow the scores live on their own phone.",
     statusLive: "Live · auto-updating",
@@ -302,15 +302,15 @@ export const en: Strings = {
       `Scores after round ${scored} of ${total}`,
     noRounds: "No round has been scored yet.",
     finished: "Final scores. The game is over.",
-    snapshotAt: (time) => `Game master's scores · read at ${time}`,
+    snapshotAt: (time) => `Scorekeeper's scores · captured at ${time}`,
     liveUpdatedAt: (time) => `Updated live · ${time}`,
     refreshHint:
-      "This is a snapshot. To refresh it, scan the game master's QR code again.",
+      "This is a snapshot. To refresh it, scan the scorekeeper's QR code again.",
     connecting: "Connecting to the live game…",
     reconnecting: "Connection lost. Reconnecting…",
     endedTitle: "Live session ended",
     endedBody:
-      "The game master stopped sharing. The last scores you received are shown below.",
+      "The scorekeeper stopped sharing. The last scores you received are shown below.",
     standingsTitle: "Standings",
     tapHint:
       "Tap any player for their full round-by-round details: bids, tricks and every bonus.",
@@ -326,12 +326,12 @@ export const en: Strings = {
     openApp: "Open the app for my own games",
     invalidTitle: "This code could not be read",
     invalidBody:
-      "The scanned link does not contain a readable game. Ask the game master to show the QR code again, then rescan it.",
+      "The scanned link does not contain a readable game. Ask the scorekeeper to show the QR code again, then rescan it.",
   },
 
   results: {
     gameOver: "Game Over",
-    winner: (name, total) => `${name} wins with ${total}!`,
+    winner: (name, total) => `${name} wins with ${total} points!`,
     duration: (hours, minutes) =>
       hours > 0 && minutes > 0
         ? `Played in ${hours} hr ${minutes} min`
@@ -345,7 +345,7 @@ export const en: Strings = {
       `Rank ${rank}, ${name}, ${total} points`,
     review: "Review round-by-round",
     rematch: "Rematch with the same crew",
-    installTitle: "Keep the score keeper aboard",
+    installTitle: "Keep the scorekeeper aboard",
     installHint: "Install the app for quick access and fully offline play.",
     installIosHint:
       "Tap Share and “Add to Home Screen”. In Chrome, open “See more” first.",
@@ -459,12 +459,12 @@ export const en: Strings = {
     historyTitle: "Scored rounds",
     round: (n) => `Round ${n}`,
     roundSummary: (bid, tricks) => `Bid ${bid} · won ${tricks}`,
-    exact: "Bid hit",
-    missed: "Bid missed",
+    exact: "Exact bid",
+    missed: "Missed bid",
     runningTotal: "Total after round",
     expandRound: (n) => `Show round ${n} details`,
     collapseRound: (n) => `Hide round ${n} details`,
-    bidSuccess: (bid) => `Bid ${bid} hit exactly`,
+    bidSuccess: (bid) => `Exact bid: ${bid}`,
     bidMissed: (bid, difference) =>
       `Bid ${bid} missed · ${difference} ${
         difference === 1 ? "trick" : "tricks"
@@ -476,13 +476,13 @@ export const en: Strings = {
     outcomes: {
       directHit: "Direct hit",
       glancingBlow: "Glancing blow",
-      whiff: "Total whiff",
+      whiff: "Complete miss",
     },
     rascalBidDirect: (bid) => `Direct hit · bid ${bid} exact · full points`,
     rascalBidGlancing: "Glancing blow · off by one · half the points",
-    rascalBidWhiff: (diff) => `Total whiff · off by ${diff}`,
+    rascalBidWhiff: (diff) => `Complete miss · off by ${diff}`,
     rascalCannonballWon: "Cannonball · exact bid · 15 per card",
-    rascalCannonballLost: (diff) => `Cannonball lost · off by ${diff}`,
+    rascalCannonballLost: (diff) => `Cannonball missed · off by ${diff}`,
     ignored: "Not counted",
     items: {
       colored14: (count) =>
@@ -574,7 +574,7 @@ export const en: Strings = {
   },
 
   rules: {
-    title: "Scoring & Cards",
+    title: "Scoring & cards",
     done: "Done",
     unofficialNotice:
       "Unofficial practical summary written to make scoring easier. When in doubt, the rulebook for your edition takes precedence.",
@@ -603,7 +603,7 @@ export const en: Strings = {
         body: "Chosen when creating the game. Every player has the same potential each round: 10 points per card dealt, whatever the bid. Accuracy decides how much of it you take. Scores never go negative.",
       },
       {
-        title: "Direct hit · glancing blow · total whiff",
+        title: "Direct hit · glancing blow · complete miss",
         body: "Exact bid: all the points at stake. Off by one: half of them. Off by two or more: nothing.",
       },
       {
@@ -611,8 +611,8 @@ export const en: Strings = {
         body: "Capture bonuses count in full on a direct hit, half on a glancing blow, and not at all on a whiff. Loot, the special 7s/8s and the Rascal pirate wager keep their own exact-bid rules.",
       },
       {
-        title: "Optional: Buckshot or Cannonball",
-        body: "If enabled at setup, everyone declares after bidding, then reveals simultaneously. Open hand (Buckshot) keeps the standard tiers; closed fist (Cannonball) pays 15 points per card dealt on an exact bid and nothing otherwise, bonuses included.",
+        title: "Optional: Grapeshot or Cannonball",
+        body: "If enabled at setup, everyone declares after bidding, then reveals simultaneously. Open hand (Grapeshot) keeps the standard tiers; closed fist (Cannonball) pays 15 points per card dealt on an exact bid and nothing otherwise, bonuses included.",
       },
     ],
     bonusEntries: [

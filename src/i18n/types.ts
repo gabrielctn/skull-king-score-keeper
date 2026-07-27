@@ -186,7 +186,7 @@ export interface Strings {
     scoringNames: Record<ScoringMode, string>;
     /** One-line description of each scoring system. */
     scoringHints: Record<ScoringMode, string>;
-    /** Toggle for the Rascal optional rules (Chevrotine / Boulet de canon). */
+    /** Toggle for the Rascal optional rules (Grapeshot / Cannonball). */
     rascalBetsTitle: string;
     rascalBetsHint: string;
     /** Toggle for the "capture bonuses need an exact bid" house rule. */
@@ -306,7 +306,7 @@ export interface Strings {
     connecting: string;
     /** Banner while a live session is reconnecting. */
     reconnecting: string;
-    /** Banner when the game master ends the live session. */
+    /** Banner when the scorekeeper ends the live session. */
     endedTitle: string;
     endedBody: string;
     standingsTitle: string;
