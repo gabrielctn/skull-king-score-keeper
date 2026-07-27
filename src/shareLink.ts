@@ -50,6 +50,10 @@ export const SHARE_CODEC_VERSION = 1;
 /** URL-hash parameter carrying the share code: `#skl=<code>`. */
 export const SHARE_HASH_PARAM = "skl";
 
+/** Public web destination opened by QR codes created in the native app. */
+export const DEPLOYED_PWA_BASE_URL =
+  "https://gabrielctn.github.io/skull-king-score-keeper/";
+
 /** Upper bound accepted by the decoder; far above any QR code's capacity. */
 export const MAX_SHARE_CODE_CHARS = 8192;
 
@@ -571,11 +575,14 @@ export function buildShareUrl(game: Game, baseUrl: string): string {
 }
 
 /**
- * The address players should land on: this page, without query or hash. On
- * the deployed PWA that is the GitHub Pages sub-path; in dev, localhost.
+ * The address players should land on: this page, without query or hash. Web
+ * keeps using the current page (including localhost in development); native
+ * falls back to the canonical deployed PWA.
  */
-export function webShareBaseUrl(): string | null {
-  if (typeof window === "undefined" || !window.location) return null;
+export function webShareBaseUrl(): string {
+  if (typeof window === "undefined" || !window.location) {
+    return DEPLOYED_PWA_BASE_URL;
+  }
   return `${window.location.origin}${window.location.pathname}`;
 }
 

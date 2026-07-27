@@ -150,6 +150,27 @@ dev server. The export is served under the `/skull-king-score-keeper/` sub-path
 serves it, expose `dist/` at that path — e.g. symlink it into a folder named
 `skull-king-score-keeper/` and serve the parent.
 
+## Native iOS companion
+
+The PWA remains available and unchanged. A separate native iOS target reuses
+the same React Native screens, scoring engine, translations, and local game
+storage:
+
+```bash
+npm install
+npm run prebuild:ios  # generates ios/ and installs CocoaPods
+npm run ios           # builds and launches the iOS app
+```
+
+The generated `ios/` directory is intentionally ignored. The native App
+Intents and React Native handoff are tracked under `native/ios/` and injected
+on every prebuild by `plugins/withSkullKingAppIntents.js`, so regenerating the
+Xcode project does not erase them.
+
+The iOS app targets iOS 16 or later and exposes three App Shortcuts to Siri,
+Spotlight, and Shortcuts: start a new game, continue the current game, and open
+player statistics.
+
 ## How it becomes a PWA
 
 `expo export -p web` produces a plain static SPA with no PWA shell. The
@@ -183,9 +204,10 @@ The typed `Strings` contract prevents a locale from omitting the release-note UI
 and `npm run test:scoring` verifies that all localized rules and note lists remain
 structurally synchronized.
 
-> **Note (iOS):** Safari may evict a PWA's stored data after ~7 days of no use, so
-> an in-progress game saved on iOS isn't guaranteed to survive a long break. This is
-> an iOS PWA limitation, accepted as part of the move off the native app.
+> **Note (iOS PWA only):** Safari may evict a PWA's stored data after ~7 days of
+> no use, so an in-progress PWA game isn't guaranteed to survive a long break.
+> The separate native iOS app uses native application storage and is not subject
+> to that Safari limitation.
 
 ## Deploying to GitHub Pages
 

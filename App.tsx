@@ -59,6 +59,11 @@ import {
   serializeBackup,
 } from "./src/backup";
 import CookieConsentBanner from "./src/components/CookieConsentBanner";
+import {
+  consumePendingAppIntentDestination,
+  subscribeToAppIntentDestinations,
+} from "./src/appIntents";
+import type { AppIntentDestination } from "./src/appIntents";
 
 type Screen = "home" | "setup" | "game" | "results" | "settings" | "stats";
 type PendingCurrentGame = Game | null | undefined;
@@ -141,6 +146,8 @@ export default function App() {
   const [settings, setSettings] = useState<AppSettings | null>(null);
   const [loading, setLoading] = useState(true);
   const [storageError, setStorageError] = useState(false);
+  const [pendingAppIntentDestination, setPendingAppIntentDestination] =
+    useState<AppIntentDestination | null>(null);
   const historyRef = useRef<Game[]>([]);
   const gameRef = useRef<Game | null>(null);
   const pendingCurrentSave = useRef<PendingCurrentGame>(undefined);
@@ -244,6 +251,25 @@ export default function App() {
   useEffect(() => {
     gameRef.current = game;
   }, [game]);
+
+  // Subscribe before consuming the launch value so an intent delivered while
+  // the bridge is starting cannot fall into the gap between those two steps.
+  // The web implementation is deliberately inert.
+  useEffect(() => {
+    let active = true;
+    const unsubscribe = subscribeToAppIntentDestinations((destination) => {
+      if (active) setPendingAppIntentDestination(destination);
+    });
+    void consumePendingAppIntentDestination().then((destination) => {
+      if (active && destination) {
+        setPendingAppIntentDestination(destination);
+      }
+    });
+    return () => {
+      active = false;
+      unsubscribe();
+    };
+  }, []);
 
   // A QR code scanned while the app is already open navigates to the same
   // page with a new share payload in the hash; pick it up without a reload.
@@ -493,6 +519,41 @@ export default function App() {
     persist(rematch, true);
     setScreen("game");
   };
+
+  // Storage restoration must finish before resolving "continue game"; otherwise
+  // a launch intent could briefly see an empty store and route to setup.
+  useEffect(() => {
+    if (loading || pendingAppIntentDestination === null) return;
+
+    const destination = pendingAppIntentDestination;
+    setPendingAppIntentDestination(null);
+
+    if (destination === "newGame") {
+      setScreen("setup");
+      return;
+    }
+    if (destination === "statistics") {
+      setScreen("stats");
+      return;
+    }
+
+    const activeGame =
+      game?.status === "in_progress"
+        ? game
+        : gameHistory.find((item) => item.status === "in_progress") ?? null;
+    if (activeGame) {
+      setGame(activeGame);
+      gameRef.current = activeGame;
+      queueCurrentSave(activeGame);
+      pushCloud(activeGame, historyRef.current);
+      setScreen("game");
+      return;
+    }
+
+    // With no games at all, setup is the useful recovery path. If only finished
+    // history exists, Home lets the user review it or deliberately start anew.
+    setScreen(game === null && gameHistory.length === 0 ? "setup" : "home");
+  }, [game, gameHistory, loading, pendingAppIntentDestination]);
 
   if (loading || lang === null || settings === null) {
     return (

@@ -3,6 +3,7 @@ import {
   Image,
   Linking,
   Modal,
+  Platform,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -120,7 +121,12 @@ export default function HomeScreen({
 
   return (
     <SafeAreaView style={styles.safe}>
-      <View style={styles.topActions}>
+      <View
+        style={[
+          styles.topActions,
+          Platform.OS !== "web" && styles.topActionsNative,
+        ]}
+      >
         <TouchableOpacity
           style={styles.iconButton}
           onPress={onOpenStats}
@@ -355,7 +361,9 @@ export default function HomeScreen({
             <Text style={styles.disclaimer}>{t.home.disclaimer}</Text>
           </View>
 
-          <Text style={styles.footer}>{t.home.offline}</Text>
+          {Platform.OS === "web" ? (
+            <Text style={styles.footer}>{t.home.offline}</Text>
+          ) : null}
         </View>
         </View>
       </ScrollView>
@@ -418,6 +426,14 @@ const styles = StyleSheet.create({
     right: spacing.md,
     zIndex: 1,
     flexDirection: "row",
+  },
+  topActionsNative: {
+    position: "relative",
+    top: 0,
+    right: 0,
+    alignSelf: "flex-end",
+    marginTop: spacing.sm,
+    marginEnd: spacing.md,
   },
   iconButton: {
     width: 44,

@@ -1,19 +1,15 @@
+import { resolvePreferredLang } from "./resolveLanguage";
 import { Lang } from "./types";
 
-/** Resolve browser language preferences in order, with English as fallback. */
-export function resolvePreferredLang(locales: readonly string[]): Lang {
-  for (const locale of locales) {
-    const code = locale.toLowerCase().split("-")[0];
-    if (
-      code === "en" ||
-      code === "fr" ||
-      code === "es" ||
-      code === "de" ||
-      code === "ar" ||
-      code === "zh"
-    ) {
-      return code;
-    }
-  }
-  return "en";
+export { resolvePreferredLang } from "./resolveLanguage";
+
+/** Best-effort first-launch browser language guess. */
+export function detectPreferredLang(): Lang {
+  if (typeof navigator === "undefined") return "en";
+  const requested = navigator.languages?.length
+    ? navigator.languages
+    : navigator.language
+      ? [navigator.language]
+      : [];
+  return resolvePreferredLang(requested);
 }

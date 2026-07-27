@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { Platform, View } from "react-native";
 import { Lang, Strings } from "./types";
 import { en } from "./en";
 import { fr } from "./fr";
@@ -7,7 +8,7 @@ import { de } from "./de";
 import { ar } from "./ar";
 import { zh } from "./zh";
 import { saveLang } from "../storage";
-import { resolvePreferredLang } from "./detection";
+import { detectPreferredLang } from "./detection";
 
 export const SUPPORTED_LANGS: readonly Lang[] = [
   "fr",
@@ -54,17 +55,9 @@ export function languageNativeName(lang: Lang): string {
   return nativeLanguageNames[lang];
 }
 
-/** Best-effort first-launch language guess (web only); defaults to English. */
+/** Best-effort first-launch language guess; defaults to English. */
 export function detectLang(): Lang {
-  if (typeof navigator !== "undefined") {
-    const requested = navigator.languages?.length
-      ? navigator.languages
-      : navigator.language
-        ? [navigator.language]
-        : [];
-    return resolvePreferredLang(requested);
-  }
-  return "en";
+  return detectPreferredLang();
 }
 
 interface I18nValue {
@@ -96,7 +89,18 @@ export function I18nProvider({
   };
   return (
     <I18nContext.Provider value={{ lang, setLang, t: dictionaries[lang] }}>
-      {children}
+      {Platform.OS === "web" ? (
+        children
+      ) : (
+        <View
+          style={{
+            flex: 1,
+            direction: lang === "ar" ? "rtl" : "ltr",
+          }}
+        >
+          {children}
+        </View>
+      )}
     </I18nContext.Provider>
   );
 }

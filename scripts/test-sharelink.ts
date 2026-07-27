@@ -6,11 +6,13 @@
 import { createGame, playerScoreHistory, standings } from "../src/scoring";
 import {
   MAX_SHARE_CODE_CHARS,
+  DEPLOYED_PWA_BASE_URL,
   ShareCodeError,
   buildShareUrl,
   decodeShareCode,
   encodeShareCode,
   extractShareCode,
+  webShareBaseUrl,
 } from "../src/shareLink";
 import { qrCodeDataUrl } from "../src/qr";
 import { Game } from "../src/types";
@@ -276,6 +278,10 @@ check(
 );
 
 console.log("URL helpers");
+check(
+  "non-browser runtimes use the deployed PWA as the QR destination",
+  webShareBaseUrl() === DEPLOYED_PWA_BASE_URL
+);
 check(
   "share URLs put the code in the #skl= hash",
   url.startsWith("https://example.test/skull-king/#skl=")

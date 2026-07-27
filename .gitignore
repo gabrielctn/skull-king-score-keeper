@@ -10,6 +10,8 @@ expo-env.d.ts
 # Native
 ios/
 android/
+!native/ios/
+!native/ios/**
 
 # Metro
 .metro-health-check*

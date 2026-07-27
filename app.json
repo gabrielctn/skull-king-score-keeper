@@ -3,6 +3,7 @@
     "name": "Score Keeper, Unofficial",
     "slug": "skull-king-scorekeeper",
     "version": "1.9.2",
+    "scheme": "skullking",
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
     "newArchEnabled": true,
@@ -11,6 +12,13 @@
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#0b1722"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.gabrielcretin.skullking",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "web": {
       "bundler": "metro",
@@ -23,6 +31,9 @@
       "display": "standalone",
       "orientation": "portrait"
     },
+    "plugins": [
+      "./plugins/withSkullKingAppIntents"
+    ],
     "experiments": {
       "baseUrl": "/skull-king-score-keeper"
     },
