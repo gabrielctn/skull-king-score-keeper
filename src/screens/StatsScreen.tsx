@@ -17,13 +17,15 @@ import { Game } from "../types";
 
 interface Props {
   gameHistory: Game[];
+  /** Name of the shared game table these stats belong to, if any. */
+  tableName?: string | null;
   onBack: () => void;
 }
 
 const rankMedal = (rank: number) =>
   rank === 1 ? "🥇" : rank === 2 ? "🥈" : rank === 3 ? "🥉" : String(rank);
 
-export default function StatsScreen({ gameHistory, onBack }: Props) {
+export default function StatsScreen({ gameHistory, tableName, onBack }: Props) {
   const { t, lang } = useI18n();
   const { width } = useWindowDimensions();
   const layout = getResponsiveLayout(width);
@@ -86,14 +88,21 @@ export default function StatsScreen({ gameHistory, onBack }: Props) {
         >
           <Text style={styles.back}>‹ {t.common.back}</Text>
         </TouchableOpacity>
-        <Text
-          style={styles.title}
-          numberOfLines={1}
-          accessibilityRole="header"
-          accessibilityLiveRegion="polite"
-        >
-          {selected ? t.stats.playerTitle(selected.name) : t.stats.title}
-        </Text>
+        <View style={styles.titleBlock}>
+          <Text
+            style={styles.title}
+            numberOfLines={1}
+            accessibilityRole="header"
+            accessibilityLiveRegion="polite"
+          >
+            {selected ? t.stats.playerTitle(selected.name) : t.stats.title}
+          </Text>
+          {!selected && tableName ? (
+            <Text style={styles.tableName} numberOfLines={1}>
+              ⚓ {tableName}
+            </Text>
+          ) : null}
+        </View>
         <View style={styles.headerSpacer} />
       </View>
 
@@ -494,12 +503,18 @@ const styles = StyleSheet.create({
   },
   backButton: { width: 92, minHeight: 44, justifyContent: "center" },
   back: { color: colors.gold, fontSize: 17 },
+  titleBlock: { flex: 1, alignItems: "center" },
   title: {
-    flex: 1,
     color: colors.text,
     fontSize: 20,
     fontWeight: "800",
     textAlign: "center",
+  },
+  tableName: {
+    color: colors.gold,
+    fontSize: 12,
+    fontWeight: "700",
+    marginTop: 2,
   },
   headerSpacer: { width: 92 },
   scroll: {

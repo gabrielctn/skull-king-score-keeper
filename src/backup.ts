@@ -20,6 +20,22 @@ const MAX_LOOT_USES_PER_RAW_ROUND = 10;
 export interface BackupData {
   currentGame: Game | null;
   history: Game[];
+  /**
+   * Name of the shared game table this data belongs to. Optional so that
+   * pre-1.10 payloads (and the many `{currentGame, history}` literals) stay
+   * valid; absent means "no name chosen yet".
+   */
+  tableName?: string | null;
+}
+
+/** Hard cap applied to table names at input and at import. */
+export const MAX_TABLE_NAME_LENGTH = 60;
+
+/** Trim and bound an untrusted table name; anything unusable becomes null. */
+export function normalizeTableName(raw: unknown): string | null {
+  if (typeof raw !== "string") return null;
+  const trimmed = raw.trim().slice(0, MAX_TABLE_NAME_LENGTH).trim();
+  return trimmed.length > 0 ? trimmed : null;
 }
 
 export interface BackupPayloadV1 extends BackupData {
@@ -528,6 +544,7 @@ function normalizeBackupData(data: BackupData, path: string): BackupData {
     history: deduplicateGames(
       rawHistory.map((game) => winnerById.get(game.id) ?? game)
     ),
+    tableName: normalizeTableName(data.tableName),
   };
 }
 
@@ -649,6 +666,7 @@ export function parseBackup(json: string): BackupPayloadV1 {
     {
       currentGame: raw.currentGame as Game | null,
       history: raw.history as Game[],
+      tableName: raw.tableName as string | null | undefined,
     },
     "backup"
   );
@@ -705,6 +723,9 @@ export function mergeBackupData(
       ? byId.get(currentCandidate.id) ?? currentCandidate
       : null,
     history,
+    // The shared table row is authoritative for the name, so a rename made by
+    // any member propagates; a device that never named it adopts the table's.
+    tableName: normalizedImported.tableName ?? normalizedLocal.tableName ?? null,
   };
 }
 

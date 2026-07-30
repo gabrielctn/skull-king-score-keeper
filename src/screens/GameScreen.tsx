@@ -34,9 +34,12 @@ import BonusEditor from "../components/BonusEditor";
 import LootTracker from "../components/LootTracker";
 import LootConfirmationModal from "../components/LootConfirmationModal";
 import RulesModal from "../components/RulesModal";
+import GameRulesModal from "../components/GameRulesModal";
 import ScoreBreakdownModal from "../components/ScoreBreakdownModal";
 import ShareLiveModal from "../components/ShareLiveModal";
 import ScoreChart from "../components/ScoreChart";
+import { MasterLiveState, liveSessionManager } from "../liveSession";
+import { liveConfigured } from "../liveConfig";
 import { colors, radius, spacing } from "../theme";
 import { getResponsiveLayout } from "../responsive";
 import { useKeepAwake } from "../wakeLock";
@@ -138,7 +141,23 @@ export default function GameScreen({
   }
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [rulesOpen, setRulesOpen] = useState(false);
+  const [gameRulesOpen, setGameRulesOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
+  const [liveState, setLiveState] = useState<MasterLiveState | null>(() =>
+    liveConfigured() ? liveSessionManager().getState() : null
+  );
+
+  // Reflect the live-session state on the header pill (gold while sharing).
+  useEffect(() => {
+    if (!liveConfigured()) return;
+    const manager = liveSessionManager();
+    setLiveState(manager.getState());
+    return manager.subscribe(setLiveState);
+  }, []);
+  const liveActive =
+    liveState !== null &&
+    liveState.gameId === game.id &&
+    (liveState.status === "live" || liveState.status === "syncing");
   const [scorePlayerId, setScorePlayerId] = useState<string | null>(null);
   const [lootReviewOpen, setLootReviewOpen] = useState(false);
   const [untouchedReviewOpen, setUntouchedReviewOpen] = useState(false);
@@ -499,11 +518,27 @@ export default function GameScreen({
           <View style={styles.sideActions}>
             <TouchableOpacity
               style={styles.headerIconButton}
+              onPress={() => setGameRulesOpen(true)}
+              accessibilityRole="button"
+              accessibilityLabel={t.gameSettings.open}
+            >
+              <Text style={styles.help}>⚙</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.livePill, liveActive && styles.livePillActive]}
               onPress={() => setShareOpen(true)}
               accessibilityRole="button"
               accessibilityLabel={t.liveShare.open}
+              accessibilityState={{ selected: liveActive }}
             >
-              <Text style={styles.help}>▦</Text>
+              <Text
+                style={[
+                  styles.livePillText,
+                  liveActive && styles.livePillTextActive,
+                ]}
+              >
+                📡 {t.liveShare.badge}
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.headerIconButton}
@@ -549,6 +584,14 @@ export default function GameScreen({
                   ]}
                   numberOfLines={1}
                 >
+                  <Text
+                    style={[
+                      styles.turnChipNum,
+                      i === 0 && styles.turnChipLeadText,
+                    ]}
+                  >
+                    {i + 1}
+                  </Text>{" "}
                   {slot.kind === "ghost"
                     ? `👻 ${t.game.ghostName}`
                     : slot.player.name}
@@ -557,7 +600,11 @@ export default function GameScreen({
             </React.Fragment>
           ))}
         </View>
-        <Text style={styles.turnHint}>{t.game.playOrderHint}</Text>
+        <Text style={styles.turnHint}>
+          {t.game.playOrderLead(
+            order[0]?.kind === "player" ? order[0].player.name : t.game.ghostName
+          )}
+        </Text>
         {game.scoringMode === "rascal" ? (
           <Text style={styles.rascalStake}>
             🎲 {t.game.rascalStake(RASCAL_POINTS_PER_CARD * cards)}
@@ -862,6 +909,12 @@ export default function GameScreen({
       ) : null}
 
       <RulesModal visible={rulesOpen} onClose={() => setRulesOpen(false)} />
+      <GameRulesModal
+        visible={gameRulesOpen}
+        game={game}
+        onClose={() => setGameRulesOpen(false)}
+        onChange={onUpdateGame}
+      />
       <ShareLiveModal
         visible={shareOpen}
         game={game}
@@ -965,6 +1018,18 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     textAlign: "center",
   },
+  livePill: {
+    minHeight: 44,
+    paddingHorizontal: spacing.sm,
+    borderWidth: 1,
+    borderColor: colors.controlBorder,
+    borderRadius: 22,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  livePillActive: { backgroundColor: colors.gold, borderColor: colors.gold },
+  livePillText: { color: colors.gold, fontSize: 13, fontWeight: "800" },
+  livePillTextActive: { color: colors.bg },
   roundNav: { flexDirection: "row", alignItems: "center" },
   roundNavMobile: { alignSelf: "center", marginTop: spacing.xs },
   roundArrow: {
@@ -1013,12 +1078,12 @@ const styles = StyleSheet.create({
   turnChipLead: { backgroundColor: colors.gold, borderColor: colors.gold },
   turnChipGhost: { borderColor: colors.accent, borderStyle: "dashed" },
   turnChipText: { color: colors.text, fontSize: 12, fontWeight: "700" },
+  turnChipNum: { color: colors.textDim, fontSize: 11, fontWeight: "900" },
   turnChipLeadText: { color: colors.bg },
   turnHint: {
     color: colors.textDim,
-    fontSize: 10,
+    fontSize: 12,
     marginTop: 4,
-    fontStyle: "italic",
   },
   rascalStake: {
     color: colors.gold,

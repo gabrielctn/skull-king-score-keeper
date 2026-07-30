@@ -64,8 +64,11 @@ export const de: Strings = {
     automaticUpdatesBody:
       "Installierte Apps laden jede neue Version automatisch und wechseln zu ihr, sobald das Gerät online ist.",
     items: [
-      "Die Punkteingabe hält nun einen klaren Abstand vor „Bonus“ ein, auch wenn der Zähler auf kleinen Bildschirmen sichtbar ist.",
-      "Alle sichtbaren Texte verwenden jetzt eine flüssigere Zeichensetzung ohne Halbgeviertstriche oder Geviertstriche.",
+      "Gemeinsame Spieltische: Gib dem Tisch deiner Crew einen Namen und lade Freunde per Link oder QR-Code ein. Wer beitritt, kann die Punkte führen, jedes Spiel landet in der gemeinsamen Historie und Rangliste, und ein Handy kann mehrere Tische halten, einen pro Freundesgruppe.",
+      "Die Regeln lassen sich jetzt während des Spiels über den neuen ⚙-Button ändern: Erweiterung aktivieren, Wertung wechseln und mehr. Bereits gewertete Runden werden automatisch neu berechnet.",
+      "Die neue Erweiterung ist bei neuen Spielen jetzt standardmäßig aktiviert.",
+      "Der Live-Button ist jetzt eine klare „Live“-Schaltfläche, und die Spielreihenfolge zeigt nummerierte Plätze mit dem Spieler, der den Stich eröffnet.",
+      "Alle Bonus-Bezeichnungen folgen jetzt derselben Form: Wer fängt wen.",
     ],
     close: "Verstanden",
   },
@@ -138,18 +141,60 @@ export const de: Strings = {
       statusSyncing: "Wird in der Cloud gespeichert…",
       statusOffline: "Offline. Änderungen werden synchronisiert, sobald du wieder online bist.",
       statusUnavailable: "Cloud-Sicherung ist für diese App nicht eingerichtet.",
-      linkTitle: "Deine Spiele auf einem anderen Handy nutzen",
+      tablesTitle: "Deine Tische",
+      tableUnnamed: "Unbenannter Tisch",
+      tableActive: "Aktiv",
+      tableSwitch: (name) => `Zum Tisch ${name} wechseln`,
+      tableSwitching: "Tisch wird geöffnet…",
+      tableSwitchError:
+        "Dieser Tisch konnte nicht geöffnet werden. Prüfe deine Verbindung und versuche es erneut.",
+      newTable: "Neuen Tisch anlegen",
+      newTableHint:
+        "Ein leerer Tisch mit eigener Historie und Rangliste, für eine andere Freundesgruppe. Deine bisherigen Tische bleiben auf diesem Handy.",
+      removeTable: (name) => `${name} von diesem Handy entfernen`,
+      removeTableTitle: "Diesen Tisch von diesem Handy entfernen?",
+      removeTableMessage:
+        "Er verschwindet nur von diesem Handy. Der Tisch und seine Spiele bleiben für seine Mitglieder bestehen, und du kannst später mit einer Einladung wieder beitreten.",
+      removeTableCancel: "Abbrechen",
+      removeTableConfirm: "Entfernen",
+      tableNameLabel: "Name des Tisches",
+      tableNamePlaceholder: "z. B. Freitagsrunde",
+      tableNameHint:
+        "Gib dem Tisch deiner Crew einen Namen. Alle, die beitreten, sehen denselben Namen, dieselbe Historie und dieselbe Rangliste.",
+      shareTitle: "Lade deine Crew ein",
+      shareHint:
+        "Freunde scannen diesen QR-Code (oder öffnen den Link), um deinem Tisch beizutreten. Jedes Mitglied kann die Punkte führen; alle Spiele landen in derselben gemeinsamen Historie. Teile ihn nur mit deiner Crew.",
+      copyLink: "Einladungslink kopieren",
+      linkCopied: "Link kopiert!",
+      qrLabel: "QR-Code zum Beitreten dieses Spieltisches",
+      linkTitle: "Keine Kamera zur Hand? Nutze einen Code",
       linkHint:
-        "Kopiere den Code dieses Geräts und füge ihn auf dem anderen Handy ein, um dieselben Spiele dort zu laden. Halte ihn geheim, denn wer ihn hat, kann deine Spiele sehen.",
-      codeLabel: "Code dieses Geräts",
+        "Kopiere den Code dieses Tisches und füge ihn auf dem anderen Handy ein, um dort demselben Tisch beizutreten. Halte ihn geheim, denn wer ihn hat, kann deine Spiele sehen und ändern.",
+      codeLabel: "Code dieses Tisches",
       copy: "Kopieren",
       copied: "Kopiert",
-      pasteLabel: "Code eines anderen Geräts einfügen",
-      linkButton: "Diese Spiele hier laden",
-      linking: "Wird geladen…",
+      pasteLabel: "Code eines anderen Tisches einfügen",
+      linkButton: "Diesem Tisch beitreten",
+      linking: "Wird beigetreten…",
       linkError: "Dieser Code konnte nicht gelesen werden.",
-      linkSuccess: "Fertig. Die Spiele wurden auf diesem Gerät zusammengeführt.",
+      linkSuccess: "Fertig. Dieses Handy gehört jetzt zum gemeinsamen Tisch.",
     },
+  },
+
+  joinTable: {
+    title: "Einem Spieltisch beitreten",
+    named: (name) => `Dem Tisch „${name}“ beitreten?`,
+    unnamed: "Diesem Spieltisch beitreten?",
+    message: (count) =>
+      count === 1
+        ? "Dieser Tisch und sein Spiel werden auf diesem Handy hinzugefügt. Vorhandene Spiele bleiben in ihrem eigenen Tisch; du kannst jederzeit zwischen Tischen wechseln."
+        : `Dieser Tisch und seine ${count} Spiele werden auf diesem Handy hinzugefügt. Vorhandene Spiele bleiben in ihrem eigenen Tisch; du kannst jederzeit zwischen Tischen wechseln.`,
+    confirm: "Tisch beitreten",
+    cancel: "Jetzt nicht",
+    busy: "Wird beigetreten…",
+    success: "Willkommen an Bord! Dieses Handy folgt jetzt diesem Tisch.",
+    error:
+      "Diese Einladung konnte nicht geöffnet werden. Prüfe deine Verbindung oder bitte deine Crew, den Link erneut zu senden.",
   },
 
   setup: {
@@ -224,7 +269,7 @@ export const de: Strings = {
     round: (n) => `Runde ${n}`,
     cardsDealt: "Karten ausgeteilt",
     dealsVerb: "teilt aus",
-    playOrderHint: "Spielreihenfolge · links beginnt",
+    playOrderLead: (name) => `Spielreihenfolge · ${name} eröffnet den ersten Stich`,
     ghostName: "Graubart",
     bid: "Ansage",
     won: "Stiche",
@@ -261,8 +306,17 @@ export const de: Strings = {
     rascalBetFor: (name) => `Erklärung von ${name}`,
   },
 
+  gameSettings: {
+    open: "Spielregeln",
+    title: "Spielregeln",
+    recomputeHint:
+      "Änderungen gelten für das ganze Spiel: Bereits gewertete Runden werden mit den neuen Regeln neu berechnet.",
+    close: "Fertig",
+  },
+
   liveShare: {
-    open: "Punkteverfolgung teilen (QR-Code)",
+    open: "Live-Punkteteilung",
+    badge: "Live",
     title: "Punkte mitverfolgen",
     subtitle: "Alle Spieler können die Punkte auf dem eigenen Handy verfolgen.",
     liveHint:
@@ -493,15 +547,15 @@ export const de: Strings = {
     items: {
       colored14: (count) => `${count} farbige ${count === 1 ? "14" : "14er"} gefangen`,
       black14: "Schwarze 14 gefangen",
-      mermaidByPirate: (count) => `${count} ${count === 1 ? "Meerjungfrau" : "Meerjungfrauen"} von einem Piraten gefangen`,
-      pirateBySkullKing: (count) => `${count} ${count === 1 ? "Pirat" : "Piraten"} vom Skull King gefangen`,
-      mermaidCapturesSkullKing: "Meerjungfrau fängt den Skull King",
+      mermaidByPirate: (count) => `Ein Pirat fing ${count} ${count === 1 ? "Meerjungfrau" : "Meerjungfrauen"}`,
+      pirateBySkullKing: (count) => `Der Skull King fing ${count} Piraten`,
+      mermaidCapturesSkullKing: "Eine Meerjungfrau fing den Skull King",
       rascalWon: "Rascal-Wette gewonnen",
       rascalLost: "Rascal-Wette verloren",
       expansion7: (count) => `${count} besondere ${count === 1 ? "7" : "7er"} gefangen`,
       expansion8: (count) => `${count} besondere ${count === 1 ? "8" : "8er"} gefangen`,
-      davyJonesLeviathans: (count) => `${count} ${count === 1 ? "Leviathan" : "Leviathane"} von Davy Jones zerstört`,
-      secondCaptured: "Den Zweiten gefangen",
+      davyJonesLeviathans: (count) => `Davy Jones zerstörte ${count} ${count === 1 ? "Leviathan" : "Leviathane"}`,
+      secondCaptured: "Skull King oder Meerjungfrau fing den Zweiten",
       legacyLoot: (count) => `${count} alte Beute-${count === 1 ? "Bonus" : "Boni"}`,
       loot: (count) => `${count} Beute-${count === 1 ? "Allianz" : "Allianzen"} erfolgreich`,
       lootMissed: (count) => `${count} Beute-${count === 1 ? "Allianz" : "Allianzen"} · mindestens eine Ansage verfehlt`,
@@ -512,16 +566,16 @@ export const de: Strings = {
   bonus: {
     colored14: "Farbige 14er",
     black14: "Schwarze 14 (Jolly Roger)",
-    mermaidByPirate: "Meerjungfrau von einem Piraten gefangen",
-    pirateBySkullKing: "Pirat vom Skull King gefangen",
+    mermaidByPirate: "Pirat fängt eine Meerjungfrau",
+    pirateBySkullKing: "Skull King fängt einen Piraten",
     mermaidCapturesSkullKing: "Meerjungfrau fängt den Skull King",
     rascal: "Rascal-Wette",
     newExpansion: "Neue Erweiterung",
     expansion7: "Neue 7 gefangen",
     expansion8: "Neue 8 gefangen",
     expansionColorHint: "Die neuen 7er und 8er zählen nur bei exakt getroffener Ansage.",
-    davyJonesLeviathans: "Leviathan von Davy Jones zerstört",
-    secondCaptured: "Zweiter von Skull King / Meerjungfrau gefangen",
+    davyJonesLeviathans: "Davy Jones zerstört einen Leviathan",
+    secondCaptured: "Skull King / Meerjungfrau fängt den Zweiten",
     each: "je",
     requiresBidHint:
       "In dieser Partie gibt es Fangboni nur bei exakt getroffener Ansage.",
@@ -588,8 +642,8 @@ export const de: Strings = {
     bonusEntries: [
       { title: "Farbige 14  (+10 je)", body: "Jede gelbe / violette / grüne 14, die du am Rundenende fängst (den Stich mit ihr gewinnst)." },
       { title: "Schwarze 14  (+20)", body: "Fange die schwarze 14 (Jolly Roger / Trumpf)." },
-      { title: "Meerjungfrau durch Pirat  (+20 je)", body: "Dein Pirat gewinnt einen Stich mit einer Meerjungfrau." },
-      { title: "Pirat durch Skull King  (+30 je)", body: "Dein Skull King gewinnt einen Stich mit einem oder mehreren Piraten." },
+      { title: "Pirat fängt Meerjungfrau  (+20 je)", body: "Dein Pirat gewinnt einen Stich mit einer Meerjungfrau." },
+      { title: "Skull King fängt Pirat  (+30 je)", body: "Dein Skull King gewinnt einen Stich mit einem oder mehreren Piraten." },
       { title: "Meerjungfrau fängt Skull King  (+40)", body: "Deine Meerjungfrau gewinnt einen Stich mit dem Skull King. (Meerjungfrau schlägt Skull King, Skull King schlägt Piraten, Piraten schlagen Meerjungfrau.)" },
       { title: "Boni zählen unabhängig von der Ansage", body: "Laut Anleitung bleiben Fangboni auch bei verfehlter Ansage erhalten. Sie gehen an die Person, die die Karte fängt, unabhängig davon, wer sie gespielt hat. Beim Erstellen der Partie lässt sich die umgekehrte Variante wählen: verfehlte Ansage, keine Fangboni." },
     ],

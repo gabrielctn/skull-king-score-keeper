@@ -37,6 +37,14 @@ const scoreBreakdownSource = readFileSync(
   "src/components/ScoreBreakdownModal.tsx",
   "utf8"
 );
+const bonusEditorSource = readFileSync("src/components/BonusEditor.tsx", "utf8");
+const gameRulesSource = readFileSync(
+  "src/components/GameRulesModal.tsx",
+  "utf8"
+);
+const settingsSource = readFileSync("src/screens/SettingsScreen.tsx", "utf8");
+const statsSource = readFileSync("src/screens/StatsScreen.tsx", "utf8");
+const spectatorSource = readFileSync("src/screens/SpectatorScreen.tsx", "utf8");
 const playerFacingTextSources = [
   "src/i18n/en.ts",
   "src/i18n/fr.ts",
@@ -125,6 +133,84 @@ check(
   resultsSource.includes("style={styles.reviewBtn}") &&
     resultsSource.includes("style={styles.secondaryBtn}")
 );
+check(
+  "new expansion is on by default for new games",
+  /const \[newExpansion, setNewExpansion\] = useState\(true\)/.test(setupSource)
+);
+check(
+  "bonus editor groups count rows before toggle rows",
+  bonusEditorSource.indexOf("t.bonus.pirateBySkullKing") <
+    bonusEditorSource.indexOf("t.bonus.black14") &&
+    bonusEditorSource.indexOf("t.bonus.black14") <
+      bonusEditorSource.indexOf("t.bonus.mermaidCapturesSkullKing")
+);
+check(
+  "game header exposes a labeled Live pill that reflects the session state",
+  gameSource.includes("t.liveShare.badge") &&
+    gameSource.includes("styles.livePillActive") &&
+    gameSource.includes("liveSessionManager")
+);
+check(
+  "turn order names the leader and numbers the seats",
+  gameSource.includes("t.game.playOrderLead(") &&
+    gameSource.includes("styles.turnChipNum") &&
+    spectatorSource.includes("t.game.playOrderLead(") &&
+    spectatorSource.includes("styles.turnChipNum")
+);
+check(
+  "game rules can be edited mid-game through the header modal",
+  gameSource.includes("GameRulesModal") &&
+    gameSource.includes("t.gameSettings.open")
+);
+check(
+  "mid-game rule edits re-apply the creation invariants",
+  gameRulesSource.includes('next.scoringMode === "rascal" && next.rascalBets') &&
+    gameRulesSource.includes(
+      'next.scoringMode === "classic" && next.bonusesRequireBid'
+    )
+);
+check(
+  "the app consumes table join links behind an explicit confirmation",
+  appSource.includes("consumeScannedJoinCode") &&
+    appSource.includes("JoinTableModal")
+);
+check(
+  "settings share the table through a QR code and invite link",
+  settingsSource.includes("buildJoinUrl") &&
+    settingsSource.includes("qrCodeDataUrl") &&
+    settingsSource.includes("t.settings.cloud.copyLink")
+);
+check(
+  "settings let the crew name their shared table",
+  settingsSource.includes("t.settings.cloud.tableNameLabel") &&
+    settingsSource.includes("onRenameTable")
+);
+check(
+  "statistics display the shared table name",
+  statsSource.includes("tableName") && appSource.includes("tableName={tableName}")
+);
+check(
+  "settings list every table with a switch and a way to add one",
+  settingsSource.includes("t.settings.cloud.tablesTitle") &&
+    settingsSource.includes("onSwitchTable(membership.ownerId)") &&
+    settingsSource.includes("t.settings.cloud.newTable")
+);
+check(
+  "the last remaining table cannot be removed by accident",
+  settingsSource.includes("tables.length > 1 ? (") &&
+    appSource.includes("if (tablesRef.current.length <= 1) return;")
+);
+check(
+  "joining a table keeps the other tables instead of merging histories",
+  appSource.includes("const handleJoinTable") &&
+    appSource.includes("adoptTableData(data, owner)") &&
+    !appSource.includes("mergeBackupData(\n      localData,")
+);
+check(
+  "a table change flushes pending games to the table being left",
+  appSource.includes("flushBeforeTableChange") &&
+    appSource.includes("await cloudBackupManager().flushPending()")
+);
 
 for (const [language, strings] of Object.entries({ en, fr, es, de, ar, zh })) {
   check(
@@ -132,8 +218,8 @@ for (const [language, strings] of Object.entries({ en, fr, es, de, ar, zh })) {
     strings.game.roundPointsPreview.trim().length > 0
   );
   check(
-    `${language} release notes describe this UX release`,
-    strings.whatsNew.items.length === 2
+    `${language} release notes describe this release`,
+    strings.whatsNew.items.length === 5
   );
 }
 

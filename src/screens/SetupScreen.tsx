@@ -48,7 +48,7 @@ export default function SetupScreen({ gameHistory, onStart, onBack }: Props) {
   const [structure, setStructure] = useState<RoundStructureId>("classic");
   const [roundVariantsVisible, setRoundVariantsVisible] = useState(false);
   const [advanced, setAdvanced] = useState(true);
-  const [newExpansion, setNewExpansion] = useState(false);
+  const [newExpansion, setNewExpansion] = useState(true);
   const [scoringMode, setScoringMode] = useState<ScoringMode>("classic");
   const [rascalBets, setRascalBets] = useState(false);
   const [bonusesRequireBid, setBonusesRequireBid] = useState(false);

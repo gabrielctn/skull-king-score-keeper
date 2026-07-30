@@ -10,8 +10,10 @@ import {
   CloudBackupManager,
   CloudOwnerStore,
   CloudTransport,
+  buildJoinUrl,
   decodeSyncCode,
   encodeSyncCode,
+  extractJoinCode,
   parseCloudState,
 } from "../src/cloudSync";
 import { CloudOwner } from "../src/storage";
@@ -157,6 +159,18 @@ check(
 );
 check("uppercases nothing it should not — trims input", decodeSyncCode(` ${code} `) !== null);
 
+// --- table join links -------------------------------------------------------
+
+section("Table join links");
+const joinUrl = buildJoinUrl(code, "https://example.com/app/");
+check("join URL carries the #join= hash", joinUrl === `https://example.com/app/#join=${code}`);
+check("extract round-trips the code from a full hash", extractJoinCode(`#join=${code}`) === code);
+check("extract accepts a hash without the # prefix", extractJoinCode(`join=${code}`) === code);
+check("extract rejects an empty hash", extractJoinCode("") === null);
+check("extract rejects other hash params", extractJoinCode(`#live=${code}`) === null);
+check("extract rejects a malformed code", extractJoinCode("#join=SKC1.$$$$") === null);
+check("extract rejects a non-code payload", extractJoinCode("#join=hello") === null);
+
 // --- untrusted state hardening ---------------------------------------------
 
 section("Cloud state hardening");
@@ -238,6 +252,95 @@ async function run() {
     store.owner?.ownerId === ownerBeforeBadAdopt
   );
   check("adopt rejects a bad code", await rejects(() => manager.adopt("garbage")));
+
+  section("Manager: peek a table without adopting");
+  const peekOwner: CloudOwner = {
+    ownerId: "33333333-3333-4333-8333-333333333333",
+    writerKey: "d".repeat(48),
+  };
+  transport.seed(peekOwner.ownerId, peekOwner.writerKey, {
+    currentGame: null,
+    history: [finishedGame("peeked", 6000)],
+    tableName: "Crew of the Fable",
+  });
+  const ownerBeforePeek = store.owner?.ownerId;
+  const peeked = await manager.peek(encodeSyncCode(peekOwner));
+  eq("peek returns the table's games", peeked?.history[0]?.id, "peeked");
+  eq("peek returns the table name", peeked?.tableName ?? null, "Crew of the Fable");
+  check(
+    "peek never touches this device's owner",
+    store.owner?.ownerId === ownerBeforePeek
+  );
+  check(
+    "peek rejects a well-formed but unknown code",
+    await rejects(() =>
+      manager.peek(
+        encodeSyncCode({
+          ownerId: "44444444-4444-4444-8444-444444444444",
+          writerKey: "c".repeat(48),
+        })
+      )
+    )
+  );
+  check("peek rejects a bad code", await rejects(() => manager.peek("garbage")));
+
+  section("Manager: several tables on one device");
+  const otherTable: CloudOwner = {
+    ownerId: "55555555-5555-4555-8555-555555555555",
+    writerKey: "b".repeat(48),
+  };
+  transport.seed(otherTable.ownerId, otherTable.writerKey, {
+    currentGame: null,
+    history: [finishedGame("friday", 7000)],
+    tableName: "Friday crew",
+  });
+  const switched = await manager.switchTo(otherTable);
+  eq("switching loads that table's games", switched?.history[0]?.id, "friday");
+  eq("switching loads that table's name", switched?.tableName ?? null, "Friday crew");
+  check(
+    "switching makes it the active identity",
+    manager.getOwner()?.ownerId === otherTable.ownerId &&
+      store.owner?.ownerId === otherTable.ownerId
+  );
+
+  const ownerBeforeBadSwitch = store.owner?.ownerId;
+  check(
+    "switching to an unknown table is refused",
+    await rejects(() =>
+      manager.switchTo({
+        ownerId: "66666666-6666-4666-8666-666666666666",
+        writerKey: "9".repeat(48),
+      })
+    )
+  );
+  check(
+    "a refused switch keeps the working table",
+    store.owner?.ownerId === ownerBeforeBadSwitch
+  );
+
+  const createsBefore = transport.createCalls;
+  const fresh = await manager.createTable();
+  check("a new table gets its own owner id", fresh.ownerId !== otherTable.ownerId);
+  check("a new table is created server-side", transport.createCalls === createsBefore + 1);
+  check("a new table becomes active", manager.getOwner()?.ownerId === fresh.ownerId);
+  const freshState = await manager.pull();
+  check("a new table starts empty", freshState === null);
+
+  // Switching tables replaces local state, so a queued change must reach its
+  // own table's row first; the guard is flushPending() reporting success.
+  section("Manager: flushing before a table change");
+  manager.push({ currentGame: null, history: [finishedGame("g9", 9000)] });
+  const flushed = await manager.flushPending();
+  check("a pending push flushes on demand", flushed);
+  eq("the flushed state is stored", manager.getStatus(), "synced");
+  check("flushing with nothing pending succeeds", await manager.flushPending());
+
+  transport.offline = true;
+  manager.push({ currentGame: null, history: [finishedGame("g10", 10000)] });
+  const flushedOffline = await manager.flushPending();
+  check("flushing while offline reports failure", !flushedOffline);
+  transport.offline = false;
+  check("the unsent change stays queued for later", await manager.flushPending());
 
   console.log(`\n${passed} passed, ${failed} failed`);
   if (failed > 0) process.exit(1);

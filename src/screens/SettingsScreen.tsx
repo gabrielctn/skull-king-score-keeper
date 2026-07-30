@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  Image,
   Linking,
   Modal,
   SafeAreaView,
@@ -22,16 +23,21 @@ import { Lang } from "../i18n/types";
 import { getResponsiveLayout } from "../responsive";
 import {
   AppSettings,
+  TableMembership,
   loadSeenRelease,
   saveSeenRelease,
 } from "../storage";
 import { CURRENT_RELEASE, CURRENT_RELEASE_DATE } from "../releases";
 import { isWakeLockSupported } from "../wakeLock";
 import {
+  buildJoinUrl,
   cloudBackupManager,
   cloudConfigured,
   CloudStatus,
 } from "../cloudSync";
+import { MAX_TABLE_NAME_LENGTH, normalizeTableName } from "../backup";
+import { webShareBaseUrl } from "../shareLink";
+import { qrCodeDataUrl } from "../qr";
 import ToggleSwitch from "../components/ToggleSwitch";
 import WhatsNewModal from "../components/WhatsNewModal";
 import InstallAppSection from "../components/InstallAppSection";
@@ -43,24 +49,45 @@ interface Props {
   settings: AppSettings;
   /** Enables the destructive "delete all games" action. */
   hasGames: boolean;
+  /** Name of the active shared game table, if one was chosen. */
+  tableName: string | null;
+  /** Every table this device belongs to (a player can have several crews). */
+  tables: TableMembership[];
+  /** Owner id of the table currently loaded, or null before the first sync. */
+  activeTableId: string | null;
   onUpdateSettings: (settings: AppSettings) => void;
   onBack: () => void;
   onExportBackup: () => Promise<void>;
   onImportBackup: () => Promise<number | null>;
   onDeleteAllGames: () => Promise<void>;
-  /** Adopt another device's sync code, merge its games, return the new count. */
+  /** Join the table carried by an invite code; returns its game count. */
   onLinkDevice: (code: string) => Promise<number | null>;
+  /** Persist (and sync) the active table's name; null clears it. */
+  onRenameTable: (name: string | null) => void;
+  /** Open another table this device already belongs to. */
+  onSwitchTable: (ownerId: string) => Promise<void>;
+  /** Start a separate table for another group of friends. */
+  onCreateTable: () => Promise<void>;
+  /** Forget a table on this device (it survives for the rest of the crew). */
+  onRemoveTable: (ownerId: string) => Promise<void>;
 }
 
 export default function SettingsScreen({
   settings,
   hasGames,
+  tableName,
+  tables,
+  activeTableId,
   onUpdateSettings,
   onBack,
   onExportBackup,
   onImportBackup,
   onDeleteAllGames,
   onLinkDevice,
+  onRenameTable,
+  onSwitchTable,
+  onCreateTable,
+  onRemoveTable,
 }: Props) {
   const { t, lang, setLang } = useI18n();
   const { width } = useWindowDimensions();
@@ -79,6 +106,12 @@ export default function SettingsScreen({
   const [linkOpen, setLinkOpen] = React.useState(false);
   const [syncCode, setSyncCode] = React.useState<string | null>(null);
   const [codeCopied, setCodeCopied] = React.useState(false);
+  const [linkCopied, setLinkCopied] = React.useState(false);
+  const [nameDraft, setNameDraft] = React.useState(tableName ?? "");
+  const [tableBusy, setTableBusy] = React.useState(false);
+  const [tableError, setTableError] = React.useState(false);
+  const [removeTarget, setRemoveTarget] =
+    React.useState<TableMembership | null>(null);
   const [pasteCode, setPasteCode] = React.useState("");
   const [linkBusy, setLinkBusy] = React.useState(false);
   const [linkMessage, setLinkMessage] = React.useState<{
@@ -116,6 +149,44 @@ export default function SettingsScreen({
     };
   }, [linkOpen, syncCode]);
 
+  // The name can also change under us when this device joins another table.
+  React.useEffect(() => {
+    setNameDraft(tableName ?? "");
+  }, [tableName]);
+
+  const commitTableName = () => {
+    const normalized = normalizeTableName(nameDraft);
+    setNameDraft(normalized ?? "");
+    if (normalized !== (tableName ?? null)) onRenameTable(normalized);
+  };
+
+  // Any table change (switch, create, remove) can fail on a dead connection;
+  // they share one busy flag and one error line under the list.
+  const runTableAction = async (action: () => Promise<void>) => {
+    if (tableBusy) return;
+    setTableBusy(true);
+    setTableError(false);
+    try {
+      await action();
+      // The invite code belongs to the table that was active; drop it so the
+      // QR and code are re-fetched for whichever table is now open.
+      setSyncCode(null);
+    } catch {
+      setTableError(true);
+    } finally {
+      setTableBusy(false);
+    }
+  };
+
+  const tableLabel = (membership: TableMembership) =>
+    membership.name ?? t.settings.cloud.tableUnnamed;
+
+  const joinUrl = syncCode ? buildJoinUrl(syncCode, webShareBaseUrl()) : null;
+  const joinQr = React.useMemo(
+    () => (joinUrl ? qrCodeDataUrl(joinUrl, 220) : null),
+    [joinUrl]
+  );
+
   const copySyncCode = async () => {
     if (!syncCode) return;
     try {
@@ -124,6 +195,17 @@ export default function SettingsScreen({
       setTimeout(() => setCodeCopied(false), 2000);
     } catch {
       // Clipboard unavailable: the code is selectable in the field instead.
+    }
+  };
+
+  const copyJoinLink = async () => {
+    if (!joinUrl) return;
+    try {
+      await navigator.clipboard.writeText(joinUrl);
+      setLinkCopied(true);
+      setTimeout(() => setLinkCopied(false), 2000);
+    } catch {
+      // Clipboard unavailable: the QR code and raw code remain usable.
     }
   };
 
@@ -327,6 +409,129 @@ export default function SettingsScreen({
               </View>
             </View>
 
+            {tables.length > 0 ? (
+              <View style={styles.tablesBlock}>
+                <Text style={styles.codeLabel}>
+                  {t.settings.cloud.tablesTitle}
+                </Text>
+                <View style={styles.tablesList}>
+                  {tables.map((membership, index) => {
+                    const active = membership.ownerId === activeTableId;
+                    return (
+                      <View
+                        key={membership.ownerId}
+                        style={[
+                          styles.tableRow,
+                          index < tables.length - 1 && styles.tableRowBorder,
+                        ]}
+                      >
+                        <TouchableOpacity
+                          style={styles.tableRowMain}
+                          onPress={() =>
+                            void runTableAction(() =>
+                              onSwitchTable(membership.ownerId)
+                            )
+                          }
+                          disabled={active || tableBusy}
+                          accessibilityRole="radio"
+                          accessibilityState={{
+                            checked: active,
+                            disabled: active || tableBusy,
+                          }}
+                          accessibilityLabel={
+                            active
+                              ? tableLabel(membership)
+                              : t.settings.cloud.tableSwitch(
+                                  tableLabel(membership)
+                                )
+                          }
+                        >
+                          <Text
+                            style={[
+                              styles.tableRowName,
+                              active && styles.tableRowNameActive,
+                            ]}
+                            numberOfLines={1}
+                          >
+                            ⚓ {tableLabel(membership)}
+                          </Text>
+                          {active ? (
+                            <Text style={styles.tableActiveBadge}>
+                              {t.settings.cloud.tableActive}
+                            </Text>
+                          ) : null}
+                        </TouchableOpacity>
+                        {tables.length > 1 ? (
+                          <TouchableOpacity
+                            style={styles.tableRemove}
+                            onPress={() => setRemoveTarget(membership)}
+                            disabled={tableBusy}
+                            accessibilityRole="button"
+                            accessibilityLabel={t.settings.cloud.removeTable(
+                              tableLabel(membership)
+                            )}
+                          >
+                            <Text style={styles.tableRemoveText}>✕</Text>
+                          </TouchableOpacity>
+                        ) : null}
+                      </View>
+                    );
+                  })}
+                </View>
+                {tableBusy ? (
+                  <Text style={styles.linkHint}>
+                    {t.settings.cloud.tableSwitching}
+                  </Text>
+                ) : null}
+                {tableError ? (
+                  <Text style={styles.linkMessageError} accessibilityRole="alert">
+                    {t.settings.cloud.tableSwitchError}
+                  </Text>
+                ) : null}
+                <TouchableOpacity
+                  style={styles.newTableButton}
+                  onPress={() => void runTableAction(onCreateTable)}
+                  disabled={tableBusy}
+                  accessibilityRole="button"
+                  accessibilityState={{ disabled: tableBusy }}
+                >
+                  <Text style={styles.newTableText}>
+                    + {t.settings.cloud.newTable}
+                  </Text>
+                </TouchableOpacity>
+                <Text style={styles.linkHint}>
+                  {t.settings.cloud.newTableHint}
+                </Text>
+              </View>
+            ) : null}
+
+            <View style={styles.tableNameRow}>
+              <Text style={styles.codeLabel}>
+                {t.settings.cloud.tableNameLabel}
+              </Text>
+              <TextInput
+                style={styles.tableNameInput}
+                value={nameDraft}
+                onChangeText={setNameDraft}
+                onBlur={commitTableName}
+                // onSubmitEditing does not fire on react-native-web, so the
+                // keyboard's Enter/Done is handled here; both paths are safe to
+                // run twice.
+                onKeyPress={(event) => {
+                  if (event.nativeEvent.key === "Enter") commitTableName();
+                }}
+                onSubmitEditing={commitTableName}
+                placeholder={t.settings.cloud.tableNamePlaceholder}
+                placeholderTextColor={colors.textDim}
+                maxLength={MAX_TABLE_NAME_LENGTH}
+                returnKeyType="done"
+                accessibilityLabel={t.settings.cloud.tableNameLabel}
+              />
+              <Text style={styles.linkHint}>
+                {t.settings.cloud.tableNameHint}
+              </Text>
+            </View>
+
             <TouchableOpacity
               style={styles.linkToggle}
               onPress={() => setLinkOpen((open) => !open)}
@@ -334,13 +539,44 @@ export default function SettingsScreen({
               accessibilityState={{ expanded: linkOpen }}
             >
               <Text style={styles.linkToggleText}>
-                {t.settings.cloud.linkTitle}
+                {t.settings.cloud.shareTitle}
               </Text>
               <DisclosureChevron expanded={linkOpen} />
             </TouchableOpacity>
 
             {linkOpen ? (
               <View style={styles.linkPanel}>
+                <Text style={styles.linkHint}>
+                  {t.settings.cloud.shareHint}
+                </Text>
+                {joinQr ? (
+                  <Image
+                    source={{ uri: joinQr }}
+                    style={styles.joinQr}
+                    resizeMode="contain"
+                    accessibilityLabel={t.settings.cloud.qrLabel}
+                  />
+                ) : null}
+                <TouchableOpacity
+                  style={[
+                    styles.linkButton,
+                    !joinUrl && styles.linkButtonDisabled,
+                  ]}
+                  onPress={() => void copyJoinLink()}
+                  disabled={!joinUrl}
+                  accessibilityRole="button"
+                >
+                  <Text style={styles.linkButtonText}>
+                    {linkCopied
+                      ? t.settings.cloud.linkCopied
+                      : t.settings.cloud.copyLink}
+                  </Text>
+                </TouchableOpacity>
+
+                <View style={styles.linkDivider} />
+                <Text style={styles.fallbackTitle}>
+                  {t.settings.cloud.linkTitle}
+                </Text>
                 <Text style={styles.linkHint}>{t.settings.cloud.linkHint}</Text>
 
                 <Text style={styles.codeLabel}>{t.settings.cloud.codeLabel}</Text>
@@ -535,6 +771,53 @@ export default function SettingsScreen({
         </View>
       </Modal>
 
+      <Modal
+        visible={removeTarget !== null}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setRemoveTarget(null)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.confirmDialog} accessibilityRole="alert">
+            <Text style={styles.confirmTitle}>
+              {t.settings.cloud.removeTableTitle}
+            </Text>
+            <Text style={styles.confirmMessage}>
+              {removeTarget ? `⚓ ${tableLabel(removeTarget)}` : ""}
+            </Text>
+            <Text style={styles.confirmMessage}>
+              {t.settings.cloud.removeTableMessage}
+            </Text>
+            <View style={styles.confirmActions}>
+              <TouchableOpacity
+                style={styles.cancelBtn}
+                onPress={() => setRemoveTarget(null)}
+                accessibilityRole="button"
+              >
+                <Text style={styles.cancelText}>
+                  {t.settings.cloud.removeTableCancel}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.confirmDeleteBtn}
+                onPress={() => {
+                  const target = removeTarget;
+                  setRemoveTarget(null);
+                  if (target) {
+                    void runTableAction(() => onRemoveTable(target.ownerId));
+                  }
+                }}
+                accessibilityRole="button"
+              >
+                <Text style={styles.confirmDeleteText}>
+                  {t.settings.cloud.removeTableConfirm}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
       <WhatsNewModal
         visible={whatsNewOpen}
         onClose={() => setWhatsNewOpen(false)}
@@ -646,6 +929,88 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   linkToggleText: { color: colors.gold, fontSize: 14, fontWeight: "800" },
+  tablesBlock: { marginBottom: spacing.md },
+  tablesList: {
+    backgroundColor: colors.bgElevated,
+    borderColor: colors.cardBorder,
+    borderWidth: 1,
+    borderRadius: radius.md,
+    overflow: "hidden",
+    marginBottom: spacing.sm,
+  },
+  tableRow: { flexDirection: "row", alignItems: "center" },
+  tableRowBorder: {
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.cardBorder,
+  },
+  tableRowMain: {
+    flex: 1,
+    minHeight: 48,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: spacing.md,
+  },
+  tableRowName: { flex: 1, color: colors.text, fontSize: 15 },
+  tableRowNameActive: { color: colors.gold, fontWeight: "800" },
+  tableActiveBadge: {
+    color: colors.bg,
+    backgroundColor: colors.gold,
+    fontSize: 10,
+    fontWeight: "800",
+    overflow: "hidden",
+    borderRadius: radius.sm,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    marginStart: spacing.sm,
+  },
+  tableRemove: {
+    width: 44,
+    height: 44,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  tableRemoveText: { color: colors.negative, fontSize: 16 },
+  newTableButton: {
+    minHeight: 44,
+    alignItems: "center",
+    justifyContent: "center",
+    borderColor: colors.controlBorder,
+    borderWidth: 1,
+    borderStyle: "dashed",
+    borderRadius: radius.md,
+    marginBottom: spacing.xs,
+  },
+  newTableText: { color: colors.gold, fontSize: 14, fontWeight: "800" },
+  tableNameRow: { marginBottom: spacing.md },
+  tableNameInput: {
+    backgroundColor: colors.card,
+    borderColor: colors.controlBorder,
+    borderWidth: 1,
+    borderRadius: radius.md,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    color: colors.text,
+    fontSize: 16,
+    marginBottom: spacing.xs,
+  },
+  joinQr: {
+    width: 220,
+    height: 220,
+    alignSelf: "center",
+    borderRadius: radius.sm,
+    marginBottom: spacing.md,
+  },
+  linkDivider: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: colors.cardBorder,
+    marginVertical: spacing.md,
+  },
+  fallbackTitle: {
+    color: colors.text,
+    fontSize: 14,
+    fontWeight: "800",
+    marginBottom: spacing.xs,
+  },
   linkPanel: {
     borderColor: colors.cardBorder,
     borderWidth: 1,

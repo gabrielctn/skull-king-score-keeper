@@ -129,7 +129,10 @@ export interface Strings {
       androidTitle: string;
       androidSteps: string[];
     };
-    /** Automatic cloud backup that keeps each scorekeeper's games private. */
+    /**
+     * Shared game table: the cloud-backed history one group of friends
+     * shares, plus the link/QR/code flows to bring other devices onto it.
+     */
     cloud: {
       title: string;
       /** Configured but no sync has happened yet this session. */
@@ -138,6 +141,39 @@ export interface Strings {
       statusSyncing: string;
       statusOffline: string;
       statusUnavailable: string;
+      /** Header of the membership list (one entry per crew). */
+      tablesTitle: string;
+      /** Row label for a table that has no name yet. */
+      tableUnnamed: string;
+      /** Badge on the currently loaded table. */
+      tableActive: string;
+      /** Accessibility label of an inactive row: "Switch to {name}". */
+      tableSwitch: (name: string) => string;
+      /** Shown while another table's history is being loaded. */
+      tableSwitching: string;
+      tableSwitchError: string;
+      /** Button starting a fresh, empty table for another group. */
+      newTable: string;
+      newTableHint: string;
+      /** Accessibility label of a row's remove button. */
+      removeTable: (name: string) => string;
+      removeTableTitle: string;
+      removeTableMessage: string;
+      removeTableCancel: string;
+      removeTableConfirm: string;
+      /** Label of the editable table-name field. */
+      tableNameLabel: string;
+      tableNamePlaceholder: string;
+      /** Explains the name is shared with everyone on the table. */
+      tableNameHint: string;
+      /** Header of the invite block (QR + link). */
+      shareTitle: string;
+      /** Warns that anyone with the link can read and write the table. */
+      shareHint: string;
+      copyLink: string;
+      linkCopied: string;
+      /** Accessibility description of the join QR code image. */
+      qrLabel: string;
       linkTitle: string;
       linkHint: string;
       codeLabel: string;
@@ -149,6 +185,22 @@ export interface Strings {
       linkError: string;
       linkSuccess: string;
     };
+  };
+
+  /** Confirmation sheet shown after opening a table join link or QR code. */
+  joinTable: {
+    title: string;
+    /** "Join the table «{name}»?" */
+    named: (name: string) => string;
+    /** Fallback when the table has no name yet. */
+    unnamed: string;
+    /** Explains the merge: "{count} games … merged into one shared history". */
+    message: (count: number) => string;
+    confirm: string;
+    cancel: string;
+    busy: string;
+    success: string;
+    error: string;
   };
 
   setup: {
@@ -209,7 +261,8 @@ export interface Strings {
     cardsDealt: string;
     /** Verb after the bold dealer name: "deals" / "distribue". */
     dealsVerb: string;
-    playOrderHint: string;
+    /** "Play order · {name} leads the first trick" under the ordered chips. */
+    playOrderLead: (name: string) => string;
     /** Display name of the ghost in the play-order chip. */
     ghostName: string;
     bid: string;
@@ -247,10 +300,22 @@ export interface Strings {
     rascalBetFor: (name: string) => string;
   };
 
+  /** In-game rules editor: change the game's options while it is running. */
+  gameSettings: {
+    /** Accessibility label of the ⚙ button in the game header. */
+    open: string;
+    title: string;
+    /** Warns that recorded rounds are recalculated with the new rules. */
+    recomputeHint: string;
+    close: string;
+  };
+
   /** Game master's sheet sharing the current game with the other players. */
   liveShare: {
-    /** Accessibility label of the QR button in the game header. */
+    /** Accessibility label of the Live button in the game header. */
     open: string;
+    /** Short label inside the header pill button ("Live"). */
+    badge: string;
     title: string;
     subtitle: string;
     // Live (real-time, server-backed) section.

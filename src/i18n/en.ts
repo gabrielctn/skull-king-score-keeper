@@ -64,8 +64,11 @@ export const en: Strings = {
     automaticUpdatesBody:
       "Installed apps now download each new release automatically and switch to it as soon as the device is online.",
     items: [
-      "Score controls now keep a clear gap before “Bonus”, including when its counter is visible on compact screens.",
-      "All player-facing text now uses cleaner punctuation without en or em dashes.",
+      "Shared game tables: name your crew's table and invite friends with a link or QR code. Anyone who joins can keep score, every game lands in the shared history and leaderboard, and one phone can hold several tables, one per group of friends.",
+      "Game rules can now be changed during a game from the new ⚙ button: enable the expansion mid-game, switch scoring, and more. Scored rounds recalculate automatically.",
+      "The new expansion is now on by default for new games.",
+      "The live-tracking button is now a clear “Live” pill, and the play order shows numbered seats with who leads the trick.",
+      "Bonus labels now all read the same way: who takes what.",
     ],
     close: "Got it",
   },
@@ -130,25 +133,67 @@ export const en: Strings = {
       ],
     },
     cloud: {
-      title: "Cloud backup",
+      title: "Shared game table",
       statusIdle: "Cloud backup is on.",
       statusSynced:
         "Backed up. Your games save to the cloud automatically and come back if this device's data is cleared.",
       statusSyncing: "Saving to the cloud…",
       statusOffline: "Offline. Changes will sync once you're back online.",
       statusUnavailable: "Cloud backup isn't set up for this app.",
-      linkTitle: "Use your games on another phone",
+      tablesTitle: "Your tables",
+      tableUnnamed: "Unnamed table",
+      tableActive: "Active",
+      tableSwitch: (name) => `Switch to ${name}`,
+      tableSwitching: "Opening that table…",
+      tableSwitchError:
+        "That table could not be opened. Check your connection and try again.",
+      newTable: "Start a new table",
+      newTableHint:
+        "A fresh table with its own history and leaderboard, for another group of friends. Your current tables stay on this phone.",
+      removeTable: (name) => `Remove ${name} from this phone`,
+      removeTableTitle: "Remove this table from this phone?",
+      removeTableMessage:
+        "It only disappears from this phone. The table and its games keep existing for its members, and you can rejoin later with an invite.",
+      removeTableCancel: "Cancel",
+      removeTableConfirm: "Remove",
+      tableNameLabel: "Table name",
+      tableNamePlaceholder: "e.g. Friday night crew",
+      tableNameHint:
+        "Give your crew's table a name. Everyone who joins the table sees the same name, history and leaderboard.",
+      shareTitle: "Invite your crew",
+      shareHint:
+        "Friends scan this QR code (or open the link) to join your table. Anyone on the table can keep score; every game joins the same shared history. Share it only with your crew.",
+      copyLink: "Copy invite link",
+      linkCopied: "Link copied!",
+      qrLabel: "QR code to join this game table",
+      linkTitle: "No camera at hand? Use a code",
       linkHint:
-        "Copy this device's code, then paste it on the other phone to load the same games there. Keep it private; anyone with it can see your games.",
-      codeLabel: "This device's code",
+        "Copy this table's code, then paste it on the other phone to join the same table there. Keep it private; anyone with it can see and edit your games.",
+      codeLabel: "This table's code",
       copy: "Copy",
       copied: "Copied",
-      pasteLabel: "Paste a code from another device",
-      linkButton: "Load those games here",
-      linking: "Loading…",
+      pasteLabel: "Paste a code from another table",
+      linkButton: "Join that table",
+      linking: "Joining…",
       linkError: "That code could not be read.",
-      linkSuccess: "Done. Games merged onto this device.",
+      linkSuccess: "Done. This phone is now on the shared table.",
     },
+  },
+
+  joinTable: {
+    title: "Join a game table",
+    named: (name) => `Join the table “${name}”?`,
+    unnamed: "Join this game table?",
+    message: (count) =>
+      count === 1
+        ? "This table and its 1 game will be added on this phone. Games already on this phone stay in their own table; you can switch tables anytime."
+        : `This table and its ${count} games will be added on this phone. Games already on this phone stay in their own table; you can switch tables anytime.`,
+    confirm: "Join the table",
+    cancel: "Not now",
+    busy: "Joining…",
+    success: "Welcome aboard! This phone now follows this table.",
+    error:
+      "This invite could not be opened. Check your connection, or ask your crew to send the link again.",
   },
 
   setup: {
@@ -223,7 +268,7 @@ export const en: Strings = {
     round: (n) => `Round ${n}`,
     cardsDealt: "cards dealt",
     dealsVerb: "deals",
-    playOrderHint: "play order · first to lead is left",
+    playOrderLead: (name) => `Play order · ${name} leads the first trick`,
     ghostName: "Greybeard",
     bid: "Bid",
     won: "Won",
@@ -259,8 +304,17 @@ export const en: Strings = {
     rascalBetFor: (name) => `${name}'s declaration`,
   },
 
+  gameSettings: {
+    open: "Game rules",
+    title: "Game rules",
+    recomputeHint:
+      "Changes apply to the whole game: rounds already scored are recalculated with the new rules.",
+    close: "Done",
+  },
+
   liveShare: {
-    open: "Share score tracking (QR code)",
+    open: "Live score sharing",
+    badge: "Live",
     title: "Follow the scores",
     subtitle: "Every player can track the scores on their own phone.",
     liveHint:
@@ -489,10 +543,10 @@ export const en: Strings = {
         `${count} colored ${count === 1 ? "14" : "14s"} captured`,
       black14: "Black 14 captured",
       mermaidByPirate: (count) =>
-        `${count} ${count === 1 ? "mermaid" : "mermaids"} taken by a pirate`,
+        `Pirate took ${count} ${count === 1 ? "mermaid" : "mermaids"}`,
       pirateBySkullKing: (count) =>
-        `${count} ${count === 1 ? "pirate" : "pirates"} taken by Skull King`,
-      mermaidCapturesSkullKing: "Mermaid captures Skull King",
+        `Skull King took ${count} ${count === 1 ? "pirate" : "pirates"}`,
+      mermaidCapturesSkullKing: "Mermaid took the Skull King",
       rascalWon: "Rascal wager won",
       rascalLost: "Rascal wager lost",
       expansion7: (count) =>
@@ -500,8 +554,8 @@ export const en: Strings = {
       expansion8: (count) =>
         `${count} special ${count === 1 ? "8" : "8s"} captured`,
       davyJonesLeviathans: (count) =>
-        `${count} ${count === 1 ? "leviathan" : "leviathans"} destroyed by Davy Jones`,
-      secondCaptured: "The Second captured",
+        `Davy Jones destroyed ${count} ${count === 1 ? "leviathan" : "leviathans"}`,
+      secondCaptured: "Skull King or a mermaid took the Second",
       legacyLoot: (count) =>
         `${count} legacy Loot ${count === 1 ? "bonus" : "bonuses"}`,
       loot: (count) =>
@@ -518,17 +572,17 @@ export const en: Strings = {
   bonus: {
     colored14: "Colored 14s",
     black14: "Black 14 (Jolly Roger)",
-    mermaidByPirate: "Mermaid taken by a pirate",
-    pirateBySkullKing: "Pirate taken by Skull King",
-    mermaidCapturesSkullKing: "Mermaid captures Skull King",
+    mermaidByPirate: "Pirate takes a mermaid",
+    pirateBySkullKing: "Skull King takes a pirate",
+    mermaidCapturesSkullKing: "Mermaid takes the Skull King",
     rascal: "Rascal wager",
     newExpansion: "New expansion",
     expansion7: "New 7 captured",
     expansion8: "New 8 captured",
     expansionColorHint:
       "The new 7s and 8s only score when the bid is hit exactly.",
-    davyJonesLeviathans: "Leviathan destroyed by Davy Jones",
-    secondCaptured: "Second taken by Skull King / Mermaid",
+    davyJonesLeviathans: "Davy Jones destroys a leviathan",
+    secondCaptured: "Skull King / mermaid takes the Second",
     each: "ea.",
     requiresBidHint:
       "This game only awards capture bonuses when the bid is made exactly.",
@@ -625,15 +679,15 @@ export const en: Strings = {
         body: "Capturing the black (Jolly Roger / trump) 14.",
       },
       {
-        title: "Mermaid taken by a pirate  (+20 each)",
+        title: "Pirate takes a mermaid  (+20 each)",
         body: "Your pirate wins a trick containing a mermaid.",
       },
       {
-        title: "Pirate taken by Skull King  (+30 each)",
+        title: "Skull King takes a pirate  (+30 each)",
         body: "Your Skull King wins a trick containing pirate(s).",
       },
       {
-        title: "Mermaid captures Skull King  (+40)",
+        title: "Mermaid takes the Skull King  (+40)",
         body: "Your mermaid wins a trick containing the Skull King. (Mermaid beats Skull King beats Pirates beats Mermaid.)",
       },
       {

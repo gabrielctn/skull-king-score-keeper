@@ -1,6 +1,6 @@
 {
   "name": "skull-king-scorekeeper",
-  "version": "1.9.2",
+  "version": "1.10.0",
   "main": "index.ts",
   "scripts": {
     "start": "expo start --web",
@@ -9,7 +9,7 @@
     "prebuild:ios": "expo prebuild --platform ios",
     "build:web": "expo export -p web && node scripts/build-pwa.mjs",
     "serve:web": "npx serve dist -l 8080",
-    "test": "npm run typecheck && npm run test:scoring && npm run test:stats && npm run test:storage && npm run test:backup && npm run test:sharelink && npm run test:livesession && npm run test:cloudsync && npm run test:responsive && npm run test:ux && npm run test:assets && npm run test:branding",
+    "test": "npm run typecheck && npm run test:scoring && npm run test:stats && npm run test:storage && npm run test:backup && npm run test:sharelink && npm run test:livesession && npm run test:cloudsync && npm run test:tables && npm run test:responsive && npm run test:ux && npm run test:assets && npm run test:branding",
     "typecheck": "tsc --noEmit",
     "test:scoring": "node --import tsx scripts/test-scoring.ts",
     "test:stats": "node --import tsx scripts/test-stats.ts",
@@ -18,6 +18,7 @@
     "test:sharelink": "node --import tsx scripts/test-sharelink.ts",
     "test:livesession": "node --import tsx scripts/test-livesession.ts",
     "test:cloudsync": "node --import tsx scripts/test-cloudsync.ts",
+    "test:tables": "node --import tsx scripts/test-tables.ts",
     "test:responsive": "node --import tsx scripts/test-responsive-layout.ts",
     "test:ux": "node --import tsx scripts/test-ux.ts",
     "test:assets": "node --import tsx scripts/test-assets.ts",
