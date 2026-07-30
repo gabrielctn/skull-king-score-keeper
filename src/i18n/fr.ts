@@ -15,14 +15,14 @@ export const fr: Strings = {
   cookies: {
     accessibilityLabel: "Choix des cookies statistiques",
     message:
-      "Nous utilisons des cookies Google Analytics pour mesurer les visites et améliorer le compteur de scores.",
+      "Nous utilisons des cookies Google Analytics pour mesurer les visites et améliorer Skull King Score Keeper.",
     decline: "Refuser",
     accept: "Accepter",
   },
 
   home: {
-    title: "Compteur de scores",
-    subtitle: "pour Skull King",
+    title: "Skull King",
+    subtitle: "Score Keeper",
     unofficial: "Application non officielle",
     resume: "Reprendre la partie",
     activeTitle: "Partie en cours",
@@ -100,11 +100,11 @@ export const fr: Strings = {
       title: "Installer l’application",
       installedTitle: "Application installée",
       installedBody:
-        "Le compteur de scores est installé sur votre appareil. Il s’ouvre comme une appli et fonctionne entièrement hors ligne.",
+        "Skull King Score Keeper est installée sur votre appareil. Elle s’ouvre comme une appli et fonctionne entièrement hors ligne.",
       promptHint:
-        "Ajoutez le compteur de scores à votre écran d’accueil pour y accéder rapidement et jouer hors ligne.",
+        "Ajoutez Skull King Score Keeper à votre écran d’accueil pour y accéder rapidement et jouer hors ligne.",
       manualHint:
-        "Ajoutez le compteur de scores à votre écran d’accueil pour y accéder rapidement et jouer hors ligne. Suivez les étapes correspondant à votre téléphone ci-dessous.",
+        "Ajoutez Skull King Score Keeper à votre écran d’accueil pour y accéder rapidement et jouer hors ligne. Suivez les étapes correspondant à votre téléphone ci-dessous.",
       button: "Installer maintenant",
       error:
         "L’installation n’a pas pu démarrer. Suivez les étapes manuelles ci-dessous.",
@@ -349,7 +349,7 @@ export const fr: Strings = {
       `${rank === 1 ? "1re" : `${rank}e`} place, ${name}, ${total} points`,
     review: "Revoir manche par manche",
     rematch: "Revanche avec le même équipage",
-    installTitle: "Gardez le compteur à bord",
+    installTitle: "Gardez Skull King Score Keeper à bord",
     installHint: "Installez l’app pour la retrouver rapidement et jouer hors ligne.",
     installIosHint:
       "Touchez Partager puis « Sur l’écran d’accueil ». Dans Chrome, ouvrez d’abord « En voir plus ».",

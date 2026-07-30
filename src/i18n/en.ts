@@ -15,14 +15,14 @@ export const en: Strings = {
   cookies: {
     accessibilityLabel: "Analytics cookie choices",
     message:
-      "We use Google Analytics cookies to understand visits and improve the scorekeeper.",
+      "We use Google Analytics cookies to understand visits and improve Skull King Score Keeper.",
     decline: "Decline",
     accept: "Accept",
   },
 
   home: {
-    title: "Scorekeeper",
-    subtitle: "for Skull King",
+    title: "Skull King",
+    subtitle: "Score Keeper",
     unofficial: "Unofficial fan-made app",
     resume: "Resume game",
     activeTitle: "Game in progress",
@@ -99,11 +99,11 @@ export const en: Strings = {
       title: "Install the app",
       installedTitle: "App installed",
       installedBody:
-        "The scorekeeper is installed on your device. It opens like any app and works fully offline.",
+        "Skull King Score Keeper is installed on your device. It opens like any app and works fully offline.",
       promptHint:
-        "Add the scorekeeper to your home screen for one-tap access and offline play.",
+        "Add Skull King Score Keeper to your home screen for one-tap access and offline play.",
       manualHint:
-        "Add the scorekeeper to your home screen for one-tap access and offline play. Follow the steps for your phone below.",
+        "Add Skull King Score Keeper to your home screen for one-tap access and offline play. Follow the steps for your phone below.",
       button: "Install now",
       error: "Installation could not start. Try the manual steps below.",
       guideTitle: "How to install it by hand",
@@ -345,7 +345,7 @@ export const en: Strings = {
       `Rank ${rank}, ${name}, ${total} points`,
     review: "Review round-by-round",
     rematch: "Rematch with the same crew",
-    installTitle: "Keep the scorekeeper aboard",
+    installTitle: "Keep Skull King Score Keeper aboard",
     installHint: "Install the app for quick access and fully offline play.",
     installIosHint:
       "Tap Share and “Add to Home Screen”. In Chrome, open “See more” first.",

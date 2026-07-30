@@ -14,14 +14,14 @@ export const zh: Strings = {
   cookies: {
     accessibilityLabel: "分析 Cookie 选项",
     message:
-      "我们使用 Google Analytics Cookie 来了解访问情况并改进计分器。",
+      "我们使用 Google Analytics Cookie 来了解访问情况并改进 Skull King Score Keeper。",
     decline: "拒绝",
     accept: "接受",
   },
 
   home: {
-    title: "计分器",
-    subtitle: "Skull King 专用",
+    title: "Skull King",
+    subtitle: "Score Keeper",
     unofficial: "非官方玩家应用",
     resume: "继续对局",
     activeTitle: "进行中的对局",
@@ -94,10 +94,10 @@ export const zh: Strings = {
     install: {
       title: "安装应用",
       installedTitle: "应用已安装",
-      installedBody: "计分器已安装到你的设备上。它像普通应用一样打开，并可完全离线使用。",
-      promptHint: "将计分器添加到主屏幕，一触即达并可离线游戏。",
+      installedBody: "Skull King Score Keeper 已安装到你的设备上。它像普通应用一样打开，并可完全离线使用。",
+      promptHint: "将 Skull King Score Keeper 添加到主屏幕，一触即达并可离线游戏。",
       manualHint:
-        "将计分器添加到主屏幕，一触即达并可离线游戏。请按下方对应你手机的步骤操作。",
+        "将 Skull King Score Keeper 添加到主屏幕，一触即达并可离线游戏。请按下方对应你手机的步骤操作。",
       button: "立即安装",
       error: "无法开始安装。请按下方的手动步骤操作。",
       guideTitle: "如何手动安装",
@@ -327,7 +327,7 @@ export const zh: Strings = {
       `第 ${rank} 名，${name}，${total} 分`,
     review: "逐回合查看",
     rematch: "与同一队伍再来一局",
-    installTitle: "把计分器留在船上",
+    installTitle: "把 Skull King Score Keeper 留在船上",
     installHint: "安装应用，快速打开并完全离线游玩。",
     installIosHint:
       "点按“共享”再点按“添加到主屏幕”，在 Chrome 中请先展开“查看更多”。",

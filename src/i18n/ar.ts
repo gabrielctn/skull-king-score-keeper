@@ -76,14 +76,14 @@ export const ar: Strings = {
   cookies: {
     accessibilityLabel: "خيارات ملفات تعريف الارتباط التحليلية",
     message:
-      "نستخدم ملفات تعريف ارتباط Google Analytics لفهم الزيارات وتحسين حاسبة النقاط.",
+      "نستخدم ملفات تعريف ارتباط Google Analytics لفهم الزيارات وتحسين Skull King Score Keeper.",
     decline: "رفض",
     accept: "قبول",
   },
 
   home: {
-    title: "حاسبة النقاط",
-    subtitle: "للعبة Skull King",
+    title: "Skull King",
+    subtitle: "Score Keeper",
     unofficial: "تطبيق غير رسمي من المعجبين",
     resume: "متابعة المباراة",
     activeTitle: "مباراة جارية",
@@ -163,11 +163,11 @@ export const ar: Strings = {
       title: "تثبيت التطبيق",
       installedTitle: "تم تثبيت التطبيق",
       installedBody:
-        "عدّاد النقاط الآن على جهازك. يفتح مثل أي تطبيق ويعمل دون اتصال تمامًا.",
+        "تطبيق Skull King Score Keeper الآن على جهازك. يفتح مثل أي تطبيق ويعمل دون اتصال تمامًا.",
       promptHint:
-        "أضف عدّاد النقاط إلى شاشتك الرئيسية للوصول بلمسة واحدة واللعب دون اتصال.",
+        "أضف Skull King Score Keeper إلى شاشتك الرئيسية للوصول بلمسة واحدة واللعب دون اتصال.",
       manualHint:
-        "أضف عدّاد النقاط إلى شاشتك الرئيسية للوصول بلمسة واحدة واللعب دون اتصال. اتبع الخطوات الخاصة بهاتفك أدناه.",
+        "أضف Skull King Score Keeper إلى شاشتك الرئيسية للوصول بلمسة واحدة واللعب دون اتصال. اتبع الخطوات الخاصة بهاتفك أدناه.",
       button: "تثبيت الآن",
       error: "تعذّر بدء التثبيت. اتبع الخطوات اليدوية أدناه.",
       guideTitle: "كيفية تثبيته يدويًا",
@@ -413,7 +413,7 @@ export const ar: Strings = {
       `المركز ${rank}، ${name}، ${total} نقطة`,
     review: "مراجعة الجولات واحدة تلو الأخرى",
     rematch: "إعادة اللعب مع الطاقم نفسه",
-    installTitle: "احتفظ بعدّاد النقاط على متن السفينة",
+    installTitle: "احتفظ بـ Skull King Score Keeper على متن السفينة",
     installHint: "ثبّت التطبيق للوصول السريع واللعب دون اتصال.",
     installIosHint:
       "اضغط على مشاركة ثم «إضافة إلى الشاشة الرئيسية». في Chrome افتح «عرض المزيد» أولًا.",

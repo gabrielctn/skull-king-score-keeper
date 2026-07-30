@@ -15,14 +15,14 @@ export const de: Strings = {
   cookies: {
     accessibilityLabel: "Auswahl für Analyse-Cookies",
     message:
-      "Wir verwenden Google-Analytics-Cookies, um Besuche zu verstehen und den Punktezähler zu verbessern.",
+      "Wir verwenden Google-Analytics-Cookies, um Besuche zu verstehen und Skull King Score Keeper zu verbessern.",
     decline: "Ablehnen",
     accept: "Akzeptieren",
   },
 
   home: {
-    title: "Punktezähler",
-    subtitle: "für Skull King",
+    title: "Skull King",
+    subtitle: "Score Keeper",
     unofficial: "Inoffizielle Fan-App",
     resume: "Spiel fortsetzen",
     activeTitle: "Laufendes Spiel",
@@ -99,11 +99,11 @@ export const de: Strings = {
       title: "App installieren",
       installedTitle: "App installiert",
       installedBody:
-        "Der Punktezähler ist auf deinem Gerät installiert. Er öffnet sich wie jede App und funktioniert komplett offline.",
+        "Skull King Score Keeper ist auf deinem Gerät installiert. Die App öffnet sich wie jede andere und funktioniert komplett offline.",
       promptHint:
-        "Füge den Punktezähler zum Startbildschirm hinzu, um ihn mit einem Tipp zu öffnen und offline zu spielen.",
+        "Füge Skull King Score Keeper zum Startbildschirm hinzu, um die App mit einem Tipp zu öffnen und offline zu spielen.",
       manualHint:
-        "Füge den Punktezähler zum Startbildschirm hinzu, um ihn mit einem Tipp zu öffnen und offline zu spielen. Folge unten den Schritten für dein Telefon.",
+        "Füge Skull King Score Keeper zum Startbildschirm hinzu, um die App mit einem Tipp zu öffnen und offline zu spielen. Folge unten den Schritten für dein Telefon.",
       button: "Jetzt installieren",
       error:
         "Die Installation konnte nicht starten. Nutze die manuellen Schritte unten.",
@@ -348,7 +348,7 @@ export const de: Strings = {
       `Platz ${rank}, ${name}, ${total} Punkte`,
     review: "Runden einzeln ansehen",
     rematch: "Revanche mit derselben Crew",
-    installTitle: "Punktezähler an Bord behalten",
+    installTitle: "Skull King Score Keeper an Bord behalten",
     installHint: "Installiere die App für schnellen Zugriff und vollständig offline spielbare Partien.",
     installIosHint:
       "Tippe auf Teilen und „Zum Home-Bildschirm“. In Chrome zuerst „Mehr anzeigen“ öffnen.",

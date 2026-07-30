@@ -1,13 +1,13 @@
 import Foundation
 
-enum IntentDestinationStore {
-  static let eventName = "SkullKingAppIntentDestination"
+enum SkullKingScoreKeeperDestinationStore {
+  static let eventName = "SkullKingScoreKeeperAppIntentDestination"
   static let notificationName = Notification.Name(
-    "SkullKingAppIntentDestinationNotification"
+    "SkullKingScoreKeeperAppIntentDestinationNotification"
   )
 
   private static let pendingDestinationKey =
-    "skullking.appIntents.pendingDestination"
+    "skullkingscorekeeper.appIntents.pendingDestination"
   private static let destinationUserInfoKey = "destination"
   private static let validDestinations: Set<String> = [
     "newGame",

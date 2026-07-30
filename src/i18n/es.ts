@@ -15,14 +15,14 @@ export const es: Strings = {
   cookies: {
     accessibilityLabel: "Opciones de cookies analíticas",
     message:
-      "Usamos cookies de Google Analytics para conocer las visitas y mejorar el anotador de puntos.",
+      "Usamos cookies de Google Analytics para conocer las visitas y mejorar Skull King Score Keeper.",
     decline: "Rechazar",
     accept: "Aceptar",
   },
 
   home: {
-    title: "Anotador de puntos",
-    subtitle: "para Skull King",
+    title: "Skull King",
+    subtitle: "Score Keeper",
     unofficial: "Aplicación no oficial creada por fans",
     resume: "Continuar partida",
     activeTitle: "Partida en curso",
@@ -103,11 +103,11 @@ export const es: Strings = {
       title: "Instalar la aplicación",
       installedTitle: "Aplicación instalada",
       installedBody:
-        "El marcador está en tu dispositivo. Se abre como cualquier app y funciona totalmente sin conexión.",
+        "Skull King Score Keeper está en tu dispositivo. Se abre como cualquier app y funciona totalmente sin conexión.",
       promptHint:
-        "Añade el marcador a tu pantalla de inicio para acceder con un toque y jugar sin conexión.",
+        "Añade Skull King Score Keeper a tu pantalla de inicio para acceder con un toque y jugar sin conexión.",
       manualHint:
-        "Añade el marcador a tu pantalla de inicio para acceder con un toque y jugar sin conexión. Sigue los pasos de tu teléfono más abajo.",
+        "Añade Skull King Score Keeper a tu pantalla de inicio para acceder con un toque y jugar sin conexión. Sigue los pasos de tu teléfono más abajo.",
       button: "Instalar ahora",
       error:
         "No se pudo iniciar la instalación. Sigue los pasos manuales de abajo.",
@@ -353,7 +353,7 @@ export const es: Strings = {
       `Puesto ${rank}, ${name}, ${total} puntos`,
     review: "Revisar ronda por ronda",
     rematch: "Revancha con la misma tripulación",
-    installTitle: "Lleva el anotador a bordo",
+    installTitle: "Lleva Skull King Score Keeper a bordo",
     installHint:
       "Instala la aplicación para acceder rápidamente y jugar sin conexión.",
     installIosHint:

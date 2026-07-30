@@ -21,12 +21,14 @@
     "test:responsive": "node --import tsx scripts/test-responsive-layout.ts",
     "test:ux": "node --import tsx scripts/test-ux.ts",
     "test:assets": "node --import tsx scripts/test-assets.ts",
-    "test:branding": "node --import tsx scripts/test-branding.ts"
+    "test:branding": "node --import tsx scripts/test-branding.ts",
+    "android": "expo run:android"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "2.2.0",
     "@supabase/supabase-js": "^2.110.7",
     "expo": "~54.0.35",
+    "expo-crypto": "~15.0.9",
     "expo-keep-awake": "~15.0.8",
     "expo-status-bar": "~3.0.9",
     "qrcode-generator": "^2.0.4",

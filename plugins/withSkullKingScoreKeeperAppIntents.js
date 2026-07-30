@@ -10,12 +10,12 @@ const {
 
 const IOS_DEPLOYMENT_TARGET = "16.0";
 const NATIVE_SOURCE_FILES = [
-  "AppIntents/ScoreKeeperDestination.swift",
-  "AppIntents/ScoreKeeperIntents.swift",
-  "AppIntents/ScoreKeeperAppShortcuts.swift",
-  "IntentBridge/IntentDestinationStore.swift",
-  "IntentBridge/SkullKingAppIntents.swift",
-  "IntentBridge/SkullKingAppIntentsBridge.m",
+  "AppIntents/SkullKingScoreKeeperDestination.swift",
+  "AppIntents/SkullKingScoreKeeperIntents.swift",
+  "AppIntents/SkullKingScoreKeeperAppShortcuts.swift",
+  "IntentBridge/SkullKingScoreKeeperDestinationStore.swift",
+  "IntentBridge/SkullKingScoreKeeperAppIntents.swift",
+  "IntentBridge/SkullKingScoreKeeperAppIntentsBridge.m",
 ];
 
 function copyNativeSources(projectRoot, platformProjectRoot, sourceRootName) {
@@ -23,7 +23,7 @@ function copyNativeSources(projectRoot, platformProjectRoot, sourceRootName) {
   const generatedRoot = path.join(
     platformProjectRoot,
     sourceRootName,
-    "SkullKingAppIntents"
+    "SkullKingScoreKeeperAppIntents"
   );
 
   for (const relativePath of NATIVE_SOURCE_FILES) {
@@ -32,7 +32,7 @@ function copyNativeSources(projectRoot, platformProjectRoot, sourceRootName) {
 
     if (!fs.existsSync(sourcePath)) {
       throw new Error(
-        `[withSkullKingAppIntents] Missing native source: ${sourcePath}`
+        `[withSkullKingScoreKeeperAppIntents] Missing native source: ${sourcePath}`
       );
     }
 
@@ -50,12 +50,12 @@ function addNativeSourcesToProject(
     const sourceDirectory = path.dirname(relativePath);
     const groupName = [
       sourceRootName,
-      "SkullKingAppIntents",
+      "SkullKingScoreKeeperAppIntents",
       sourceDirectory,
     ].join("/");
     const generatedRelativePath = [
       sourceRootName,
-      "SkullKingAppIntents",
+      "SkullKingScoreKeeperAppIntents",
       relativePath,
     ].join("/");
 
@@ -69,7 +69,7 @@ function addNativeSourcesToProject(
   }
 }
 
-function withSkullKingAppIntents(config) {
+function withSkullKingScoreKeeperAppIntents(config) {
   config = withPodfileProperties(config, (podfileConfig) => {
     podfileConfig.modResults["ios.deploymentTarget"] = IOS_DEPLOYMENT_TARGET;
     return podfileConfig;
@@ -104,6 +104,6 @@ function withSkullKingAppIntents(config) {
   return config;
 }
 
-module.exports = withSkullKingAppIntents;
+module.exports = withSkullKingScoreKeeperAppIntents;
 module.exports.IOS_DEPLOYMENT_TARGET = IOS_DEPLOYMENT_TARGET;
 module.exports.NATIVE_SOURCE_FILES = NATIVE_SOURCE_FILES;

@@ -1,7 +1,7 @@
 {
-  "name": "Unofficial Score Keeper for Skull King",
-  "short_name": "Score Keeper",
-  "description": "Unofficial score keeper for the Skull King card game. Works fully offline.",
+  "name": "Skull King Score Keeper",
+  "short_name": "Skull King Score Keeper",
+  "description": "Skull King Score Keeper is an unofficial fan-made scoring app. Works fully offline.",
   "id": "/skull-king-score-keeper/",
   "start_url": "/skull-king-score-keeper/",
   "scope": "/skull-king-score-keeper/",

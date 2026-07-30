@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { en } from "../src/i18n/en";
 import { fr } from "../src/i18n/fr";
 import { de } from "../src/i18n/de";
+import { es } from "../src/i18n/es";
 import { ar } from "../src/i18n/ar";
 import { zh } from "../src/i18n/zh";
 
@@ -26,14 +27,20 @@ const readme = readFileSync("README.md", "utf8");
 const buildPwa = readFileSync("scripts/build-pwa.mjs", "utf8");
 
 check(
-  "installed app label uses an independent identity",
-  appConfig.name === "Score Keeper, Unofficial"
+  "native and PWA names match the App Store name",
+  appConfig.name === "Skull King Score Keeper" &&
+    appConfig.web.name === appConfig.name &&
+    appConfig.web.shortName === appConfig.name &&
+    manifest.name === appConfig.name &&
+    manifest.short_name === appConfig.name
 );
 check("web and manifest full names match", appConfig.web.name === manifest.name);
-check("full PWA name is explicitly unofficial", /unofficial/i.test(manifest.name));
 check(
-  "short installed name does not use the game trademark",
-  appConfig.web.shortName === "Score Keeper" && manifest.short_name === "Score Keeper"
+  "localized home branding matches the app name",
+  [en, fr, de, es, ar, zh].every(
+    ({ home }) =>
+      home.title === "Skull King" && home.subtitle === "Score Keeper"
+  )
 );
 check(
   "PWA descriptions are explicitly unofficial",

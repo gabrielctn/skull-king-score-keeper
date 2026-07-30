@@ -1,7 +1,7 @@
 import AppIntents
 
 @available(iOS 16.0, *)
-enum ScoreKeeperDestination: String, AppEnum, CaseIterable, Sendable {
+enum SkullKingScoreKeeperDestination: String, AppEnum, CaseIterable, Sendable {
   case newGame
   case continueGame
   case statistics
