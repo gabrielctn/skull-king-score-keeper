@@ -64,6 +64,7 @@ export const en: Strings = {
     automaticUpdatesBody:
       "Installed apps now download each new release automatically and switch to it as soon as the device is online.",
     items: [
+      "Inviting your crew and joining another table are now separate actions, so each flow is immediately visible in Settings.",
       "Shared game tables: name your crew's table and invite friends with a link or QR code. Anyone who joins can keep score, every game lands in the shared history and leaderboard, and one phone can hold several tables, one per group of friends.",
       "Game rules can now be changed during a game from the new ⚙ button: enable the expansion mid-game, switch scoring, and more. Scored rounds recalculate automatically.",
       "The new expansion is now on by default for new games.",
@@ -172,6 +173,7 @@ export const en: Strings = {
       codeLabel: "This table's code",
       copy: "Copy",
       copied: "Copied",
+      joinTitle: "Join another table",
       pasteLabel: "Paste a code from another table",
       linkButton: "Join that table",
       linking: "Joining…",

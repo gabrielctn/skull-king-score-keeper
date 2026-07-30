@@ -103,7 +103,8 @@ export default function SettingsScreen({
   const [cloudStatus, setCloudStatus] = React.useState<CloudStatus>(() =>
     cloudBackupManager().getStatus()
   );
-  const [linkOpen, setLinkOpen] = React.useState(false);
+  const [inviteOpen, setInviteOpen] = React.useState(false);
+  const [joinOpen, setJoinOpen] = React.useState(false);
   const [syncCode, setSyncCode] = React.useState<string | null>(null);
   const [codeCopied, setCodeCopied] = React.useState(false);
   const [linkCopied, setLinkCopied] = React.useState(false);
@@ -135,9 +136,9 @@ export default function SettingsScreen({
     return cloud.subscribe(setCloudStatus);
   }, []);
 
-  // Fetch this device's sync code lazily, only once the link panel is opened.
+  // Fetch this device's sync code lazily, only once the invite panel is opened.
   React.useEffect(() => {
-    if (!linkOpen || syncCode || !cloudConfigured()) return;
+    if (!inviteOpen || syncCode || !cloudConfigured()) return;
     let active = true;
     void cloudBackupManager()
       .syncCode()
@@ -147,7 +148,7 @@ export default function SettingsScreen({
     return () => {
       active = false;
     };
-  }, [linkOpen, syncCode]);
+  }, [inviteOpen, syncCode]);
 
   // The name can also change under us when this device joins another table.
   React.useEffect(() => {
@@ -534,17 +535,17 @@ export default function SettingsScreen({
 
             <TouchableOpacity
               style={styles.linkToggle}
-              onPress={() => setLinkOpen((open) => !open)}
+              onPress={() => setInviteOpen((open) => !open)}
               accessibilityRole="button"
-              accessibilityState={{ expanded: linkOpen }}
+              accessibilityState={{ expanded: inviteOpen }}
             >
               <Text style={styles.linkToggleText}>
                 {t.settings.cloud.shareTitle}
               </Text>
-              <DisclosureChevron expanded={linkOpen} />
+              <DisclosureChevron expanded={inviteOpen} />
             </TouchableOpacity>
 
-            {linkOpen ? (
+            {inviteOpen ? (
               <View style={styles.linkPanel}>
                 <Text style={styles.linkHint}>
                   {t.settings.cloud.shareHint}
@@ -602,8 +603,24 @@ export default function SettingsScreen({
                     </Text>
                   </TouchableOpacity>
                 </View>
+              </View>
+            ) : null}
 
-                <Text style={[styles.codeLabel, styles.pasteLabel]}>
+            <TouchableOpacity
+              style={styles.linkToggle}
+              onPress={() => setJoinOpen((open) => !open)}
+              accessibilityRole="button"
+              accessibilityState={{ expanded: joinOpen }}
+            >
+              <Text style={styles.linkToggleText}>
+                {t.settings.cloud.joinTitle}
+              </Text>
+              <DisclosureChevron expanded={joinOpen} />
+            </TouchableOpacity>
+
+            {joinOpen ? (
+              <View style={styles.linkPanel}>
+                <Text style={styles.codeLabel}>
                   {t.settings.cloud.pasteLabel}
                 </Text>
                 <TextInput
@@ -1032,7 +1049,6 @@ const styles = StyleSheet.create({
     letterSpacing: 0.6,
     marginBottom: spacing.xs,
   },
-  pasteLabel: { marginTop: spacing.md },
   codeRow: { flexDirection: "row", alignItems: "stretch" },
   codeValue: {
     flex: 1,

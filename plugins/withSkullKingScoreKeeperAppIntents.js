@@ -70,6 +70,15 @@ function addNativeSourcesToProject(
 }
 
 function withSkullKingScoreKeeperAppIntents(config) {
+  const marketingVersion = config.ios?.version ?? config.version;
+  const buildNumber = config.ios?.buildNumber;
+
+  if (!marketingVersion || !buildNumber) {
+    throw new Error(
+      "[withSkullKingScoreKeeperAppIntents] Expo version and iOS buildNumber are required"
+    );
+  }
+
   config = withPodfileProperties(config, (podfileConfig) => {
     podfileConfig.modResults["ios.deploymentTarget"] = IOS_DEPLOYMENT_TARGET;
     return podfileConfig;
@@ -93,6 +102,18 @@ function withSkullKingScoreKeeperAppIntents(config) {
     project.updateBuildProperty(
       "IPHONEOS_DEPLOYMENT_TARGET",
       IOS_DEPLOYMENT_TARGET,
+      undefined,
+      targetName
+    );
+    project.updateBuildProperty(
+      "MARKETING_VERSION",
+      marketingVersion,
+      undefined,
+      targetName
+    );
+    project.updateBuildProperty(
+      "CURRENT_PROJECT_VERSION",
+      buildNumber,
       undefined,
       targetName
     );

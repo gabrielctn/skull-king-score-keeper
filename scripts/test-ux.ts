@@ -23,6 +23,10 @@ function check(label: string, condition: boolean, detail = "") {
 const packageJson = JSON.parse(readFileSync("package.json", "utf8"));
 const packageLock = JSON.parse(readFileSync("package-lock.json", "utf8"));
 const appConfig = JSON.parse(readFileSync("app.json", "utf8")).expo;
+const xcodeCloudSource = readFileSync(
+  "ios/ci_scripts/ci_post_clone.sh",
+  "utf8"
+);
 const cookieSource = readFileSync(
   "src/components/CookieConsentBanner.tsx",
   "utf8"
@@ -60,6 +64,16 @@ check(
   "release versions stay aligned",
   [packageJson.version, packageLock.version, packageLock.packages[""].version, appConfig.version]
     .every((version) => version === CURRENT_RELEASE)
+);
+check(
+  "the local iOS build number is a positive integer",
+  /^[1-9]\d*$/.test(appConfig.ios.buildNumber)
+);
+check(
+  "Xcode Cloud stamps its unique build number before generating iOS",
+  xcodeCloudSource.includes("CI_BUILD_NUMBER") &&
+    xcodeCloudSource.indexOf("CI_BUILD_NUMBER") <
+      xcodeCloudSource.indexOf("npx expo prebuild --platform ios")
 );
 check(
   "consent prompt participates in page layout",
@@ -181,6 +195,15 @@ check(
     settingsSource.includes("t.settings.cloud.copyLink")
 );
 check(
+  "settings expose invite and join as separate actions",
+  settingsSource.includes("const [inviteOpen, setInviteOpen]") &&
+    settingsSource.includes("const [joinOpen, setJoinOpen]") &&
+    settingsSource.includes("t.settings.cloud.shareTitle") &&
+    settingsSource.includes("t.settings.cloud.joinTitle") &&
+    settingsSource.includes("expanded: inviteOpen") &&
+    settingsSource.includes("expanded: joinOpen")
+);
+check(
   "settings let the crew name their shared table",
   settingsSource.includes("t.settings.cloud.tableNameLabel") &&
     settingsSource.includes("onRenameTable")
@@ -219,7 +242,7 @@ for (const [language, strings] of Object.entries({ en, fr, es, de, ar, zh })) {
   );
   check(
     `${language} release notes describe this release`,
-    strings.whatsNew.items.length === 5
+    strings.whatsNew.items.length === 6
   );
 }
 

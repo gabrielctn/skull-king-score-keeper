@@ -25,6 +25,10 @@ const homeSource = readFileSync("src/screens/HomeScreen.tsx", "utf8");
 const rulesSource = readFileSync("src/components/RulesModal.tsx", "utf8");
 const readme = readFileSync("README.md", "utf8");
 const buildPwa = readFileSync("scripts/build-pwa.mjs", "utf8");
+const iosConfigPlugin = readFileSync(
+  "plugins/withSkullKingScoreKeeperAppIntents.js",
+  "utf8"
+);
 
 check(
   "native and PWA names match the App Store name",
@@ -82,6 +86,13 @@ check("README identifies the project as unofficial", readme.includes("Unofficial
 check(
   "Apple installed title is sourced from app configuration",
   buildPwa.includes('content="${installedAppTitle}"')
+);
+check(
+  "generated Xcode release metadata is sourced from app configuration",
+  iosConfigPlugin.includes('"MARKETING_VERSION"') &&
+    iosConfigPlugin.includes('"CURRENT_PROJECT_VERSION"') &&
+    iosConfigPlugin.includes("config.ios?.version ?? config.version") &&
+    iosConfigPlugin.includes("config.ios?.buildNumber")
 );
 
 console.log(`\n${passed} passed, ${failed} failed`);

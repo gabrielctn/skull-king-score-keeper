@@ -179,6 +179,8 @@ export interface Strings {
       codeLabel: string;
       copy: string;
       copied: string;
+      /** Header of the separate flow for joining another table. */
+      joinTitle: string;
       pasteLabel: string;
       linkButton: string;
       linking: string;
