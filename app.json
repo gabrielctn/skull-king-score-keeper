@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Skull King Score Keeper",
+    "name": "Skull King Crew Ledger",
     "slug": "skull-king-scorekeeper",
     "version": "1.10.1",
     "scheme": "skullking",
@@ -16,7 +16,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.gabrielcretin.skullking",
-      "buildNumber": "3",
+      "buildNumber": "4",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
@@ -24,15 +24,15 @@
     "web": {
       "bundler": "metro",
       "favicon": "./assets/favicon.png",
-      "name": "Skull King Score Keeper",
-      "shortName": "Skull King Score Keeper",
-      "description": "Skull King Score Keeper is an unofficial fan-made scoring app. Works offline.",
+      "name": "Skull King Crew Ledger",
+      "shortName": "Skull King Crew Ledger",
+      "description": "Skull King Crew Ledger is an unofficial fan-made scoring app. Works offline.",
       "themeColor": "#0b1722",
       "backgroundColor": "#0b1722",
       "display": "standalone",
       "orientation": "portrait"
     },
-    "plugins": ["./plugins/withSkullKingScoreKeeperAppIntents"],
+    "plugins": ["./plugins/withSkullKingCrewLedgerAppIntents"],
     "experiments": {
       "baseUrl": "/skull-king-score-keeper"
     },

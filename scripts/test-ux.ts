@@ -31,6 +31,10 @@ const cookieSource = readFileSync(
   "src/components/CookieConsentBanner.tsx",
   "utf8"
 );
+const glassSource = readFileSync("src/components/GlassSurface.tsx", "utf8");
+const clipboardWebSource = readFileSync("src/clipboard.ts", "utf8");
+const clipboardNativeSource = readFileSync("src/clipboard.native.ts", "utf8");
+const copyButtonSource = readFileSync("src/components/CopyButton.tsx", "utf8");
 const stepperSource = readFileSync("src/components/Stepper.tsx", "utf8");
 const setupSource = readFileSync("src/screens/SetupScreen.tsx", "utf8");
 const homeSource = readFileSync("src/screens/HomeScreen.tsx", "utf8");
@@ -78,6 +82,54 @@ check(
 check(
   "consent prompt participates in page layout",
   !cookieSource.includes('position: "absolute"')
+);
+check(
+  "glass is reserved for navigation and temporary overlays",
+  packageJson.dependencies?.["expo-blur"] &&
+    homeSource.includes("<GlassSurface") &&
+    setupSource.includes("<GlassSurface") &&
+    gameSource.includes("<GlassSurface") &&
+    settingsSource.includes("<GlassSurface") &&
+    statsSource.includes("<GlassSurface") &&
+    cookieSource.includes("<GlassSurface")
+);
+check(
+  "glass preserves contrast and avoids experimental Android blur",
+  glassSource.includes("isReduceTransparencyEnabled") &&
+    glassSource.includes('Platform.OS === "android"') &&
+    glassSource.includes('"systemUltraThinMaterialDark"') &&
+    !glassSource.includes("experimentalBlurMethod")
+);
+check(
+  "settings and statistics glass headers overlay scrolling content",
+  settingsSource.includes("stickyHeaderIndices={[0]}") &&
+    settingsSource.includes("styles.headerLayer") &&
+    settingsSource.includes('width: "100%"') &&
+    settingsSource.includes("{ paddingTop: layout.screenPadding }") &&
+    statsSource.includes("stickyHeaderIndices={[0]}") &&
+    statsSource.includes("styles.headerLayer") &&
+    statsSource.includes("{ paddingTop: layout.screenPadding }")
+);
+check(
+  "screen headers align with their content columns",
+  setupSource.includes("layout.formMaxWidth - layout.screenPadding * 2") &&
+    settingsSource.includes("stickyHeaderIndices={[0]}") &&
+    statsSource.includes("stickyHeaderIndices={[0]}") &&
+    gameSource.includes("layout.gameContentMaxWidth - layout.screenPadding * 2")
+);
+check(
+  "settings copy actions use the cross-platform clipboard with feedback",
+  packageJson.dependencies?.["expo-clipboard"] &&
+    settingsSource.includes('from "../clipboard"') &&
+    settingsSource.includes("copyTextToClipboard") &&
+    settingsSource.includes("<CopyButton") &&
+    copyButtonSource.includes('"button"') &&
+    copyButtonSource.includes("onClick: onPress") &&
+    clipboardNativeSource.includes("Clipboard.setStringAsync") &&
+    clipboardWebSource.includes("navigator.clipboard.writeText") &&
+    clipboardWebSource.includes('document.execCommand("copy")') &&
+    settingsSource.includes('copied ? "copied" : "error"') &&
+    settingsSource.includes("t.settings.cloud.copyFailed")
 );
 check(
   "active game is excluded from recent history",

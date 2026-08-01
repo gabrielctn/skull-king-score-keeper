@@ -15,14 +15,14 @@ export const es: Strings = {
   cookies: {
     accessibilityLabel: "Opciones de cookies analíticas",
     message:
-      "Usamos cookies de Google Analytics para conocer las visitas y mejorar Skull King Score Keeper.",
+      "Usamos cookies de Google Analytics para conocer las visitas y mejorar Skull King Crew Ledger.",
     decline: "Rechazar",
     accept: "Aceptar",
   },
 
   home: {
     title: "Skull King",
-    subtitle: "Score Keeper",
+    subtitle: "Crew Ledger",
     unofficial: "Aplicación no oficial creada por fans",
     resume: "Continuar partida",
     activeTitle: "Partida en curso",
@@ -107,11 +107,11 @@ export const es: Strings = {
       title: "Instalar la aplicación",
       installedTitle: "Aplicación instalada",
       installedBody:
-        "Skull King Score Keeper está en tu dispositivo. Se abre como cualquier app y funciona totalmente sin conexión.",
+        "Skull King Crew Ledger está en tu dispositivo. Se abre como cualquier app y funciona totalmente sin conexión.",
       promptHint:
-        "Añade Skull King Score Keeper a tu pantalla de inicio para acceder con un toque y jugar sin conexión.",
+        "Añade Skull King Crew Ledger a tu pantalla de inicio para acceder con un toque y jugar sin conexión.",
       manualHint:
-        "Añade Skull King Score Keeper a tu pantalla de inicio para acceder con un toque y jugar sin conexión. Sigue los pasos de tu teléfono más abajo.",
+        "Añade Skull King Crew Ledger a tu pantalla de inicio para acceder con un toque y jugar sin conexión. Sigue los pasos de tu teléfono más abajo.",
       button: "Instalar ahora",
       error:
         "No se pudo iniciar la instalación. Sigue los pasos manuales de abajo.",
@@ -170,7 +170,9 @@ export const es: Strings = {
       shareHint:
         "Tus amigos escanean este código QR (o abren el enlace) para unirse a tu mesa. Cualquier miembro puede anotar los puntos; todas las partidas van al mismo historial compartido. Compártelo solo con tu tripulación.",
       copyLink: "Copiar enlace de invitación",
+      copying: "Copiando…",
       linkCopied: "¡Enlace copiado!",
+      copyFailed: "No se pudo copiar",
       qrLabel: "Código QR para unirse a esta mesa de juego",
       linkTitle: "¿Sin cámara a mano? Usa un código",
       linkHint:
@@ -409,7 +411,7 @@ export const es: Strings = {
       `Puesto ${rank}, ${name}, ${total} puntos`,
     review: "Revisar ronda por ronda",
     rematch: "Revancha con la misma tripulación",
-    installTitle: "Lleva Skull King Score Keeper a bordo",
+    installTitle: "Lleva Skull King Crew Ledger a bordo",
     installHint:
       "Instala la aplicación para acceder rápidamente y jugar sin conexión.",
     installIosHint:

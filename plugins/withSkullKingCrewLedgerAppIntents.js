@@ -10,12 +10,12 @@ const {
 
 const IOS_DEPLOYMENT_TARGET = "16.0";
 const NATIVE_SOURCE_FILES = [
-  "AppIntents/SkullKingScoreKeeperDestination.swift",
-  "AppIntents/SkullKingScoreKeeperIntents.swift",
-  "AppIntents/SkullKingScoreKeeperAppShortcuts.swift",
-  "IntentBridge/SkullKingScoreKeeperDestinationStore.swift",
-  "IntentBridge/SkullKingScoreKeeperAppIntents.swift",
-  "IntentBridge/SkullKingScoreKeeperAppIntentsBridge.m",
+  "AppIntents/SkullKingCrewLedgerDestination.swift",
+  "AppIntents/SkullKingCrewLedgerIntents.swift",
+  "AppIntents/SkullKingCrewLedgerAppShortcuts.swift",
+  "IntentBridge/SkullKingCrewLedgerDestinationStore.swift",
+  "IntentBridge/SkullKingCrewLedgerAppIntents.swift",
+  "IntentBridge/SkullKingCrewLedgerAppIntentsBridge.m",
 ];
 
 function copyNativeSources(projectRoot, platformProjectRoot, sourceRootName) {
@@ -23,7 +23,7 @@ function copyNativeSources(projectRoot, platformProjectRoot, sourceRootName) {
   const generatedRoot = path.join(
     platformProjectRoot,
     sourceRootName,
-    "SkullKingScoreKeeperAppIntents"
+    "SkullKingCrewLedgerAppIntents"
   );
 
   for (const relativePath of NATIVE_SOURCE_FILES) {
@@ -32,7 +32,7 @@ function copyNativeSources(projectRoot, platformProjectRoot, sourceRootName) {
 
     if (!fs.existsSync(sourcePath)) {
       throw new Error(
-        `[withSkullKingScoreKeeperAppIntents] Missing native source: ${sourcePath}`
+        `[withSkullKingCrewLedgerAppIntents] Missing native source: ${sourcePath}`
       );
     }
 
@@ -50,12 +50,12 @@ function addNativeSourcesToProject(
     const sourceDirectory = path.dirname(relativePath);
     const groupName = [
       sourceRootName,
-      "SkullKingScoreKeeperAppIntents",
+      "SkullKingCrewLedgerAppIntents",
       sourceDirectory,
     ].join("/");
     const generatedRelativePath = [
       sourceRootName,
-      "SkullKingScoreKeeperAppIntents",
+      "SkullKingCrewLedgerAppIntents",
       relativePath,
     ].join("/");
 
@@ -69,13 +69,13 @@ function addNativeSourcesToProject(
   }
 }
 
-function withSkullKingScoreKeeperAppIntents(config) {
+function withSkullKingCrewLedgerAppIntents(config) {
   const marketingVersion = config.ios?.version ?? config.version;
   const buildNumber = config.ios?.buildNumber;
 
   if (!marketingVersion || !buildNumber) {
     throw new Error(
-      "[withSkullKingScoreKeeperAppIntents] Expo version and iOS buildNumber are required"
+      "[withSkullKingCrewLedgerAppIntents] Expo version and iOS buildNumber are required"
     );
   }
 
@@ -125,6 +125,6 @@ function withSkullKingScoreKeeperAppIntents(config) {
   return config;
 }
 
-module.exports = withSkullKingScoreKeeperAppIntents;
+module.exports = withSkullKingCrewLedgerAppIntents;
 module.exports.IOS_DEPLOYMENT_TARGET = IOS_DEPLOYMENT_TARGET;
 module.exports.NATIVE_SOURCE_FILES = NATIVE_SOURCE_FILES;

@@ -4,7 +4,7 @@ import AppIntents
 struct StartNewGameIntent: AppIntent {
   static let title: LocalizedStringResource = "Start New Game"
   static let description = IntentDescription(
-    "Open Skull King Score Keeper to set up a new game."
+    "Open Skull King Crew Ledger to set up a new game."
   )
   static let openAppWhenRun = true
 
@@ -12,8 +12,8 @@ struct StartNewGameIntent: AppIntent {
   static var supportedModes: IntentModes { .foreground(.immediate) }
 
   func perform() async throws -> some IntentResult {
-    SkullKingScoreKeeperDestinationStore.setPendingDestination(
-      SkullKingScoreKeeperDestination.newGame.rawValue
+    SkullKingCrewLedgerDestinationStore.setPendingDestination(
+      SkullKingCrewLedgerDestination.newGame.rawValue
     )
     return .result()
   }
@@ -23,7 +23,7 @@ struct StartNewGameIntent: AppIntent {
 struct ContinueGameIntent: AppIntent {
   static let title: LocalizedStringResource = "Continue Game"
   static let description = IntentDescription(
-    "Open Skull King Score Keeper on the current game."
+    "Open Skull King Crew Ledger on the current game."
   )
   static let openAppWhenRun = true
 
@@ -31,8 +31,8 @@ struct ContinueGameIntent: AppIntent {
   static var supportedModes: IntentModes { .foreground(.immediate) }
 
   func perform() async throws -> some IntentResult {
-    SkullKingScoreKeeperDestinationStore.setPendingDestination(
-      SkullKingScoreKeeperDestination.continueGame.rawValue
+    SkullKingCrewLedgerDestinationStore.setPendingDestination(
+      SkullKingCrewLedgerDestination.continueGame.rawValue
     )
     return .result()
   }
@@ -42,7 +42,7 @@ struct ContinueGameIntent: AppIntent {
 struct OpenStatisticsIntent: AppIntent {
   static let title: LocalizedStringResource = "Open Statistics"
   static let description = IntentDescription(
-    "Open Skull King Score Keeper statistics."
+    "Open Skull King Crew Ledger statistics."
   )
   static let openAppWhenRun = true
 
@@ -50,8 +50,8 @@ struct OpenStatisticsIntent: AppIntent {
   static var supportedModes: IntentModes { .foreground(.immediate) }
 
   func perform() async throws -> some IntentResult {
-    SkullKingScoreKeeperDestinationStore.setPendingDestination(
-      SkullKingScoreKeeperDestination.statistics.rawValue
+    SkullKingCrewLedgerDestinationStore.setPendingDestination(
+      SkullKingCrewLedgerDestination.statistics.rawValue
     )
     return .result()
   }

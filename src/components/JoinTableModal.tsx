@@ -10,6 +10,7 @@ import {
 import { cloudBackupManager } from "../cloudSync";
 import { colors, radius, spacing } from "../theme";
 import { useI18n } from "../i18n/context";
+import GlassSurface from "./GlassSurface";
 
 interface Props {
   /** Join code consumed from a scanned link; null hides the modal. */
@@ -86,7 +87,8 @@ export default function JoinTableModal({ code, onClose, onJoin }: Props) {
       onRequestClose={onClose}
     >
       <View style={styles.overlay}>
-        <View
+        <GlassSurface
+          intensity={56}
           style={styles.dialog}
           accessibilityRole="alert"
           accessibilityViewIsModal
@@ -155,7 +157,7 @@ export default function JoinTableModal({ code, onClose, onJoin }: Props) {
               </TouchableOpacity>
             ) : null}
           </View>
-        </View>
+        </GlassSurface>
       </View>
     </Modal>
   );
@@ -172,9 +174,7 @@ const styles = StyleSheet.create({
   dialog: {
     width: "100%",
     maxWidth: 420,
-    backgroundColor: colors.card,
-    borderColor: colors.cardBorder,
-    borderWidth: 1,
+    borderColor: colors.glassBorder,
     borderRadius: radius.lg,
     padding: spacing.lg,
   },

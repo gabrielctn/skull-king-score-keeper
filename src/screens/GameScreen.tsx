@@ -43,6 +43,7 @@ import { liveConfigured } from "../liveConfig";
 import { colors, radius, spacing } from "../theme";
 import { getResponsiveLayout } from "../responsive";
 import { useKeepAwake } from "../wakeLock";
+import GlassSurface from "../components/GlassSurface";
 
 interface Props {
   game: Game;
@@ -496,11 +497,15 @@ export default function GameScreen({
 
   return (
     <SafeAreaView style={styles.safe}>
-      <View
+      <GlassSurface
+        intensity={42}
         style={[
           styles.header,
           {
-            maxWidth: layout.gameContentMaxWidth,
+            width: Math.max(
+              0,
+              layout.gameContentMaxWidth - layout.screenPadding * 2
+            ),
             paddingHorizontal: layout.screenPadding,
           },
         ]}
@@ -551,7 +556,7 @@ export default function GameScreen({
           </View>
         </View>
         {!layout.isTablet ? roundNavigation : null}
-      </View>
+      </GlassSurface>
 
       <View
         style={[
@@ -927,7 +932,8 @@ export default function GameScreen({
         onRequestClose={() => setUntouchedReviewOpen(false)}
       >
         <View style={styles.modalOverlay}>
-          <View
+          <GlassSurface
+            intensity={54}
             style={styles.confirmDialog}
             accessibilityRole="alert"
             accessibilityViewIsModal
@@ -957,7 +963,7 @@ export default function GameScreen({
                 </Text>
               </TouchableOpacity>
             </View>
-          </View>
+          </GlassSurface>
         </View>
       </Modal>
       <ScoreBreakdownModal
@@ -981,12 +987,13 @@ export default function GameScreen({
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.bg },
+  safe: { flex: 1, backgroundColor: "transparent" },
   header: {
-    width: "100%",
     alignSelf: "center",
     paddingHorizontal: spacing.md,
-    paddingTop: spacing.sm,
+    paddingVertical: spacing.sm,
+    marginTop: spacing.sm,
+    borderRadius: radius.lg,
   },
   headerTopRow: {
     width: "100%",
@@ -1304,8 +1311,7 @@ const styles = StyleSheet.create({
   confirmDialog: {
     width: "100%",
     maxWidth: 420,
-    backgroundColor: colors.card,
-    borderColor: colors.cardBorder,
+    borderColor: colors.glassBorder,
     borderWidth: 1,
     borderRadius: radius.lg,
     padding: spacing.lg,

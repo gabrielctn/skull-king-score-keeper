@@ -334,7 +334,7 @@ export default function ResultsScreen({
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.bg },
+  safe: { flex: 1, backgroundColor: "transparent" },
   scroll: {
     width: "100%",
     alignSelf: "center",

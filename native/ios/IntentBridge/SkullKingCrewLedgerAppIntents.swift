@@ -1,8 +1,8 @@
 import Foundation
 import React
 
-@objc(SkullKingScoreKeeperAppIntents)
-final class SkullKingScoreKeeperAppIntents: RCTEventEmitter {
+@objc(SkullKingCrewLedgerAppIntents)
+final class SkullKingCrewLedgerAppIntents: RCTEventEmitter {
   private var hasListeners = false
 
   override init() {
@@ -10,7 +10,7 @@ final class SkullKingScoreKeeperAppIntents: RCTEventEmitter {
     NotificationCenter.default.addObserver(
       self,
       selector: #selector(handleDestinationNotification(_:)),
-      name: SkullKingScoreKeeperDestinationStore.notificationName,
+      name: SkullKingCrewLedgerDestinationStore.notificationName,
       object: nil
     )
   }
@@ -24,7 +24,7 @@ final class SkullKingScoreKeeperAppIntents: RCTEventEmitter {
   }
 
   override func supportedEvents() -> [String]! {
-    [SkullKingScoreKeeperDestinationStore.eventName]
+    [SkullKingCrewLedgerDestinationStore.eventName]
   }
 
   override func startObserving() {
@@ -41,7 +41,7 @@ final class SkullKingScoreKeeperAppIntents: RCTEventEmitter {
     rejecter _: RCTPromiseRejectBlock
   ) {
     resolve(
-      SkullKingScoreKeeperDestinationStore.takePendingDestination() ?? NSNull()
+      SkullKingCrewLedgerDestinationStore.takePendingDestination() ?? NSNull()
     )
   }
 
@@ -49,10 +49,10 @@ final class SkullKingScoreKeeperAppIntents: RCTEventEmitter {
   private func handleDestinationNotification(_ notification: Notification) {
     guard
       hasListeners,
-      let destination = SkullKingScoreKeeperDestinationStore.destination(
+      let destination = SkullKingCrewLedgerDestinationStore.destination(
         from: notification
       ),
-      let pending = SkullKingScoreKeeperDestinationStore.takePendingDestination(
+      let pending = SkullKingCrewLedgerDestinationStore.takePendingDestination(
         matching: destination
       )
     else {
@@ -60,7 +60,7 @@ final class SkullKingScoreKeeperAppIntents: RCTEventEmitter {
     }
 
     sendEvent(
-      withName: SkullKingScoreKeeperDestinationStore.eventName,
+      withName: SkullKingCrewLedgerDestinationStore.eventName,
       body: pending
     )
   }

@@ -26,6 +26,7 @@ import { colors, radius, spacing } from "../theme";
 import { illustrations } from "../assets/illustrations";
 import { useI18n } from "../i18n/context";
 import { getResponsiveLayout } from "../responsive";
+import GlassSurface from "../components/GlassSurface";
 
 interface Props {
   gameHistory: Game[];
@@ -158,11 +159,15 @@ export default function SetupScreen({ gameHistory, onStart, onBack }: Props) {
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
-        <View
+        <GlassSurface
+          intensity={40}
           style={[
             styles.header,
             {
-              maxWidth: layout.formMaxWidth,
+              width: Math.max(
+                0,
+                layout.formMaxWidth - layout.screenPadding * 2
+              ),
               paddingHorizontal: layout.screenPadding,
             },
           ]}
@@ -176,7 +181,7 @@ export default function SetupScreen({ gameHistory, onStart, onBack }: Props) {
           </TouchableOpacity>
           <Text style={styles.title}>{t.setup.title}</Text>
           <View style={{ width: 50 }} />
-        </View>
+        </GlassSurface>
 
         <ScrollView
           contentContainerStyle={[
@@ -581,15 +586,16 @@ export default function SetupScreen({ gameHistory, onStart, onBack }: Props) {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.bg },
+  safe: { flex: 1, backgroundColor: "transparent" },
   header: {
-    width: "100%",
     alignSelf: "center",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
+    marginTop: spacing.sm,
+    borderRadius: radius.lg,
   },
   back: { color: colors.gold, fontSize: 17 },
   backButton: { minHeight: 44, justifyContent: "center" },

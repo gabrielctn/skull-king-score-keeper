@@ -1,4 +1,4 @@
-# ☠️ Skull King Score Keeper
+# ☠️ Skull King Crew Ledger
 
 A fan-made, installable **offline-first PWA** for keeping score in the **Skull King**
 card game, built with **React Native + Expo (web) + TypeScript** and deployed as a
@@ -164,8 +164,8 @@ npm run ios           # builds and launches the iOS app
 
 The generated `ios/` directory is intentionally ignored. The native App
 Intents and React Native handoff are tracked under `native/ios/` and injected
-on every prebuild by `plugins/withSkullKingScoreKeeperAppIntents.js`, so regenerating the
-Xcode project does not erase them.
+on every prebuild by `plugins/withSkullKingCrewLedgerAppIntents.js`, so
+regenerating the Xcode project does not erase them.
 
 The iOS app targets iOS 16 or later and exposes three App Shortcuts to Siri,
 Spotlight, and Shortcuts: start a new game, continue the current game, and open

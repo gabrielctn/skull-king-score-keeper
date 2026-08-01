@@ -26,13 +26,18 @@ const rulesSource = readFileSync("src/components/RulesModal.tsx", "utf8");
 const readme = readFileSync("README.md", "utf8");
 const buildPwa = readFileSync("scripts/build-pwa.mjs", "utf8");
 const iosConfigPlugin = readFileSync(
-  "plugins/withSkullKingScoreKeeperAppIntents.js",
+  "plugins/withSkullKingCrewLedgerAppIntents.js",
   "utf8"
 );
+const visibleBranding = JSON.stringify({
+  appConfig,
+  manifest,
+  locales: [en, fr, de, es, ar, zh],
+});
 
 check(
   "native and PWA names match the App Store name",
-  appConfig.name === "Skull King Score Keeper" &&
+  appConfig.name === "Skull King Crew Ledger" &&
     appConfig.web.name === appConfig.name &&
     appConfig.web.shortName === appConfig.name &&
     manifest.name === appConfig.name &&
@@ -43,8 +48,18 @@ check(
   "localized home branding matches the app name",
   [en, fr, de, es, ar, zh].every(
     ({ home }) =>
-      home.title === "Skull King" && home.subtitle === "Score Keeper"
+      home.title === "Skull King" && home.subtitle === "Crew Ledger"
   )
+);
+check(
+  "legacy app name is absent from visible branding",
+  !visibleBranding.includes("Skull King Score Keeper")
+);
+check(
+  "registered identifiers remain compatible",
+  appConfig.ios.bundleIdentifier === "com.gabrielcretin.skullking" &&
+    appConfig.experiments.baseUrl === "/skull-king-score-keeper" &&
+    manifest.id === "/skull-king-score-keeper/"
 );
 check(
   "PWA descriptions are explicitly unofficial",
@@ -93,6 +108,11 @@ check(
     iosConfigPlugin.includes('"CURRENT_PROJECT_VERSION"') &&
     iosConfigPlugin.includes("config.ios?.version ?? config.version") &&
     iosConfigPlugin.includes("config.ios?.buildNumber")
+);
+check(
+  "native App Intent sources use the new project name",
+  iosConfigPlugin.includes("SkullKingCrewLedger") &&
+    !iosConfigPlugin.includes("SkullKingScoreKeeper")
 );
 
 console.log(`\n${passed} passed, ${failed} failed`);

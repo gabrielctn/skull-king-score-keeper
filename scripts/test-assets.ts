@@ -56,6 +56,11 @@ const brandAssets = [
   ["assets/favicon.png", 48, 48, false],
 ] as const;
 
+check(
+  "lightweight in-app brand texture exists",
+  existsSync("assets/brand/leather-map-texture-ui.jpg")
+);
+
 for (const [path, width, height, requireAlpha] of brandAssets) {
   check(`${path} exists`, existsSync(path));
   if (!existsSync(path)) continue;

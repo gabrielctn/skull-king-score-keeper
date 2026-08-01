@@ -14,6 +14,7 @@ import { getResponsiveLayout } from "../responsive";
 import { aggregateStats, PlayerStats, Rate } from "../stats";
 import { colors, radius, spacing } from "../theme";
 import { Game } from "../types";
+import GlassSurface from "../components/GlassSurface";
 
 interface Props {
   gameHistory: Game[];
@@ -71,51 +72,58 @@ export default function StatsScreen({ gameHistory, tableName, onBack }: Props) {
 
   return (
     <SafeAreaView style={styles.safe}>
-      <View
-        style={[
-          styles.header,
+      <ScrollView
+        stickyHeaderIndices={[0]}
+        contentContainerStyle={[
+          styles.scroll,
           {
             maxWidth: layout.formMaxWidth,
             paddingHorizontal: layout.screenPadding,
           },
         ]}
-      >
-        <TouchableOpacity
-          ref={backButtonRef}
-          onPress={goBack}
-          style={styles.backButton}
-          accessibilityRole="button"
-        >
-          <Text style={styles.back}>‹ {t.common.back}</Text>
-        </TouchableOpacity>
-        <View style={styles.titleBlock}>
-          <Text
-            style={styles.title}
-            numberOfLines={1}
-            accessibilityRole="header"
-            accessibilityLiveRegion="polite"
-          >
-            {selected ? t.stats.playerTitle(selected.name) : t.stats.title}
-          </Text>
-          {!selected && tableName ? (
-            <Text style={styles.tableName} numberOfLines={1}>
-              ⚓ {tableName}
-            </Text>
-          ) : null}
-        </View>
-        <View style={styles.headerSpacer} />
-      </View>
-
-      <ScrollView
-        contentContainerStyle={[
-          styles.scroll,
-          {
-            maxWidth: layout.formMaxWidth,
-            padding: layout.screenPadding,
-          },
-        ]}
         showsVerticalScrollIndicator={false}
       >
+        <View style={styles.headerLayer} pointerEvents="box-none">
+          <GlassSurface
+            intensity={72}
+            style={[
+              styles.header,
+              { paddingHorizontal: layout.screenPadding },
+            ]}
+          >
+            <TouchableOpacity
+              ref={backButtonRef}
+              onPress={goBack}
+              style={styles.backButton}
+              accessibilityRole="button"
+            >
+              <Text style={styles.back}>‹ {t.common.back}</Text>
+            </TouchableOpacity>
+            <View style={styles.titleBlock}>
+              <Text
+                style={styles.title}
+                numberOfLines={1}
+                accessibilityRole="header"
+                accessibilityLiveRegion="polite"
+              >
+                {selected ? t.stats.playerTitle(selected.name) : t.stats.title}
+              </Text>
+              {!selected && tableName ? (
+                <Text style={styles.tableName} numberOfLines={1}>
+                  ⚓ {tableName}
+                </Text>
+              ) : null}
+            </View>
+            <View style={styles.headerSpacer} />
+          </GlassSurface>
+        </View>
+
+        <View
+          style={[
+            styles.statsContent,
+            { paddingTop: layout.screenPadding },
+          ]}
+        >
         {snapshot.players.length === 0 ? (
           <EmptyState />
         ) : selected ? (
@@ -306,6 +314,7 @@ export default function StatsScreen({ gameHistory, tableName, onBack }: Props) {
             </View>
           </>
         )}
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -492,14 +501,19 @@ function Metric({
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.bg },
+  safe: { flex: 1, backgroundColor: "transparent" },
+  headerLayer: {
+    width: "100%",
+    paddingTop: spacing.sm,
+    zIndex: 20,
+  },
   header: {
     width: "100%",
-    alignSelf: "center",
     minHeight: 60,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    borderRadius: radius.lg,
   },
   backButton: { width: 92, minHeight: 44, justifyContent: "center" },
   back: { color: colors.gold, fontSize: 17 },
@@ -520,6 +534,9 @@ const styles = StyleSheet.create({
   scroll: {
     width: "100%",
     alignSelf: "center",
+  },
+  statsContent: {
+    width: "100%",
     paddingBottom: spacing.xl,
   },
   hero: { alignItems: "center", marginBottom: spacing.xl },

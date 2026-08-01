@@ -76,14 +76,14 @@ export const ar: Strings = {
   cookies: {
     accessibilityLabel: "خيارات ملفات تعريف الارتباط التحليلية",
     message:
-      "نستخدم ملفات تعريف ارتباط Google Analytics لفهم الزيارات وتحسين Skull King Score Keeper.",
+      "نستخدم ملفات تعريف ارتباط Google Analytics لفهم الزيارات وتحسين Skull King Crew Ledger.",
     decline: "رفض",
     accept: "قبول",
   },
 
   home: {
     title: "Skull King",
-    subtitle: "Score Keeper",
+    subtitle: "Crew Ledger",
     unofficial: "تطبيق غير رسمي من المعجبين",
     resume: "متابعة المباراة",
     activeTitle: "مباراة جارية",
@@ -167,11 +167,11 @@ export const ar: Strings = {
       title: "تثبيت التطبيق",
       installedTitle: "تم تثبيت التطبيق",
       installedBody:
-        "تطبيق Skull King Score Keeper الآن على جهازك. يفتح مثل أي تطبيق ويعمل دون اتصال تمامًا.",
+        "تطبيق Skull King Crew Ledger الآن على جهازك. يفتح مثل أي تطبيق ويعمل دون اتصال تمامًا.",
       promptHint:
-        "أضف Skull King Score Keeper إلى شاشتك الرئيسية للوصول بلمسة واحدة واللعب دون اتصال.",
+        "أضف Skull King Crew Ledger إلى شاشتك الرئيسية للوصول بلمسة واحدة واللعب دون اتصال.",
       manualHint:
-        "أضف Skull King Score Keeper إلى شاشتك الرئيسية للوصول بلمسة واحدة واللعب دون اتصال. اتبع الخطوات الخاصة بهاتفك أدناه.",
+        "أضف Skull King Crew Ledger إلى شاشتك الرئيسية للوصول بلمسة واحدة واللعب دون اتصال. اتبع الخطوات الخاصة بهاتفك أدناه.",
       button: "تثبيت الآن",
       error: "تعذّر بدء التثبيت. اتبع الخطوات اليدوية أدناه.",
       guideTitle: "كيفية تثبيته يدويًا",
@@ -229,7 +229,9 @@ export const ar: Strings = {
       shareHint:
         "يمسح أصدقاؤك رمز QR هذا (أو يفتحون الرابط) للانضمام إلى طاولتك. يمكن لأي عضو تسجيل النقاط؛ وتنضم كل المباريات إلى السجل المشترك نفسه. شاركه مع مجموعتك فقط.",
       copyLink: "نسخ رابط الدعوة",
+      copying: "جارٍ النسخ…",
       linkCopied: "تم نسخ الرابط!",
+      copyFailed: "تعذّر النسخ",
       qrLabel: "رمز QR للانضمام إلى طاولة اللعب هذه",
       linkTitle: "لا كاميرا في المتناول؟ استخدم رمزًا",
       linkHint:
@@ -469,7 +471,7 @@ export const ar: Strings = {
       `المركز ${rank}، ${name}، ${total} نقطة`,
     review: "مراجعة الجولات واحدة تلو الأخرى",
     rematch: "إعادة اللعب مع الطاقم نفسه",
-    installTitle: "احتفظ بـ Skull King Score Keeper على متن السفينة",
+    installTitle: "احتفظ بـ Skull King Crew Ledger على متن السفينة",
     installHint: "ثبّت التطبيق للوصول السريع واللعب دون اتصال.",
     installIosHint:
       "اضغط على مشاركة ثم «إضافة إلى الشاشة الرئيسية». في Chrome افتح «عرض المزيد» أولًا.",

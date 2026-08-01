@@ -15,14 +15,14 @@ export const fr: Strings = {
   cookies: {
     accessibilityLabel: "Choix des cookies statistiques",
     message:
-      "Nous utilisons des cookies Google Analytics pour mesurer les visites et améliorer Skull King Score Keeper.",
+      "Nous utilisons des cookies Google Analytics pour mesurer les visites et améliorer Skull King Crew Ledger.",
     decline: "Refuser",
     accept: "Accepter",
   },
 
   home: {
     title: "Skull King",
-    subtitle: "Score Keeper",
+    subtitle: "Crew Ledger",
     unofficial: "Application non officielle",
     resume: "Reprendre la partie",
     activeTitle: "Partie en cours",
@@ -104,11 +104,11 @@ export const fr: Strings = {
       title: "Installer l’application",
       installedTitle: "Application installée",
       installedBody:
-        "Skull King Score Keeper est installée sur votre appareil. Elle s’ouvre comme une appli et fonctionne entièrement hors ligne.",
+        "Skull King Crew Ledger est installée sur votre appareil. Elle s’ouvre comme une appli et fonctionne entièrement hors ligne.",
       promptHint:
-        "Ajoutez Skull King Score Keeper à votre écran d’accueil pour y accéder rapidement et jouer hors ligne.",
+        "Ajoutez Skull King Crew Ledger à votre écran d’accueil pour y accéder rapidement et jouer hors ligne.",
       manualHint:
-        "Ajoutez Skull King Score Keeper à votre écran d’accueil pour y accéder rapidement et jouer hors ligne. Suivez les étapes correspondant à votre téléphone ci-dessous.",
+        "Ajoutez Skull King Crew Ledger à votre écran d’accueil pour y accéder rapidement et jouer hors ligne. Suivez les étapes correspondant à votre téléphone ci-dessous.",
       button: "Installer maintenant",
       error:
         "L’installation n’a pas pu démarrer. Suivez les étapes manuelles ci-dessous.",
@@ -167,7 +167,9 @@ export const fr: Strings = {
       shareHint:
         "Vos amis scannent ce QR code (ou ouvrent le lien) pour rejoindre votre table. Chaque membre peut tenir les scores ; toutes les parties rejoignent le même historique partagé. Partagez-le uniquement avec votre équipage.",
       copyLink: "Copier le lien d’invitation",
+      copying: "Copie…",
       linkCopied: "Lien copié !",
+      copyFailed: "Échec de la copie",
       qrLabel: "QR code pour rejoindre cette table de jeu",
       linkTitle: "Pas d’appareil photo ? Utilisez un code",
       linkHint:
@@ -405,7 +407,7 @@ export const fr: Strings = {
       `${rank === 1 ? "1re" : `${rank}e`} place, ${name}, ${total} points`,
     review: "Revoir manche par manche",
     rematch: "Revanche avec le même équipage",
-    installTitle: "Gardez Skull King Score Keeper à bord",
+    installTitle: "Gardez Skull King Crew Ledger à bord",
     installHint: "Installez l’app pour la retrouver rapidement et jouer hors ligne.",
     installIosHint:
       "Touchez Partager puis « Sur l’écran d’accueil ». Dans Chrome, ouvrez d’abord « En voir plus ».",

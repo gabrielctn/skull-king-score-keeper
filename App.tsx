@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
+  Image,
   Platform,
   StatusBar,
   StyleSheet,
@@ -83,6 +84,7 @@ import {
   subscribeToAppIntentDestinations,
 } from "./src/appIntents";
 import type { AppIntentDestination } from "./src/appIntents";
+import { illustrations } from "./src/assets/illustrations";
 
 type Screen = "home" | "setup" | "game" | "results" | "settings" | "stats";
 type PendingCurrentGame = Game | null | undefined;
@@ -742,6 +744,11 @@ export default function App() {
     <I18nProvider initialLang={lang}>
       <View style={styles.root}>
         <StatusBar barStyle="light-content" backgroundColor={colors.bg} />
+        <Image
+          source={illustrations.brandTexture}
+          style={styles.backgroundTexture}
+          resizeMode="cover"
+        />
         {spectatorActive && (
           <SpectatorScreen
             game={spectator.kind === "snapshot" ? spectator.game : null}
@@ -830,6 +837,13 @@ export default function App() {
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.bg },
+  backgroundTexture: {
+    ...StyleSheet.absoluteFillObject,
+    width: undefined,
+    height: undefined,
+    opacity: 0.075,
+    pointerEvents: "none",
+  },
   loader: {
     flex: 1,
     backgroundColor: colors.bg,

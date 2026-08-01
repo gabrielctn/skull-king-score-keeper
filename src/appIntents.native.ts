@@ -4,16 +4,16 @@ import type {
   AppIntentDestinationListener,
 } from "./appIntents";
 
-const DESTINATION_EVENT = "SkullKingScoreKeeperAppIntentDestination";
+const DESTINATION_EVENT = "SkullKingCrewLedgerAppIntentDestination";
 
-interface SkullKingScoreKeeperAppIntentsModule {
+interface SkullKingCrewLedgerAppIntentsModule {
   getPendingDestination(): Promise<unknown>;
   addListener(eventType: string): void;
   removeListeners(count: number): void;
 }
 
-const nativeModule = NativeModules.SkullKingScoreKeeperAppIntents as
-  | SkullKingScoreKeeperAppIntentsModule
+const nativeModule = NativeModules.SkullKingCrewLedgerAppIntents as
+  | SkullKingCrewLedgerAppIntentsModule
   | undefined;
 
 function parseDestination(value: unknown): AppIntentDestination | null {

@@ -15,14 +15,14 @@ export const de: Strings = {
   cookies: {
     accessibilityLabel: "Auswahl für Analyse-Cookies",
     message:
-      "Wir verwenden Google-Analytics-Cookies, um Besuche zu verstehen und Skull King Score Keeper zu verbessern.",
+      "Wir verwenden Google-Analytics-Cookies, um Besuche zu verstehen und Skull King Crew Ledger zu verbessern.",
     decline: "Ablehnen",
     accept: "Akzeptieren",
   },
 
   home: {
     title: "Skull King",
-    subtitle: "Score Keeper",
+    subtitle: "Crew Ledger",
     unofficial: "Inoffizielle Fan-App",
     resume: "Spiel fortsetzen",
     activeTitle: "Laufendes Spiel",
@@ -103,11 +103,11 @@ export const de: Strings = {
       title: "App installieren",
       installedTitle: "App installiert",
       installedBody:
-        "Skull King Score Keeper ist auf deinem Gerät installiert. Die App öffnet sich wie jede andere und funktioniert komplett offline.",
+        "Skull King Crew Ledger ist auf deinem Gerät installiert. Die App öffnet sich wie jede andere und funktioniert komplett offline.",
       promptHint:
-        "Füge Skull King Score Keeper zum Startbildschirm hinzu, um die App mit einem Tipp zu öffnen und offline zu spielen.",
+        "Füge Skull King Crew Ledger zum Startbildschirm hinzu, um die App mit einem Tipp zu öffnen und offline zu spielen.",
       manualHint:
-        "Füge Skull King Score Keeper zum Startbildschirm hinzu, um die App mit einem Tipp zu öffnen und offline zu spielen. Folge unten den Schritten für dein Telefon.",
+        "Füge Skull King Crew Ledger zum Startbildschirm hinzu, um die App mit einem Tipp zu öffnen und offline zu spielen. Folge unten den Schritten für dein Telefon.",
       button: "Jetzt installieren",
       error:
         "Die Installation konnte nicht starten. Nutze die manuellen Schritte unten.",
@@ -166,7 +166,9 @@ export const de: Strings = {
       shareHint:
         "Freunde scannen diesen QR-Code (oder öffnen den Link), um deinem Tisch beizutreten. Jedes Mitglied kann die Punkte führen; alle Spiele landen in derselben gemeinsamen Historie. Teile ihn nur mit deiner Crew.",
       copyLink: "Einladungslink kopieren",
+      copying: "Wird kopiert…",
       linkCopied: "Link kopiert!",
+      copyFailed: "Kopieren fehlgeschlagen",
       qrLabel: "QR-Code zum Beitreten dieses Spieltisches",
       linkTitle: "Keine Kamera zur Hand? Nutze einen Code",
       linkHint:
@@ -404,7 +406,7 @@ export const de: Strings = {
       `Platz ${rank}, ${name}, ${total} Punkte`,
     review: "Runden einzeln ansehen",
     rematch: "Revanche mit derselben Crew",
-    installTitle: "Skull King Score Keeper an Bord behalten",
+    installTitle: "Skull King Crew Ledger an Bord behalten",
     installHint: "Installiere die App für schnellen Zugriff und vollständig offline spielbare Partien.",
     installIosHint:
       "Tippe auf Teilen und „Zum Home-Bildschirm“. In Chrome zuerst „Mehr anzeigen“ öffnen.",

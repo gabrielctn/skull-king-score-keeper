@@ -3,7 +3,7 @@ name: verify
 description: Build, launch, and drive this Expo web app to verify changes end-to-end.
 ---
 
-# Verifying Skull King Score Keeper
+# Verifying Skull King Crew Ledger
 
 ## Build & launch
 

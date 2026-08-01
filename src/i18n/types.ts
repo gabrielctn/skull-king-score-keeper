@@ -171,7 +171,9 @@ export interface Strings {
       /** Warns that anyone with the link can read and write the table. */
       shareHint: string;
       copyLink: string;
+      copying: string;
       linkCopied: string;
+      copyFailed: string;
       /** Accessibility description of the join QR code image. */
       qrLabel: string;
       linkTitle: string;

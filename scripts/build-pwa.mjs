@@ -30,7 +30,7 @@ const webSrc = join(root, "web");
 
 const appJson = JSON.parse(readFileSync(join(root, "app.json"), "utf8"));
 const baseUrl = (appJson.expo?.experiments?.baseUrl ?? "").replace(/\/$/, ""); // e.g. "/skull-king-score-keeper"
-const installedAppTitle = appJson.expo?.web?.shortName ?? appJson.expo?.name ?? "Score Keeper";
+const installedAppTitle = appJson.expo?.web?.shortName ?? appJson.expo?.name ?? "Crew Ledger";
 
 function fail(msg) {
   console.error(`\n[build-pwa] ${msg}\n`);

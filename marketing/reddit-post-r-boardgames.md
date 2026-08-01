@@ -30,6 +30,6 @@ Obligatory disclaimer: this is a fan project, not affiliated with Grandpa Beck's
 ## Posting notes (don't paste these)
 
 - **Personal placeholder lines**: swap these for your real experience before posting: the napkin scene in the intro, "we sometimes play places with zero reception", and "my friends check this way more than I expected". Everything else is factual about the app.
-- **Visual**: post as a text post, then add `marketing/skull-king-score-keeper-demo.gif` in a top comment (or link it in the body). Posts with a demo visual get far more traction than bare links.
+- **Visual**: post as a text post, then add `marketing/skull-king-crew-ledger-demo.gif` in a top comment (or link it in the body). Posts with a demo visual get far more traction than bare links.
 - **Rules**: r/boardgames follows Reddit's ~10% self-promotion guideline and expects makers to engage in comments — plan to answer questions the first day. Pick the self-promotion/project flair if one is offered.
 - **Deliberate claim framing**: some paid apps *do* offer Rascal scoring and alliance tracking in their unlockable "full versions" — so the post never claims those features are unique, only that here everything is free, offline and included. Keep that framing if you edit.

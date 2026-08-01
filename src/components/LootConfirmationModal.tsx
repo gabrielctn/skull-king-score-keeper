@@ -13,6 +13,7 @@ import { lootAllianceSucceeded, madeBid } from "../scoring";
 import { useI18n } from "../i18n/context";
 import { colors, radius, spacing } from "../theme";
 import { getResponsiveLayout } from "../responsive";
+import GlassSurface from "./GlassSurface";
 
 interface Props {
   visible: boolean;
@@ -60,7 +61,8 @@ export default function LootConfirmationModal({
       onRequestClose={() => undefined}
     >
       <View style={styles.backdrop}>
-        <View
+        <GlassSurface
+          intensity={56}
           style={[styles.sheet, layout.isTablet && styles.sheetWide]}
           accessibilityViewIsModal
         >
@@ -141,7 +143,7 @@ export default function LootConfirmationModal({
               {t.lootConfirmation.confirm}
             </Text>
           </TouchableOpacity>
-        </View>
+        </GlassSurface>
       </View>
     </Modal>
   );
@@ -158,8 +160,6 @@ const styles = StyleSheet.create({
   sheet: {
     width: "100%",
     maxHeight: "88%",
-    backgroundColor: colors.bg,
-    borderWidth: 1,
     borderColor: colors.goldDim,
     borderRadius: radius.lg,
     padding: spacing.lg,

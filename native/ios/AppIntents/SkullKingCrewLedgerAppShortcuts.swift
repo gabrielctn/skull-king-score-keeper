@@ -1,7 +1,7 @@
 import AppIntents
 
 @available(iOS 16.0, *)
-struct SkullKingScoreKeeperAppShortcuts: AppShortcutsProvider {
+struct SkullKingCrewLedgerAppShortcuts: AppShortcutsProvider {
   static var appShortcuts: [AppShortcut] {
     AppShortcut(
       intent: StartNewGameIntent(),

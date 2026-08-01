@@ -4,7 +4,7 @@
 # workspace. The generated project is not tracked (see .gitignore): it is built
 # from app.json plus the native sources under native/ios/ by `expo prebuild`,
 # so CI has to generate it here or the build fails with "Workspace
-# SkullKingScoreKeeper.xcworkspace does not exist".
+# SkullKingCrewLedger.xcworkspace does not exist".
 #
 # The script has to live next to the Xcode project, which is why it sits under
 # ios/ while everything else there is generated and ignored. Xcode Cloud starts
@@ -32,7 +32,7 @@ if [ -n "$CI_BUILD_NUMBER" ]; then
   '
 fi
 
-# Generates ios/SkullKingScoreKeeper.xcworkspace, the shared scheme and the
+# Generates ios/SkullKingCrewLedger.xcworkspace, the shared scheme and the
 # Pods. Deliberately not --clean: that would delete ios/, and with it the
 # directory this script is running from.
 npx expo prebuild --platform ios

@@ -42,8 +42,14 @@ import ToggleSwitch from "../components/ToggleSwitch";
 import WhatsNewModal from "../components/WhatsNewModal";
 import InstallAppSection from "../components/InstallAppSection";
 import DisclosureChevron from "../components/DisclosureChevron";
+import GlassSurface from "../components/GlassSurface";
+import CopyButton from "../components/CopyButton";
+import { copyTextToClipboard } from "../clipboard";
 
 const FEEDBACK_EMAIL = "gabrielcretin@gmail.com";
+const HEADER_HEIGHT = 60;
+
+type CopyState = "idle" | "copying" | "copied" | "error";
 
 interface Props {
   settings: AppSettings;
@@ -106,8 +112,10 @@ export default function SettingsScreen({
   const [inviteOpen, setInviteOpen] = React.useState(false);
   const [joinOpen, setJoinOpen] = React.useState(false);
   const [syncCode, setSyncCode] = React.useState<string | null>(null);
-  const [codeCopied, setCodeCopied] = React.useState(false);
-  const [linkCopied, setLinkCopied] = React.useState(false);
+  const [codeCopyState, setCodeCopyState] =
+    React.useState<CopyState>("idle");
+  const [linkCopyState, setLinkCopyState] =
+    React.useState<CopyState>("idle");
   const [nameDraft, setNameDraft] = React.useState(tableName ?? "");
   const [tableBusy, setTableBusy] = React.useState(false);
   const [tableError, setTableError] = React.useState(false);
@@ -188,27 +196,33 @@ export default function SettingsScreen({
     [joinUrl]
   );
 
-  const copySyncCode = async () => {
-    if (!syncCode) return;
-    try {
-      await navigator.clipboard.writeText(syncCode);
-      setCodeCopied(true);
-      setTimeout(() => setCodeCopied(false), 2000);
-    } catch {
-      // Clipboard unavailable: the code is selectable in the field instead.
-    }
+  const copyText = (
+    value: string | null,
+    setState: React.Dispatch<React.SetStateAction<CopyState>>
+  ) => {
+    if (!value) return;
+    setState("copying");
+    void copyTextToClipboard(value)
+      .then((copied) => setState(copied ? "copied" : "error"))
+      .catch(() => setState("error"))
+      .finally(() => setTimeout(() => setState("idle"), 4000));
   };
 
-  const copyJoinLink = async () => {
-    if (!joinUrl) return;
-    try {
-      await navigator.clipboard.writeText(joinUrl);
-      setLinkCopied(true);
-      setTimeout(() => setLinkCopied(false), 2000);
-    } catch {
-      // Clipboard unavailable: the QR code and raw code remain usable.
-    }
-  };
+  const copySyncCode = () => copyText(syncCode, setCodeCopyState);
+  const copyJoinLink = () => copyText(joinUrl, setLinkCopyState);
+
+  const copyLabel = (
+    state: CopyState,
+    idleLabel: string,
+    copiedLabel: string
+  ) =>
+    state === "copying"
+      ? t.settings.cloud.copying
+      : state === "copied"
+        ? copiedLabel
+        : state === "error"
+          ? t.settings.cloud.copyFailed
+          : idleLabel;
 
   const linkDevice = async () => {
     const code = pasteCode.trim();
@@ -303,35 +317,43 @@ export default function SettingsScreen({
 
   return (
     <SafeAreaView style={styles.safe}>
-      <View
-        style={[
-          styles.header,
+      <ScrollView
+        stickyHeaderIndices={[0]}
+        contentContainerStyle={[
+          styles.scroll,
           {
             maxWidth: layout.formMaxWidth,
             paddingHorizontal: layout.screenPadding,
           },
         ]}
+        showsVerticalScrollIndicator={false}
       >
-        <TouchableOpacity
-          onPress={onBack}
-          style={styles.backButton}
-          accessibilityRole="button"
-        >
-          <Text style={styles.back}>‹ {t.common.back}</Text>
-        </TouchableOpacity>
-        <Text style={styles.title}>{t.settings.title}</Text>
-        <View style={{ width: 50 }} />
-      </View>
+        <View style={styles.headerLayer} pointerEvents="box-none">
+          <GlassSurface
+            intensity={72}
+            style={[
+              styles.header,
+              { paddingHorizontal: layout.screenPadding },
+            ]}
+          >
+            <TouchableOpacity
+              onPress={onBack}
+              style={styles.backButton}
+              accessibilityRole="button"
+            >
+              <Text style={styles.back}>‹ {t.common.back}</Text>
+            </TouchableOpacity>
+            <Text style={styles.title}>{t.settings.title}</Text>
+            <View style={{ width: 50 }} />
+          </GlassSurface>
+        </View>
 
-      <ScrollView
-        contentContainerStyle={[
-          styles.scroll,
-          {
-            maxWidth: layout.formMaxWidth,
-            padding: layout.screenPadding,
-          },
-        ]}
-      >
+        <View
+          style={[
+            styles.settingsContent,
+            { paddingTop: layout.screenPadding },
+          ]}
+        >
         <Text style={styles.section}>{t.settings.languageTitle}</Text>
         <View style={styles.languageList}>
           {SUPPORTED_LANGS.map((option: Lang, index) => (
@@ -558,21 +580,31 @@ export default function SettingsScreen({
                     accessibilityLabel={t.settings.cloud.qrLabel}
                   />
                 ) : null}
-                <TouchableOpacity
+                <CopyButton
                   style={[
                     styles.linkButton,
                     !joinUrl && styles.linkButtonDisabled,
+                    linkCopyState === "error" && styles.copyButtonError,
                   ]}
-                  onPress={() => void copyJoinLink()}
+                  onPress={copyJoinLink}
                   disabled={!joinUrl}
-                  accessibilityRole="button"
+                  accessibilityLabel={copyLabel(
+                    linkCopyState,
+                    t.settings.cloud.copyLink,
+                    t.settings.cloud.linkCopied
+                  )}
                 >
-                  <Text style={styles.linkButtonText}>
-                    {linkCopied
-                      ? t.settings.cloud.linkCopied
-                      : t.settings.cloud.copyLink}
+                  <Text
+                    style={styles.linkButtonText}
+                    accessibilityLiveRegion="polite"
+                  >
+                    {copyLabel(
+                      linkCopyState,
+                      t.settings.cloud.copyLink,
+                      t.settings.cloud.linkCopied
+                    )}
                   </Text>
-                </TouchableOpacity>
+                </CopyButton>
 
                 <View style={styles.linkDivider} />
                 <Text style={styles.fallbackTitle}>
@@ -589,19 +621,30 @@ export default function SettingsScreen({
                     selectTextOnFocus
                     multiline
                   />
-                  <TouchableOpacity
-                    style={styles.codeCopy}
-                    onPress={() => void copySyncCode()}
+                  <CopyButton
+                    style={[
+                      styles.codeCopy,
+                      codeCopyState === "error" && styles.copyButtonError,
+                    ]}
+                    onPress={copySyncCode}
                     disabled={!syncCode}
-                    accessibilityRole="button"
-                    accessibilityLabel={t.settings.cloud.copy}
+                    accessibilityLabel={copyLabel(
+                      codeCopyState,
+                      t.settings.cloud.copy,
+                      t.settings.cloud.copied
+                    )}
                   >
-                    <Text style={styles.codeCopyText}>
-                      {codeCopied
-                        ? t.settings.cloud.copied
-                        : t.settings.cloud.copy}
+                    <Text
+                      style={styles.codeCopyText}
+                      accessibilityLiveRegion="polite"
+                    >
+                      {copyLabel(
+                        codeCopyState,
+                        t.settings.cloud.copy,
+                        t.settings.cloud.copied
+                      )}
                     </Text>
-                  </TouchableOpacity>
+                  </CopyButton>
                 </View>
               </View>
             ) : null}
@@ -750,6 +793,7 @@ export default function SettingsScreen({
         </TouchableOpacity>
 
         <Text style={styles.footer}>{t.home.offline}</Text>
+        </View>
       </ScrollView>
 
       <Modal
@@ -759,7 +803,11 @@ export default function SettingsScreen({
         onRequestClose={() => setDeleteAllOpen(false)}
       >
         <View style={styles.modalOverlay}>
-          <View style={styles.confirmDialog} accessibilityRole="alert">
+          <GlassSurface
+            intensity={54}
+            style={styles.confirmDialog}
+            accessibilityRole="alert"
+          >
             <Text style={styles.confirmTitle}>{t.settings.deleteAllTitle}</Text>
             <Text style={styles.confirmMessage}>
               {t.settings.deleteAllMessage}
@@ -784,7 +832,7 @@ export default function SettingsScreen({
                 </Text>
               </TouchableOpacity>
             </View>
-          </View>
+          </GlassSurface>
         </View>
       </Modal>
 
@@ -795,7 +843,11 @@ export default function SettingsScreen({
         onRequestClose={() => setRemoveTarget(null)}
       >
         <View style={styles.modalOverlay}>
-          <View style={styles.confirmDialog} accessibilityRole="alert">
+          <GlassSurface
+            intensity={54}
+            style={styles.confirmDialog}
+            accessibilityRole="alert"
+          >
             <Text style={styles.confirmTitle}>
               {t.settings.cloud.removeTableTitle}
             </Text>
@@ -831,7 +883,7 @@ export default function SettingsScreen({
                 </Text>
               </TouchableOpacity>
             </View>
-          </View>
+          </GlassSurface>
         </View>
       </Modal>
 
@@ -844,15 +896,19 @@ export default function SettingsScreen({
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.bg },
+  safe: { flex: 1, backgroundColor: "transparent" },
+  headerLayer: {
+    width: "100%",
+    paddingTop: spacing.sm,
+    zIndex: 20,
+  },
   header: {
     width: "100%",
-    alignSelf: "center",
+    minHeight: HEADER_HEIGHT,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
+    borderRadius: radius.lg,
   },
   back: { color: colors.gold, fontSize: 17 },
   backButton: { minHeight: 44, justifyContent: "center" },
@@ -860,7 +916,9 @@ const styles = StyleSheet.create({
   scroll: {
     width: "100%",
     alignSelf: "center",
-    padding: spacing.md,
+  },
+  settingsContent: {
+    width: "100%",
     paddingBottom: spacing.xl,
   },
   section: {
@@ -1071,6 +1129,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.sm,
   },
   codeCopyText: { color: colors.bg, fontSize: 13, fontWeight: "800" },
+  copyButtonError: { backgroundColor: colors.negative },
   pasteInput: {
     color: colors.text,
     fontSize: 13,
@@ -1179,8 +1238,7 @@ const styles = StyleSheet.create({
   confirmDialog: {
     width: "100%",
     maxWidth: 420,
-    backgroundColor: colors.card,
-    borderColor: colors.cardBorder,
+    borderColor: colors.glassBorder,
     borderWidth: 1,
     borderRadius: radius.lg,
     padding: spacing.lg,

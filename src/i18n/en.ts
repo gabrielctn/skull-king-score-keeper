@@ -15,14 +15,14 @@ export const en: Strings = {
   cookies: {
     accessibilityLabel: "Analytics cookie choices",
     message:
-      "We use Google Analytics cookies to understand visits and improve Skull King Score Keeper.",
+      "We use Google Analytics cookies to understand visits and improve Skull King Crew Ledger.",
     decline: "Decline",
     accept: "Accept",
   },
 
   home: {
     title: "Skull King",
-    subtitle: "Score Keeper",
+    subtitle: "Crew Ledger",
     unofficial: "Unofficial fan-made app",
     resume: "Resume game",
     activeTitle: "Game in progress",
@@ -103,11 +103,11 @@ export const en: Strings = {
       title: "Install the app",
       installedTitle: "App installed",
       installedBody:
-        "Skull King Score Keeper is installed on your device. It opens like any app and works fully offline.",
+        "Skull King Crew Ledger is installed on your device. It opens like any app and works fully offline.",
       promptHint:
-        "Add Skull King Score Keeper to your home screen for one-tap access and offline play.",
+        "Add Skull King Crew Ledger to your home screen for one-tap access and offline play.",
       manualHint:
-        "Add Skull King Score Keeper to your home screen for one-tap access and offline play. Follow the steps for your phone below.",
+        "Add Skull King Crew Ledger to your home screen for one-tap access and offline play. Follow the steps for your phone below.",
       button: "Install now",
       error: "Installation could not start. Try the manual steps below.",
       guideTitle: "How to install it by hand",
@@ -165,7 +165,9 @@ export const en: Strings = {
       shareHint:
         "Friends scan this QR code (or open the link) to join your table. Anyone on the table can keep score; every game joins the same shared history. Share it only with your crew.",
       copyLink: "Copy invite link",
+      copying: "Copying…",
       linkCopied: "Link copied!",
+      copyFailed: "Copy failed",
       qrLabel: "QR code to join this game table",
       linkTitle: "No camera at hand? Use a code",
       linkHint:
@@ -401,7 +403,7 @@ export const en: Strings = {
       `Rank ${rank}, ${name}, ${total} points`,
     review: "Review round-by-round",
     rematch: "Rematch with the same crew",
-    installTitle: "Keep Skull King Score Keeper aboard",
+    installTitle: "Keep Skull King Crew Ledger aboard",
     installHint: "Install the app for quick access and fully offline play.",
     installIosHint:
       "Tap Share and “Add to Home Screen”. In Chrome, open “See more” first.",
