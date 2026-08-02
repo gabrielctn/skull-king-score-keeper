@@ -29,8 +29,9 @@ const iosConfigPlugin = readFileSync(
   "plugins/withSkullKingCrewLedgerAppIntents.js",
   "utf8"
 );
-// expo.name is the generated Xcode project name, not a name anyone reads: the
-// iOS app is titled by CFBundleDisplayName and the web app by web.name.
+// expo.name is the generated Xcode project name, not a name the shipped apps
+// show: iOS reads CFBundleDisplayName and the web app reads web.name. Android
+// would label itself from expo.name, but it is not a target this app ships to.
 const displayName = appConfig.ios.infoPlist.CFBundleDisplayName;
 const visibleBranding = JSON.stringify({
   displayName,

@@ -91,8 +91,9 @@ check(
 );
 check(
   "the generated workspace is checked against the name the workflow stores",
-  xcodeCloudSource.indexOf("if [ ! -d ios/SkullKingScoreKeeper.xcworkspace ]") >
-    prebuildIndex
+  prebuildIndex > -1 &&
+    xcodeCloudSource.indexOf("if [ ! -d ios/SkullKingScoreKeeper.xcworkspace ]") >
+      prebuildIndex
 );
 check(
   "consent prompt participates in page layout",
