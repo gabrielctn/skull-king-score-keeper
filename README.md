@@ -167,6 +167,16 @@ Intents and React Native handoff are tracked under `native/ios/` and injected
 on every prebuild by `plugins/withSkullKingCrewLedgerAppIntents.js`, so
 regenerating the Xcode project does not erase them.
 
+Prebuild names the Xcode project, its shared scheme and its workspace after
+`expo.name`, and the Xcode Cloud workflow in App Store Connect stores those
+names. `expo.name` is pinned to `Skull King Score Keeper` for that reason: it is
+the project identifier rather than a name anyone reads. The app is titled by
+`ios.infoPlist.CFBundleDisplayName` on iOS and `web.name` on the web, both
+"Skull King Crew Ledger". Renaming `expo.name` moves the generated workspace and
+fails the archive with `Workspace SkullKingScoreKeeper.xcworkspace does not
+exist`; `ios/ci_scripts/ci_post_clone.sh`, which generates the project on Xcode
+Cloud, checks for it and says so.
+
 The iOS app targets iOS 16 or later and exposes three App Shortcuts to Siri,
 Spotlight, and Shortcuts: start a new game, continue the current game, and open
 player statistics.

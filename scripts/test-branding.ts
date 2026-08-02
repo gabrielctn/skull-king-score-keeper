@@ -29,19 +29,23 @@ const iosConfigPlugin = readFileSync(
   "plugins/withSkullKingCrewLedgerAppIntents.js",
   "utf8"
 );
+// expo.name is the generated Xcode project name, not a name anyone reads: the
+// iOS app is titled by CFBundleDisplayName and the web app by web.name.
+const displayName = appConfig.ios.infoPlist.CFBundleDisplayName;
 const visibleBranding = JSON.stringify({
-  appConfig,
+  displayName,
+  web: appConfig.web,
   manifest,
   locales: [en, fr, de, es, ar, zh],
 });
 
 check(
   "native and PWA names match the App Store name",
-  appConfig.name === "Skull King Crew Ledger" &&
-    appConfig.web.name === appConfig.name &&
-    appConfig.web.shortName === appConfig.name &&
-    manifest.name === appConfig.name &&
-    manifest.short_name === appConfig.name
+  displayName === "Skull King Crew Ledger" &&
+    appConfig.web.name === displayName &&
+    appConfig.web.shortName === displayName &&
+    manifest.name === displayName &&
+    manifest.short_name === displayName
 );
 check("web and manifest full names match", appConfig.web.name === manifest.name);
 check(
@@ -60,6 +64,13 @@ check(
   appConfig.ios.bundleIdentifier === "com.gabrielcretin.skullking" &&
     appConfig.experiments.baseUrl === "/skull-king-score-keeper" &&
     manifest.id === "/skull-king-score-keeper/"
+);
+check(
+  "the Xcode project name stays pinned to the Xcode Cloud workflow",
+  // prebuild derives ios/SkullKingScoreKeeper.xcworkspace and its scheme from
+  // expo.name, and the App Store Connect workflow stores both by name: renaming
+  // this fails the archive with "Workspace ... does not exist".
+  appConfig.name === "Skull King Score Keeper"
 );
 check(
   "PWA descriptions are explicitly unofficial",
@@ -110,7 +121,7 @@ check(
     iosConfigPlugin.includes("config.ios?.buildNumber")
 );
 check(
-  "native App Intent sources use the new project name",
+  "native App Intent sources use the current app name",
   iosConfigPlugin.includes("SkullKingCrewLedger") &&
     !iosConfigPlugin.includes("SkullKingScoreKeeper")
 );
