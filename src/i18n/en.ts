@@ -252,9 +252,9 @@ export const en: Strings = {
     rascalBetsTitle: "Rascal's optional rules ✊",
     rascalBetsHint:
       "After bidding, everyone declares Grapeshot (open hand: the standard tiers) or Cannonball (closed fist: 15 points per card dealt on an exact bid, nothing otherwise, bonuses included).",
-    bonusesRequireBidTitle: "Bonuses only on an exact bid",
-    bonusesRequireBidHint:
-      "A common variant: capture bonuses (14s, mermaids, pirates, Skull King…) are lost when the bid is missed. Left off, the app follows the rulebook and keeps them whatever the bid.",
+    bonusesOnMissTitle: "Count bonuses after a missed bid",
+    bonusesOnMissHint:
+      "Optional variant: capture bonuses (14s, Mermaids, Pirates, Skull King...) still count after a missed bid. Leave this off to follow the official exact-bid rule.",
     expansion: "Expansion cards",
     advancedTitle: "Loot & Rascal wager",
     advancedHint:
@@ -695,8 +695,8 @@ export const en: Strings = {
         body: "Your mermaid wins a trick containing the Skull King. (Mermaid beats Skull King beats Pirates beats Mermaid.)",
       },
       {
-        title: "Bonuses count regardless of your bid",
-        body: "By the rulebook you keep capture bonuses even if you missed your bid. They go to whoever captures the card, no matter who played it. A setup option lets you play the opposite variant: miss the bid, lose the capture bonuses.",
+        title: "Capture bonuses require an exact bid",
+        body: "Official rules award capture bonuses only when you make your bid exactly. They go to whoever captures the card, no matter who played it. The setup option enables the opposite variant: capture bonuses still count after a missed bid.",
       },
     ],
     expansion: [

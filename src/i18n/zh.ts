@@ -236,9 +236,9 @@ export const zh: Strings = {
     rascalBetsTitle: "Rascal 可选规则 ✊",
     rascalBetsHint:
       "叫牌后，每人选择散弹（张开手掌：按常规档位计分）或炮弹（握紧拳头：叫牌准确时每发一张牌得 15 分，否则一分不得，奖励分同样如此）。",
-    bonusesRequireBidTitle: "仅在叫牌准确时计奖励",
-    bonusesRequireBidHint:
-      "常见变体：叫牌失败时失去俘获奖励（14、美人鱼、海盗、Skull King 等）。关闭时，应用遵循规则书，无论叫牌结果都保留奖励。",
+    bonusesOnMissTitle: "叫牌失败时仍计入奖励",
+    bonusesOnMissHint:
+      "可选变体：叫牌失败后仍计入俘获奖励（14、美人鱼、海盗、Skull King 等）。关闭此选项则遵循官方规则。",
     expansion: "扩展牌",
     advancedTitle: "战利品与 Rascal 赌注",
     advancedHint:
@@ -607,7 +607,7 @@ export const zh: Strings = {
       { title: "海盗俘获美人鱼（每张 +20）", body: "你的海盗赢得含有美人鱼的墩。" },
       { title: "Skull King 俘获海盗（每张 +30）", body: "你的 Skull King 赢得含有一张或多张海盗的墩。" },
       { title: "美人鱼俘获 Skull King（+40）", body: "你的美人鱼赢得含 Skull King 的墩。（美人鱼胜 Skull King，Skull King 胜海盗，海盗胜美人鱼。）" },
-      { title: "奖励与叫牌结果无关", body: "按规则书，即使叫牌失败，俘获奖励仍然保留。奖励归俘获该牌的玩家，无论谁打出了它。创建对局时也可选择相反的变体：叫牌失败即失去俘获奖励。" },
+      { title: "奖励要求叫牌准确", body: "按官方规则，只有准确完成叫牌时才会获得俘获奖励。奖励归俘获该牌的玩家，无论谁打出了它。创建对局时可启用相反的变体：叫牌失败后仍计入俘获奖励。" },
     ],
     expansion: [
       { title: "新 7 和新 8（每张 -5 / +5）", body: "它们与普通花色牌相同。俘获新 7 的玩家失去 5 分，俘获新 8 的玩家获得 5 分，但仅在准确完成叫牌时生效。获胜点数相同则先出的牌获胜。" },

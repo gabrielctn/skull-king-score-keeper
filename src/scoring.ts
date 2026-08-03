@@ -171,6 +171,26 @@ export function entryHasInput(entry: RoundEntry): boolean {
   );
 }
 
+/** Whether the visible classic house-rule switch should be on. */
+export function bonusesOnMissEnabled(bonusesRequireBid: boolean): boolean {
+  return !bonusesRequireBid;
+}
+
+/** Convert the visible house-rule choice back to its persisted representation. */
+export function bonusesRequireBidFromOnMiss(bonusesOnMiss: boolean): boolean {
+  return !bonusesOnMiss;
+}
+
+/** Keep classic choices stable and apply the official default after Rascal. */
+export function bonusesRequireBidForMode(
+  previousMode: ScoringMode,
+  nextMode: ScoringMode,
+  currentValue: boolean
+): boolean {
+  if (nextMode === "rascal") return false;
+  return previousMode === "rascal" ? true : currentValue;
+}
+
 /** Rascal accuracy tier: exact, off by one, or off by two and more. */
 export function rascalOutcome(entry: RoundEntry): RascalOutcome {
   const diff = Math.abs(entry.tricks - entry.bid);

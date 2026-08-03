@@ -256,11 +256,8 @@ check(
     gameSource.includes("t.gameSettings.open")
 );
 check(
-  "mid-game rule edits re-apply the creation invariants",
-  gameRulesSource.includes('next.scoringMode === "rascal" && next.rascalBets') &&
-    gameRulesSource.includes(
-      'next.scoringMode === "classic" && next.bonusesRequireBid'
-    )
+  "mid-game rule edits clear Rascal declarations outside Rascal scoring",
+  gameRulesSource.includes('next.scoringMode === "rascal" && next.rascalBets')
 );
 check(
   "the app consumes table join links behind an explicit confirmation",

@@ -254,9 +254,9 @@ export const fr: Strings = {
     rascalBetsTitle: "Règles optionnelles de Rascal ✊",
     rascalBetsHint:
       "Après la mise, chacun déclare Chevrotine (main ouverte : barème habituel) ou Boulet de canon (poing fermé : 15 points par carte distribuée si la mise est exacte, sinon rien, bonus compris).",
-    bonusesRequireBidTitle: "Bonus seulement si la mise est réussie",
-    bonusesRequireBidHint:
-      "Variante courante : les bonus de capture (14, sirènes, pirates, Skull King…) sont perdus si la mise est ratée. Si cette option est désactivée, l’app suit le livret : les bonus sont conservés quelle que soit la mise.",
+    bonusesOnMissTitle: "Compter les bonus malgré une mise ratée",
+    bonusesOnMissHint:
+      "Variante optionnelle : les bonus de capture (14, sirènes, pirates, Skull King...) restent acquis après une mise ratée. Laissez cette option désactivée pour suivre la règle officielle.",
     expansion: "Cartes d’extension",
     advancedTitle: "Butin et pari Rascal",
     advancedHint:
@@ -707,8 +707,8 @@ export const fr: Strings = {
         body: "Votre sirène remporte un pli contenant le Skull King. (Sirène bat Skull King, qui bat les pirates, qui battent la sirène.)",
       },
       {
-        title: "Les bonus comptent quelle que soit votre mise",
-        body: "Selon le livret, vous gardez les bonus de capture même si vous ratez votre mise. Ils vont à celui qui capture la carte, peu importe qui l’a jouée. Une option à la création de la partie permet de jouer la variante inverse : mise ratée, aucun bonus de capture.",
+        title: "Les bonus exigent une mise réussie",
+        body: "Selon le livret officiel, les bonus de capture ne sont accordés que si vous réussissez exactement votre mise. Ils vont à celui qui capture la carte, peu importe qui l’a jouée. Une option à la création de la partie permet la variante inverse : les bonus comptent même après une mise ratée.",
       },
     ],
     expansion: [

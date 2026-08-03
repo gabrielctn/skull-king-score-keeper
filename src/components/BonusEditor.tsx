@@ -16,7 +16,7 @@ interface Props {
   advanced: boolean;
   newExpansion: boolean;
   bidMade: boolean;
-  /** House rule: capture bonuses are voided when the bid is missed. */
+  /** Official classic rule: a missed bid voids capture bonuses. */
   bonusesRequireBid: boolean;
   onChange: (next: BonusInput) => void;
 }

@@ -259,9 +259,9 @@ export interface Strings {
     /** Toggle for the Rascal optional rules (Grapeshot / Cannonball). */
     rascalBetsTitle: string;
     rascalBetsHint: string;
-    /** Toggle for the "capture bonuses need an exact bid" house rule. */
-    bonusesRequireBidTitle: string;
-    bonusesRequireBidHint: string;
+    /** Optional rule that awards capture bonuses even after a missed bid. */
+    bonusesOnMissTitle: string;
+    bonusesOnMissHint: string;
     expansion: string;
     advancedTitle: string;
     advancedHint: string;

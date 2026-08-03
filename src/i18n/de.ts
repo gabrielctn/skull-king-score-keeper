@@ -253,9 +253,9 @@ export const de: Strings = {
     rascalBetsTitle: "Optionale Rascal-Regeln ✊",
     rascalBetsHint:
       "Nach der Ansage wählt jede Person Grapeshot (offene Hand: übliche Stufen) oder Cannonball (geschlossene Faust: 15 Punkte pro Karte bei exakter Ansage, sonst nichts, Boni eingeschlossen).",
-    bonusesRequireBidTitle: "Boni nur bei exakter Ansage",
-    bonusesRequireBidHint:
-      "Verbreitete Variante: Fangboni (14er, Meerjungfrauen, Piraten, Skull King …) verfallen bei verfehlter Ansage. Ausgeschaltet folgt die App der Anleitung und behält sie unabhängig von der Ansage.",
+    bonusesOnMissTitle: "Boni trotz verfehlter Ansage zählen",
+    bonusesOnMissHint:
+      "Optionale Variante: Fangboni (14er, Meerjungfrauen, Piraten, Skull King ...) zählen auch nach einer verfehlten Ansage. Ausgeschaltet gilt die offizielle Regel.",
     expansion: "Erweiterungskarten",
     advancedTitle: "Beute & Rascal-Wette",
     advancedHint:
@@ -649,7 +649,7 @@ export const de: Strings = {
       { title: "Pirat fängt Meerjungfrau  (+20 je)", body: "Dein Pirat gewinnt einen Stich mit einer Meerjungfrau." },
       { title: "Skull King fängt Pirat  (+30 je)", body: "Dein Skull King gewinnt einen Stich mit einem oder mehreren Piraten." },
       { title: "Meerjungfrau fängt Skull King  (+40)", body: "Deine Meerjungfrau gewinnt einen Stich mit dem Skull King. (Meerjungfrau schlägt Skull King, Skull King schlägt Piraten, Piraten schlagen Meerjungfrau.)" },
-      { title: "Boni zählen unabhängig von der Ansage", body: "Laut Anleitung bleiben Fangboni auch bei verfehlter Ansage erhalten. Sie gehen an die Person, die die Karte fängt, unabhängig davon, wer sie gespielt hat. Beim Erstellen der Partie lässt sich die umgekehrte Variante wählen: verfehlte Ansage, keine Fangboni." },
+      { title: "Boni erfordern eine exakte Ansage", body: "Nach den offiziellen Regeln werden Fangboni nur bei exakt getroffener Ansage vergeben. Sie gehen an die Person, die die Karte fängt, unabhängig davon, wer sie gespielt hat. Eine Option beim Erstellen des Spiels aktiviert die umgekehrte Variante: Fangboni zählen auch nach einer verfehlten Ansage." },
     ],
     expansion: [
       { title: "Neue 7er und 8er  (-5 / +5 je)", body: "Sie werden wie normale Farbkarten gespielt. Wer eine neue 7 fängt, verliert 5 Punkte; wer eine neue 8 fängt, erhält 5 Punkte, allerdings nur bei exakt getroffener Ansage. Bei Gleichstand gewinnt die zuerst gespielte Karte." },

@@ -13,6 +13,11 @@ import ToggleSwitch from "./ToggleSwitch";
 import { colors, radius, spacing } from "../theme";
 import { useI18n } from "../i18n/context";
 import { getResponsiveLayout } from "../responsive";
+import {
+  bonusesOnMissEnabled,
+  bonusesRequireBidForMode,
+  bonusesRequireBidFromOnMiss,
+} from "../scoring";
 
 interface Props {
   visible: boolean;
@@ -43,8 +48,11 @@ export default function GameRulesModal({
   const apply = (updates: Partial<Game>) => {
     const next: Game = { ...game, ...updates, updatedAt: Date.now() };
     next.rascalBets = next.scoringMode === "rascal" && next.rascalBets;
-    next.bonusesRequireBid =
-      next.scoringMode === "classic" && next.bonusesRequireBid;
+    next.bonusesRequireBid = bonusesRequireBidForMode(
+      game.scoringMode,
+      next.scoringMode,
+      next.bonusesRequireBid
+    );
     next.twoPlayerGhost = game.players.length === 2 && next.twoPlayerGhost;
     onChange(next);
   };
@@ -126,18 +134,21 @@ export default function GameRulesModal({
               <View style={styles.row}>
                 <View style={styles.rowCopy}>
                   <Text style={styles.rowTitle}>
-                    {t.setup.bonusesRequireBidTitle}
+                    {t.setup.bonusesOnMissTitle}
                   </Text>
                   <Text style={styles.rowHint}>
-                    {t.setup.bonusesRequireBidHint}
+                    {t.setup.bonusesOnMissHint}
                   </Text>
                 </View>
                 <ToggleSwitch
-                  value={game.bonusesRequireBid}
-                  onValueChange={(bonusesRequireBid) =>
-                    apply({ bonusesRequireBid })
+                  value={bonusesOnMissEnabled(game.bonusesRequireBid)}
+                  onValueChange={(enabled) =>
+                    apply({
+                      bonusesRequireBid:
+                        bonusesRequireBidFromOnMiss(enabled),
+                    })
                   }
-                  accessibilityLabel={t.setup.bonusesRequireBidTitle}
+                  accessibilityLabel={t.setup.bonusesOnMissTitle}
                 />
               </View>
             )}

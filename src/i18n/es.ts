@@ -257,9 +257,9 @@ export const es: Strings = {
     rascalBetsTitle: "Reglas opcionales del Bribón ✊",
     rascalBetsHint:
       "Tras hacer el envite, todos declaran Metralla (mano abierta: niveles normales) o Bala de cañón (puño cerrado: 15 puntos por carta repartida con un envite exacto y nada en caso contrario, bonificaciones incluidas).",
-    bonusesRequireBidTitle: "Bonificaciones solo con envite exacto",
-    bonusesRequireBidHint:
-      "Variante habitual: las bonificaciones por captura (14, sirenas, piratas, Skull King…) se pierden si fallas el envite. Si se desactiva, la app sigue el reglamento y las conserva sea cual sea el envite.",
+    bonusesOnMissTitle: "Contar bonificaciones aunque falle el envite",
+    bonusesOnMissHint:
+      "Variante opcional: las bonificaciones por captura (14, sirenas, piratas, Skull King...) se conservan tras fallar el envite. Déjala desactivada para seguir la regla oficial.",
     expansion: "Cartas de expansión",
     advancedTitle: "Botín y apuesta del Bribón",
     advancedHint:
@@ -712,8 +712,8 @@ export const es: Strings = {
         body: "Tu sirena gana una baza que contiene a Skull King. (La sirena gana a Skull King, Skull King gana a los piratas y los piratas ganan a la sirena).",
       },
       {
-        title: "Las bonificaciones cuentan sin importar tu envite",
-        body: "Según el reglamento conservas las bonificaciones por captura aunque falles tu envite. Se las lleva quien captura la carta, sin importar quién la haya jugado. Una opción al crear la partida permite jugar la variante contraria: envite fallado, sin bonificaciones por captura.",
+        title: "Las bonificaciones exigen un envite exacto",
+        body: "Según el reglamento oficial, las bonificaciones por captura solo se conceden si aciertas exactamente el envite. Las recibe quien captura la carta, sin importar quién la haya jugado. Una opción al crear la partida permite la variante contraria: las bonificaciones cuentan incluso tras fallar el envite.",
       },
     ],
     expansion: [

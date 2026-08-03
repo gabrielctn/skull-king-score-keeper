@@ -13,7 +13,11 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { Game, Player, ScoringMode } from "../types";
-import { createGame } from "../scoring";
+import {
+  bonusesOnMissEnabled,
+  bonusesRequireBidFromOnMiss,
+  createGame,
+} from "../scoring";
 import { playerNameSuggestions } from "../stats";
 import Stepper from "../components/Stepper";
 import ToggleSwitch from "../components/ToggleSwitch";
@@ -52,7 +56,7 @@ export default function SetupScreen({ gameHistory, onStart, onBack }: Props) {
   const [newExpansion, setNewExpansion] = useState(true);
   const [scoringMode, setScoringMode] = useState<ScoringMode>("classic");
   const [rascalBets, setRascalBets] = useState(false);
-  const [bonusesRequireBid, setBonusesRequireBid] = useState(false);
+  const [bonusesRequireBid, setBonusesRequireBid] = useState(true);
   const [twoPlayerGhost, setTwoPlayerGhost] = useState(true);
   const [customizationVisible, setCustomizationVisible] = useState(false);
   const [focusedPlayerId, setFocusedPlayerId] = useState<string | null>(null);
@@ -119,6 +123,7 @@ export default function SetupScreen({ gameHistory, onStart, onBack }: Props) {
         (id) => id === "classic" || id === structure
       );
   const quickCards = structureCards(structure, rounds);
+  const bonusesOnMiss = bonusesOnMissEnabled(bonusesRequireBid);
   const activeRules = [
     `${t.setup.structureNames[structure]} · ${t.setup.structureRounds(
       quickCards.length
@@ -130,8 +135,8 @@ export default function SetupScreen({ gameHistory, onStart, onBack }: Props) {
     ...(scoringMode === "rascal" && rascalBets
       ? [t.setup.rascalBetsTitle]
       : []),
-    ...(scoringMode === "classic" && bonusesRequireBid
-      ? [t.setup.bonusesRequireBidTitle]
+    ...(scoringMode === "classic" && bonusesOnMiss
+      ? [t.setup.bonusesOnMissTitle]
       : []),
   ];
 
@@ -424,20 +429,24 @@ export default function SetupScreen({ gameHistory, onStart, onBack }: Props) {
                 </View>
               ) : (
                 // Rascal scoring already ties bonuses to bid accuracy, so this
-                // house rule is only offered with classic scoring.
+                // unconditional house rule is only offered with classic scoring.
                 <View style={[styles.advancedRow, { marginBottom: spacing.sm }]}>
                   <View style={{ flex: 1, marginEnd: spacing.md }}>
                     <Text style={styles.advancedTitle}>
-                      {t.setup.bonusesRequireBidTitle}
+                      {t.setup.bonusesOnMissTitle}
                     </Text>
                     <Text style={styles.advancedHint}>
-                      {t.setup.bonusesRequireBidHint}
+                      {t.setup.bonusesOnMissHint}
                     </Text>
                   </View>
                   <ToggleSwitch
-                    value={bonusesRequireBid}
-                    onValueChange={setBonusesRequireBid}
-                    accessibilityLabel={t.setup.bonusesRequireBidTitle}
+                    value={bonusesOnMiss}
+                    onValueChange={(enabled) =>
+                      setBonusesRequireBid(
+                        bonusesRequireBidFromOnMiss(enabled)
+                      )
+                    }
+                    accessibilityLabel={t.setup.bonusesOnMissTitle}
                   />
                 </View>
               )}

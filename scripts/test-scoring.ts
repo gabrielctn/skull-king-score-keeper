@@ -7,6 +7,9 @@
  * zero-bid failures, Loot gating, Rascal wager, 7-8 player card counts).
  */
 import {
+  bonusesOnMissEnabled,
+  bonusesRequireBidForMode,
+  bonusesRequireBidFromOnMiss,
   captureBonus,
   createGame,
   emptyBonus,
@@ -481,6 +484,38 @@ eq(
     ? 1
     : 0,
   0
+);
+
+console.log("\nClassic bonus option mapping");
+eq(
+  "the official stored rule renders the exception switch off",
+  bonusesOnMissEnabled(true) ? 0 : 1,
+  1
+);
+eq(
+  "an old unconditional game renders the exception switch on",
+  bonusesOnMissEnabled(false) ? 1 : 0,
+  1
+);
+eq(
+  "turning the exception on stores bonusesRequireBid false",
+  bonusesRequireBidFromOnMiss(true) ? 0 : 1,
+  1
+);
+eq(
+  "an old classic game's stored choice survives unrelated edits",
+  bonusesRequireBidForMode("classic", "classic", false) ? 0 : 1,
+  1
+);
+eq(
+  "switching from Rascal to classic selects the official rule",
+  bonusesRequireBidForMode("rascal", "classic", false) ? 1 : 0,
+  1
+);
+eq(
+  "switching from classic to Rascal clears the classic-only flag",
+  bonusesRequireBidForMode("classic", "rascal", true) ? 0 : 1,
+  1
 );
 
 const officialGame = createGame(
