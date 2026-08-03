@@ -73,11 +73,27 @@ check(
   "the local iOS build number is a positive integer",
   /^[1-9]\d*$/.test(appConfig.ios.buildNumber)
 );
+const prebuildIndex = xcodeCloudSource.indexOf("npx expo prebuild --platform ios");
+const scriptsBackupIndex = xcodeCloudSource.indexOf("cp -Rp ios/ci_scripts");
+const scriptsRestoreIndex = xcodeCloudSource.indexOf(
+  'cp -Rp "$scripts_backup/ci_scripts" ios/'
+);
 check(
   "Xcode Cloud stamps its unique build number before generating iOS",
   xcodeCloudSource.includes("CI_BUILD_NUMBER") &&
-    xcodeCloudSource.indexOf("CI_BUILD_NUMBER") <
-      xcodeCloudSource.indexOf("npx expo prebuild --platform ios")
+    xcodeCloudSource.indexOf("CI_BUILD_NUMBER") < prebuildIndex
+);
+check(
+  "Xcode Cloud keeps its own scripts across the prebuild that clears ios/",
+  scriptsBackupIndex > -1 &&
+    scriptsBackupIndex < prebuildIndex &&
+    scriptsRestoreIndex > prebuildIndex
+);
+check(
+  "the generated workspace is checked against the name the workflow stores",
+  prebuildIndex > -1 &&
+    xcodeCloudSource.indexOf("if [ ! -d ios/SkullKingScoreKeeper.xcworkspace ]") >
+      prebuildIndex
 );
 check(
   "consent prompt participates in page layout",
