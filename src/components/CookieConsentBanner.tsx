@@ -16,6 +16,7 @@ import {
 } from "../analytics";
 import { useI18n } from "../i18n/context";
 import { colors, radius, spacing } from "../theme";
+import GlassSurface from "./GlassSurface";
 
 function prefersReducedMotion(): boolean {
   return (
@@ -60,11 +61,8 @@ export default function CookieConsentBanner() {
   return (
     <View style={styles.positioner}>
       <Animated.View
-        accessibilityRole="alert"
-        accessibilityLabel={t.cookies.accessibilityLabel}
         style={[
-          styles.banner,
-          compact && styles.bannerCompact,
+          styles.motionSurface,
           {
             opacity: reveal,
             transform: [
@@ -78,33 +76,40 @@ export default function CookieConsentBanner() {
           },
         ]}
       >
-        <Text style={[styles.message, compact && styles.messageCompact]}>
-          {t.cookies.message}
-        </Text>
-        <View style={[styles.actions, compact && styles.actionsCompact]}>
-          <Pressable
-            accessibilityRole="button"
-            onPress={() => choose("declined")}
-            style={({ pressed }) => [
-              styles.button,
-              styles.declineButton,
-              pressed && styles.buttonPressed,
-            ]}
-          >
-            <Text style={styles.declineText}>{t.cookies.decline}</Text>
-          </Pressable>
-          <Pressable
-            accessibilityRole="button"
-            onPress={() => choose("accepted")}
-            style={({ pressed }) => [
-              styles.button,
-              styles.acceptButton,
-              pressed && styles.buttonPressed,
-            ]}
-          >
-            <Text style={styles.acceptText}>{t.cookies.accept}</Text>
-          </Pressable>
-        </View>
+        <GlassSurface
+          intensity={54}
+          accessibilityRole="alert"
+          accessibilityLabel={t.cookies.accessibilityLabel}
+          style={[styles.banner, compact && styles.bannerCompact]}
+        >
+          <Text style={[styles.message, compact && styles.messageCompact]}>
+            {t.cookies.message}
+          </Text>
+          <View style={[styles.actions, compact && styles.actionsCompact]}>
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => choose("declined")}
+              style={({ pressed }) => [
+                styles.button,
+                styles.declineButton,
+                pressed && styles.buttonPressed,
+              ]}
+            >
+              <Text style={styles.declineText}>{t.cookies.decline}</Text>
+            </Pressable>
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => choose("accepted")}
+              style={({ pressed }) => [
+                styles.button,
+                styles.acceptButton,
+                pressed && styles.buttonPressed,
+              ]}
+            >
+              <Text style={styles.acceptText}>{t.cookies.accept}</Text>
+            </Pressable>
+          </View>
+        </GlassSurface>
       </Animated.View>
     </View>
   );
@@ -117,16 +122,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingBottom: 12,
   },
-  banner: {
+  motionSurface: {
     width: "100%",
     maxWidth: 760,
+  },
+  banner: {
+    width: "100%",
     minHeight: 68,
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: 12,
     paddingHorizontal: spacing.md,
-    backgroundColor: colors.bgElevated,
-    borderWidth: 1,
     borderColor: colors.goldDim,
     borderRadius: radius.md,
     shadowColor: "#000",

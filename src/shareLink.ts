@@ -52,7 +52,7 @@ export const SHARE_HASH_PARAM = "skl";
 
 /** Public web destination opened by QR codes created in the native app. */
 export const DEPLOYED_PWA_BASE_URL =
-  "https://gabrielctn.github.io/skull-king-score-keeper/";
+  "https://gabrielctn.github.io/skull-king-crew-ledger/";
 
 /** Upper bound accepted by the decoder; far above any QR code's capacity. */
 export const MAX_SHARE_CODE_CHARS = 8192;

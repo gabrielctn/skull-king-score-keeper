@@ -15,14 +15,14 @@ export const fr: Strings = {
   cookies: {
     accessibilityLabel: "Choix des cookies statistiques",
     message:
-      "Nous utilisons des cookies Google Analytics pour mesurer les visites et améliorer le compteur de scores.",
+      "Nous utilisons des cookies Google Analytics pour mesurer les visites et améliorer Skull King Crew Ledger.",
     decline: "Refuser",
     accept: "Accepter",
   },
 
   home: {
-    title: "Compteur de scores",
-    subtitle: "pour Skull King",
+    title: "Skull King",
+    subtitle: "Crew Ledger",
     unofficial: "Application non officielle",
     resume: "Reprendre la partie",
     activeTitle: "Partie en cours",
@@ -65,8 +65,12 @@ export const fr: Strings = {
     automaticUpdatesBody:
       "Les applications installées téléchargent désormais chaque nouvelle version automatiquement et l’activent dès que l’appareil est en ligne.",
     items: [
-      "Les commandes de score gardent désormais un espace net avant « Bonus », même lorsque son compteur est visible sur un petit écran.",
-      "Tous les textes utilisent désormais une ponctuation plus fluide, sans tirets cadratins ni demi-cadratins.",
+      "Inviter votre équipage et rejoindre une autre table sont désormais deux actions distinctes, directement visibles dans les paramètres.",
+      "Tables de jeu partagées : donnez un nom à la table de votre équipage et invitez vos amis par lien ou QR code. Chaque membre peut tenir les scores, toutes les parties rejoignent l’historique et le classement partagés, et un même téléphone peut garder plusieurs tables, une par groupe d’amis.",
+      "Les règles peuvent désormais être modifiées en cours de partie via le nouveau bouton ⚙ : activer l’extension, changer de décompte, etc. Les manches déjà comptées sont recalculées automatiquement.",
+      "L’extension est maintenant activée par défaut pour les nouvelles parties.",
+      "Le bouton de suivi en direct devient une pastille « Live » explicite, et l’ordre de jeu affiche des places numérotées avec la personne qui entame.",
+      "Les intitulés de bonus suivent tous la même forme : qui prend quoi.",
     ],
     close: "Compris",
   },
@@ -100,11 +104,11 @@ export const fr: Strings = {
       title: "Installer l’application",
       installedTitle: "Application installée",
       installedBody:
-        "Le compteur de scores est installé sur votre appareil. Il s’ouvre comme une appli et fonctionne entièrement hors ligne.",
+        "Skull King Crew Ledger est installée sur votre appareil. Elle s’ouvre comme une appli et fonctionne entièrement hors ligne.",
       promptHint:
-        "Ajoutez le compteur de scores à votre écran d’accueil pour y accéder rapidement et jouer hors ligne.",
+        "Ajoutez Skull King Crew Ledger à votre écran d’accueil pour y accéder rapidement et jouer hors ligne.",
       manualHint:
-        "Ajoutez le compteur de scores à votre écran d’accueil pour y accéder rapidement et jouer hors ligne. Suivez les étapes correspondant à votre téléphone ci-dessous.",
+        "Ajoutez Skull King Crew Ledger à votre écran d’accueil pour y accéder rapidement et jouer hors ligne. Suivez les étapes correspondant à votre téléphone ci-dessous.",
       button: "Installer maintenant",
       error:
         "L’installation n’a pas pu démarrer. Suivez les étapes manuelles ci-dessous.",
@@ -132,25 +136,70 @@ export const fr: Strings = {
       ],
     },
     cloud: {
-      title: "Sauvegarde cloud",
+      title: "Table de jeu partagée",
       statusIdle: "La sauvegarde cloud est activée.",
       statusSynced:
         "Sauvegarde terminée. Vos parties sont enregistrées automatiquement dans le cloud et restaurées si les données de cet appareil sont effacées.",
       statusSyncing: "Enregistrement dans le cloud…",
       statusOffline: "Hors ligne. Les changements se synchroniseront une fois de retour en ligne.",
       statusUnavailable: "La sauvegarde cloud n’est pas configurée pour cette appli.",
-      linkTitle: "Utiliser vos parties sur un autre téléphone",
+      tablesTitle: "Vos tables",
+      tableUnnamed: "Table sans nom",
+      tableActive: "Active",
+      tableSwitch: (name) => `Passer à la table ${name}`,
+      tableSwitching: "Ouverture de la table…",
+      tableSwitchError:
+        "Cette table n’a pas pu être ouverte. Vérifiez votre connexion et réessayez.",
+      newTable: "Créer une nouvelle table",
+      newTableHint:
+        "Une table vierge avec son propre historique et son propre classement, pour un autre groupe d’amis. Vos tables actuelles restent sur ce téléphone.",
+      removeTable: (name) => `Retirer ${name} de ce téléphone`,
+      removeTableTitle: "Retirer cette table de ce téléphone ?",
+      removeTableMessage:
+        "Elle disparaît uniquement de ce téléphone. La table et ses parties continuent d’exister pour ses membres, et vous pourrez la rejoindre plus tard avec une invitation.",
+      removeTableCancel: "Annuler",
+      removeTableConfirm: "Retirer",
+      tableNameLabel: "Nom de la table",
+      tableNamePlaceholder: "ex. La tablée du vendredi",
+      tableNameHint:
+        "Donnez un nom à la table de votre équipage. Tous ceux qui la rejoignent voient le même nom, le même historique et le même classement.",
+      shareTitle: "Invitez votre équipage",
+      shareHint:
+        "Vos amis scannent ce QR code (ou ouvrent le lien) pour rejoindre votre table. Chaque membre peut tenir les scores ; toutes les parties rejoignent le même historique partagé. Partagez-le uniquement avec votre équipage.",
+      copyLink: "Copier le lien d’invitation",
+      copying: "Copie…",
+      linkCopied: "Lien copié !",
+      copyFailed: "Échec de la copie",
+      qrLabel: "QR code pour rejoindre cette table de jeu",
+      linkTitle: "Pas d’appareil photo ? Utilisez un code",
       linkHint:
-        "Copiez le code de cet appareil, puis collez-le sur l’autre téléphone pour y charger les mêmes parties. Conservez-le à l’abri : toute personne qui le possède peut voir vos parties.",
-      codeLabel: "Code de cet appareil",
+        "Copiez le code de cette table, puis collez-le sur l’autre téléphone pour y rejoindre la même table. Conservez-le à l’abri : toute personne qui le possède peut voir et modifier vos parties.",
+      codeLabel: "Code de cette table",
       copy: "Copier",
       copied: "Copié",
-      pasteLabel: "Coller un code d’un autre appareil",
-      linkButton: "Charger ces parties ici",
-      linking: "Chargement…",
+      joinTitle: "Rejoindre une autre table",
+      pasteLabel: "Coller le code d’une autre table",
+      linkButton: "Rejoindre cette table",
+      linking: "Connexion…",
       linkError: "Ce code n’a pas pu être lu.",
-      linkSuccess: "Terminé. Les parties ont été fusionnées sur cet appareil.",
+      linkSuccess: "Terminé. Ce téléphone fait maintenant partie de la table partagée.",
     },
+  },
+
+  joinTable: {
+    title: "Rejoindre une table de jeu",
+    named: (name) => `Rejoindre la table « ${name} » ?`,
+    unnamed: "Rejoindre cette table de jeu ?",
+    message: (count) =>
+      count === 1
+        ? "Cette table et sa partie seront ajoutées sur ce téléphone. Les parties déjà présentes restent dans leur propre table ; vous pouvez changer de table à tout moment."
+        : `Cette table et ses ${count} parties seront ajoutées sur ce téléphone. Les parties déjà présentes restent dans leur propre table ; vous pouvez changer de table à tout moment.`,
+    confirm: "Rejoindre la table",
+    cancel: "Pas maintenant",
+    busy: "Connexion…",
+    success: "Bienvenue à bord ! Ce téléphone suit désormais cette table.",
+    error:
+      "Cette invitation n’a pas pu être ouverte. Vérifiez votre connexion, ou demandez à votre équipage de renvoyer le lien.",
   },
 
   setup: {
@@ -225,7 +274,7 @@ export const fr: Strings = {
     round: (n) => `Manche ${n}`,
     cardsDealt: "cartes distribuées",
     dealsVerb: "distribue",
-    playOrderHint: "ordre de jeu · la personne à gauche entame",
+    playOrderLead: (name) => `Ordre de jeu · ${name} entame la manche`,
     ghostName: "Barbe Grise",
     bid: "Mise",
     won: "Plis",
@@ -263,8 +312,17 @@ export const fr: Strings = {
     rascalBetFor: (name) => `Déclaration de ${name}`,
   },
 
+  gameSettings: {
+    open: "Règles de la partie",
+    title: "Règles de la partie",
+    recomputeHint:
+      "Les changements s’appliquent à toute la partie : les manches déjà comptées sont recalculées avec les nouvelles règles.",
+    close: "Terminé",
+  },
+
   liveShare: {
-    open: "Partager le suivi des scores (QR code)",
+    open: "Partage des scores en direct",
+    badge: "Live",
     title: "Suivre les scores",
     subtitle: "Chaque joueur peut suivre les scores sur son propre téléphone.",
     liveHint:
@@ -349,7 +407,7 @@ export const fr: Strings = {
       `${rank === 1 ? "1re" : `${rank}e`} place, ${name}, ${total} points`,
     review: "Revoir manche par manche",
     rematch: "Revanche avec le même équipage",
-    installTitle: "Gardez le compteur à bord",
+    installTitle: "Gardez Skull King Crew Ledger à bord",
     installHint: "Installez l’app pour la retrouver rapidement et jouer hors ligne.",
     installIosHint:
       "Touchez Partager puis « Sur l’écran d’accueil ». Dans Chrome, ouvrez d’abord « En voir plus ».",
@@ -501,10 +559,10 @@ export const fr: Strings = {
         `${count} ${count === 1 ? "14 de couleur capturé" : "14 de couleur capturés"}`,
       black14: "14 noir capturé",
       mermaidByPirate: (count) =>
-        `${count} ${count === 1 ? "sirène prise" : "sirènes prises"} par un pirate`,
+        `Un pirate a pris ${count} ${count === 1 ? "sirène" : "sirènes"}`,
       pirateBySkullKing: (count) =>
-        `${count} ${count === 1 ? "pirate pris" : "pirates pris"} par le Skull King`,
-      mermaidCapturesSkullKing: "Une sirène capture le Skull King",
+        `Le Skull King a pris ${count} ${count === 1 ? "pirate" : "pirates"}`,
+      mermaidCapturesSkullKing: "Une sirène a pris le Skull King",
       rascalWon: "Pari Rascal réussi",
       rascalLost: "Pari Rascal perdu",
       expansion7: (count) =>
@@ -512,8 +570,8 @@ export const fr: Strings = {
       expansion8: (count) =>
         `${count} ${count === 1 ? "8 spécial capturé" : "8 spéciaux capturés"}`,
       davyJonesLeviathans: (count) =>
-        `${count} ${count === 1 ? "léviathan détruit" : "léviathans détruits"} par Davy Jones`,
-      secondCaptured: "Le Second capturé",
+        `Davy Jones a détruit ${count} ${count === 1 ? "léviathan" : "léviathans"}`,
+      secondCaptured: "Skull King ou une sirène a pris le Second",
       legacyLoot: (count) =>
         `${count} ${count === 1 ? "ancien bonus Butin" : "anciens bonus Butin"}`,
       loot: (count) =>
@@ -528,17 +586,17 @@ export const fr: Strings = {
   bonus: {
     colored14: "14 de couleur",
     black14: "14 noir (Drapeau pirate)",
-    mermaidByPirate: "Sirène prise par un pirate",
-    pirateBySkullKing: "Pirate pris par le Skull King",
-    mermaidCapturesSkullKing: "Une sirène capture le Skull King",
+    mermaidByPirate: "Un pirate prend une sirène",
+    pirateBySkullKing: "Le Skull King prend un pirate",
+    mermaidCapturesSkullKing: "Une sirène prend le Skull King",
     rascal: "Pari Rascal",
     newExpansion: "Extension",
     expansion7: "Nouveau 7 remporté",
     expansion8: "Nouveau 8 remporté",
     expansionColorHint:
       "Les nouveaux 7 et 8 ne comptent que si la mise est réussie exactement.",
-    davyJonesLeviathans: "Léviathan détruit par Davy Jones",
-    secondCaptured: "Le Second pris par Skull King / une sirène",
+    davyJonesLeviathans: "Davy Jones détruit un léviathan",
+    secondCaptured: "Skull King / sirène prend le Second",
     each: "ch.",
     requiresBidHint:
       "Cette partie n’accorde les bonus de capture que si la mise est réussie.",
@@ -637,15 +695,15 @@ export const fr: Strings = {
         body: "Capturer le 14 noir (Drapeau pirate / atout).",
       },
       {
-        title: "Sirène prise par un pirate  (+20 chacune)",
+        title: "Un pirate prend une sirène  (+20 chacune)",
         body: "Votre pirate remporte un pli contenant une sirène.",
       },
       {
-        title: "Pirate pris par le Skull King  (+30 chacun)",
+        title: "Le Skull King prend un pirate  (+30 chacun)",
         body: "Votre Skull King remporte un pli contenant un ou des pirates.",
       },
       {
-        title: "Une sirène capture le Skull King  (+40)",
+        title: "Une sirène prend le Skull King  (+40)",
         body: "Votre sirène remporte un pli contenant le Skull King. (Sirène bat Skull King, qui bat les pirates, qui battent la sirène.)",
       },
       {

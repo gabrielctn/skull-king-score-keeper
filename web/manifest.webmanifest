@@ -1,29 +1,29 @@
 {
-  "name": "Unofficial Score Keeper for Skull King",
-  "short_name": "Score Keeper",
-  "description": "Unofficial score keeper for the Skull King card game. Works fully offline.",
-  "id": "/skull-king-score-keeper/",
-  "start_url": "/skull-king-score-keeper/",
-  "scope": "/skull-king-score-keeper/",
+  "name": "Skull King Crew Ledger",
+  "short_name": "Skull King Crew Ledger",
+  "description": "Skull King Crew Ledger is an unofficial fan-made scoring app. Works fully offline.",
+  "id": "/skull-king-crew-ledger/",
+  "start_url": "/skull-king-crew-ledger/",
+  "scope": "/skull-king-crew-ledger/",
   "display": "standalone",
   "orientation": "portrait",
   "theme_color": "#0b1722",
   "background_color": "#0b1722",
   "icons": [
     {
-      "src": "/skull-king-score-keeper/icons/icon-192.png",
+      "src": "/skull-king-crew-ledger/icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/skull-king-score-keeper/icons/icon-512.png",
+      "src": "/skull-king-crew-ledger/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/skull-king-score-keeper/icons/icon-512-maskable.png",
+      "src": "/skull-king-crew-ledger/icons/icon-512-maskable.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"

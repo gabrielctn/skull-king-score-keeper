@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
+  Image,
   Platform,
   StatusBar,
   StyleSheet,
@@ -9,18 +10,32 @@ import {
   View,
 } from "react-native";
 import { Game } from "./src/types";
+import type { CloudOwner } from "./src/storage";
 import {
   AppSettings,
+  TableMembership,
   clearGame,
   clearLiveSessionFor,
   loadGame,
   loadGameHistory,
   loadLang,
   loadSettings,
+  loadTableMemberships,
+  loadTableName,
   saveGame,
   saveGameHistory,
   saveSettings,
+  saveTableMemberships,
+  saveTableName,
 } from "./src/storage";
+import {
+  findMembership,
+  membershipOwner,
+  nextActiveAfterRemoval,
+  removeMembership,
+  renameMembership,
+  upsertMembership,
+} from "./src/tables";
 import { colors } from "./src/theme";
 import { I18nProvider, detectLang, useI18n } from "./src/i18n/context";
 import { Lang } from "./src/i18n/types";
@@ -48,7 +63,11 @@ import { registerServiceWorker } from "./src/registerServiceWorker";
 import { createGame } from "./src/scoring";
 import { initializePwaInstallPrompt } from "./src/pwaInstall";
 import { requestPersistentStorage } from "./src/storagePersistence";
-import { cloudBackupManager, cloudConfigured } from "./src/cloudSync";
+import {
+  cloudBackupManager,
+  cloudConfigured,
+  consumeScannedJoinCode,
+} from "./src/cloudSync";
 import {
   BackupData,
   deduplicateGames,
@@ -59,11 +78,13 @@ import {
   serializeBackup,
 } from "./src/backup";
 import CookieConsentBanner from "./src/components/CookieConsentBanner";
+import JoinTableModal from "./src/components/JoinTableModal";
 import {
   consumePendingAppIntentDestination,
   subscribeToAppIntentDestinations,
 } from "./src/appIntents";
 import type { AppIntentDestination } from "./src/appIntents";
+import { illustrations } from "./src/assets/illustrations";
 
 type Screen = "home" | "setup" | "game" | "results" | "settings" | "stats";
 type PendingCurrentGame = Game | null | undefined;
@@ -140,8 +161,16 @@ export default function App() {
   // lazy initializer, before first paint and before analytics can load, so
   // the share payload is stripped from the URL as early as possible.
   const [spectator, setSpectator] = useState<SpectatorMode>(readSpectatorMode);
+  // A scanned table invite (`#join=`) waits in this state for explicit
+  // confirmation; joining swaps the cloud identity so it is never automatic.
+  const [pendingJoinCode, setPendingJoinCode] = useState<string | null>(
+    consumeScannedJoinCode
+  );
   const [game, setGame] = useState<Game | null>(null);
   const [gameHistory, setGameHistory] = useState<Game[]>([]);
+  const [tableName, setTableName] = useState<string | null>(null);
+  const [tables, setTables] = useState<TableMembership[]>([]);
+  const [activeTableId, setActiveTableId] = useState<string | null>(null);
   const [lang, setLang] = useState<Lang | null>(null);
   const [settings, setSettings] = useState<AppSettings | null>(null);
   const [loading, setLoading] = useState(true);
@@ -150,6 +179,8 @@ export default function App() {
     useState<AppIntentDestination | null>(null);
   const historyRef = useRef<Game[]>([]);
   const gameRef = useRef<Game | null>(null);
+  const tableNameRef = useRef<string | null>(null);
+  const tablesRef = useRef<TableMembership[]>([]);
   const pendingCurrentSave = useRef<PendingCurrentGame>(undefined);
   const currentSaveWorker = useRef<Promise<void> | null>(null);
   const pendingHistorySave = useRef<Game[] | null>(null);
@@ -230,12 +261,56 @@ export default function App() {
     while (historySaveWorker.current) await historySaveWorker.current;
   };
 
-  // Mirror every game change to this device's private cloud backup.
+  // Mirror every game change to this shared table's cloud backup.
   const pushCloud = (currentGame: Game | null, history: Game[]) => {
-    if (cloudConfigured()) cloudBackupManager().push({ currentGame, history });
+    if (cloudConfigured()) {
+      cloudBackupManager().push({
+        currentGame,
+        history,
+        tableName: tableNameRef.current,
+      });
+    }
   };
 
-  // Apply a reconciled backup (from the cloud on launch, or a linked device)
+  // Persist the membership list (state, ref, storage) in one place.
+  const applyTables = (next: TableMembership[]) => {
+    tablesRef.current = next;
+    setTables(next);
+    void saveTableMemberships(next);
+  };
+
+  /**
+   * Update the active table's name everywhere it lives: the live state, the
+   * single-table storage key (what the payload carries) and the matching
+   * membership row, so the table list shows the same label.
+   */
+  const applyTableName = (name: string | null) => {
+    const activeId = cloudConfigured()
+      ? cloudBackupManager().getOwner()?.ownerId ?? null
+      : null;
+    if (activeId) {
+      applyTables(renameMembership(tablesRef.current, activeId, name));
+    }
+    if (name === tableNameRef.current) return;
+    tableNameRef.current = name;
+    setTableName(name);
+    void saveTableName(name);
+  };
+
+  /** Record the active table (and remember its credentials for switching). */
+  const markActiveTable = (owner: CloudOwner | null, name: string | null) => {
+    setActiveTableId(owner?.ownerId ?? null);
+    if (!owner) return;
+    applyTables(
+      upsertMembership(tablesRef.current, {
+        ownerId: owner.ownerId,
+        writerKey: owner.writerKey,
+        name,
+      })
+    );
+  };
+
+  // Apply a reconciled backup (from the cloud on launch, or a joined table)
   // to both the live UI state and the local store.
   const applyBackupData = (data: BackupData) => {
     historyRef.current = data.history;
@@ -244,6 +319,7 @@ export default function App() {
     gameRef.current = data.currentGame;
     setGame(data.currentGame);
     queueCurrentSave(data.currentGame);
+    applyTableName(data.tableName ?? null);
   };
 
   // Keep a synchronous mirror of the current game so cloud reconciles that run
@@ -276,6 +352,11 @@ export default function App() {
   useEffect(() => {
     if (Platform.OS !== "web" || typeof window === "undefined") return;
     const handleHashChange = () => {
+      const scannedJoin = consumeScannedJoinCode();
+      if (scannedJoin) {
+        setPendingJoinCode(scannedJoin);
+        return;
+      }
       const scannedLive = consumeScannedLiveId();
       if (scannedLive) {
         setSpectator({ kind: "live", sessionId: scannedLive });
@@ -307,12 +388,25 @@ export default function App() {
     initializePwaInstallPrompt();
     registerServiceWorker();
     (async () => {
-      const [saved, history, savedLang, savedSettings] = await Promise.all([
+      const [
+        saved,
+        history,
+        savedLang,
+        savedSettings,
+        savedTableName,
+        savedTables,
+      ] = await Promise.all([
         loadGame(),
         loadGameHistory(),
         loadLang(),
         loadSettings(),
+        loadTableName(),
+        loadTableMemberships(),
       ]);
+      tableNameRef.current = savedTableName;
+      setTableName(savedTableName);
+      tablesRef.current = savedTables;
+      setTables(savedTables);
       if (saved) setGame(saved);
       // Populate the ref synchronously (the [game] effect runs later, after the
       // background cloud reconcile below may have already read it).
@@ -334,17 +428,22 @@ export default function App() {
       setSettings(savedSettings);
       setLoading(false);
 
-      // Reconcile with this device's private cloud backup in the background:
-      // pull the stored snapshot, merge it with what's local (newest wins per
-      // game), apply the result, and push it back. Falls back to local-only on
-      // any failure, so nothing blocks or breaks offline.
+      // Reconcile with the active table's cloud row in the background: pull its
+      // snapshot, merge it with what's local (newest wins per game, because
+      // both sides are the same table seen from different phones), apply the
+      // result, and push it back. Falls back to local-only on any failure, so
+      // nothing blocks or breaks offline.
       if (cloudConfigured()) {
         void (async () => {
           const cloud = cloudBackupManager();
           const remote = await cloud.pull();
+          // Registers the active table in the membership list, which also
+          // migrates devices that had a cloud identity before tables existed.
+          markActiveTable(cloud.getOwner(), tableNameRef.current);
           const localData: BackupData = {
             currentGame: gameRef.current,
             history: historyRef.current,
+            tableName: tableNameRef.current,
           };
           if (!remote) {
             cloud.push(localData);
@@ -426,24 +525,96 @@ export default function App() {
     pushCloud(nextCurrent, next);
   };
 
-  const handleLinkDevice = async (code: string): Promise<number | null> => {
-    const remote = await cloudBackupManager().adopt(code);
-    const localData: BackupData = {
-      currentGame: gameRef.current,
-      history: historyRef.current,
+  /**
+   * Load another table's snapshot as the local state. Each table keeps its own
+   * history, so this replaces rather than merges: the games of the table we
+   * are leaving stay in its own cloud row (flushed by the callers before the
+   * identity changes) and come back when it is opened again.
+   */
+  const adoptTableData = (data: BackupData | null, owner: CloudOwner) => {
+    const next: BackupData = data ?? {
+      currentGame: null,
+      history: [],
+      tableName: null,
     };
-    const merged = mergeBackupData(
-      localData,
-      remote ?? { currentGame: null, history: [] }
+    applyBackupData(next);
+    markActiveTable(owner, next.tableName ?? null);
+  };
+
+  /**
+   * Make sure everything typed on the table we are leaving has reached its own
+   * cloud row before the identity changes. Switching with an unsent change
+   * would drop it, since the local store is about to be replaced.
+   */
+  const flushBeforeTableChange = async () => {
+    if (!(await cloudBackupManager().flushPending())) {
+      throw new Error("cloud unreachable");
+    }
+  };
+
+  /** Join the table carried by an invite code, keeping the existing ones. */
+  const handleJoinTable = async (code: string): Promise<number | null> => {
+    const cloud = cloudBackupManager();
+    await flushBeforeTableChange();
+    const data = await cloud.adopt(code);
+    const owner = cloud.getOwner();
+    if (!owner) throw new Error("cloud unreachable");
+    adoptTableData(data, owner);
+    return data?.history.length ?? 0;
+  };
+
+  /** Open one of the tables this device already belongs to. */
+  const handleSwitchTable = async (ownerId: string): Promise<void> => {
+    const cloud = cloudBackupManager();
+    if (cloud.getOwner()?.ownerId === ownerId) return;
+    const membership = findMembership(tablesRef.current, ownerId);
+    if (!membership) throw new Error("unknown table");
+    await flushBeforeTableChange();
+    const owner = membershipOwner(membership);
+    adoptTableData(await cloud.switchTo(owner), owner);
+  };
+
+  /** Start a separate table (another group of friends) and open it. */
+  const handleCreateTable = async (): Promise<void> => {
+    const cloud = cloudBackupManager();
+    await flushBeforeTableChange();
+    const owner = await cloud.createTable();
+    adoptTableData(null, owner);
+    pushCloud(null, []);
+  };
+
+  /**
+   * Forget a table on this device. The table itself keeps existing for the
+   * rest of the crew, so an invite can bring it back later.
+   */
+  const handleRemoveTable = async (ownerId: string): Promise<void> => {
+    if (tablesRef.current.length <= 1) return;
+    const cloud = cloudBackupManager();
+    const fallback = nextActiveAfterRemoval(
+      tablesRef.current,
+      ownerId,
+      cloud.getOwner()?.ownerId ?? null
     );
-    applyBackupData(merged);
-    cloudBackupManager().push(merged);
-    return merged.history.length;
+    if (fallback) {
+      await flushBeforeTableChange();
+      const owner = membershipOwner(fallback);
+      adoptTableData(await cloud.switchTo(owner), owner);
+    }
+    applyTables(removeMembership(tablesRef.current, ownerId));
+  };
+
+  const handleRenameTable = (name: string | null) => {
+    applyTableName(name);
+    pushCloud(gameRef.current, historyRef.current);
   };
 
   const handleExportBackup = () => {
     downloadBackupJson(
-      serializeBackup({ currentGame: game, history: gameHistory })
+      serializeBackup({
+        currentGame: game,
+        history: gameHistory,
+        tableName: tableNameRef.current,
+      })
     );
   };
 
@@ -453,9 +624,10 @@ export default function App() {
 
     const imported = parseBackup(json);
     const merged = mergeBackupData(
-      { currentGame: game, history: gameHistory },
+      { currentGame: game, history: gameHistory, tableName: tableNameRef.current },
       imported
     );
+    applyTableName(merged.tableName ?? null);
     const failureCount = persistenceFailures.current;
     queueCurrentSave(merged.currentGame);
     queueHistorySave(merged.history, true);
@@ -573,6 +745,11 @@ export default function App() {
     <I18nProvider initialLang={lang}>
       <View style={styles.root}>
         <StatusBar barStyle="light-content" backgroundColor={colors.bg} />
+        <Image
+          source={illustrations.brandTexture}
+          style={styles.backgroundTexture}
+          resizeMode="cover"
+        />
         {spectatorActive && (
           <SpectatorScreen
             game={spectator.kind === "snapshot" ? spectator.game : null}
@@ -594,18 +771,29 @@ export default function App() {
           />
         )}
         {!spectatorActive && screen === "stats" && (
-          <StatsScreen gameHistory={gameHistory} onBack={handleHome} />
+          <StatsScreen
+            gameHistory={gameHistory}
+            tableName={tableName}
+            onBack={handleHome}
+          />
         )}
         {!spectatorActive && screen === "settings" && (
           <SettingsScreen
             settings={settings}
             hasGames={gameHistory.length > 0 || game !== null}
+            tableName={tableName}
+            tables={tables}
+            activeTableId={activeTableId}
             onUpdateSettings={handleUpdateSettings}
             onBack={handleHome}
             onExportBackup={handleExportBackup}
             onImportBackup={handleImportBackup}
             onDeleteAllGames={handleDeleteAllGames}
-            onLinkDevice={handleLinkDevice}
+            onLinkDevice={handleJoinTable}
+            onRenameTable={handleRenameTable}
+            onSwitchTable={handleSwitchTable}
+            onCreateTable={handleCreateTable}
+            onRemoveTable={handleRemoveTable}
           />
         )}
         {!spectatorActive && screen === "setup" && (
@@ -633,6 +821,11 @@ export default function App() {
             onReview={() => setScreen("game")}
           />
         )}
+        <JoinTableModal
+          code={pendingJoinCode}
+          onClose={() => setPendingJoinCode(null)}
+          onJoin={handleJoinTable}
+        />
         <CookieConsentBanner />
         <StorageWarning
           visible={storageError}
@@ -645,6 +838,13 @@ export default function App() {
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.bg },
+  backgroundTexture: {
+    ...StyleSheet.absoluteFillObject,
+    width: undefined,
+    height: undefined,
+    opacity: 0.075,
+    pointerEvents: "none",
+  },
   loader: {
     flex: 1,
     backgroundColor: colors.bg,

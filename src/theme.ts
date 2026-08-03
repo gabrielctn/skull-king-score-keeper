@@ -14,6 +14,10 @@ export const colors = {
   accent: "#2f9bd6",
   danger: "#c0392b",
   overlay: "rgba(0,0,0,0.55)",
+  glass: "rgba(19, 40, 58, 0.42)",
+  glassOpaque: "rgba(19, 40, 58, 0.96)",
+  glassBorder: "rgba(159, 180, 196, 0.24)",
+  glassHighlight: "rgba(243, 247, 250, 0.08)",
 };
 
 /**

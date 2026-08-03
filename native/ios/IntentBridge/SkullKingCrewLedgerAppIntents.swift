@@ -1,8 +1,8 @@
 import Foundation
 import React
 
-@objc(SkullKingAppIntents)
-final class SkullKingAppIntents: RCTEventEmitter {
+@objc(SkullKingCrewLedgerAppIntents)
+final class SkullKingCrewLedgerAppIntents: RCTEventEmitter {
   private var hasListeners = false
 
   override init() {
@@ -10,7 +10,7 @@ final class SkullKingAppIntents: RCTEventEmitter {
     NotificationCenter.default.addObserver(
       self,
       selector: #selector(handleDestinationNotification(_:)),
-      name: IntentDestinationStore.notificationName,
+      name: SkullKingCrewLedgerDestinationStore.notificationName,
       object: nil
     )
   }
@@ -24,7 +24,7 @@ final class SkullKingAppIntents: RCTEventEmitter {
   }
 
   override func supportedEvents() -> [String]! {
-    [IntentDestinationStore.eventName]
+    [SkullKingCrewLedgerDestinationStore.eventName]
   }
 
   override func startObserving() {
@@ -40,15 +40,19 @@ final class SkullKingAppIntents: RCTEventEmitter {
     _ resolve: RCTPromiseResolveBlock,
     rejecter _: RCTPromiseRejectBlock
   ) {
-    resolve(IntentDestinationStore.takePendingDestination() ?? NSNull())
+    resolve(
+      SkullKingCrewLedgerDestinationStore.takePendingDestination() ?? NSNull()
+    )
   }
 
   @objc
   private func handleDestinationNotification(_ notification: Notification) {
     guard
       hasListeners,
-      let destination = IntentDestinationStore.destination(from: notification),
-      let pending = IntentDestinationStore.takePendingDestination(
+      let destination = SkullKingCrewLedgerDestinationStore.destination(
+        from: notification
+      ),
+      let pending = SkullKingCrewLedgerDestinationStore.takePendingDestination(
         matching: destination
       )
     else {
@@ -56,7 +60,7 @@ final class SkullKingAppIntents: RCTEventEmitter {
     }
 
     sendEvent(
-      withName: IntentDestinationStore.eventName,
+      withName: SkullKingCrewLedgerDestinationStore.eventName,
       body: pending
     )
   }

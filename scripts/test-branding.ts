@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { en } from "../src/i18n/en";
 import { fr } from "../src/i18n/fr";
 import { de } from "../src/i18n/de";
+import { es } from "../src/i18n/es";
 import { ar } from "../src/i18n/ar";
 import { zh } from "../src/i18n/zh";
 
@@ -24,16 +25,56 @@ const homeSource = readFileSync("src/screens/HomeScreen.tsx", "utf8");
 const rulesSource = readFileSync("src/components/RulesModal.tsx", "utf8");
 const readme = readFileSync("README.md", "utf8");
 const buildPwa = readFileSync("scripts/build-pwa.mjs", "utf8");
+const iosConfigPlugin = readFileSync(
+  "plugins/withSkullKingCrewLedgerAppIntents.js",
+  "utf8"
+);
+// expo.name is the generated Xcode project name, not a name the shipped apps
+// show: iOS reads CFBundleDisplayName and the web app reads web.name. Android
+// would label itself from expo.name, but it is not a target this app ships to.
+const displayName = appConfig.ios.infoPlist.CFBundleDisplayName;
+const visibleBranding = JSON.stringify({
+  displayName,
+  web: appConfig.web,
+  manifest,
+  locales: [en, fr, de, es, ar, zh],
+});
 
 check(
-  "installed app label uses an independent identity",
-  appConfig.name === "Score Keeper, Unofficial"
+  "native and PWA names match the App Store name",
+  displayName === "Skull King Crew Ledger" &&
+    // CFBundleName defaults to the Xcode product name, which is pinned to the
+    // old one, so it is set explicitly to keep it out of the shipped bundle.
+    appConfig.ios.infoPlist.CFBundleName === displayName &&
+    appConfig.web.name === displayName &&
+    appConfig.web.shortName === displayName &&
+    manifest.name === displayName &&
+    manifest.short_name === displayName
 );
 check("web and manifest full names match", appConfig.web.name === manifest.name);
-check("full PWA name is explicitly unofficial", /unofficial/i.test(manifest.name));
 check(
-  "short installed name does not use the game trademark",
-  appConfig.web.shortName === "Score Keeper" && manifest.short_name === "Score Keeper"
+  "localized home branding matches the app name",
+  [en, fr, de, es, ar, zh].every(
+    ({ home }) =>
+      home.title === "Skull King" && home.subtitle === "Crew Ledger"
+  )
+);
+check(
+  "legacy app name is absent from visible branding",
+  !visibleBranding.includes("Skull King Score Keeper")
+);
+check(
+  "registered identifiers remain compatible",
+  appConfig.ios.bundleIdentifier === "com.gabrielcretin.skullking" &&
+    appConfig.experiments.baseUrl === "/skull-king-crew-ledger" &&
+    manifest.id === "/skull-king-crew-ledger/"
+);
+check(
+  "the Xcode project name stays pinned to the Xcode Cloud workflow",
+  // prebuild derives ios/SkullKingScoreKeeper.xcworkspace and its scheme from
+  // expo.name, and the App Store Connect workflow stores both by name: renaming
+  // this fails the archive with "Workspace ... does not exist".
+  appConfig.name === "Skull King Score Keeper"
 );
 check(
   "PWA descriptions are explicitly unofficial",
@@ -75,6 +116,18 @@ check("README identifies the project as unofficial", readme.includes("Unofficial
 check(
   "Apple installed title is sourced from app configuration",
   buildPwa.includes('content="${installedAppTitle}"')
+);
+check(
+  "generated Xcode release metadata is sourced from app configuration",
+  iosConfigPlugin.includes('"MARKETING_VERSION"') &&
+    iosConfigPlugin.includes('"CURRENT_PROJECT_VERSION"') &&
+    iosConfigPlugin.includes("config.ios?.version ?? config.version") &&
+    iosConfigPlugin.includes("config.ios?.buildNumber")
+);
+check(
+  "native App Intent sources use the current app name",
+  iosConfigPlugin.includes("SkullKingCrewLedger") &&
+    !iosConfigPlugin.includes("SkullKingScoreKeeper")
 );
 
 console.log(`\n${passed} passed, ${failed} failed`);

@@ -14,16 +14,19 @@ import { getResponsiveLayout } from "../responsive";
 import { aggregateStats, PlayerStats, Rate } from "../stats";
 import { colors, radius, spacing } from "../theme";
 import { Game } from "../types";
+import GlassSurface from "../components/GlassSurface";
 
 interface Props {
   gameHistory: Game[];
+  /** Name of the shared game table these stats belong to, if any. */
+  tableName?: string | null;
   onBack: () => void;
 }
 
 const rankMedal = (rank: number) =>
   rank === 1 ? "🥇" : rank === 2 ? "🥈" : rank === 3 ? "🥉" : String(rank);
 
-export default function StatsScreen({ gameHistory, onBack }: Props) {
+export default function StatsScreen({ gameHistory, tableName, onBack }: Props) {
   const { t, lang } = useI18n();
   const { width } = useWindowDimensions();
   const layout = getResponsiveLayout(width);
@@ -69,44 +72,58 @@ export default function StatsScreen({ gameHistory, onBack }: Props) {
 
   return (
     <SafeAreaView style={styles.safe}>
-      <View
-        style={[
-          styles.header,
+      <ScrollView
+        stickyHeaderIndices={[0]}
+        contentContainerStyle={[
+          styles.scroll,
           {
             maxWidth: layout.formMaxWidth,
             paddingHorizontal: layout.screenPadding,
           },
         ]}
-      >
-        <TouchableOpacity
-          ref={backButtonRef}
-          onPress={goBack}
-          style={styles.backButton}
-          accessibilityRole="button"
-        >
-          <Text style={styles.back}>‹ {t.common.back}</Text>
-        </TouchableOpacity>
-        <Text
-          style={styles.title}
-          numberOfLines={1}
-          accessibilityRole="header"
-          accessibilityLiveRegion="polite"
-        >
-          {selected ? t.stats.playerTitle(selected.name) : t.stats.title}
-        </Text>
-        <View style={styles.headerSpacer} />
-      </View>
-
-      <ScrollView
-        contentContainerStyle={[
-          styles.scroll,
-          {
-            maxWidth: layout.formMaxWidth,
-            padding: layout.screenPadding,
-          },
-        ]}
         showsVerticalScrollIndicator={false}
       >
+        <View style={styles.headerLayer} pointerEvents="box-none">
+          <GlassSurface
+            intensity={72}
+            style={[
+              styles.header,
+              { paddingHorizontal: layout.screenPadding },
+            ]}
+          >
+            <TouchableOpacity
+              ref={backButtonRef}
+              onPress={goBack}
+              style={styles.backButton}
+              accessibilityRole="button"
+            >
+              <Text style={styles.back}>‹ {t.common.back}</Text>
+            </TouchableOpacity>
+            <View style={styles.titleBlock}>
+              <Text
+                style={styles.title}
+                numberOfLines={1}
+                accessibilityRole="header"
+                accessibilityLiveRegion="polite"
+              >
+                {selected ? t.stats.playerTitle(selected.name) : t.stats.title}
+              </Text>
+              {!selected && tableName ? (
+                <Text style={styles.tableName} numberOfLines={1}>
+                  ⚓ {tableName}
+                </Text>
+              ) : null}
+            </View>
+            <View style={styles.headerSpacer} />
+          </GlassSurface>
+        </View>
+
+        <View
+          style={[
+            styles.statsContent,
+            { paddingTop: layout.screenPadding },
+          ]}
+        >
         {snapshot.players.length === 0 ? (
           <EmptyState />
         ) : selected ? (
@@ -297,6 +314,7 @@ export default function StatsScreen({ gameHistory, onBack }: Props) {
             </View>
           </>
         )}
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -483,28 +501,42 @@ function Metric({
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.bg },
+  safe: { flex: 1, backgroundColor: "transparent" },
+  headerLayer: {
+    width: "100%",
+    paddingTop: spacing.sm,
+    zIndex: 20,
+  },
   header: {
     width: "100%",
-    alignSelf: "center",
     minHeight: 60,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    borderRadius: radius.lg,
   },
   backButton: { width: 92, minHeight: 44, justifyContent: "center" },
   back: { color: colors.gold, fontSize: 17 },
+  titleBlock: { flex: 1, alignItems: "center" },
   title: {
-    flex: 1,
     color: colors.text,
     fontSize: 20,
     fontWeight: "800",
     textAlign: "center",
   },
+  tableName: {
+    color: colors.gold,
+    fontSize: 12,
+    fontWeight: "700",
+    marginTop: 2,
+  },
   headerSpacer: { width: 92 },
   scroll: {
     width: "100%",
     alignSelf: "center",
+  },
+  statsContent: {
+    width: "100%",
     paddingBottom: spacing.xl,
   },
   hero: { alignItems: "center", marginBottom: spacing.xl },

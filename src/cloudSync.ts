@@ -91,6 +91,45 @@ export function decodeSyncCode(code: string): CloudOwner | null {
   return { ownerId, writerKey };
 }
 
+// --- join links (shared game table) -----------------------------------------
+
+/** URL-hash parameter carrying a table join code: `#join=<sync code>`. */
+export const JOIN_HASH_PARAM = "join";
+
+/** Full URL to share (link or QR) for joining this device's table. */
+export function buildJoinUrl(code: string, baseUrl: string): string {
+  return `${baseUrl}#${JOIN_HASH_PARAM}=${code}`;
+}
+
+/** Extract a well-formed join code from a location hash, or null. */
+export function extractJoinCode(hash: string | null | undefined): string | null {
+  if (!hash) return null;
+  const prefix = `${JOIN_HASH_PARAM}=`;
+  const trimmed = hash.startsWith("#") ? hash.slice(1) : hash;
+  if (!trimmed.startsWith(prefix)) return null;
+  const code = trimmed.slice(prefix.length);
+  return decodeSyncCode(code) ? code : null;
+}
+
+/**
+ * If the URL hash carries a table join code (the page was just opened from a
+ * shared link or QR), consume it: strip the hash and return the code. One-shot
+ * on purpose; joining a table must stay a deliberate, confirmed action.
+ */
+export function consumeScannedJoinCode(): string | null {
+  if (typeof window === "undefined" || !window.location) return null;
+  const code = extractJoinCode(window.location.hash);
+  if (!code) return null;
+  if (window.history?.replaceState) {
+    window.history.replaceState(
+      window.history.state,
+      "",
+      `${window.location.pathname}${window.location.search}`
+    );
+  }
+  return code;
+}
+
 // --- transport --------------------------------------------------------------
 
 /** The backend calls cloud backup needs; swappable so tests can fake them. */
@@ -146,7 +185,11 @@ export function parseCloudState(state: unknown): BackupData | null {
   if (state === null || state === undefined) return null;
   try {
     const payload = parseBackup(JSON.stringify(state));
-    return { currentGame: payload.currentGame, history: payload.history };
+    return {
+      currentGame: payload.currentGame,
+      history: payload.history,
+      tableName: payload.tableName ?? null,
+    };
   } catch {
     return null;
   }
@@ -315,13 +358,30 @@ export class CloudBackupManager {
   }
 
   /**
-   * Adopt the identity carried by a sync code (to load another device's games
-   * here) and return that owner's stored snapshot. Throws on a bad or
-   * unreachable code so the caller can show the right message.
+   * Push any pending snapshot right now instead of waiting for the debounce.
+   * Returns false when the cloud could not be reached (the data stays queued).
+   * Callers switching tables MUST get a true from this first, so nothing from
+   * the previous table can ever land in the next table's row.
    */
-  async adopt(code: string): Promise<BackupData | null> {
-    const owner = decodeSyncCode(code);
-    if (!owner) throw new Error("invalid sync code");
+  async flushPending(): Promise<boolean> {
+    if (this.pushTimer !== null) {
+      clearTimeout(this.pushTimer);
+      this.pushTimer = null;
+    }
+    while (this.pushing) {
+      await new Promise((resolve) => setTimeout(resolve, 10));
+    }
+    if (this.pending !== null) await this.flush();
+    return this.pending === null;
+  }
+
+  /**
+   * Make another table's identity the active one and return its stored
+   * snapshot. Unlike a pull-merge, the caller replaces its local state with
+   * the result: each table keeps its own history. Throws on an unreachable or
+   * unknown table, leaving the current identity untouched.
+   */
+  async switchTo(owner: CloudOwner): Promise<BackupData | null> {
     let state: unknown;
     try {
       state = await this.transport.get(owner.ownerId, owner.writerKey);
@@ -330,16 +390,63 @@ export class CloudBackupManager {
       throw new Error("cloud unreachable");
     }
     // get_user_backup returns null for an unknown owner or a wrong key (a real
-    // owner always has at least its initial "{}" state), so a well-formed but
-    // wrong code must never overwrite this device's working identity.
+    // owner always has at least its initial "{}" state), so a stale membership
+    // must never replace this device's working identity.
     if (state === null || state === undefined) {
-      throw new Error("unknown sync code");
+      throw new Error("unknown table");
     }
     this.owner = owner;
     this.ownerChecked = true;
     await this.store.save(owner);
     this.setStatus("synced");
     return parseCloudState(state);
+  }
+
+  /**
+   * Create a brand-new, empty table identity and make it active. Used to
+   * start a separate history for another group of friends. Throws when the
+   * backend is unreachable, leaving the current identity untouched.
+   */
+  async createTable(): Promise<CloudOwner> {
+    const writerKey = generateWriterKey();
+    const ownerId = await this.transport.create(writerKey);
+    const owner: CloudOwner = { ownerId, writerKey };
+    this.owner = owner;
+    this.ownerChecked = true;
+    await this.store.save(owner);
+    this.setStatus("synced");
+    return owner;
+  }
+
+  /**
+   * Read the snapshot behind a sync/join code WITHOUT adopting its identity,
+   * so a join prompt can preview the table (name, game count) before the user
+   * commits. Throws on a bad, unknown, or unreachable code.
+   */
+  async peek(code: string): Promise<BackupData | null> {
+    const owner = decodeSyncCode(code);
+    if (!owner) throw new Error("invalid sync code");
+    let state: unknown;
+    try {
+      state = await this.transport.get(owner.ownerId, owner.writerKey);
+    } catch {
+      throw new Error("cloud unreachable");
+    }
+    if (state === null || state === undefined) {
+      throw new Error("unknown sync code");
+    }
+    return parseCloudState(state);
+  }
+
+  /**
+   * Adopt the identity carried by a sync code (join that table here) and
+   * return its stored snapshot. Throws on a bad, unknown, or unreachable
+   * code so the caller can show the right message.
+   */
+  async adopt(code: string): Promise<BackupData | null> {
+    const owner = decodeSyncCode(code);
+    if (!owner) throw new Error("invalid sync code");
+    return this.switchTo(owner);
   }
 }
 

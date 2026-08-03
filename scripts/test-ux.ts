@@ -23,10 +23,18 @@ function check(label: string, condition: boolean, detail = "") {
 const packageJson = JSON.parse(readFileSync("package.json", "utf8"));
 const packageLock = JSON.parse(readFileSync("package-lock.json", "utf8"));
 const appConfig = JSON.parse(readFileSync("app.json", "utf8")).expo;
+const xcodeCloudSource = readFileSync(
+  "ios/ci_scripts/ci_post_clone.sh",
+  "utf8"
+);
 const cookieSource = readFileSync(
   "src/components/CookieConsentBanner.tsx",
   "utf8"
 );
+const glassSource = readFileSync("src/components/GlassSurface.tsx", "utf8");
+const clipboardWebSource = readFileSync("src/clipboard.ts", "utf8");
+const clipboardNativeSource = readFileSync("src/clipboard.native.ts", "utf8");
+const copyButtonSource = readFileSync("src/components/CopyButton.tsx", "utf8");
 const stepperSource = readFileSync("src/components/Stepper.tsx", "utf8");
 const setupSource = readFileSync("src/screens/SetupScreen.tsx", "utf8");
 const homeSource = readFileSync("src/screens/HomeScreen.tsx", "utf8");
@@ -49,6 +57,13 @@ const directionProviderSource = readFileSync(
   "utf8"
 );
 const localeModule: Record<string, unknown> = require("react-native-web/dist/modules/useLocale");
+const gameRulesSource = readFileSync(
+  "src/components/GameRulesModal.tsx",
+  "utf8"
+);
+const settingsSource = readFileSync("src/screens/SettingsScreen.tsx", "utf8");
+const statsSource = readFileSync("src/screens/StatsScreen.tsx", "utf8");
+const spectatorSource = readFileSync("src/screens/SpectatorScreen.tsx", "utf8");
 const playerFacingTextSources = [
   "src/i18n/en.ts",
   "src/i18n/fr.ts",
@@ -66,8 +81,82 @@ check(
     .every((version) => version === CURRENT_RELEASE)
 );
 check(
+  "the local iOS build number is a positive integer",
+  /^[1-9]\d*$/.test(appConfig.ios.buildNumber)
+);
+const prebuildIndex = xcodeCloudSource.indexOf("npx expo prebuild --platform ios");
+const scriptsBackupIndex = xcodeCloudSource.indexOf("cp -Rp ios/ci_scripts");
+const scriptsRestoreIndex = xcodeCloudSource.indexOf(
+  'cp -Rp "$scripts_backup/ci_scripts" ios/'
+);
+check(
+  "Xcode Cloud stamps its unique build number before generating iOS",
+  xcodeCloudSource.includes("CI_BUILD_NUMBER") &&
+    xcodeCloudSource.indexOf("CI_BUILD_NUMBER") < prebuildIndex
+);
+check(
+  "Xcode Cloud keeps its own scripts across the prebuild that clears ios/",
+  scriptsBackupIndex > -1 &&
+    scriptsBackupIndex < prebuildIndex &&
+    scriptsRestoreIndex > prebuildIndex
+);
+check(
+  "the generated workspace is checked against the name the workflow stores",
+  prebuildIndex > -1 &&
+    xcodeCloudSource.indexOf("if [ ! -d ios/SkullKingScoreKeeper.xcworkspace ]") >
+      prebuildIndex
+);
+check(
   "consent prompt participates in page layout",
   !cookieSource.includes('position: "absolute"')
+);
+check(
+  "glass is reserved for navigation and temporary overlays",
+  packageJson.dependencies?.["expo-blur"] &&
+    homeSource.includes("<GlassSurface") &&
+    setupSource.includes("<GlassSurface") &&
+    gameSource.includes("<GlassSurface") &&
+    settingsSource.includes("<GlassSurface") &&
+    statsSource.includes("<GlassSurface") &&
+    cookieSource.includes("<GlassSurface")
+);
+check(
+  "glass preserves contrast and avoids experimental Android blur",
+  glassSource.includes("isReduceTransparencyEnabled") &&
+    glassSource.includes('Platform.OS === "android"') &&
+    glassSource.includes('"systemUltraThinMaterialDark"') &&
+    !glassSource.includes("experimentalBlurMethod")
+);
+check(
+  "settings and statistics glass headers overlay scrolling content",
+  settingsSource.includes("stickyHeaderIndices={[0]}") &&
+    settingsSource.includes("styles.headerLayer") &&
+    settingsSource.includes('width: "100%"') &&
+    settingsSource.includes("{ paddingTop: layout.screenPadding }") &&
+    statsSource.includes("stickyHeaderIndices={[0]}") &&
+    statsSource.includes("styles.headerLayer") &&
+    statsSource.includes("{ paddingTop: layout.screenPadding }")
+);
+check(
+  "screen headers align with their content columns",
+  setupSource.includes("layout.formMaxWidth - layout.screenPadding * 2") &&
+    settingsSource.includes("stickyHeaderIndices={[0]}") &&
+    statsSource.includes("stickyHeaderIndices={[0]}") &&
+    gameSource.includes("layout.gameContentMaxWidth - layout.screenPadding * 2")
+);
+check(
+  "settings copy actions use the cross-platform clipboard with feedback",
+  packageJson.dependencies?.["expo-clipboard"] &&
+    settingsSource.includes('from "../clipboard"') &&
+    settingsSource.includes("copyTextToClipboard") &&
+    settingsSource.includes("<CopyButton") &&
+    copyButtonSource.includes('"button"') &&
+    copyButtonSource.includes("onClick: onPress") &&
+    clipboardNativeSource.includes("Clipboard.setStringAsync") &&
+    clipboardWebSource.includes("navigator.clipboard.writeText") &&
+    clipboardWebSource.includes('document.execCommand("copy")') &&
+    settingsSource.includes('copied ? "copied" : "error"') &&
+    settingsSource.includes("t.settings.cloud.copyFailed")
 );
 check(
   "active game is excluded from recent history",
@@ -137,6 +226,93 @@ check(
   resultsSource.includes("style={styles.reviewBtn}") &&
     resultsSource.includes("style={styles.secondaryBtn}")
 );
+check(
+  "new expansion is on by default for new games",
+  /const \[newExpansion, setNewExpansion\] = useState\(true\)/.test(setupSource)
+);
+check(
+  "bonus editor groups count rows before toggle rows",
+  bonusEditorSource.indexOf("t.bonus.pirateBySkullKing") <
+    bonusEditorSource.indexOf("t.bonus.black14") &&
+    bonusEditorSource.indexOf("t.bonus.black14") <
+      bonusEditorSource.indexOf("t.bonus.mermaidCapturesSkullKing")
+);
+check(
+  "game header exposes a labeled Live pill that reflects the session state",
+  gameSource.includes("t.liveShare.badge") &&
+    gameSource.includes("styles.livePillActive") &&
+    gameSource.includes("liveSessionManager")
+);
+check(
+  "turn order names the leader and numbers the seats",
+  gameSource.includes("t.game.playOrderLead(") &&
+    gameSource.includes("styles.turnChipNum") &&
+    spectatorSource.includes("t.game.playOrderLead(") &&
+    spectatorSource.includes("styles.turnChipNum")
+);
+check(
+  "game rules can be edited mid-game through the header modal",
+  gameSource.includes("GameRulesModal") &&
+    gameSource.includes("t.gameSettings.open")
+);
+check(
+  "mid-game rule edits re-apply the creation invariants",
+  gameRulesSource.includes('next.scoringMode === "rascal" && next.rascalBets') &&
+    gameRulesSource.includes(
+      'next.scoringMode === "classic" && next.bonusesRequireBid'
+    )
+);
+check(
+  "the app consumes table join links behind an explicit confirmation",
+  appSource.includes("consumeScannedJoinCode") &&
+    appSource.includes("JoinTableModal")
+);
+check(
+  "settings share the table through a QR code and invite link",
+  settingsSource.includes("buildJoinUrl") &&
+    settingsSource.includes("qrCodeDataUrl") &&
+    settingsSource.includes("t.settings.cloud.copyLink")
+);
+check(
+  "settings expose invite and join as separate actions",
+  settingsSource.includes("const [inviteOpen, setInviteOpen]") &&
+    settingsSource.includes("const [joinOpen, setJoinOpen]") &&
+    settingsSource.includes("t.settings.cloud.shareTitle") &&
+    settingsSource.includes("t.settings.cloud.joinTitle") &&
+    settingsSource.includes("expanded: inviteOpen") &&
+    settingsSource.includes("expanded: joinOpen")
+);
+check(
+  "settings let the crew name their shared table",
+  settingsSource.includes("t.settings.cloud.tableNameLabel") &&
+    settingsSource.includes("onRenameTable")
+);
+check(
+  "statistics display the shared table name",
+  statsSource.includes("tableName") && appSource.includes("tableName={tableName}")
+);
+check(
+  "settings list every table with a switch and a way to add one",
+  settingsSource.includes("t.settings.cloud.tablesTitle") &&
+    settingsSource.includes("onSwitchTable(membership.ownerId)") &&
+    settingsSource.includes("t.settings.cloud.newTable")
+);
+check(
+  "the last remaining table cannot be removed by accident",
+  settingsSource.includes("tables.length > 1 ? (") &&
+    appSource.includes("if (tablesRef.current.length <= 1) return;")
+);
+check(
+  "joining a table keeps the other tables instead of merging histories",
+  appSource.includes("const handleJoinTable") &&
+    appSource.includes("adoptTableData(data, owner)") &&
+    !appSource.includes("mergeBackupData(\n      localData,")
+);
+check(
+  "a table change flushes pending games to the table being left",
+  appSource.includes("flushBeforeTableChange") &&
+    appSource.includes("await cloudBackupManager().flushPending()")
+);
 
 // React Native Web deletes `direction` from a StyleSheet and logs an error for
 // it, so a view that must not mirror under Arabic cannot ask for it that way —
@@ -202,6 +378,7 @@ for (const [name, source] of [
   ["src/components/ScoreBreakdownModal.tsx", scoreBreakdownSource],
   ["src/components/RulesModal.tsx", rulesSource],
   ["src/components/BonusEditor.tsx", bonusEditorSource],
+  ["src/components/GameRulesModal.tsx", gameRulesSource],
 ] as [string, string][]) {
   const stylesheet = source.slice(source.indexOf("StyleSheet.create("));
   const physical = stylesheet.match(
@@ -220,8 +397,8 @@ for (const [language, strings] of Object.entries({ en, fr, es, de, ar, zh })) {
     strings.game.roundPointsPreview.trim().length > 0
   );
   check(
-    `${language} release notes describe this UX release`,
-    strings.whatsNew.items.length === 2
+    `${language} release notes describe this release`,
+    strings.whatsNew.items.length === 6
   );
 }
 

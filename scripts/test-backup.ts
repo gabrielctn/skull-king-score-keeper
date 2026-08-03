@@ -391,6 +391,57 @@ check(
   JSON.stringify(reverseMerged) === JSON.stringify(merged)
 );
 
+// --- shared table name ------------------------------------------------------
+
+const namedPayloadJson = serializeBackup({
+  currentGame: null,
+  history: [game("named", 100)],
+  tableName: "  Les Moussaillons  ",
+});
+const namedParsed = parseBackup(namedPayloadJson);
+check(
+  "table name round-trips trimmed through serialize/parse",
+  namedParsed.tableName === "Les Moussaillons"
+);
+check(
+  "a payload without a table name parses to null",
+  parseBackup(
+    serializeBackup({ currentGame: null, history: [game("plain", 100)] })
+  ).tableName === null
+);
+const badNamePayload = JSON.parse(namedPayloadJson);
+badNamePayload.tableName = 42;
+check(
+  "a non-string table name is dropped to null",
+  parseBackup(JSON.stringify(badNamePayload)).tableName === null
+);
+badNamePayload.tableName = "x".repeat(500);
+check(
+  "an oversized table name is truncated to the cap",
+  parseBackup(JSON.stringify(badNamePayload)).tableName === "x".repeat(60)
+);
+check(
+  "merge prefers the imported (shared row) table name",
+  mergeBackupData(
+    { currentGame: null, history: [], tableName: "Local" },
+    { currentGame: null, history: [], tableName: "Remote" }
+  ).tableName === "Remote"
+);
+check(
+  "merge falls back to the local table name",
+  mergeBackupData(
+    { currentGame: null, history: [], tableName: "Local" },
+    { currentGame: null, history: [] }
+  ).tableName === "Local"
+);
+check(
+  "merge with no names stays null",
+  mergeBackupData(
+    { currentGame: null, history: [] },
+    { currentGame: null, history: [] }
+  ).tableName === null
+);
+
 const manyLocalGames = Array.from({ length: 300 }, (_, index) =>
   game(`local-${index}`, index)
 );

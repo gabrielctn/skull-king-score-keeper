@@ -325,6 +325,103 @@ export async function clearLiveSessionFor(gameId: string): Promise<void> {
   }
 }
 
+const TABLE_NAME_KEY = "skullking:tableName";
+
+/**
+ * Load the name of this device's shared game table, or null when none was
+ * chosen yet. The name also travels inside the cloud backup payload, so every
+ * member of the table converges on the same one.
+ */
+export async function loadTableName(): Promise<string | null> {
+  try {
+    const stored = await AsyncStorage.getItem(TABLE_NAME_KEY);
+    return typeof stored === "string" && stored.length > 0 ? stored : null;
+  } catch (e) {
+    console.warn("Failed to load table name", e);
+    return null;
+  }
+}
+
+/** Persist the shared table name; null clears it. */
+export async function saveTableName(name: string | null): Promise<void> {
+  try {
+    if (name === null) await AsyncStorage.removeItem(TABLE_NAME_KEY);
+    else await AsyncStorage.setItem(TABLE_NAME_KEY, name);
+  } catch (e) {
+    console.warn("Failed to save table name", e);
+  }
+}
+
+const TABLE_LIST_KEY = "skullking:tables";
+
+/**
+ * One shared game table this device belongs to. A player can be part of
+ * several crews (family, friday-night friends, …), each with its own cloud
+ * row, history and leaderboard; the entry matching the active CloudOwner is
+ * the one currently loaded.
+ */
+export interface TableMembership {
+  ownerId: string;
+  writerKey: string;
+  name: string | null;
+}
+
+const MEMBERSHIP_UUID_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/** Shape-check an untrusted membership list; invalid entries are dropped. */
+export function normalizeTableMemberships(raw: unknown): TableMembership[] {
+  if (!Array.isArray(raw)) return [];
+  const seen = new Set<string>();
+  const memberships: TableMembership[] = [];
+  for (const item of raw) {
+    if (!item || typeof item !== "object") continue;
+    const entry = item as Record<string, unknown>;
+    if (
+      typeof entry.ownerId !== "string" ||
+      !MEMBERSHIP_UUID_PATTERN.test(entry.ownerId) ||
+      typeof entry.writerKey !== "string" ||
+      entry.writerKey.length < 16 ||
+      entry.writerKey.length > 200
+    ) {
+      continue;
+    }
+    const ownerId = entry.ownerId.toLowerCase();
+    if (seen.has(ownerId)) continue;
+    seen.add(ownerId);
+    memberships.push({
+      ownerId,
+      writerKey: entry.writerKey,
+      name:
+        typeof entry.name === "string" && entry.name.trim().length > 0
+          ? entry.name
+          : null,
+    });
+  }
+  return memberships;
+}
+
+export async function loadTableMemberships(): Promise<TableMembership[]> {
+  try {
+    const stored = await AsyncStorage.getItem(TABLE_LIST_KEY);
+    if (!stored) return [];
+    return normalizeTableMemberships(JSON.parse(stored));
+  } catch (e) {
+    console.warn("Failed to load table memberships", e);
+    return [];
+  }
+}
+
+export async function saveTableMemberships(
+  memberships: TableMembership[]
+): Promise<void> {
+  try {
+    await AsyncStorage.setItem(TABLE_LIST_KEY, JSON.stringify(memberships));
+  } catch (e) {
+    console.warn("Failed to save table memberships", e);
+  }
+}
+
 const CLOUD_OWNER_KEY = "skullking:cloudOwner";
 
 /**

@@ -13,6 +13,7 @@ import {
   loadLiveSessionFor,
   saveLiveSessionFor,
 } from "./storage";
+import { fillSecureRandomValues } from "./secureRandom";
 
 export type { StoredLiveSession } from "./storage";
 
@@ -170,7 +171,7 @@ export function supabaseLiveTransport(): LiveTransport {
  * except inside the authenticated update calls. */
 export function generateWriterKey(): string {
   const bytes = new Uint8Array(24);
-  crypto.getRandomValues(bytes);
+  fillSecureRandomValues(bytes);
   return Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join(
     ""
   );

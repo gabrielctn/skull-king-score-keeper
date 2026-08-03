@@ -403,6 +403,14 @@ export default function SpectatorScreen({ game, liveSessionId, onExit }: Props) 
                           ]}
                           numberOfLines={1}
                         >
+                          <Text
+                            style={[
+                              styles.turnChipNum,
+                              i === 0 && styles.turnChipLeadText,
+                            ]}
+                          >
+                            {i + 1}
+                          </Text>{" "}
                           {slot.kind === "ghost"
                             ? `👻 ${t.game.ghostName}`
                             : slot.player.name}
@@ -412,7 +420,13 @@ export default function SpectatorScreen({ game, liveSessionId, onExit }: Props) 
                   );
                 })}
               </View>
-              <Text style={styles.turnHint}>{t.game.playOrderHint}</Text>
+              <Text style={styles.turnHint}>
+                {t.game.playOrderLead(
+                  turnSlots[0]?.kind === "player"
+                    ? turnSlots[0].player.name
+                    : t.game.ghostName
+                )}
+              </Text>
             </View>
           </>
         ) : null}
@@ -520,7 +534,7 @@ export default function SpectatorScreen({ game, liveSessionId, onExit }: Props) 
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.bg },
+  safe: { flex: 1, backgroundColor: "transparent" },
   scroll: {
     width: "100%",
     alignSelf: "center",
@@ -753,12 +767,12 @@ const styles = StyleSheet.create({
   turnChipGhost: { borderColor: colors.accent, borderStyle: "dashed" },
   turnChipMine: { borderColor: colors.accent, borderWidth: 2 },
   turnChipText: { color: colors.text, fontSize: 12, fontWeight: "700" },
+  turnChipNum: { color: colors.textDim, fontSize: 11, fontWeight: "900" },
   turnChipLeadText: { color: colors.bg },
   turnHint: {
     color: colors.textDim,
-    fontSize: 10,
+    fontSize: 12,
     marginTop: 4,
-    fontStyle: "italic",
     textAlign: "center",
   },
   boardCard: {

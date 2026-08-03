@@ -98,18 +98,13 @@ export default function BonusEditor({
 
   return (
     <View style={styles.wrap}>
+      {/* Count-based bonuses first, then the on/off ones, for visual rhythm. */}
       <CountRow
         label={t.bonus.colored14}
         points={BONUS_VALUES.colored14}
         value={bonus.colored14}
         max={3}
         onChange={(v) => set("colored14", v)}
-      />
-      <BooleanRow
-        label={t.bonus.black14}
-        points={BONUS_VALUES.black14}
-        value={bonus.black14}
-        onValueChange={(value) => set("black14", value)}
       />
       <CountRow
         label={t.bonus.mermaidByPirate}
@@ -124,6 +119,12 @@ export default function BonusEditor({
         value={bonus.pirateBySkullKing}
         max={newExpansion ? 7 : 6}
         onChange={(v) => set("pirateBySkullKing", v)}
+      />
+      <BooleanRow
+        label={t.bonus.black14}
+        points={BONUS_VALUES.black14}
+        value={bonus.black14}
+        onValueChange={(value) => set("black14", value)}
       />
       <BooleanRow
         label={t.bonus.mermaidCapturesSkullKing}

@@ -3,7 +3,7 @@ name: verify
 description: Build, launch, and drive this Expo web app to verify changes end-to-end.
 ---
 
-# Verifying the Skull King score keeper
+# Verifying Skull King Crew Ledger
 
 ## Build & launch
 
@@ -50,6 +50,15 @@ Gotchas learned the hard way:
   real deployed publication); the initial REST fetch still delivers the game.
 - `isVisible()` returns immediately — use `.waitFor()` to await async-loaded
   content (e.g. a spectator screen populated from a network fetch).
+- Synthetic Enter from a driver's `key`/`press` helper often does not reach
+  react-native-web's TextInput handlers, so "commit on Enter/Done" looks broken
+  when it is not. Verify it by dispatching a real event on the element:
+  `input.dispatchEvent(new KeyboardEvent('keypress', {key:'Enter', keyCode:13, bubbles:true}))`.
+  Note that RN-web 0.21 does not fire `onSubmitEditing` at all; inputs in this
+  app commit through `onBlur` plus an explicit `onKeyPress` check.
+- RN-web renders its own scroll containers, so `window.scrollTo` does nothing.
+  Scroll a screen (or an open modal sheet) with
+  `[...document.querySelectorAll('div')].filter(d => d.scrollHeight > d.clientHeight + 20 && d.clientHeight > 100).forEach(s => s.scrollTop = <y>)`.
 
 ## Flows worth driving
 

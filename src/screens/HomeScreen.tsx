@@ -22,6 +22,7 @@ import { CURRENT_RELEASE } from "../releases";
 import { loadSeenRelease, saveSeenRelease } from "../storage";
 import WhatsNewModal from "../components/WhatsNewModal";
 import DisclosureChevron from "../components/DisclosureChevron";
+import GlassSurface from "../components/GlassSurface";
 
 const SUPPORT_URL = "https://buymeacoffee.com/gabrielctn";
 
@@ -149,7 +150,8 @@ export default function HomeScreen({
 
   return (
     <SafeAreaView style={styles.safe}>
-      <View
+      <GlassSurface
+        intensity={48}
         style={[
           styles.topActions,
           Platform.OS !== "web" && styles.topActionsNative,
@@ -176,7 +178,7 @@ export default function HomeScreen({
           */}
           <Text style={styles.topActionIcon}>⚙️</Text>
         </TouchableOpacity>
-      </View>
+      </GlassSurface>
       <ScrollView
         contentContainerStyle={styles.scroll}
         showsVerticalScrollIndicator={false}
@@ -400,7 +402,8 @@ export default function HomeScreen({
         onRequestClose={() => setPendingRemoval(null)}
       >
         <View style={styles.modalOverlay}>
-          <View
+          <GlassSurface
+            intensity={54}
             style={styles.confirmDialog}
             accessibilityRole="alert"
             accessibilityViewIsModal
@@ -435,7 +438,7 @@ export default function HomeScreen({
                 </Text>
               </TouchableOpacity>
             </View>
-          </View>
+          </GlassSurface>
         </View>
       </Modal>
       <WhatsNewModal visible={whatsNewOpen} onClose={closeWhatsNew} />
@@ -444,7 +447,7 @@ export default function HomeScreen({
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.bg },
+  safe: { flex: 1, backgroundColor: "transparent" },
   scroll: { flexGrow: 1, justifyContent: "center" },
   topActions: {
     position: "absolute",
@@ -453,6 +456,8 @@ const styles = StyleSheet.create({
     end: spacing.md,
     zIndex: 1,
     flexDirection: "row",
+    borderRadius: radius.lg,
+    padding: spacing.xs,
   },
   topActionsNative: {
     position: "relative",
@@ -467,9 +472,6 @@ const styles = StyleSheet.create({
     height: 44,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.bgElevated,
-    borderWidth: 1,
-    borderColor: colors.controlBorder,
     borderRadius: radius.md,
     marginEnd: spacing.sm,
   },
@@ -724,8 +726,7 @@ const styles = StyleSheet.create({
   confirmDialog: {
     width: "100%",
     maxWidth: 420,
-    backgroundColor: colors.card,
-    borderColor: colors.cardBorder,
+    borderColor: colors.glassBorder,
     borderWidth: 1,
     borderRadius: radius.lg,
     padding: spacing.lg,

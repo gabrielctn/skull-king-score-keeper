@@ -1,11 +1,11 @@
-# ☠️ Unofficial score keeper for Skull King
+# ☠️ Skull King Crew Ledger
 
 A fan-made, installable **offline-first PWA** for keeping score in the **Skull King**
 card game, built with **React Native + Expo (web) + TypeScript** and deployed as a
 static site to **GitHub Pages**. Add it to your home screen and it runs without any
 network — perfect for a table with no wifi.
 
-**Live:** https://gabrielctn.github.io/skull-king-score-keeper/
+**Live:** https://gabrielctn.github.io/skull-king-crew-ledger/
 
 > **Unofficial fan project.** This app is not affiliated with, endorsed by, or
 > sponsored by Grandpa Beck's Games, its publishers, or distributors. "Skull King"
@@ -145,10 +145,10 @@ npm run build:web  # expo export -p web  +  scripts/build-pwa.mjs
 ```
 
 The service worker and manifest only exist in this production export, not in the
-dev server. The export is served under the `/skull-king-score-keeper/` sub-path
+dev server. The export is served under the `/skull-king-crew-ledger/` sub-path
 (set by `experiments.baseUrl` in `app.json`), so to test it the way GitHub Pages
 serves it, expose `dist/` at that path — e.g. symlink it into a folder named
-`skull-king-score-keeper/` and serve the parent.
+`skull-king-crew-ledger/` and serve the parent.
 
 ## Native iOS companion
 
@@ -164,8 +164,26 @@ npm run ios           # builds and launches the iOS app
 
 The generated `ios/` directory is intentionally ignored. The native App
 Intents and React Native handoff are tracked under `native/ios/` and injected
-on every prebuild by `plugins/withSkullKingAppIntents.js`, so regenerating the
-Xcode project does not erase them.
+on every prebuild by `plugins/withSkullKingCrewLedgerAppIntents.js`, so
+regenerating the Xcode project does not erase them.
+
+Prebuild names the Xcode project, its shared scheme and its workspace after
+`expo.name`, and the Xcode Cloud workflow in App Store Connect stores those
+names. `expo.name` is pinned to `Skull King Score Keeper` for that reason: on the
+platforms this app ships to it is the project identifier rather than a name
+anyone reads. The app is titled by
+`ios.infoPlist.CFBundleDisplayName` on iOS and `web.name` on the web, both
+"Skull King Crew Ledger". Renaming `expo.name` moves the generated workspace and
+fails the archive with `Workspace SkullKingScoreKeeper.xcworkspace does not
+exist`; `ios/ci_scripts/ci_post_clone.sh`, which generates the project on Xcode
+Cloud, checks for it and says so.
+
+Android is the exception: prebuild writes its launcher label straight from
+`expo.name` and Expo has no per-platform override for it, so `npm run android`
+produces an app labelled "Skull King Score Keeper". That target is not shipped —
+`app.json` declares no `android.package` and nothing here builds or releases it —
+so it is left as is. Shipping Android would mean giving it the Crew Ledger label
+through a config plugin that writes the `app_name` string resource.
 
 The iOS app targets iOS 16 or later and exposes three App Shortcuts to Siri,
 Spotlight, and Shortcuts: start a new game, continue the current game, and open
@@ -216,7 +234,7 @@ every push to `main` builds the PWA and publishes `dist/` to Pages.
 
 **One-time setup:** in the repo, go to **Settings → Pages → Build and deployment**
 and set **Source** to **"GitHub Actions"**. The site then lives at
-https://gabrielctn.github.io/skull-king-score-keeper/.
+https://gabrielctn.github.io/skull-king-crew-ledger/.
 
 If you fork/rename the repo, update `experiments.baseUrl` in `app.json` and the
 `start_url`/`scope`/icon paths in `web/manifest.webmanifest` to the new sub-path.

@@ -10,12 +10,12 @@ const {
 
 const IOS_DEPLOYMENT_TARGET = "16.0";
 const NATIVE_SOURCE_FILES = [
-  "AppIntents/ScoreKeeperDestination.swift",
-  "AppIntents/ScoreKeeperIntents.swift",
-  "AppIntents/ScoreKeeperAppShortcuts.swift",
-  "IntentBridge/IntentDestinationStore.swift",
-  "IntentBridge/SkullKingAppIntents.swift",
-  "IntentBridge/SkullKingAppIntentsBridge.m",
+  "AppIntents/SkullKingCrewLedgerDestination.swift",
+  "AppIntents/SkullKingCrewLedgerIntents.swift",
+  "AppIntents/SkullKingCrewLedgerAppShortcuts.swift",
+  "IntentBridge/SkullKingCrewLedgerDestinationStore.swift",
+  "IntentBridge/SkullKingCrewLedgerAppIntents.swift",
+  "IntentBridge/SkullKingCrewLedgerAppIntentsBridge.m",
 ];
 
 function copyNativeSources(projectRoot, platformProjectRoot, sourceRootName) {
@@ -23,7 +23,7 @@ function copyNativeSources(projectRoot, platformProjectRoot, sourceRootName) {
   const generatedRoot = path.join(
     platformProjectRoot,
     sourceRootName,
-    "SkullKingAppIntents"
+    "SkullKingCrewLedgerAppIntents"
   );
 
   for (const relativePath of NATIVE_SOURCE_FILES) {
@@ -32,7 +32,7 @@ function copyNativeSources(projectRoot, platformProjectRoot, sourceRootName) {
 
     if (!fs.existsSync(sourcePath)) {
       throw new Error(
-        `[withSkullKingAppIntents] Missing native source: ${sourcePath}`
+        `[withSkullKingCrewLedgerAppIntents] Missing native source: ${sourcePath}`
       );
     }
 
@@ -50,12 +50,12 @@ function addNativeSourcesToProject(
     const sourceDirectory = path.dirname(relativePath);
     const groupName = [
       sourceRootName,
-      "SkullKingAppIntents",
+      "SkullKingCrewLedgerAppIntents",
       sourceDirectory,
     ].join("/");
     const generatedRelativePath = [
       sourceRootName,
-      "SkullKingAppIntents",
+      "SkullKingCrewLedgerAppIntents",
       relativePath,
     ].join("/");
 
@@ -69,7 +69,16 @@ function addNativeSourcesToProject(
   }
 }
 
-function withSkullKingAppIntents(config) {
+function withSkullKingCrewLedgerAppIntents(config) {
+  const marketingVersion = config.ios?.version ?? config.version;
+  const buildNumber = config.ios?.buildNumber;
+
+  if (!marketingVersion || !buildNumber) {
+    throw new Error(
+      "[withSkullKingCrewLedgerAppIntents] Expo version and iOS buildNumber are required"
+    );
+  }
+
   config = withPodfileProperties(config, (podfileConfig) => {
     podfileConfig.modResults["ios.deploymentTarget"] = IOS_DEPLOYMENT_TARGET;
     return podfileConfig;
@@ -96,6 +105,18 @@ function withSkullKingAppIntents(config) {
       undefined,
       targetName
     );
+    project.updateBuildProperty(
+      "MARKETING_VERSION",
+      marketingVersion,
+      undefined,
+      targetName
+    );
+    project.updateBuildProperty(
+      "CURRENT_PROJECT_VERSION",
+      buildNumber,
+      undefined,
+      targetName
+    );
 
     xcodeConfig.modResults = project;
     return xcodeConfig;
@@ -104,6 +125,6 @@ function withSkullKingAppIntents(config) {
   return config;
 }
 
-module.exports = withSkullKingAppIntents;
+module.exports = withSkullKingCrewLedgerAppIntents;
 module.exports.IOS_DEPLOYMENT_TARGET = IOS_DEPLOYMENT_TARGET;
 module.exports.NATIVE_SOURCE_FILES = NATIVE_SOURCE_FILES;

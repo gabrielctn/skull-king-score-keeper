@@ -10,6 +10,7 @@ import {
 import { colors, radius, spacing } from "../theme";
 import { browserLocale, useI18n } from "../i18n/context";
 import { CURRENT_RELEASE, CURRENT_RELEASE_DATE } from "../releases";
+import GlassSurface from "./GlassSurface";
 
 interface Props {
   visible: boolean;
@@ -38,7 +39,11 @@ export default function WhatsNewModal({ visible, onClose }: Props) {
       onRequestClose={onClose}
     >
       <View style={styles.modalOverlay}>
-        <View style={styles.releaseDialog} accessibilityViewIsModal>
+        <GlassSurface
+          intensity={56}
+          style={styles.releaseDialog}
+          accessibilityViewIsModal
+        >
           <Text style={styles.releaseEyebrow}>
             {t.whatsNew.version(CURRENT_RELEASE, releaseDate)}
           </Text>
@@ -72,7 +77,7 @@ export default function WhatsNewModal({ visible, onClose }: Props) {
           >
             <Text style={styles.releaseCloseText}>{t.whatsNew.close}</Text>
           </TouchableOpacity>
-        </View>
+        </GlassSurface>
       </View>
     </Modal>
   );
@@ -90,7 +95,6 @@ const styles = StyleSheet.create({
     width: "100%",
     maxWidth: 520,
     maxHeight: "86%",
-    backgroundColor: colors.bg,
     borderColor: colors.goldDim,
     borderWidth: 1,
     borderRadius: radius.lg,
