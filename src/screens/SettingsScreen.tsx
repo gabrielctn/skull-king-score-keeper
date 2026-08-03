@@ -63,7 +63,7 @@ interface Props {
   activeTableId: string | null;
   onUpdateSettings: (settings: AppSettings) => void;
   onBack: () => void;
-  onExportBackup: () => Promise<void>;
+  onExportBackup: () => void;
   onImportBackup: () => Promise<number | null>;
   onDeleteAllGames: () => Promise<void>;
   /** Join the table carried by an invite code; returns its game count. */
@@ -258,15 +258,12 @@ export default function SettingsScreen({
     year: "numeric",
   });
 
-  const exportBackup = async () => {
-    setDataBusy(true);
+  const exportBackup = () => {
     setDataMessage(null);
     try {
-      await onExportBackup();
+      onExportBackup();
     } catch {
       setDataMessage({ type: "error", text: t.settings.backupError });
-    } finally {
-      setDataBusy(false);
     }
   };
 
@@ -712,7 +709,7 @@ export default function SettingsScreen({
         <View style={styles.dataActions}>
           <TouchableOpacity
             style={styles.dataButton}
-            onPress={() => void exportBackup()}
+            onPress={exportBackup}
             disabled={dataBusy}
             accessibilityRole="button"
             accessibilityState={{ disabled: dataBusy }}
@@ -1262,7 +1259,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
-    marginLeft: spacing.sm,
+    marginStart: spacing.sm,
   },
   confirmDeleteText: { color: colors.text, fontSize: 15, fontWeight: "800" },
 });

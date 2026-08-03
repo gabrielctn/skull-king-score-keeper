@@ -4,7 +4,7 @@ import {
   normalizeUntrustedGame,
 } from "./backup";
 import { BonusInput, Game, LootUse, RoundEntry } from "./types";
-import { emptyBonus, emptyEntry } from "./scoring";
+import { bonusIsEmpty, emptyBonus, emptyEntry } from "./scoring";
 
 /**
  * Live-follow share links.
@@ -303,21 +303,6 @@ const ENTRY_FLAG_HAS_LEGACY_LOOT = 8;
 const BONUS_FLAG_BLACK14 = 1;
 const BONUS_FLAG_MERMAID_SK = 2;
 const BONUS_FLAG_SECOND = 4;
-
-function bonusIsEmpty(bonus: BonusInput): boolean {
-  return (
-    bonus.colored14 === 0 &&
-    !bonus.black14 &&
-    bonus.mermaidByPirate === 0 &&
-    bonus.pirateBySkullKing === 0 &&
-    !bonus.mermaidCapturesSkullKing &&
-    bonus.rascalWager === 0 &&
-    bonus.expansion7 === 0 &&
-    bonus.expansion8 === 0 &&
-    bonus.davyJonesLeviathans === 0 &&
-    !bonus.secondCaptured
-  );
-}
 
 function writeEntry(writer: ByteWriter, entry: RoundEntry): void {
   const bonus = entry.bonus ?? emptyBonus();
@@ -658,24 +643,4 @@ export function consumeScannedShareCode(): SpectatorBoot | null {
     clearSpectatorSessionCode();
     return { game: null, invalid: true };
   }
-}
-
-/**
- * Resolve the spectator state for this page load: a fresh scan in the URL
- * hash wins, then a snapshot kept in sessionStorage (page reload). Called
- * synchronously before first paint so the hash can be stripped before any
- * analytics script observes the URL.
- */
-export function readSpectatorBoot(): SpectatorBoot {
-  const scanned = consumeScannedShareCode();
-  if (scanned) return scanned;
-  const stored = loadSpectatorSessionCode();
-  if (stored) {
-    try {
-      return { game: decodeShareCode(stored), invalid: false };
-    } catch {
-      clearSpectatorSessionCode();
-    }
-  }
-  return { game: null, invalid: false };
 }

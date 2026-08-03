@@ -608,13 +608,14 @@ export default function App() {
     pushCloud(gameRef.current, historyRef.current);
   };
 
-  const handleExportBackup = async () => {
-    const json = serializeBackup({
-      currentGame: game,
-      history: gameHistory,
-      tableName: tableNameRef.current,
-    });
-    downloadBackupJson(json);
+  const handleExportBackup = () => {
+    downloadBackupJson(
+      serializeBackup({
+        currentGame: game,
+        history: gameHistory,
+        tableName: tableNameRef.current,
+      })
+    );
   };
 
   const handleImportBackup = async (): Promise<number | null> => {

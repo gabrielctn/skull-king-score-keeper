@@ -10,6 +10,7 @@ import type { ViewStyle } from "react-native";
 import { useI18n } from "../i18n/context";
 import type { Standing } from "../scoring";
 import type { AwardKind, GameAward } from "../stats";
+import LtrView from "./LtrView";
 import {
   colors,
   radius,
@@ -234,7 +235,10 @@ export default function Podium({ rows, awards }: Props) {
         {t.results.podiumTitle}
       </Text>
 
-      <View style={styles.podiumRow}>
+      {/* The steps are placed by flex `order` (silver, gold, bronze), which
+          resolves against the writing direction — so this row must stay LTR
+          for the podium to keep its shape in a right-to-left language. */}
+      <LtrView style={styles.podiumRow}>
         {visibleRows.map((row, index) => {
           const reveal = revealValues[index];
           return (
@@ -290,7 +294,7 @@ export default function Podium({ rows, awards }: Props) {
             style={[styles.podiumColumn, visualOrder(2)]}
           />
         ) : null}
-      </View>
+      </LtrView>
 
       {orderedAwards.length > 0 ? (
         <View style={styles.awardsSection}>
@@ -393,7 +397,6 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   podiumRow: {
-    direction: "ltr",
     flexDirection: "row",
     alignItems: "flex-end",
     width: "100%",

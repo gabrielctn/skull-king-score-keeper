@@ -183,6 +183,9 @@ export default function ScoreChart({ game }: Props) {
         })}
       </svg>
 
+      {/* The legend is ordinary content — a list of swatch-and-name labels —
+          so it mirrors with the rest of the interface. Only the plot above
+          stays left-to-right, because its x axis is a scale. */}
       <View style={styles.legend}>
         {series.map((player, playerIndex) => (
           <View key={player.playerId} style={styles.legendItem}>
@@ -218,7 +221,6 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xs,
   },
   legend: {
-    direction: "ltr",
     flexDirection: "row",
     flexWrap: "wrap",
     alignItems: "center",
@@ -226,7 +228,6 @@ const styles = StyleSheet.create({
     marginHorizontal: -spacing.sm,
   },
   legendItem: {
-    direction: "ltr",
     flexDirection: "row",
     alignItems: "center",
     minWidth: 96,
@@ -238,7 +239,7 @@ const styles = StyleSheet.create({
     width: 9,
     height: 9,
     borderRadius: 5,
-    marginRight: 6,
+    marginEnd: 6,
   },
   legendName: {
     flexShrink: 1,

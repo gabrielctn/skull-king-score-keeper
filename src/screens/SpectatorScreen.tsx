@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Image,
   Platform,
@@ -77,9 +77,6 @@ export default function SpectatorScreen({ game, liveSessionId, onExit }: Props) 
   const [liveStatus, setLiveStatus] = useState<SpectatorLiveStatus>(
     "connecting"
   );
-  const watcherRef = useRef<{ refresh: () => void; stop: () => void } | null>(
-    null
-  );
 
   // Follow the live session: subscribe on mount, refresh when the tab regains
   // focus (realtime channels can miss events while backgrounded).
@@ -94,7 +91,6 @@ export default function SpectatorScreen({ game, liveSessionId, onExit }: Props) 
       },
       onStatus: setLiveStatus,
     });
-    watcherRef.current = watcher;
 
     let detachVisibility: (() => void) | null = null;
     if (Platform.OS === "web" && typeof document !== "undefined") {
@@ -107,7 +103,6 @@ export default function SpectatorScreen({ game, liveSessionId, onExit }: Props) 
     }
     return () => {
       watcher.stop();
-      watcherRef.current = null;
       if (detachVisibility) detachVisibility();
     };
   }, [liveSessionId]);
@@ -552,7 +547,7 @@ const styles = StyleSheet.create({
     paddingTop: spacing.sm,
     marginBottom: spacing.sm,
   },
-  mascot: { width: 56, height: 56, marginRight: spacing.sm },
+  mascot: { width: 56, height: 56, marginEnd: spacing.sm },
   headerCopy: { flex: 1, minWidth: 0 },
   eyebrowRow: { flexDirection: "row", alignItems: "center" },
   eyebrow: {
@@ -569,14 +564,14 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     paddingHorizontal: 8,
     paddingVertical: 2,
-    marginLeft: spacing.sm,
+    marginStart: spacing.sm,
   },
   liveBadgeDot: {
     width: 6,
     height: 6,
     borderRadius: 3,
     backgroundColor: colors.positive,
-    marginRight: 5,
+    marginEnd: 5,
   },
   liveBadgeText: {
     color: colors.positive,
@@ -629,7 +624,7 @@ const styles = StyleSheet.create({
     padding: spacing.sm,
     marginBottom: spacing.md,
   },
-  refreshIcon: { fontSize: 15, marginRight: spacing.sm, lineHeight: 19 },
+  refreshIcon: { fontSize: 15, marginEnd: spacing.sm, lineHeight: 19 },
   refreshText: {
     flex: 1,
     color: colors.text,
@@ -823,7 +818,7 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     paddingHorizontal: 8,
     paddingVertical: 2,
-    marginLeft: spacing.sm,
+    marginStart: spacing.sm,
   },
   youChipText: {
     color: colors.bg,
@@ -836,9 +831,9 @@ const styles = StyleSheet.create({
     color: colors.gold,
     fontSize: 18,
     fontWeight: "900",
-    marginLeft: spacing.sm,
+    marginStart: spacing.sm,
   },
-  boardInfo: { color: colors.textDim, fontSize: 14, marginLeft: spacing.sm },
+  boardInfo: { color: colors.textDim, fontSize: 14, marginStart: spacing.sm },
   negativeText: { color: colors.negative },
   chartCard: {
     backgroundColor: colors.card,

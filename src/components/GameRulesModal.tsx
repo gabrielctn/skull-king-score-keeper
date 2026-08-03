@@ -226,9 +226,9 @@ const styles = StyleSheet.create({
   closeText: { color: colors.gold, fontSize: 16, fontWeight: "700" },
   scroll: { padding: spacing.md, paddingBottom: spacing.xl },
   notice: {
-    borderLeftWidth: 2,
-    borderLeftColor: colors.goldDim,
-    paddingLeft: spacing.md,
+    borderStartWidth: 2,
+    borderStartColor: colors.goldDim,
+    paddingStart: spacing.md,
     marginBottom: spacing.lg,
   },
   noticeText: { color: colors.textDim, fontSize: 13, lineHeight: 18 },

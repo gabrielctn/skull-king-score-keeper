@@ -124,6 +124,53 @@ export function madeBid(entry: RoundEntry): boolean {
   return entry.bid === entry.tricks;
 }
 
+/** True when no special card was recorded in this bonus block. */
+export function bonusIsEmpty(bonus: BonusInput): boolean {
+  return (
+    bonus.colored14 === 0 &&
+    !bonus.black14 &&
+    bonus.mermaidByPirate === 0 &&
+    bonus.pirateBySkullKing === 0 &&
+    !bonus.mermaidCapturesSkullKing &&
+    bonus.rascalWager === 0 &&
+    bonus.expansion7 === 0 &&
+    bonus.expansion8 === 0 &&
+    bonus.davyJonesLeviathans === 0 &&
+    !bonus.secondCaptured
+  );
+}
+
+/** How many individual bonus events a block records, for at-a-glance badges. */
+export function bonusCount(bonus: BonusInput): number {
+  return (
+    bonus.colored14 +
+    Number(bonus.black14) +
+    bonus.mermaidByPirate +
+    bonus.pirateBySkullKing +
+    Number(bonus.mermaidCapturesSkullKing) +
+    Number(bonus.rascalWager > 0) +
+    bonus.expansion7 +
+    bonus.expansion8 +
+    bonus.davyJonesLeviathans +
+    Number(bonus.secondCaptured)
+  );
+}
+
+/**
+ * True when anything at all has been entered for this player's round —
+ * regardless of whether the round has been recorded. Distinguishes a round
+ * someone is actually filling in from one left at its all-zero default.
+ */
+export function entryHasInput(entry: RoundEntry): boolean {
+  return (
+    entry.bid > 0 ||
+    entry.tricks > 0 ||
+    (entry.legacyLoot ?? 0) > 0 ||
+    entry.rascalBet === "cannonball" ||
+    !bonusIsEmpty(entry.bonus)
+  );
+}
+
 /** Rascal accuracy tier: exact, off by one, or off by two and more. */
 export function rascalOutcome(entry: RoundEntry): RascalOutcome {
   const diff = Math.abs(entry.tricks - entry.bid);
@@ -210,21 +257,6 @@ export function expansionColorBonus(
   );
 }
 
-/** Rascal and migrated Loot extras, which depend on bid accuracy. */
-export function conditionalBonus(entry: RoundEntry): number {
-  const made = madeBid(entry);
-  const legacyLoot = made
-    ? (entry.legacyLoot ?? 0) * BONUS_VALUES.loot
-    : 0;
-  const rascal =
-    entry.bonus.rascalWager > 0
-      ? made
-        ? entry.bonus.rascalWager
-        : -entry.bonus.rascalWager
-      : 0;
-  return legacyLoot + rascal + expansionColorBonus(entry.bonus, made);
-}
-
 /** Whether a recorded Loot alliance satisfies the exact-bid requirement. */
 export function lootAllianceSucceeded(
   entries: RoundEntries,
@@ -243,6 +275,22 @@ export function lootAllianceSucceeded(
     madeBid(entries[lootUse.playedById]) &&
     madeBid(entries[lootUse.boundToId])
   );
+}
+
+/**
+ * Whether Loot is in play at all: it needs the advanced deck, and an alliance
+ * needs a third player to form between.
+ */
+export function lootAvailable(game: Game): boolean {
+  return game.advancedCards && game.players.length > 2;
+}
+
+/**
+ * Loot cards recorded for a round. Anything stored while Loot was not in play
+ * (a save whose options changed later) is ignored rather than scored.
+ */
+export function activeLootUses(game: Game, roundNumber: number): LootUse[] {
+  return lootAvailable(game) ? (game.lootUses[roundNumber - 1] ?? []) : [];
 }
 
 /** Verified Loot points earned by one player from all alliances in a round. */
@@ -463,16 +511,9 @@ export function playerScoreHistory(
     const entry = game.rounds[r - 1]?.[playerId];
     if (entry && entry.recorded) {
       const round = game.rounds[r - 1];
-      const activeLootUses =
-        game.advancedCards && game.players.length > 2
-          ? (game.lootUses[r - 1] ?? [])
-          : [];
-      const loot = lootBonusForPlayer(
-        round,
-        activeLootUses,
-        playerId
-      );
-      const lootEvents = lootEventsForPlayer(activeLootUses, playerId);
+      const lootUses = activeLootUses(game, r);
+      const loot = lootBonusForPlayer(round, lootUses, playerId);
+      const lootEvents = lootEventsForPlayer(lootUses, playerId);
       const breakdown = scoreRoundBreakdown(
         cardsForRound(game, r),
         entry,
