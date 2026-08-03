@@ -63,8 +63,8 @@ check(
 check(
   "registered identifiers remain compatible",
   appConfig.ios.bundleIdentifier === "com.gabrielcretin.skullking" &&
-    appConfig.experiments.baseUrl === "/skull-king-score-keeper" &&
-    manifest.id === "/skull-king-score-keeper/"
+    appConfig.experiments.baseUrl === "/skull-king-crew-ledger" &&
+    manifest.id === "/skull-king-crew-ledger/"
 );
 check(
   "the Xcode project name stays pinned to the Xcode Cloud workflow",

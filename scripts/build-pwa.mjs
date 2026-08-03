@@ -29,7 +29,7 @@ const dist = join(root, "dist");
 const webSrc = join(root, "web");
 
 const appJson = JSON.parse(readFileSync(join(root, "app.json"), "utf8"));
-const baseUrl = (appJson.expo?.experiments?.baseUrl ?? "").replace(/\/$/, ""); // e.g. "/skull-king-score-keeper"
+const baseUrl = (appJson.expo?.experiments?.baseUrl ?? "").replace(/\/$/, ""); // e.g. "/skull-king-crew-ledger"
 const installedAppTitle = appJson.expo?.web?.shortName ?? appJson.expo?.name ?? "Crew Ledger";
 
 function fail(msg) {

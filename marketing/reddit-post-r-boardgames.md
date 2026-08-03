@@ -23,7 +23,7 @@ There's also a small rules reference built in for every special card, for the in
 
 No account, no ads, no tracking, nothing paywalled. I even unit tested the scoring against the worked examples in the rulebook because I didn't trust myself.
 
-Link: https://gabrielctn.github.io/skull-king-score-keeper/ (open it on your phone and hit "Add to Home Screen", after that it behaves like a normal app)
+Link: https://gabrielctn.github.io/skull-king-crew-ledger/ (open it on your phone and hit "Add to Home Screen", after that it behaves like a normal app)
 
 Obligatory disclaimer: this is a fan project, not affiliated with Grandpa Beck's in any way. I just added Rascal scoring, so at this point it covers everything my group plays. If your table has house rules I missed or something scores wrong, there's a feedback button in the settings and I actually read what comes in.
 
