@@ -35,7 +35,7 @@
     },
     "plugins": ["./plugins/withSkullKingCrewLedgerAppIntents"],
     "experiments": {
-      "baseUrl": "/skull-king-score-keeper"
+      "baseUrl": "/skull-king-crew-ledger"
     },
     "extra": {
       "eas": {
