@@ -19,6 +19,7 @@
       "buildNumber": "4",
       "infoPlist": {
         "CFBundleDisplayName": "Skull King Crew Ledger",
+        "CFBundleName": "Skull King Crew Ledger",
         "ITSAppUsesNonExemptEncryption": false
       }
     },

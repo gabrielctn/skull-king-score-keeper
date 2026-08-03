@@ -43,6 +43,9 @@ const visibleBranding = JSON.stringify({
 check(
   "native and PWA names match the App Store name",
   displayName === "Skull King Crew Ledger" &&
+    // CFBundleName defaults to the Xcode product name, which is pinned to the
+    // old one, so it is set explicitly to keep it out of the shipped bundle.
+    appConfig.ios.infoPlist.CFBundleName === displayName &&
     appConfig.web.name === displayName &&
     appConfig.web.shortName === displayName &&
     manifest.name === displayName &&
