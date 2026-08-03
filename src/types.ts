@@ -108,11 +108,10 @@ export interface Game {
   /** Which official scoring system this game uses. */
   scoringMode: ScoringMode;
   /**
-   * House rule: capture bonuses (14s, mermaid/pirate/Skull King captures,
-   * Davy Jones, the Second) only count when the player makes their bid
-   * exactly. Off by default, which is the rulebook's own behaviour — bonuses
-   * are kept whatever the bid. Only used with classic scoring; Rascal scoring
-   * already scales bonuses by how close the bid was.
+   * Official classic rule: capture bonuses (14s, mermaid/pirate/Skull King
+   * captures, Davy Jones, the Second) only count when the player makes their
+   * bid exactly. False enables the house rule that keeps bonuses after a miss.
+   * Rascal scoring already scales bonuses by how close the bid was.
    */
   bonusesRequireBid: boolean;
   /**

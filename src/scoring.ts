@@ -10,7 +10,7 @@ import {
 } from "./types";
 
 /**
- * Skull King scoring — Grandpa Beck's 2022 rules ("Les scores selon Skull King").
+ * Skull King scoring — Grandpa Beck's official rules.
  *
  * Bid scoring (per round):
  *   - Bid >= 1, hit exactly:        +20 per trick won  (20 x bid)
@@ -18,9 +18,9 @@ import {
  *   - Bid 0, won 0 tricks:          +10 x cards dealt this round
  *   - Bid 0, won >= 1 trick:        -10 x cards dealt this round
  *
- * Bonus points (capturing special cards) are added regardless of bid accuracy,
- * unless the game turns on the `bonusesRequireBid` house rule, which drops them
- * entirely for a player who missed their bid:
+ * Bonus points (capturing special cards) are awarded only when the player makes
+ * their bid exactly. Setting `bonusesRequireBid` to false enables the house rule
+ * that keeps them after a missed bid:
  *   - colored 14 (yellow/purple/green): +10 each
  *   - black 14 (Jolly Roger / trump):   +20
  *   - mermaid captured by a pirate:     +20 each
@@ -171,6 +171,26 @@ export function entryHasInput(entry: RoundEntry): boolean {
   );
 }
 
+/** Whether the visible classic house-rule switch should be on. */
+export function bonusesOnMissEnabled(bonusesRequireBid: boolean): boolean {
+  return !bonusesRequireBid;
+}
+
+/** Convert the visible house-rule choice back to its persisted representation. */
+export function bonusesRequireBidFromOnMiss(bonusesOnMiss: boolean): boolean {
+  return !bonusesOnMiss;
+}
+
+/** Keep classic choices stable and apply the official default after Rascal. */
+export function bonusesRequireBidForMode(
+  previousMode: ScoringMode,
+  nextMode: ScoringMode,
+  currentValue: boolean
+): boolean {
+  if (nextMode === "rascal") return false;
+  return previousMode === "rascal" ? true : currentValue;
+}
+
 /** Rascal accuracy tier: exact, off by one, or off by two and more. */
 export function rascalOutcome(entry: RoundEntry): RascalOutcome {
   const diff = Math.abs(entry.tricks - entry.bid);
@@ -192,8 +212,8 @@ function rascalCaptureScale(entry: RoundEntry): 0 | 0.5 | 1 {
 
 /**
  * Multiplier applied to a round's capture bonuses: Rascal scales them by
- * accuracy, classic keeps them whole unless the `bonusesRequireBid` house rule
- * voids them for a missed bid.
+ * accuracy, while classic awards them only on an exact bid unless the game
+ * explicitly enables unconditional bonuses.
  */
 export function captureBonusScale(
   entry: RoundEntry,
@@ -343,8 +363,8 @@ function lootEventsForPlayer(
  * `lootAttempts` lets history views surface failed alliances as explicit
  * zero-point lines. Callers that only have a verified Loot total can omit it.
  *
- * `bonusesRequireBid` is the house rule that voids capture bonuses on a missed
- * bid; it only applies to classic scoring.
+ * `bonusesRequireBid` applies the official exact-bid condition to classic
+ * capture bonuses. Passing false enables the unconditional house rule.
  */
 export function scoreRoundBreakdown(
   cardsDealt: number,
@@ -353,12 +373,12 @@ export function scoreRoundBreakdown(
   lootAttempts = Math.floor(lootBonus / BONUS_VALUES.loot),
   lootSelfWins = 0,
   mode: ScoringMode = "classic",
-  bonusesRequireBid = false
+  bonusesRequireBid = true
 ): RoundScoreBreakdown {
   const exact = madeBid(entry);
-  // Rascal scoring scales capture bonuses by accuracy; classic keeps them
-  // whole, or drops them on a missed bid under the house rule. Every base
-  // value is even, so the half tier stays an integer.
+  // Rascal scoring scales capture bonuses by accuracy; classic drops them on
+  // a missed bid unless the table chose the unconditional house rule. Every
+  // base value is even, so the half tier stays an integer.
   const captureScale = captureBonusScale(entry, mode, bonusesRequireBid);
   const items: ScoreBreakdownItem[] = [
     {
@@ -463,7 +483,7 @@ export function scoreRound(
   entry: RoundEntry,
   lootBonus = 0,
   mode: ScoringMode = "classic",
-  bonusesRequireBid = false
+  bonusesRequireBid = true
 ): number {
   return scoreRoundBreakdown(
     cardsDealt,
@@ -628,8 +648,8 @@ export function createGame(
   scoringMode: ScoringMode = "classic",
   /** Rascal optional rules (Chevrotine / Boulet de canon declarations). */
   rascalBets = false,
-  /** House rule: capture bonuses only count on an exact bid (classic only). */
-  bonusesRequireBid = false
+  /** Official classic rule; false enables bonuses after a missed bid. */
+  bonusesRequireBid = true
 ): Game {
   const now = Date.now();
   // An empty structure would create a game with zero rounds but a
@@ -650,8 +670,8 @@ export function createGame(
       : Array.from({ length: roundCount }, (_, i) => i + 1),
     scoringMode,
     rascalBets: scoringMode === "rascal" && rascalBets,
-    // Rascal scoring already ties bonuses to bid accuracy, so the house rule
-    // is only ever stored for classic games.
+    // Rascal scoring already ties bonuses to bid accuracy, so this classic-only
+    // flag stays false for Rascal games.
     bonusesRequireBid: scoringMode === "classic" && bonusesRequireBid,
     advancedCards,
     newExpansion,

@@ -35,6 +35,7 @@ yarn-error.*
 
 # Tooling
 .superpowers/
+.worktrees/
 .playwright-cli/page-*.yml
 output/playwright/
 

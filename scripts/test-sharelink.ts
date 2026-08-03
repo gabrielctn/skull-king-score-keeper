@@ -115,7 +115,7 @@ check(
     decoded.status === "in_progress"
 );
 
-const houseRuleGame = createGame(
+const officialRuleGame = createGame(
   [
     { id: "anne", name: "Anne" },
     { id: "bonny", name: "Bonny" },
@@ -130,8 +130,8 @@ const houseRuleGame = createGame(
   true
 );
 check(
-  "the bonus house rule survives a round trip",
-  decodeShareCode(encodeShareCode(houseRuleGame)).bonusesRequireBid === true
+  "the official bonus rule survives a round trip",
+  decodeShareCode(encodeShareCode(officialRuleGame)).bonusesRequireBid === true
 );
 
 const entriesMatch = original.players.every((player, seat) =>

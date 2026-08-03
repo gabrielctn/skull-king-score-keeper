@@ -97,6 +97,7 @@ interface GameOptions {
   status?: Game["status"];
   advancedCards?: boolean;
   twoPlayerGhost?: boolean;
+  bonusesRequireBid?: boolean;
   cardsDealt?: number[];
   lootUses?: LootUse[][];
   createdAt?: number;
@@ -121,6 +122,8 @@ function fixtureGame(
   game.createdAt = options.createdAt ?? updatedAt - 1;
   game.updatedAt = updatedAt;
   game.status = options.status ?? "finished";
+  game.bonusesRequireBid =
+    options.bonusesRequireBid ?? game.bonusesRequireBid;
   game.totalRounds = rounds.length;
   game.currentRound = Math.max(1, rounds.length);
   game.rounds = rounds;
@@ -348,6 +351,7 @@ const lootRecord = fixtureGame(
   ],
   {
     advancedCards: true,
+    bonusesRequireBid: false,
     cardsDealt: [5],
     lootUses: [
       [
@@ -365,7 +369,11 @@ eq("best final score includes successful Loot", lootRecords.bestFinalScore?.scor
 eq("best score record holder", lootRecords.bestFinalScore?.identity, "bravo");
 eq("best score record game", lootRecords.bestFinalScore?.gameId, "loot_record");
 eq("best score record date", lootRecords.bestFinalScore?.playedAt, 1200);
-eq("worst round includes capture bonuses", lootRecords.worstRound?.score, -20);
+eq(
+  "an old unconditional game keeps capture bonuses in its records",
+  lootRecords.worstRound?.score,
+  -20
+);
 eq("worst round number is retained", lootRecords.worstRound?.roundNumber, 1);
 eq("worst round holder", lootRecords.worstRound?.identity, "charlie");
 

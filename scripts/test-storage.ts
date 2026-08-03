@@ -197,15 +197,15 @@ check(
   badMode?.scoringMode === "classic" && badMode.rascalBets === false
 );
 
-console.log("Bonus house rule migration (schema v9)");
+console.log("Capture bonus rule migration (schema v9)");
 check(
   "pre-v9 saves keep bonuses unconditional",
   legacy?.bonusesRequireBid === false
 );
 check(
-  "the house rule survives on a classic save",
+  "the official rule survives on a classic save",
   normalizeGame({
-    id: "houseRule",
+    id: "officialRule",
     players,
     totalRounds: 1,
     rounds: [{}],
@@ -213,9 +213,9 @@ check(
   })?.bonusesRequireBid === true
 );
 check(
-  "the house rule is dropped on a rascal save",
+  "the classic-only rule is dropped on a rascal save",
   normalizeGame({
-    id: "rascalHouseRule",
+    id: "rascalOfficialRule",
     players,
     totalRounds: 1,
     rounds: [{}],
@@ -224,9 +224,9 @@ check(
   })?.bonusesRequireBid === false
 );
 check(
-  "a non-boolean house rule falls back to off",
+  "a non-boolean rule value falls back to the legacy behavior",
   normalizeGame({
-    id: "badHouseRule",
+    id: "badBonusRule",
     players,
     totalRounds: 1,
     rounds: [{}],
