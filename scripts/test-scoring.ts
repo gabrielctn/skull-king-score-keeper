@@ -97,59 +97,72 @@ eq("zero bid success, round 7", scoreRound(7, E(0, 0)), 70);
 eq("zero bid fail, round 9 won 2", scoreRound(9, E(0, 2)), -90);
 eq("bid 1 won 1 (cards 1)", scoreRound(1, E(1, 1)), 20);
 
-console.log("\nCapture bonuses count regardless of bid");
-eq("hit bid + colored14 + black14", scoreRound(5, E(3, 3, { colored14: 1, black14: true })), 60 + 10 + 20);
-eq("MISSED bid still keeps capture bonus", scoreRound(5, E(3, 5, { colored14: 1 })), -20 + 10);
-eq("zero-bid FAIL but captured a 14", scoreRound(9, E(0, 2, { colored14: 1 })), -90 + 10);
-
-console.log("\nHouse rule: capture bonuses require an exact bid");
+console.log("\nCapture bonuses require an exact bid by default");
 eq(
-  "made bid keeps the capture bonus",
-  scoreRound(5, E(3, 3, { colored14: 1, black14: true }), 0, "classic", true),
+  "exact bid keeps colored and black 14 bonuses",
+  scoreRound(5, E(3, 3, { colored14: 1, black14: true })),
   60 + 10 + 20
 );
 eq(
-  "missed bid loses the capture bonus",
-  scoreRound(5, E(3, 5, { colored14: 1 }), 0, "classic", true),
+  "missed bid loses every capture bonus by default",
+  scoreRound(
+    5,
+    E(3, 5, {
+      colored14: 1,
+      black14: true,
+      mermaidByPirate: 1,
+      pirateBySkullKing: 1,
+      mermaidCapturesSkullKing: true,
+      davyJonesLeviathans: 1,
+      secondCaptured: true,
+    })
+  ),
   -20
 );
 eq(
-  "failed zero bid loses the capture bonus",
-  scoreRound(9, E(0, 2, { colored14: 1, mermaidCapturesSkullKing: true }), 0, "classic", true),
+  "failed zero bid loses capture bonuses by default",
+  scoreRound(9, E(0, 2, { colored14: 1 })),
   -90
 );
+
+console.log("\nHouse rule: capture bonuses count after a missed bid");
 eq(
-  "the Rascal wager is untouched by the house rule",
-  scoreRound(5, E(1, 0, { rascalWager: 10, black14: true }), 0, "classic", true),
+  "explicit house rule keeps a capture bonus after a miss",
+  scoreRound(5, E(3, 5, { colored14: 1 }), 0, "classic", false),
+  -20 + 10
+);
+eq(
+  "explicit house rule keeps a capture bonus after a failed zero bid",
+  scoreRound(9, E(0, 2, { colored14: 1 }), 0, "classic", false),
+  -90 + 10
+);
+eq(
+  "the Rascal wager keeps its own condition",
+  scoreRound(5, E(1, 0, { rascalWager: 10, black14: true })),
   -10 - 10
 );
 eq(
-  "a successful Loot alliance still pays on a missed bid partner-free round",
-  scoreRound(5, E(2, 2, { black14: true }), 20, "classic", true),
+  "a successful Loot alliance keeps its own condition",
+  scoreRound(5, E(2, 2, { black14: true }), 20),
   40 + 20 + 20
 );
-const houseRuleBreakdown = scoreRoundBreakdown(
+const officialBreakdown = scoreRoundBreakdown(
   5,
-  E(3, 5, { colored14: 2 }),
-  0,
-  0,
-  0,
-  "classic",
-  true
+  E(3, 5, { colored14: 2 })
 );
 eq(
   "voided capture bonus is itemized at zero",
-  houseRuleBreakdown.items.find((item) => item.key === "colored14")?.points ?? 999,
+  officialBreakdown.items.find((item) => item.key === "colored14")?.points ?? 999,
   0
 );
 eq(
   "voided capture bonus is marked not applied",
-  houseRuleBreakdown.items.find((item) => item.key === "colored14")?.applied ? 1 : 0,
+  officialBreakdown.items.find((item) => item.key === "colored14")?.applied ? 1 : 0,
   0
 );
 eq(
   "voided capture bonus keeps its count for the history view",
-  houseRuleBreakdown.items.find((item) => item.key === "colored14")?.count ?? 0,
+  officialBreakdown.items.find((item) => item.key === "colored14")?.count ?? 0,
   2
 );
 
@@ -449,20 +462,20 @@ const defaultGame = createGame(rascalPlayers, 2);
 eqs("default games stay classic", defaultGame.scoringMode, "classic");
 eq("default games keep bets off", defaultGame.rascalBets ? 1 : 0, 0);
 eq(
-  "default games keep the bonus house rule off",
+  "new classic games require an exact bid for capture bonuses",
   defaultGame.bonusesRequireBid ? 1 : 0,
-  0
-);
-eq(
-  "createGame stores the bonus house rule",
-  createGame(rascalPlayers, 2, true, false, true, undefined, "classic", false, true)
-    .bonusesRequireBid
-    ? 1
-    : 0,
   1
 );
 eq(
-  "the bonus house rule is dropped on a Rascal game",
+  "createGame stores the unconditional-bonus house rule",
+  createGame(rascalPlayers, 2, true, false, true, undefined, "classic", false, false)
+    .bonusesRequireBid
+    ? 1
+    : 0,
+  0
+);
+eq(
+  "the classic bonus flag is dropped on a Rascal game",
   createGame(rascalPlayers, 2, true, false, true, undefined, "rascal", false, true)
     .bonusesRequireBid
     ? 1
@@ -470,7 +483,7 @@ eq(
   0
 );
 
-const houseRuleGame = createGame(
+const officialGame = createGame(
   [
     { id: "a", name: "Anne" },
     { id: "b", name: "Bonny" },
@@ -481,14 +494,13 @@ const houseRuleGame = createGame(
   true,
   undefined,
   "classic",
-  false,
-  true
+  false
 );
-houseRuleGame.rounds[0] = { a: E(1, 1, { black14: true }), b: E(0, 0) };
-houseRuleGame.rounds[1] = { a: E(1, 2, { black14: true }), b: E(2, 2) };
+officialGame.rounds[0] = { a: E(1, 1, { black14: true }), b: E(0, 0) };
+officialGame.rounds[1] = { a: E(1, 2, { black14: true }), b: E(2, 2) };
 eq(
-  "history applies the house rule round by round",
-  playerTotal(houseRuleGame, "a"),
+  "history applies the official bonus rule round by round",
+  playerTotal(officialGame, "a"),
   20 + 20 - 10
 );
 
@@ -543,10 +555,13 @@ eq(
   20 + 30
 );
 eq(
-  "Davy Jones and Second bonuses survive a missed bid",
+  "the house rule keeps Davy Jones and Second bonuses after a miss",
   scoreRound(
     5,
-    E(2, 0, { davyJonesLeviathans: 1, secondCaptured: true })
+    E(2, 0, { davyJonesLeviathans: 1, secondCaptured: true }),
+    0,
+    "classic",
+    false
   ),
   -20 + 20 + 30
 );
