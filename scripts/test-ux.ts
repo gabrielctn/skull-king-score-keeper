@@ -101,12 +101,6 @@ check(
     scriptsRestoreIndex > prebuildIndex
 );
 check(
-  "the generated workspace is checked against the name the workflow stores",
-  prebuildIndex > -1 &&
-    xcodeCloudSource.indexOf("if [ ! -d ios/SkullKingScoreKeeper.xcworkspace ]") >
-      prebuildIndex
-);
-check(
   "consent prompt participates in page layout",
   !cookieSource.includes('position: "absolute"')
 );

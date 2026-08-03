@@ -29,11 +29,12 @@ const iosConfigPlugin = readFileSync(
   "plugins/withSkullKingCrewLedgerAppIntents.js",
   "utf8"
 );
-// expo.name is the generated Xcode project name, not a name the shipped apps
-// show: iOS reads CFBundleDisplayName and the web app reads web.name. Android
-// would label itself from expo.name, but it is not a target this app ships to.
+// expo.name drives the generated Xcode project, workspace and shared scheme.
+// Keep it aligned with the names shown by iOS and the web app.
 const displayName = appConfig.ios.infoPlist.CFBundleDisplayName;
 const visibleBranding = JSON.stringify({
+  projectName: appConfig.name,
+  slug: appConfig.slug,
   displayName,
   web: appConfig.web,
   manifest,
@@ -42,9 +43,9 @@ const visibleBranding = JSON.stringify({
 
 check(
   "native and PWA names match the App Store name",
-  displayName === "Skull King Crew Ledger" &&
-    // CFBundleName defaults to the Xcode product name, which is pinned to the
-    // old one, so it is set explicitly to keep it out of the shipped bundle.
+  appConfig.name === "Skull King Crew Ledger" &&
+    appConfig.slug === "skull-king-crew-ledger" &&
+    displayName === appConfig.name &&
     appConfig.ios.infoPlist.CFBundleName === displayName &&
     appConfig.web.name === displayName &&
     appConfig.web.shortName === displayName &&
@@ -70,11 +71,10 @@ check(
     manifest.id === "/skull-king-crew-ledger/"
 );
 check(
-  "the Xcode project name stays pinned to the Xcode Cloud workflow",
-  // prebuild derives ios/SkullKingScoreKeeper.xcworkspace and its scheme from
-  // expo.name, and the App Store Connect workflow stores both by name: renaming
-  // this fails the archive with "Workspace ... does not exist".
-  appConfig.name === "Skull King Score Keeper"
+  "the Xcode project name matches the Xcode Cloud workflow",
+  // Prebuild removes spaces to derive SkullKingCrewLedger for the project,
+  // workspace and shared scheme stored by the App Store Connect workflow.
+  appConfig.name.replace(/[^A-Za-z0-9]/g, "") === "SkullKingCrewLedger"
 );
 check(
   "PWA descriptions are explicitly unofficial",

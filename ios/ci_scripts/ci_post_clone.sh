@@ -4,13 +4,12 @@
 # workspace. The generated project is not tracked (see .gitignore): it is built
 # from app.json plus the native sources under native/ios/ by `expo prebuild`,
 # so CI has to generate it here or the build fails with "Workspace
-# SkullKingScoreKeeper.xcworkspace does not exist".
+# SkullKingCrewLedger.xcworkspace does not exist".
 #
 # The Xcode Cloud workflow stores that workspace path and its scheme name, and
-# `expo prebuild` derives both from `expo.name` in app.json. Renaming the app
-# there would silently move the workspace out from under the workflow, so
-# `expo.name` is pinned to the project name and the user-facing name comes from
-# `expo.ios.infoPlist.CFBundleDisplayName` instead.
+# `expo prebuild` derives both from `expo.name` in app.json. Keep that name,
+# `ios/SkullKingCrewLedger.xcworkspace`, and the `SkullKingCrewLedger` scheme
+# aligned so the generated project and the stored workflow cannot drift apart.
 #
 # The script has to live next to the Xcode project, which is why it sits under
 # ios/ while everything else there is generated and ignored. Xcode Cloud starts
@@ -45,7 +44,7 @@ fi
 scripts_backup=$(mktemp -d)
 cp -Rp ios/ci_scripts "$scripts_backup/"
 
-# Generates ios/SkullKingScoreKeeper.xcworkspace, the shared scheme and the
+# Generates ios/SkullKingCrewLedger.xcworkspace, the shared scheme and the
 # Pods.
 npx expo prebuild --platform ios
 
@@ -55,8 +54,8 @@ rm -rf "$scripts_backup"
 # The workspace name has to keep matching the one stored in the Xcode Cloud
 # workflow. Fail here, where the cause is visible, rather than during workspace
 # resolution with a stale-looking "does not exist".
-if [ ! -d ios/SkullKingScoreKeeper.xcworkspace ]; then
-  echo "prebuild did not generate ios/SkullKingScoreKeeper.xcworkspace." >&2
-  echo "Check that expo.name in app.json is still \"Skull King Score Keeper\"." >&2
+if [ ! -d ios/SkullKingCrewLedger.xcworkspace ]; then
+  echo "prebuild did not generate ios/SkullKingCrewLedger.xcworkspace." >&2
+  echo "Check that expo.name in app.json is still \"Skull King Crew Ledger\"." >&2
   exit 1
 fi

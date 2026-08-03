@@ -1,7 +1,7 @@
 import { normalizeGame } from "./storage";
 import { BonusInput, Game, GAME_SCHEMA_VERSION, RoundEntry } from "./types";
 
-/** Stable identity for portable Skull King Scorekeeper backups. */
+/** Stable wire identity for portable backups; renaming it would break existing files. */
 export const BACKUP_FORMAT = "skull-king-scorekeeper";
 export const BACKUP_FORMAT_VERSION = 1 as const;
 
