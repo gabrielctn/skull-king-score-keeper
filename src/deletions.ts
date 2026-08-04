@@ -27,8 +27,6 @@ export const MAX_DELETIONS = 500;
 /** Same identifier cap as the backup format applies to game IDs. */
 const MAX_DELETION_ID_LENGTH = 200;
 
-export const NO_DELETIONS: GameDeletions = {};
-
 function isTimestamp(value: unknown): value is number {
   return typeof value === "number" && Number.isSafeInteger(value) && value >= 0;
 }
@@ -38,13 +36,23 @@ function compareText(a: string, b: string): number {
 }
 
 /**
+ * Tombstone maps have no prototype: game IDs come from other devices, and on a
+ * plain object an id of "__proto__" would go to the inherited setter instead of
+ * becoming an entry — losing the tombstone, and letting that game come back.
+ * JSON serialization is unchanged.
+ */
+function emptyDeletions(): GameDeletions {
+  return Object.create(null) as GameDeletions;
+}
+
+/**
  * Validate an untrusted tombstone map (cloud row, backup file, local store).
  * Unusable entries are dropped rather than rejected: a tombstone is metadata
  * about games, and a malformed one must never cost the user their games.
  */
 export function normalizeDeletions(raw: unknown): GameDeletions {
   if (raw === null || typeof raw !== "object" || Array.isArray(raw)) {
-    return {};
+    return emptyDeletions();
   }
   const entries: [string, number][] = [];
   // Own enumerable keys only, so a "__proto__" entry is data, not a prototype.
@@ -62,7 +70,7 @@ export function normalizeDeletions(raw: unknown): GameDeletions {
   // Key order is stable regardless of how the entries arrived, so the same set
   // of tombstones always serializes to the same JSON.
   entries.sort((a, b) => compareText(a[0], b[0]));
-  return Object.fromEntries(entries);
+  return Object.assign(emptyDeletions(), Object.fromEntries(entries));
 }
 
 /** Lookup table for the merge, safe against ids like "constructor". */
@@ -93,7 +101,7 @@ export function mergeDeletions(
   a: GameDeletions | null | undefined,
   b: GameDeletions | null | undefined
 ): GameDeletions {
-  const merged: GameDeletions = { ...normalizeDeletions(a) };
+  const merged = Object.assign(emptyDeletions(), normalizeDeletions(a));
   for (const [id, deletedAt] of Object.entries(normalizeDeletions(b))) {
     const existing = merged[id];
     if (existing === undefined || deletedAt > existing) merged[id] = deletedAt;
@@ -121,7 +129,7 @@ export function recordDeletions(
   gameIds: readonly string[],
   deletedAt: number
 ): GameDeletions {
-  const added: GameDeletions = {};
+  const added = emptyDeletions();
   for (const id of gameIds) added[id] = deletedAt;
   return mergeDeletions(existing, added);
 }

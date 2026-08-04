@@ -16,7 +16,12 @@ import {
   parseBackup,
   serializeBackup,
 } from "../src/backup";
-import { MAX_DELETIONS, forgetDeletions } from "../src/deletions";
+import {
+  MAX_DELETIONS,
+  deletionTimes,
+  forgetDeletions,
+  mergeDeletions,
+} from "../src/deletions";
 import { createGame } from "../src/scoring";
 import { Game, GAME_SCHEMA_VERSION } from "../src/types";
 
@@ -615,6 +620,34 @@ check(
 check(
   "restoring one game keeps the rest of the table's deletions",
   forgetDeletions({ restored: 200, other: 300 }, ["restored"]).other === 300
+);
+
+// Game IDs arrive from other devices. On a plain object, an id of "__proto__"
+// would hit the inherited setter instead of becoming an entry, so the tombstone
+// would vanish and that game would come back. (Built through JSON, because an
+// object literal would set the prototype rather than create the key.)
+const protoDeletions = mergeDeletions(
+  { kept: 5 },
+  JSON.parse('{"__proto__": 120}')
+);
+check(
+  "a game id named __proto__ is kept as an ordinary tombstone",
+  deletionTimes(protoDeletions).get("__proto__") === 120 &&
+    deletionTimes(protoDeletions).get("kept") === 5
+);
+check(
+  "such a tombstone still deletes its game and survives serialization",
+  mergeBackupData(
+    { currentGame: null, history: [game("__proto__", 100)] },
+    { currentGame: null, history: [], deletions: protoDeletions }
+  ).history.length === 0 &&
+    parseBackup(
+      serializeBackup({
+        currentGame: null,
+        history: [],
+        deletions: protoDeletions,
+      })
+    ).deletions?.["__proto__"] === 120
 );
 
 console.log(`\n${passed} passed, ${failed} failed`);
