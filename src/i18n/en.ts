@@ -85,6 +85,7 @@ export const en: Strings = {
     automaticUpdatesBody:
       "Installed apps now download each new release automatically and switch to it as soon as the device is online.",
     items: [
+      "Deleting a game now deletes it for the whole crew: a game removed from the history no longer comes back on the next sync, and it leaves the statistics for good.",
       "The app stays free and ad-free: the home screen now shows what its App Store listing costs (€100 a year), and a finished game occasionally invites you to help cover that bill.",
       "Score sharing now uses live QR sessions only, so every player sees updates in real time.",
       "Inviting your crew and joining another table are now separate actions, so each flow is immediately visible in Settings.",
