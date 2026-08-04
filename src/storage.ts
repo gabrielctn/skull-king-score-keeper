@@ -6,6 +6,7 @@ import {
   RoundEntries,
   ScoringMode,
 } from "./types";
+import { GameDeletions, normalizeDeletions } from "./deletions";
 import { emptyBonus } from "./scoring";
 import { Lang, isLang } from "./i18n/types";
 import {
@@ -16,6 +17,7 @@ import {
 
 const CURRENT_GAME_KEY = "skullking:currentGame";
 const GAME_HISTORY_KEY = "skullking:gameHistory";
+const GAME_DELETIONS_KEY = "skullking:gameDeletions";
 const LANG_KEY = "skullking:lang";
 const SEEN_RELEASE_KEY = "skullking:seenRelease";
 const SETTINGS_KEY = "skullking:settings";
@@ -234,6 +236,37 @@ export async function saveGameHistory(games: Game[]): Promise<boolean> {
     return true;
   } catch (e) {
     console.warn("Failed to save game history", e);
+    return false;
+  }
+}
+
+/**
+ * Load this table's deletion tombstones. They outlive the games they refer to
+ * on purpose: they are what stops a crew mate's device from pushing a deleted
+ * game back into the shared history on its next sync.
+ */
+export async function loadGameDeletions(): Promise<GameDeletions> {
+  try {
+    const stored = await AsyncStorage.getItem(GAME_DELETIONS_KEY);
+    return stored ? normalizeDeletions(JSON.parse(stored)) : {};
+  } catch (e) {
+    console.warn("Failed to load game deletions", e);
+    return {};
+  }
+}
+
+/** Replace the persisted tombstones with the supplied ones. */
+export async function saveGameDeletions(
+  deletions: GameDeletions
+): Promise<boolean> {
+  try {
+    await AsyncStorage.setItem(
+      GAME_DELETIONS_KEY,
+      JSON.stringify(normalizeDeletions(deletions))
+    );
+    return true;
+  } catch (e) {
+    console.warn("Failed to save game deletions", e);
     return false;
   }
 }
