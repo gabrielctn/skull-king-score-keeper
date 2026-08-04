@@ -14,13 +14,12 @@ import {
 } from "react-native";
 import { Game } from "../types";
 import { useI18n } from "../i18n/context";
-import { buildShareUrl, webShareBaseUrl } from "../shareLink";
+import { webShareBaseUrl } from "../appUrl";
 import {
   MasterLiveState,
   buildLiveUrl,
   liveSessionManager,
 } from "../liveSession";
-import { liveConfigured } from "../liveConfig";
 import { qrCodeDataUrl } from "../qr";
 import { illustrations } from "../assets/illustrations";
 import { colors, radius, spacing } from "../theme";
@@ -35,22 +34,17 @@ interface Props {
 const QR_MAX_SIZE = 264;
 
 /**
- * The game master's sharing sheet. When a live backend is configured, the
- * primary action starts a real-time session (players see the scores update on
- * their own phones); the QR-encoded offline snapshot stays available as a
- * fallback for tables with no connection. Without a backend, only the snapshot
- * is offered.
+ * The game master's sharing sheet starts a real-time session so players can
+ * scan its QR code and see score updates on their own phones.
  */
 export default function ShareLiveModal({ visible, game, onClose }: Props) {
   const { t } = useI18n();
   const { width } = useWindowDimensions();
   const layout = getResponsiveLayout(width);
-  const live = liveConfigured();
-  const manager = useMemo(() => (live ? liveSessionManager() : null), [live]);
+  const manager = useMemo(() => liveSessionManager(), []);
   const [liveState, setLiveState] = useState<MasterLiveState>(
-    () => manager?.getState() ?? { status: "idle", sessionId: null, gameId: null }
+    () => manager.getState()
   );
-  const [snapshotOpen, setSnapshotOpen] = useState(!live);
   const [copyState, setCopyState] = useState<"idle" | "copied" | "error">(
     "idle"
   );
@@ -62,7 +56,6 @@ export default function ShareLiveModal({ visible, game, onClose }: Props) {
   );
 
   useEffect(() => {
-    if (!manager) return;
     setLiveState(manager.getState());
     return manager.subscribe(setLiveState);
   }, [manager]);
@@ -70,12 +63,11 @@ export default function ShareLiveModal({ visible, game, onClose }: Props) {
   useEffect(() => {
     if (!visible) {
       setCopyState("idle");
-      setSnapshotOpen(!live);
     }
     return () => {
       if (copyTimer.current) clearTimeout(copyTimer.current);
     };
-  }, [visible, live]);
+  }, [visible]);
 
   const baseUrl = useMemo(() => webShareBaseUrl(), []);
 
@@ -90,18 +82,6 @@ export default function ShareLiveModal({ visible, game, onClose }: Props) {
     const dataUrl = qrCodeDataUrl(url, qrSize);
     return dataUrl ? { url, dataUrl } : null;
   }, [visible, liveSessionId, baseUrl, qrSize]);
-
-  // The offline snapshot re-encodes on every game change while visible.
-  const snapshot = useMemo(() => {
-    if (!visible || !snapshotOpen || !baseUrl) return null;
-    try {
-      const url = buildShareUrl(game, baseUrl);
-      const dataUrl = qrCodeDataUrl(url, qrSize);
-      return dataUrl ? { url, dataUrl } : null;
-    } catch {
-      return null;
-    }
-  }, [visible, snapshotOpen, game, baseUrl, qrSize]);
 
   const canCopy =
     Platform.OS === "web" &&
@@ -193,9 +173,7 @@ export default function ShareLiveModal({ visible, game, onClose }: Props) {
             contentContainerStyle={styles.scroll}
             showsVerticalScrollIndicator={false}
           >
-            {/* Live section (only when a backend is configured). */}
-            {live ? (
-              <View style={styles.liveCard}>
+            <View style={styles.liveCard}>
                 {sessionActive ? (
                   <>
                     <View style={styles.liveHeaderRow}>
@@ -254,7 +232,7 @@ export default function ShareLiveModal({ visible, game, onClose }: Props) {
 
                     <TouchableOpacity
                       style={styles.stopButton}
-                      onPress={() => manager?.stop()}
+                      onPress={() => manager.stop()}
                       accessibilityRole="button"
                     >
                       <Text style={styles.stopButtonText}>
@@ -275,7 +253,7 @@ export default function ShareLiveModal({ visible, game, onClose }: Props) {
                         styles.startButton,
                         starting && styles.startButtonBusy,
                       ]}
-                      onPress={() => manager?.start(game)}
+                      onPress={() => manager.start(game)}
                       disabled={starting}
                       accessibilityRole="button"
                       accessibilityState={{ disabled: starting }}
@@ -290,83 +268,8 @@ export default function ShareLiveModal({ visible, game, onClose }: Props) {
                     </TouchableOpacity>
                   </>
                 )}
-              </View>
-            ) : null}
+            </View>
 
-            {/* Offline snapshot fallback. Primary when there is no backend. */}
-            {live ? (
-              <TouchableOpacity
-                style={styles.snapshotToggle}
-                onPress={() => setSnapshotOpen((open) => !open)}
-                accessibilityRole="button"
-                accessibilityState={{ expanded: snapshotOpen }}
-              >
-                <View style={styles.snapshotToggleCopy}>
-                  <Text style={styles.snapshotTitle}>
-                    {t.liveShare.snapshotTitle}
-                  </Text>
-                  <Text style={styles.snapshotToggleAction}>
-                    {snapshotOpen
-                      ? t.liveShare.snapshotToggleHide
-                      : t.liveShare.snapshotToggleShow}
-                  </Text>
-                </View>
-                <Text style={[styles.chevron, snapshotOpen && styles.chevronOpen]}>
-                  ›
-                </Text>
-              </TouchableOpacity>
-            ) : null}
-
-            {snapshotOpen ? (
-              <View style={styles.snapshotSection}>
-                {snapshot ? (
-                  <View style={styles.qrCard}>
-                    <Image
-                      source={{ uri: snapshot.dataUrl }}
-                      style={{ width: qrSize, height: qrSize }}
-                      resizeMode="contain"
-                      accessible
-                      accessibilityRole="image"
-                      accessibilityLabel={t.liveShare.qrLabel}
-                    />
-                  </View>
-                ) : (
-                  <View style={styles.qrErrorBox}>
-                    <Text style={styles.qrErrorText}>
-                      {t.liveShare.qrError}
-                    </Text>
-                  </View>
-                )}
-
-                <View style={styles.hintRow}>
-                  <Text style={styles.hintIcon}>📷</Text>
-                  <Text style={styles.hintText}>{t.liveShare.scanHint}</Text>
-                </View>
-                <View style={styles.hintRow}>
-                  <Text style={styles.hintIcon}>🔄</Text>
-                  <Text style={styles.hintText}>{t.liveShare.updateHint}</Text>
-                </View>
-                <View style={styles.hintRow}>
-                  <Text style={styles.hintIcon}>📶</Text>
-                  <Text style={styles.hintText}>{t.liveShare.networkHint}</Text>
-                </View>
-
-                {snapshot && canCopy ? (
-                  <TouchableOpacity
-                    style={styles.copyButton}
-                    onPress={() => copy(snapshot.url)}
-                    accessibilityRole="button"
-                    accessibilityLabel={t.liveShare.copyLink}
-                  >
-                    <Text style={styles.copyButtonText}>
-                      🔗 {t.liveShare.copyLink}
-                    </Text>
-                  </TouchableOpacity>
-                ) : null}
-              </View>
-            ) : null}
-
-            {/* One shared copy-confirmation line for whichever link was copied. */}
             <View style={styles.copyFeedbackSlot}>{copyFeedbackNode}</View>
           </ScrollView>
         </View>
@@ -542,64 +445,12 @@ const styles = StyleSheet.create({
     marginTop: spacing.md,
   },
   stopButtonText: { color: colors.negative, fontSize: 14, fontWeight: "800" },
-  snapshotToggle: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: colors.cardBorder,
-    paddingVertical: spacing.md,
-    marginTop: spacing.md,
-  },
-  snapshotToggleCopy: { flex: 1, minWidth: 0 },
-  snapshotTitle: { color: colors.text, fontSize: 14, fontWeight: "800" },
-  snapshotToggleAction: {
-    color: colors.gold,
-    fontSize: 12,
-    fontWeight: "700",
-    marginTop: 2,
-  },
-  chevron: {
-    color: colors.textDim,
-    fontSize: 24,
-    marginStart: spacing.sm,
-    transform: [{ rotate: "90deg" }],
-  },
-  chevronOpen: { transform: [{ rotate: "-90deg" }] },
-  snapshotSection: { alignItems: "center", paddingTop: spacing.xs },
   qrCard: {
     backgroundColor: "#ffffff",
     borderRadius: radius.md,
     padding: spacing.sm,
     marginTop: spacing.xs,
     marginBottom: spacing.md,
-  },
-  qrErrorBox: {
-    borderWidth: 1,
-    borderColor: colors.cardBorder,
-    borderRadius: radius.md,
-    backgroundColor: colors.bgElevated,
-    padding: spacing.lg,
-    marginVertical: spacing.md,
-  },
-  qrErrorText: {
-    color: colors.negative,
-    fontSize: 13,
-    lineHeight: 18,
-    textAlign: "center",
-  },
-  hintRow: {
-    width: "100%",
-    flexDirection: "row",
-    alignItems: "flex-start",
-    marginBottom: spacing.sm,
-  },
-  hintIcon: { fontSize: 15, marginEnd: spacing.sm, lineHeight: 19 },
-  hintText: {
-    flex: 1,
-    color: colors.textDim,
-    fontSize: 13,
-    lineHeight: 19,
   },
   copyButton: {
     minHeight: 44,

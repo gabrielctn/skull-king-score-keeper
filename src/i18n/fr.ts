@@ -338,25 +338,14 @@ export const fr: Strings = {
     statusOffline: "Reconnexion…",
     liveError:
       "La synchronisation en direct a rencontré un problème et réessaie automatiquement. Vérifiez votre connexion, ou arrêtez puis relancez le suivi.",
-    snapshotTitle: "Pas de connexion à la table ?",
-    snapshotToggleShow: "Afficher l’instantané hors ligne",
-    snapshotToggleHide: "Masquer l’instantané hors ligne",
-    scanHint:
-      "Ce QR code contient un instantané en lecture seule de la partie : chaque mise, pli et bonus enregistrés jusqu’ici.",
-    updateHint:
-      "Il fonctionne sans serveur, mais ne se met pas à jour tout seul : les joueurs le rescannent pour obtenir les derniers scores.",
-    networkHint:
-      "Le téléphone du joueur a besoin d’une connexion à la première ouverture de l’appli ; ensuite l’instantané fonctionne entièrement hors ligne.",
     copyLink: "Copier le lien",
     copied: "Lien copié !",
     copyError: "Impossible de copier le lien.",
-    qrError: "Impossible de transformer cette partie en QR code.",
     qrLabel: "QR code ouvrant le suivi des scores de cette partie",
     close: "Fermer",
   },
 
   spectator: {
-    eyebrow: "Suivi en lecture seule",
     liveEyebrow: "Suivi en direct",
     liveBadge: "En direct",
     title: "Suivi de partie",
@@ -364,10 +353,7 @@ export const fr: Strings = {
       `Scores après la manche ${scored} sur ${total}`,
     noRounds: "Aucune manche n’a encore été validée.",
     finished: "Scores finaux. La partie est terminée.",
-    snapshotAt: (time) => `Scores du maître du jeu · relevés à ${time}`,
     liveUpdatedAt: (time) => `Mis à jour en direct · ${time}`,
-    refreshHint:
-      "Ceci est un instantané. Pour l’actualiser, scannez à nouveau le QR code du maître du jeu.",
     connecting: "Connexion à la partie en direct…",
     reconnecting: "Connexion perdue, reconnexion…",
     endedTitle: "Session en direct terminée",

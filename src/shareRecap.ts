@@ -6,7 +6,7 @@ import {
 import { colors, scoreSeriesColors } from "./theme";
 import { Game } from "./types";
 import type { Strings } from "./i18n/types";
-import { DEPLOYED_PWA_BASE_URL } from "./shareLink";
+import { DEPLOYED_PWA_BASE_URL } from "./appUrl";
 
 export const APP_URL = DEPLOYED_PWA_BASE_URL;
 

@@ -36,7 +36,7 @@ import {
   CloudStatus,
 } from "../cloudSync";
 import { MAX_TABLE_NAME_LENGTH, normalizeTableName } from "../backup";
-import { webShareBaseUrl } from "../shareLink";
+import { webShareBaseUrl } from "../appUrl";
 import { qrCodeDataUrl } from "../qr";
 import ToggleSwitch from "../components/ToggleSwitch";
 import WhatsNewModal from "../components/WhatsNewModal";

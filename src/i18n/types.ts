@@ -351,17 +351,9 @@ export interface Strings {
     /** Status pill while sync is failing and retrying. */
     statusOffline: string;
     liveError: string;
-    // Offline snapshot (QR-encoded game) fallback section.
-    snapshotTitle: string;
-    snapshotToggleShow: string;
-    snapshotToggleHide: string;
-    scanHint: string;
-    updateHint: string;
-    networkHint: string;
     copyLink: string;
     copied: string;
     copyError: string;
-    qrError: string;
     /** Accessibility description of the QR code image. */
     qrLabel: string;
     close: string;
@@ -369,8 +361,6 @@ export interface Strings {
 
   /** Read-only score-tracking view opened by scanning a share QR code. */
   spectator: {
-    /** Small "read-only" tag above the title (snapshot mode). */
-    eyebrow: string;
     /** Small tag above the title while following a live session. */
     liveEyebrow: string;
     /** Pill shown next to the title while connected to a live session. */
@@ -380,11 +370,8 @@ export interface Strings {
     roundProgress: (scored: number, total: number) => string;
     noRounds: string;
     finished: string;
-    /** "Game master's scores · read at {time}". */
-    snapshotAt: (time: string) => string;
     /** "Updated live · {time}". */
     liveUpdatedAt: (time: string) => string;
-    refreshHint: string;
     /** Banner while first connecting to a live session. */
     connecting: string;
     /** Banner while a live session is reconnecting. */

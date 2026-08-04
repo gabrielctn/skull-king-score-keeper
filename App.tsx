@@ -47,16 +47,11 @@ import SettingsScreen from "./src/screens/SettingsScreen";
 import StatsScreen from "./src/screens/StatsScreen";
 import SpectatorScreen from "./src/screens/SpectatorScreen";
 import {
-  clearSpectatorSessionCode,
-  consumeScannedShareCode,
-  decodeShareCode,
-  loadSpectatorSessionCode,
-} from "./src/shareLink";
-import {
   clearSpectatorLiveId,
   consumeScannedLiveId,
   liveSessionManager,
   loadSpectatorLiveId,
+  resolveSpectatorLiveId,
 } from "./src/liveSession";
 import { liveConfigured } from "./src/liveConfig";
 import { registerServiceWorker } from "./src/registerServiceWorker";
@@ -90,44 +85,29 @@ type Screen = "home" | "setup" | "game" | "results" | "settings" | "stats";
 type PendingCurrentGame = Game | null | undefined;
 
 /**
- * Spectator mode, opened by scanning a share QR code: either a live session
- * followed in real time, or a static QR-encoded snapshot. `none` is the normal
- * app.
+ * Spectator mode, opened by scanning a live-session QR code. `none` is the
+ * normal app.
  */
 type SpectatorMode =
   | { kind: "live"; sessionId: string }
-  | { kind: "snapshot"; game: Game | null; invalid: boolean }
   | { kind: "none" };
 
 const NO_SPECTATOR: SpectatorMode = { kind: "none" };
 
 /**
- * Resolve spectator mode for this page load. A fresh scan in the URL hash
- * (either kind) wins over a session restored from an earlier scan in this tab,
- * and live takes precedence over a snapshot. Called before first paint so the
- * hash is stripped before analytics can observe it.
+ * Resolve spectator mode for this page load. A fresh live scan wins over a
+ * session restored from an earlier scan in this tab. A different capability
+ * hash opens the normal app instead of reviving an old live session.
  */
 function readSpectatorMode(): SpectatorMode {
+  const hash =
+    typeof window === "undefined" || !window.location
+      ? ""
+      : window.location.hash;
   const scannedLive = consumeScannedLiveId();
   if (scannedLive) return { kind: "live", sessionId: scannedLive };
-  const scannedSnapshot = consumeScannedShareCode();
-  if (scannedSnapshot) {
-    return {
-      kind: "snapshot",
-      game: scannedSnapshot.game,
-      invalid: scannedSnapshot.invalid,
-    };
-  }
-  const storedLive = loadSpectatorLiveId();
+  const storedLive = resolveSpectatorLiveId(hash, loadSpectatorLiveId());
   if (storedLive) return { kind: "live", sessionId: storedLive };
-  const storedCode = loadSpectatorSessionCode();
-  if (storedCode) {
-    try {
-      return { kind: "snapshot", game: decodeShareCode(storedCode), invalid: false };
-    } catch {
-      clearSpectatorSessionCode();
-    }
-  }
   return NO_SPECTATOR;
 }
 
@@ -347,8 +327,8 @@ export default function App() {
     };
   }, []);
 
-  // A QR code scanned while the app is already open navigates to the same
-  // page with a new share payload in the hash; pick it up without a reload.
+  // A QR code scanned while the app is already open navigates to the same page
+  // with a new capability in the hash; pick it up without a reload.
   useEffect(() => {
     if (Platform.OS !== "web" || typeof window === "undefined") return;
     const handleHashChange = () => {
@@ -360,15 +340,6 @@ export default function App() {
       const scannedLive = consumeScannedLiveId();
       if (scannedLive) {
         setSpectator({ kind: "live", sessionId: scannedLive });
-        return;
-      }
-      const scanned = consumeScannedShareCode();
-      if (scanned) {
-        setSpectator({
-          kind: "snapshot",
-          game: scanned.game,
-          invalid: scanned.invalid,
-        });
       }
     };
     window.addEventListener("hashchange", handleHashChange);
@@ -376,7 +347,6 @@ export default function App() {
   }, []);
 
   const handleExitSpectator = () => {
-    clearSpectatorSessionCode();
     clearSpectatorLiveId();
     setSpectator(NO_SPECTATOR);
   };
@@ -739,7 +709,7 @@ export default function App() {
 
   // A scanned session takes over the whole UI. The user's own games stay
   // untouched underneath and come back through the spectator exit button.
-  const spectatorActive = spectator.kind !== "none";
+  const spectatorActive = spectator.kind === "live";
 
   return (
     <I18nProvider initialLang={lang}>
@@ -750,12 +720,9 @@ export default function App() {
           style={styles.backgroundTexture}
           resizeMode="cover"
         />
-        {spectatorActive && (
+        {spectator.kind === "live" && (
           <SpectatorScreen
-            game={spectator.kind === "snapshot" ? spectator.game : null}
-            liveSessionId={
-              spectator.kind === "live" ? spectator.sessionId : null
-            }
+            liveSessionId={spectator.sessionId}
             onExit={handleExitSpectator}
           />
         )}

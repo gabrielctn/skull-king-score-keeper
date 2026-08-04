@@ -1,6 +1,6 @@
 import { Game } from "./types";
 import { normalizeUntrustedGame } from "./backup";
-import { stripShareHashFromLocation } from "./shareLink";
+import { stripLocationHash } from "./appUrl";
 import { liveConfigured } from "./liveConfig";
 import {
   UUID_PATTERN,
@@ -26,9 +26,6 @@ export type { StoredLiveSession } from "./storage";
  * key (whose hash lives server-side, out of API reach) is required to update
  * it. Every local save of the game is debounced and pushed; spectators fetch
  * the row once and then receive realtime UPDATE events.
- *
- * The snapshot-in-QR mode (shareLink.ts) remains the offline fallback: live
- * needs connectivity on both sides, snapshots need none.
  *
  * Server state is untrusted on the way back in: everything a spectator
  * receives goes through the backup-import hardening before it reaches the UI.
@@ -541,15 +538,28 @@ export function clearSpectatorLiveId(): void {
 }
 
 /**
+ * Resolve this page's live spectator id. A fresh non-live capability hash must
+ * open the normal app instead of reviving an older live session from this tab.
+ */
+export function resolveSpectatorLiveId(
+  hash: string | null | undefined,
+  storedLiveId: string | null
+): string | null {
+  const scanned = extractLiveSessionId(hash);
+  if (scanned) return scanned;
+  return hash ? null : storedLiveId;
+}
+
+/**
  * If the URL hash carries a live session id (the page was just opened from a
  * scanned QR code), consume it: strip the hash, remember the id for reloads,
- * and return it. Mirrors shareLink.consumeScannedShareCode for snapshots.
+ * and return it.
  */
 export function consumeScannedLiveId(): string | null {
   if (typeof window === "undefined" || !window.location) return null;
   const scanned = extractLiveSessionId(window.location.hash);
   if (!scanned) return null;
-  stripShareHashFromLocation();
+  stripLocationHash();
   saveSpectatorLiveId(scanned);
   return scanned;
 }

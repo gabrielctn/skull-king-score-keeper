@@ -33,14 +33,12 @@ import { colors, radius, spacing } from "../theme";
 import { getResponsiveLayout } from "../responsive";
 
 interface Props {
-  /** Static snapshot (QR-encoded) to show. Ignored in live mode. */
-  game: Game | null;
-  /** When set, follow this live session in real time instead of a snapshot. */
-  liveSessionId?: string | null;
+  /** Live session followed in real time. */
+  liveSessionId: string;
   onExit: () => void;
 }
 
-function formatSnapshotTime(timestamp: number, locale: string): string | null {
+function formatUpdatedTime(timestamp: number, locale: string): string | null {
   if (!Number.isFinite(timestamp) || timestamp <= 0) return null;
   try {
     return new Date(timestamp).toLocaleTimeString(locale, {
@@ -53,12 +51,11 @@ function formatSnapshotTime(timestamp: number, locale: string): string | null {
 }
 
 /**
- * Read-only view of the game master's scores, opened by scanning a share QR
- * code. In live mode it follows a Supabase session and updates in real time;
- * in snapshot mode it shows a single QR-encoded state. Either way nothing here
- * writes to the game — players just check their own bids, tricks and bonuses.
+ * Read-only view of the game master's scores, opened by scanning a live QR
+ * code. It follows a Supabase session and updates in real time without writing
+ * to the game.
  */
-export default function SpectatorScreen({ game, liveSessionId, onExit }: Props) {
+export default function SpectatorScreen({ liveSessionId, onExit }: Props) {
   const { t, lang } = useI18n();
   const { width } = useWindowDimensions();
   const layout = getResponsiveLayout(width);
@@ -71,7 +68,6 @@ export default function SpectatorScreen({ game, liveSessionId, onExit }: Props) 
   // identity picker so it never flashes before a remembered pick can load.
   const [identityResolved, setIdentityResolved] = useState(false);
 
-  const isLive = !!liveSessionId;
   const [liveGame, setLiveGame] = useState<Game | null>(null);
   const [liveUpdatedAt, setLiveUpdatedAt] = useState<number>(0);
   const [liveStatus, setLiveStatus] = useState<SpectatorLiveStatus>(
@@ -81,7 +77,6 @@ export default function SpectatorScreen({ game, liveSessionId, onExit }: Props) 
   // Follow the live session: subscribe on mount, refresh when the tab regains
   // focus (realtime channels can miss events while backgrounded).
   useEffect(() => {
-    if (!liveSessionId) return;
     setLiveGame(null);
     setLiveStatus("connecting");
     const watcher = watchLiveGame(liveSessionId, {
@@ -107,7 +102,7 @@ export default function SpectatorScreen({ game, liveSessionId, onExit }: Props) 
     };
   }, [liveSessionId]);
 
-  const activeGame = isLive ? liveGame : game;
+  const activeGame = liveGame;
 
   const board = useMemo(
     () => (activeGame ? standings(activeGame) : []),
@@ -180,10 +175,8 @@ export default function SpectatorScreen({ game, liveSessionId, onExit }: Props) 
 
   // A broken/expired link (nothing ever loaded) shows the friendly error view.
   const failedToLoad =
-    (!isLive && !game) ||
-    (isLive &&
-      liveGame === null &&
-      (liveStatus === "notFound" || liveStatus === "error"));
+    liveGame === null &&
+    (liveStatus === "notFound" || liveStatus === "error");
 
   if (failedToLoad) {
     return (
@@ -209,7 +202,7 @@ export default function SpectatorScreen({ game, liveSessionId, onExit }: Props) 
   }
 
   // Live, still connecting, nothing received yet.
-  if (isLive && !activeGame) {
+  if (!activeGame) {
     return (
       <SafeAreaView style={styles.safe}>
         <View style={[styles.invalidWrap, { maxWidth: layout.formMaxWidth }]}>
@@ -224,13 +217,8 @@ export default function SpectatorScreen({ game, liveSessionId, onExit }: Props) 
     );
   }
 
-  if (!activeGame) return null;
-
   const locale = browserLocale(lang);
-  const snapshotTime = formatSnapshotTime(
-    isLive ? liveUpdatedAt : activeGame.updatedAt,
-    locale
-  );
+  const updatedTime = formatUpdatedTime(liveUpdatedAt, locale);
   // Tapping a standings row only opens that player's breakdown — it never
   // reassigns "you". The identity pick is deliberately kept separate.
   const openBreakdown = (playerId: string) => {
@@ -273,12 +261,12 @@ export default function SpectatorScreen({ game, liveSessionId, onExit }: Props) 
   const turnSlots = showTurnOrder ? playOrder(activeGame, currentRound) : [];
 
   const liveBanner =
-    isLive && liveStatus === "ended" ? (
+    liveStatus === "ended" ? (
       <View style={[styles.statusBanner, styles.statusBannerEnded]}>
         <Text style={styles.statusBannerTitle}>{t.spectator.endedTitle}</Text>
         <Text style={styles.statusBannerBody}>{t.spectator.endedBody}</Text>
       </View>
-    ) : isLive && liveStatus === "reconnecting" ? (
+    ) : liveStatus === "reconnecting" ? (
       <View style={[styles.statusBanner, styles.statusBannerReconnecting]}>
         <Text style={styles.statusBannerBody}>{t.spectator.reconnecting}</Text>
       </View>
@@ -305,9 +293,9 @@ export default function SpectatorScreen({ game, liveSessionId, onExit }: Props) 
           <View style={styles.headerCopy}>
             <View style={styles.eyebrowRow}>
               <Text style={styles.eyebrow}>
-                {isLive ? t.spectator.liveEyebrow : t.spectator.eyebrow}
+                {t.spectator.liveEyebrow}
               </Text>
-              {isLive && liveStatus === "live" ? (
+              {liveStatus === "live" ? (
                 <View style={styles.liveBadge}>
                   <View style={styles.liveBadgeDot} />
                   <Text style={styles.liveBadgeText}>
@@ -332,19 +320,10 @@ export default function SpectatorScreen({ game, liveSessionId, onExit }: Props) 
 
         {liveBanner}
 
-        {snapshotTime ? (
-          <Text style={styles.snapshotLine}>
-            {isLive
-              ? t.spectator.liveUpdatedAt(snapshotTime)
-              : t.spectator.snapshotAt(snapshotTime)}
+        {updatedTime ? (
+          <Text style={styles.updatedLine}>
+            {t.spectator.liveUpdatedAt(updatedTime)}
           </Text>
-        ) : null}
-
-        {!isLive ? (
-          <View style={styles.refreshBox}>
-            <Text style={styles.refreshIcon}>🔄</Text>
-            <Text style={styles.refreshText}>{t.spectator.refreshHint}</Text>
-          </View>
         ) : null}
 
         {identityResolved && !rememberedId ? (
@@ -609,27 +588,10 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   statusBannerBody: { color: colors.textDim, fontSize: 12, lineHeight: 17 },
-  snapshotLine: {
+  updatedLine: {
     color: colors.textDim,
     fontSize: 12,
     marginBottom: spacing.sm,
-  },
-  refreshBox: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    borderWidth: 1,
-    borderColor: colors.goldDim,
-    borderRadius: radius.md,
-    backgroundColor: colors.bgElevated,
-    padding: spacing.sm,
-    marginBottom: spacing.md,
-  },
-  refreshIcon: { fontSize: 15, marginEnd: spacing.sm, lineHeight: 19 },
-  refreshText: {
-    flex: 1,
-    color: colors.text,
-    fontSize: 13,
-    lineHeight: 19,
   },
   connectingText: {
     color: colors.textDim,

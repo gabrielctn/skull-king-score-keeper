@@ -187,6 +187,7 @@ export default function GameScreen({
   useKeepAwake(keepAwake);
   const { width } = useWindowDimensions();
   const layout = getResponsiveLayout(width);
+  const liveAvailable = liveConfigured();
   const playerIds = useMemo(() => game.players.map((p) => p.id), [game.players]);
   const [displayRound, setDisplayRound] = useState(
     Math.min(game.currentRound, game.totalRounds)
@@ -209,12 +210,12 @@ export default function GameScreen({
   const [gameRulesOpen, setGameRulesOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const [liveState, setLiveState] = useState<MasterLiveState | null>(() =>
-    liveConfigured() ? liveSessionManager().getState() : null
+    liveAvailable ? liveSessionManager().getState() : null
   );
 
   // Reflect the live-session state on the header pill (gold while sharing).
   useEffect(() => {
-    if (!liveConfigured()) return;
+    if (!liveAvailable) return;
     const manager = liveSessionManager();
     setLiveState(manager.getState());
     return manager.subscribe(setLiveState);
@@ -547,22 +548,24 @@ export default function GameScreen({
             >
               <Text style={styles.help}>⚙</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.livePill, liveActive && styles.livePillActive]}
-              onPress={() => setShareOpen(true)}
-              accessibilityRole="button"
-              accessibilityLabel={t.liveShare.open}
-              accessibilityState={{ selected: liveActive }}
-            >
-              <Text
-                style={[
-                  styles.livePillText,
-                  liveActive && styles.livePillTextActive,
-                ]}
+            {liveAvailable ? (
+              <TouchableOpacity
+                style={[styles.livePill, liveActive && styles.livePillActive]}
+                onPress={() => setShareOpen(true)}
+                accessibilityRole="button"
+                accessibilityLabel={t.liveShare.open}
+                accessibilityState={{ selected: liveActive }}
               >
-                📡 {t.liveShare.badge}
-              </Text>
-            </TouchableOpacity>
+                <Text
+                  style={[
+                    styles.livePillText,
+                    liveActive && styles.livePillTextActive,
+                  ]}
+                >
+                  📡 {t.liveShare.badge}
+                </Text>
+              </TouchableOpacity>
+            ) : null}
             <TouchableOpacity
               style={styles.headerIconButton}
               onPress={() => setRulesOpen(true)}
@@ -915,11 +918,13 @@ export default function GameScreen({
         onClose={() => setGameRulesOpen(false)}
         onChange={onUpdateGame}
       />
-      <ShareLiveModal
-        visible={shareOpen}
-        game={game}
-        onClose={() => setShareOpen(false)}
-      />
+      {liveAvailable ? (
+        <ShareLiveModal
+          visible={shareOpen}
+          game={game}
+          onClose={() => setShareOpen(false)}
+        />
+      ) : null}
       <Modal
         visible={untouchedReviewOpen}
         transparent

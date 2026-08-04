@@ -336,26 +336,15 @@ export const de: Strings = {
     statusOffline: "Verbindung wird wiederhergestellt…",
     liveError:
       "Bei der Live-Synchronisierung gab es ein Problem. Sie versucht es weiter. Prüfe deine Verbindung, oder beende und starte neu.",
-    snapshotTitle: "Keine Verbindung am Tisch?",
-    snapshotToggleShow: "Offline-Momentaufnahme anzeigen",
-    snapshotToggleHide: "Offline-Momentaufnahme ausblenden",
-    scanHint:
-      "Dieser QR-Code enthält eine reine Lese-Momentaufnahme der Partie: jede bislang erfasste Ansage, jeder Stich und jeder Bonus.",
-    updateHint:
-      "Sie kommt ohne Server aus, aktualisiert sich aber nicht von selbst: Spieler scannen erneut, um die neuesten Punkte zu erhalten.",
-    networkHint:
-      "Das Handy des Spielers braucht beim ersten Öffnen der App eine Verbindung; danach funktioniert die Momentaufnahme vollständig offline.",
     copyLink: "Link kopieren",
     copied: "Link kopiert!",
     copyError: "Der Link konnte nicht kopiert werden.",
-    qrError: "Diese Partie konnte nicht in einen QR-Code umgewandelt werden.",
     qrLabel:
       "QR-Code, der die Punkteverfolgung dieser Partie öffnet",
     close: "Schließen",
   },
 
   spectator: {
-    eyebrow: "Nur-Lese-Ansicht",
     liveEyebrow: "Live-Verfolgung",
     liveBadge: "Live",
     title: "Partie verfolgen",
@@ -363,10 +352,7 @@ export const de: Strings = {
       `Punktestand nach Runde ${scored} von ${total}`,
     noRounds: "Es wurde noch keine Runde gewertet.",
     finished: "Endstand. Die Partie ist beendet.",
-    snapshotAt: (time) => `Punkte des Spielleiters · abgelesen um ${time}`,
     liveUpdatedAt: (time) => `Live aktualisiert · ${time}`,
-    refreshHint:
-      "Dies ist eine Momentaufnahme. Zum Aktualisieren scanne den QR-Code des Spielleiters erneut.",
     connecting: "Verbindung zur Live-Partie…",
     reconnecting: "Verbindung verloren. Verbindung wird wiederhergestellt…",
     endedTitle: "Live-Sitzung beendet",

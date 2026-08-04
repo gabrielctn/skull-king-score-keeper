@@ -3,8 +3,8 @@
  *
  * Both values are public by design: they ship in the client bundle and only
  * grant what row-level security and the SECURITY DEFINER functions in
- * supabase/schema.sql allow. Forks without a backend can blank them out —
- * the app then falls back to snapshot-only QR sharing.
+ * supabase/schema.sql allow. Forks without a backend can blank them out, which
+ * disables live score sharing for that build.
  */
 export const SUPABASE_URL = "https://hkjneydxqdjasmppfsdp.supabase.co";
 export const SUPABASE_PUBLISHABLE_KEY =

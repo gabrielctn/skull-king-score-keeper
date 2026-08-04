@@ -341,26 +341,15 @@ export const es: Strings = {
     statusOffline: "Reconectando…",
     liveError:
       "La sincronización en directo tuvo un problema. Sigue reintentando. Comprueba tu conexión, o detén e inicia de nuevo.",
-    snapshotTitle: "¿Sin conexión en la mesa?",
-    snapshotToggleShow: "Mostrar instantánea sin conexión",
-    snapshotToggleHide: "Ocultar instantánea sin conexión",
-    scanHint:
-      "Este código QR contiene una instantánea de solo lectura de la partida: cada envite, baza y bonificación registrados hasta ahora.",
-    updateHint:
-      "Funciona sin servidor, pero no se actualiza solo: los jugadores lo vuelven a escanear para obtener los últimos puntos.",
-    networkHint:
-      "El teléfono del jugador necesita conexión la primera vez que abre la app; después la instantánea funciona totalmente sin conexión.",
     copyLink: "Copiar enlace",
     copied: "¡Enlace copiado!",
     copyError: "No se pudo copiar el enlace.",
-    qrError: "No se pudo convertir esta partida en un código QR.",
     qrLabel:
       "Código QR que abre el seguimiento de puntos de esta partida",
     close: "Cerrar",
   },
 
   spectator: {
-    eyebrow: "Seguimiento de solo lectura",
     liveEyebrow: "Seguimiento en directo",
     liveBadge: "En directo",
     title: "Seguimiento de partida",
@@ -368,10 +357,7 @@ export const es: Strings = {
       `Puntos tras la ronda ${scored} de ${total}`,
     noRounds: "Todavía no se ha puntuado ninguna ronda.",
     finished: "Puntuación final. La partida ha terminado.",
-    snapshotAt: (time) => `Puntos del anotador · leídos a las ${time}`,
     liveUpdatedAt: (time) => `Actualizado en directo · ${time}`,
-    refreshHint:
-      "Esto es una instantánea. Para actualizarla, vuelve a escanear el código QR del anotador.",
     connecting: "Conectando con la partida en directo…",
     reconnecting: "Conexión perdida. Reconectando…",
     endedTitle: "Sesión en directo finalizada",

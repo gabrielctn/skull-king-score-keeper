@@ -477,8 +477,8 @@ const SPECTATOR_IDENTITY_KEY = "skullking:spectatorIdentity";
 
 /**
  * Which player this device's owner is in the game they follow as a
- * spectator. Lets a re-scan of the game master's QR code jump straight to
- * the right score details. Only the latest followed game is remembered.
+ * spectator. Lets a returning live session jump straight to the right score
+ * details. Only the latest followed game is remembered.
  */
 export interface SpectatorIdentity {
   gameId: string;
@@ -527,7 +527,7 @@ export async function saveSpectatorIdentity(
 const SPECTATOR_SORT_KEY = "skullking:spectatorSort";
 
 /**
- * How a spectator (a player following the live/QR scores on their own phone)
+ * How a spectator (a player following live scores on their own phone)
  * wants the standings list ordered:
  * - `name`: alphabetical, so a name never jumps around as scores change;
  * - `gameOrder`: seating order, matching the physical table;

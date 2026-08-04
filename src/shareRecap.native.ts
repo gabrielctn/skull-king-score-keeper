@@ -3,7 +3,7 @@ import { standings } from "./scoring";
 import type { GameAward } from "./stats";
 import type { Game } from "./types";
 import type { Strings } from "./i18n/types";
-import { DEPLOYED_PWA_BASE_URL } from "./shareLink";
+import { DEPLOYED_PWA_BASE_URL } from "./appUrl";
 
 export const APP_URL = DEPLOYED_PWA_BASE_URL;
 

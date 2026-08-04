@@ -18,6 +18,7 @@ import {
   liveStatePayload,
   watchLiveGame,
 } from "../src/liveSession";
+import * as liveSessionModule from "../src/liveSession";
 import { Game } from "../src/types";
 
 let passed = 0;
@@ -34,6 +35,16 @@ function check(label: string, condition: boolean, detail = ""): void {
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const SAMPLE_UUID = "a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d";
+
+type SpectatorResolver = (
+  hash: string | null | undefined,
+  storedLiveId: string | null
+) => string | null;
+const resolveSpectatorLiveId = (
+  liveSessionModule as unknown as {
+    resolveSpectatorLiveId?: SpectatorResolver;
+  }
+).resolveSpectatorLiveId;
 
 function makeGame(): Game {
   return createGame(
@@ -194,6 +205,11 @@ check(
     extractLiveSessionId(`#skl=${SAMPLE_UUID}`) === null &&
     extractLiveSessionId("") === null &&
     extractLiveSessionId(null) === null
+);
+check(
+  "legacy snapshot hashes open the normal app",
+  typeof resolveSpectatorLiveId === "function" &&
+    resolveSpectatorLiveId(`#skl=${SAMPLE_UUID}`, SAMPLE_UUID) === null
 );
 
 // --- game master lifecycle --------------------------------------------------

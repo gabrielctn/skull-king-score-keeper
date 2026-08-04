@@ -334,25 +334,14 @@ export const en: Strings = {
     statusOffline: "Reconnecting…",
     liveError:
       "Live sync hit a problem. It keeps retrying. Check your connection, or stop and start again.",
-    snapshotTitle: "No connection at the table?",
-    snapshotToggleShow: "Show offline snapshot",
-    snapshotToggleHide: "Hide offline snapshot",
-    scanHint:
-      "This QR code carries a read-only snapshot of the game: every bid, trick and bonus recorded so far.",
-    updateHint:
-      "It works with no server, but does not update on its own: players re-scan to get the latest scores.",
-    networkHint:
-      "A player's phone needs a connection the first time it opens the app; after that the snapshot works fully offline.",
     copyLink: "Copy link",
     copied: "Link copied!",
     copyError: "Could not copy the link.",
-    qrError: "This game could not be turned into a QR code.",
     qrLabel: "QR code opening the score tracking of this game",
     close: "Close",
   },
 
   spectator: {
-    eyebrow: "Read-only tracking",
     liveEyebrow: "Live tracking",
     liveBadge: "Live",
     title: "Game tracking",
@@ -360,10 +349,7 @@ export const en: Strings = {
       `Scores after round ${scored} of ${total}`,
     noRounds: "No round has been scored yet.",
     finished: "Final scores. The game is over.",
-    snapshotAt: (time) => `Scorekeeper's scores · captured at ${time}`,
     liveUpdatedAt: (time) => `Updated live · ${time}`,
-    refreshHint:
-      "This is a snapshot. To refresh it, scan the scorekeeper's QR code again.",
     connecting: "Connecting to the live game…",
     reconnecting: "Connection lost. Reconnecting…",
     endedTitle: "Live session ended",

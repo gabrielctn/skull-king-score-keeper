@@ -314,25 +314,14 @@ export const zh: Strings = {
     statusSyncing: "正在保存…",
     statusOffline: "正在重新连接…",
     liveError: "实时同步出现问题，正在持续重试。请检查网络，或停止后重新开启。",
-    snapshotTitle: "牌桌旁没有网络？",
-    snapshotToggleShow: "显示离线快照",
-    snapshotToggleHide: "隐藏离线快照",
-    scanHint:
-      "此二维码包含本局的只读快照，其中包括目前记录的每次叫牌、每一墩和每项奖励。",
-    updateHint:
-      "它无需服务器，但不会自动更新：玩家再次扫描即可获取最新比分。",
-    networkHint:
-      "玩家的手机首次打开应用时需要联网；之后快照可完全离线使用。",
     copyLink: "复制链接",
     copied: "链接已复制！",
     copyError: "无法复制链接。",
-    qrError: "无法将本局转换为二维码。",
     qrLabel: "打开本局比分跟踪的二维码",
     close: "关闭",
   },
 
   spectator: {
-    eyebrow: "只读跟踪",
     liveEyebrow: "实时跟踪",
     liveBadge: "实时",
     title: "对局跟踪",
@@ -340,9 +329,7 @@ export const zh: Strings = {
       `第 ${scored} / ${total} 回合后的比分`,
     noRounds: "尚未结算任何回合。",
     finished: "最终比分，对局已结束。",
-    snapshotAt: (time) => `记分员的比分 · 读取于 ${time}`,
     liveUpdatedAt: (time) => `实时更新 · ${time}`,
-    refreshHint: "这是一份快照。要刷新，请再次扫描记分员的二维码。",
     connecting: "正在连接实时对局…",
     reconnecting: "连接已断开，正在重新连接…",
     endedTitle: "实时会话已结束",

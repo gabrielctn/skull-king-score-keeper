@@ -24,16 +24,10 @@ network — perfect for a table with no wifi.
   and both bids are checked before the +20 bonuses are applied.
 - Editable **cards-dealt** per round (for 7–8 players or custom round structures).
 - Live per-round and running totals, with a tricks-vs-cards sanity check.
-- **Live score follow** (▦ button in the game header): players scan a QR code
-  with their own phone and get a read-only view of the standings and their
-  full round-by-round score details, bonuses included — no more asking the
-  game master. Two modes share one sheet:
-  - **Live** (real-time) through a Supabase backend: the game master starts a
-    session and every bid, trick and bonus appears on the players' phones as
-    it is recorded, no refresh.
-  - **Offline snapshot** fallback for tables with no connection: the whole
-    game is encoded inside the QR code itself (no server); players re-scan to
-    refresh. This is also what a fork gets with no backend configured.
+- **Live score follow** (Live button in the game header): the game master
+  starts a Supabase-backed session and players scan its QR code with their own
+  phones. Every bid, trick and bonus then appears automatically in a read-only
+  view with full round-by-round details, no refresh needed.
 - A built-in **rules reference** (the "?" button) covering every special card.
 - Full support for the **new Skull King expansion**: conditional 7/8 points,
   Davy Jones' Locker, the Second, and a rules reference for every new card.
@@ -232,9 +226,9 @@ If you fork/rename the repo, update `experiments.baseUrl` in `app.json` and the
 
 ## Live score follow (optional Supabase backend)
 
-The real-time half of the live-follow feature needs a tiny backend; the app
-stays a static PWA on GitHub Pages either way. Without a backend the sharing
-sheet simply offers the **offline QR snapshot** only.
+Live score follow needs a tiny backend; the app stays a static PWA on GitHub
+Pages either way. A fork without a configured backend does not expose the Live
+sharing action.
 
 To enable live mode on a fork:
 
@@ -275,7 +269,7 @@ Skull-King/
 ├── src/
 │   ├── types.ts                  # Shared types (Player, Game, RoundEntry)
 │   ├── scoring.ts                # Pure scoring engine (fully unit-tested)
-│   ├── shareLink.ts              # Offline snapshot codec (game ↔ QR payload)
+│   ├── appUrl.ts                 # Canonical PWA URL + share-link URL helpers
 │   ├── liveSession.ts            # Live-follow sync (Supabase transport + manager)
 │   ├── liveConfig.ts             # Supabase URL + publishable key (public)
 │   ├── qr.ts                     # QR image (data URL) rendering
