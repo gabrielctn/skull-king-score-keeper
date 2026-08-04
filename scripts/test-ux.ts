@@ -437,7 +437,7 @@ for (const [language, strings] of Object.entries({ en, fr, es, de, ar, zh })) {
   );
   check(
     `${language} release notes describe this release`,
-    strings.whatsNew.items.length === 7
+    strings.whatsNew.items.length === 8
   );
 }
 

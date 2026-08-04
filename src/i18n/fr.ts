@@ -81,6 +81,7 @@ export const fr: Strings = {
     automaticUpdatesBody:
       "Les applications installées téléchargent désormais chaque nouvelle version automatiquement et l’activent dès que l’appareil est en ligne.",
     items: [
+      "L’application reste gratuite et sans publicité : l’accueil indique désormais ce que coûte sa présence sur l’App Store (100 €/an), et une partie terminée propose parfois de contribuer à cette facture.",
       "Le partage des scores utilise désormais uniquement des sessions QR en direct, afin que chaque joueur voie les mises à jour en temps réel.",
       "Inviter votre équipage et rejoindre une autre table sont désormais deux actions distinctes, directement visibles dans les paramètres.",
       "Tables de jeu partagées : donnez un nom à la table de votre équipage et invitez vos amis par lien ou QR code. Chaque membre peut tenir les scores, toutes les parties rejoignent l’historique et le classement partagés, et un même téléphone peut garder plusieurs tables, une par groupe d’amis.",

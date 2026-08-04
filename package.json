@@ -1,6 +1,6 @@
 {
   "name": "skull-king-crew-ledger",
-  "version": "1.10.2",
+  "version": "1.11.0",
   "main": "index.ts",
   "scripts": {
     "start": "expo start --web",
