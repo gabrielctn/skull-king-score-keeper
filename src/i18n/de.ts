@@ -64,6 +64,7 @@ export const de: Strings = {
     automaticUpdatesBody:
       "Installierte Apps laden jede neue Version automatisch und wechseln zu ihr, sobald das Gerät online ist.",
     items: [
+      "Die Punkte werden jetzt ausschließlich über Live-Sitzungen per QR-Code geteilt, damit alle Spieler Aktualisierungen in Echtzeit sehen.",
       "Die eigene Crew einzuladen und einem anderen Tisch beizutreten sind jetzt getrennte Aktionen, die in den Einstellungen direkt sichtbar sind.",
       "Gemeinsame Spieltische: Gib dem Tisch deiner Crew einen Namen und lade Freunde per Link oder QR-Code ein. Wer beitritt, kann die Punkte führen, jedes Spiel landet in der gemeinsamen Historie und Rangliste, und ein Handy kann mehrere Tische halten, einen pro Freundesgruppe.",
       "Die Regeln lassen sich jetzt während des Spiels über den neuen ⚙-Button ändern: Erweiterung aktivieren, Wertung wechseln und mehr. Bereits gewertete Runden werden automatisch neu berechnet.",

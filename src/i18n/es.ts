@@ -66,6 +66,7 @@ export const es: Strings = {
     automaticUpdatesBody:
       "Las aplicaciones instaladas ahora descargan automáticamente cada nueva versión y la activan en cuanto el dispositivo se conecta a internet.",
     items: [
+      "Ahora los puntos se comparten únicamente mediante sesiones QR en directo, para que todos los jugadores vean las actualizaciones en tiempo real.",
       "Invitar a tu tripulación y unirse a otra mesa son ahora acciones separadas y visibles directamente en los ajustes.",
       "Mesas de juego compartidas: ponle nombre a la mesa de tu tripulación e invita a tus amigos con un enlace o código QR. Cualquiera que se una puede anotar los puntos, todas las partidas van al historial y la clasificación compartidos, y un mismo teléfono puede tener varias mesas, una por grupo de amigos.",
       "Las reglas ahora pueden cambiarse durante la partida con el nuevo botón ⚙: activar la expansión, cambiar la puntuación y más. Las rondas ya anotadas se recalculan automáticamente.",
