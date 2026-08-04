@@ -1,5 +1,13 @@
 import { Strings } from "./types";
 
+/** English ordinals: 1st, 2nd, 3rd, 4th, with "th" for all the teens. */
+function ordinal(value: number): string {
+  const lastTwo = value % 100;
+  if (lastTwo >= 11 && lastTwo <= 13) return `${value}th`;
+  const suffix = { 1: "st", 2: "nd", 3: "rd" }[value % 10] ?? "th";
+  return `${value}${suffix}`;
+}
+
 export const en: Strings = {
   langLabel: "EN",
 
@@ -408,35 +416,95 @@ export const en: Strings = {
     emptyTitle: "No tales to tell yet",
     emptyBody: "Finish a game to start building your crew's history.",
     leaderboard: "Leaderboard",
-    records: "Records",
     scoreEvolution: "Score evolution",
-    gamesPlayed: "Games played",
-    wins: "Wins",
-    winRate: "Win rate",
-    exactBidRate: "Exact-bid rate",
-    zeroBidRate: "Zero-bid success",
-    averagePoints: "Average points",
-    bestScore: "Best score",
-    worstScore: "Worst score",
-    winStreak: "Current win streak",
-    recentGames: "Recent games",
-    bestFinalScore: "Best final score",
-    worstFinalScore: "Worst final score",
-    worstRound: "Worst round",
-    bestExactBid: "Best exact-bid rate",
+    hallOfFame: "Hall of fame",
+    hallOfShame: "Hall of shame",
+
     totalGames: "Games logged",
     totalRounds: "Rounds played",
     totalPlunder: "Points plundered",
-    biggestRound: "Biggest single round",
-    longestStreak: "Hottest streak",
-    mostReckless: "Most reckless",
-    krakenBait: "Kraken bait",
+    totalPlayers: "Crew members",
+
+    bestFinalScore: "Best final score",
+    bestFinalScoreHint: "The highest total anyone has ever finished a game on.",
+    biggestRound: "Biggest round",
+    biggestRoundHint: "The most points banked in a single round.",
+    bestExactBid: "Sharpest bidder",
+    bestExactBidHint: (rounds) =>
+      `The best exact-bid rate, over at least ${rounds} rounds played.`,
     zeroBidMaster: "Master of nothing",
-    longestWinStreak: "Longest win streak",
-    podiumRate: "Podium rate",
+    zeroBidMasterHint: (zeroBids) =>
+      `The best record at bidding zero and taking nothing, over at least ${zeroBids} zero bids.`,
+    longestStreak: "Hottest streak",
+    longestStreakHint: "The longest run of games won back to back.",
+    biggestComeback: "Biggest comeback",
+    biggestComebackHint:
+      "The most places climbed between the halfway standings and the final ones.",
+    biggestBonusHaul: "Richest haul",
+    biggestBonusHaulHint:
+      "The most bonus points won from special cards in a single game.",
+    worstFinalScore: "Worst final score",
+    worstFinalScoreHint: "The lowest total anyone has ever finished a game on.",
+    worstRound: "Worst round",
+    worstRoundHint: "The deepest hole dug in a single round.",
+    mostLastPlaces: "Most last places",
+    mostLastPlacesHint:
+      "Finished behind everyone else at the table more often than anyone.",
+    boldestBidder: "Boldest bidder",
+    boldestBidderHint:
+      "Claims the biggest share of every hand dealt: brave, or reckless.",
+
+    recordUnclaimed: "Not claimed yet",
+    unitPoints: "pts",
+    unitWins: (count) => (count === 1 ? "win" : "wins"),
+    unitPlaces: (count) => (count === 1 ? "place" : "places"),
+    unitGames: (count) => (count === 1 ? "game" : "games"),
+    roundMeta: (round, date) => `Round ${round} · ${date}`,
+    sampleMeta: (successes, attempts) =>
+      `${successes} of ${attempts} ${attempts === 1 ? "round" : "rounds"}`,
+    comebackMeta: (fromRank, toRank, date) =>
+      `${ordinal(fromRank)} → ${ordinal(toRank)} · ${date}`,
+    lastPlaceMeta: (rate, games) =>
+      `${rate} of ${games} ${games === 1 ? "game" : "games"}`,
+    appetiteMeta: (averageBid, rounds) =>
+      `${averageBid} tricks a round · ${rounds} ${
+        rounds === 1 ? "round" : "rounds"
+      }`,
+
+    metricsResults: "Results",
+    metricsBidding: "Bidding",
+    metricsScoring: "Scoring",
+
+    gamesPlayed: "Games played",
+    roundsPlayed: "Rounds played",
+    wins: "Wins",
+    winRate: "Win rate",
+    rivalsBeaten: "Rivals beaten",
     averageRank: "Average rank",
+    lastPlaces: "Last places",
+    winStreak: "Current win streak",
+    longestWinStreak: "Longest win streak",
+    exactBidRate: "Exact-bid rate",
+    zeroBidRate: "Zero-bid success",
+    bidAppetite: "Bid appetite",
+    averagePoints: "Points per game",
+    pointsPerRound: "Points per round",
+    bestScore: "Best score",
+    worstScore: "Worst score",
     bestRoundScore: "Best round",
     worstRoundScore: "Worst round",
+    bonusPoints: "Bonus points",
+
+    outOfGames: (count, games) =>
+      `${count} of ${games} ${games === 1 ? "game" : "games"}`,
+    seatsCaption: (seats) => `out of ${seats} players`,
+    perGame: "Average across every game",
+    rivalsBeatenCaption: "Share of opponents finished ahead of",
+    perRound: "Average across every round",
+    fromSpecialCards: "Won from special cards",
+    bidCaption: (averageBid) => `${averageBid} tricks a round`,
+
+    recentGames: "Recent games",
     unavailable: "Not available",
     chartLabel: (leader, rounds) =>
       `Score evolution after ${rounds} ${rounds === 1 ? "round" : "rounds"}; ${leader} leads.`,
@@ -445,19 +513,8 @@ export const en: Strings = {
         wins === 1 ? "win" : "wins"
       }`,
     bidSummary: (successes, attempts) => `${successes} of ${attempts}`,
-    scoreRecordHolder: (name, score, date) =>
-      `${name} · ${score} points · ${date}`,
-    roundRecordHolder: (name, score, round, date) =>
-      `${name} · ${score} points in round ${round} · ${date}`,
-    rateRecordHolder: (name, rate, successes, attempts) =>
-      `${name} · ${rate} (${successes}/${attempts})`,
-    streakRecordHolder: (name, streak) =>
-      `${name} · ${streak} ${streak === 1 ? "win" : "wins"} in a row`,
-    recklessRecordHolder: (name, averageBid) => `${name} · ${averageBid} avg bid`,
-    countRecordHolder: (name, count) =>
-      `${name} · ${count} ${count === 1 ? "time" : "times"}`,
     recentGame: (date, rank, score) =>
-      `${date} · rank ${rank} · ${score} points`,
+      `${date} · ${ordinal(rank)} · ${score} points`,
   },
 
   share: {

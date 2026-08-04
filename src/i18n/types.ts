@@ -430,61 +430,103 @@ export interface Strings {
     emptyTitle: string;
     emptyBody: string;
     leaderboard: string;
-    records: string;
     scoreEvolution: string;
-    gamesPlayed: string;
-    wins: string;
-    winRate: string;
-    exactBidRate: string;
-    zeroBidRate: string;
-    averagePoints: string;
-    bestScore: string;
-    worstScore: string;
-    winStreak: string;
-    recentGames: string;
-    bestFinalScore: string;
-    worstFinalScore: string;
-    worstRound: string;
-    bestExactBid: string;
+    /** The two record walls: bragging rights and the ones nobody wants. */
+    hallOfFame: string;
+    hallOfShame: string;
+
     /** Crew-total tiles at the top of the group stats. */
     totalGames: string;
     totalRounds: string;
     totalPlunder: string;
-    /** Extra group-record labels. */
+    totalPlayers: string;
+
+    /**
+     * Record labels, each paired with a hint spelling out exactly what the
+     * app measured — every record has to be readable without guessing.
+     */
+    bestFinalScore: string;
+    bestFinalScoreHint: string;
     biggestRound: string;
-    longestStreak: string;
-    mostReckless: string;
-    krakenBait: string;
+    biggestRoundHint: string;
+    bestExactBid: string;
+    bestExactBidHint: (rounds: number) => string;
     zeroBidMaster: string;
-    /** Extra per-player metric labels. */
-    longestWinStreak: string;
-    podiumRate: string;
+    zeroBidMasterHint: (zeroBids: number) => string;
+    longestStreak: string;
+    longestStreakHint: string;
+    biggestComeback: string;
+    biggestComebackHint: string;
+    biggestBonusHaul: string;
+    biggestBonusHaulHint: string;
+    worstFinalScore: string;
+    worstFinalScoreHint: string;
+    worstRound: string;
+    worstRoundHint: string;
+    mostLastPlaces: string;
+    mostLastPlacesHint: string;
+    boldestBidder: string;
+    boldestBidderHint: string;
+
+    /** Record-card values, units and context lines. */
+    recordUnclaimed: string;
+    unitPoints: string;
+    unitWins: (count: number) => string;
+    unitPlaces: (count: number) => string;
+    unitGames: (count: number) => string;
+    /** "Round 7 · 4 Aug 2026" */
+    roundMeta: (round: number, date: string) => string;
+    /** "18 of 24 rounds" */
+    sampleMeta: (successes: number, attempts: number) => string;
+    /** "4th → 1st · 4 Aug 2026" */
+    comebackMeta: (fromRank: number, toRank: number, date: string) => string;
+    /** "25% of 12 games" (rate is already formatted) */
+    lastPlaceMeta: (rate: string, games: number) => string;
+    /** "1.8 tricks a round · 30 rounds" (averageBid is already formatted) */
+    appetiteMeta: (averageBid: string, rounds: number) => string;
+
+    /** Per-player metric groups. */
+    metricsResults: string;
+    metricsBidding: string;
+    metricsScoring: string;
+
+    /** Per-player metric labels. */
+    gamesPlayed: string;
+    roundsPlayed: string;
+    wins: string;
+    winRate: string;
+    rivalsBeaten: string;
     averageRank: string;
+    lastPlaces: string;
+    winStreak: string;
+    longestWinStreak: string;
+    exactBidRate: string;
+    zeroBidRate: string;
+    bidAppetite: string;
+    averagePoints: string;
+    pointsPerRound: string;
+    bestScore: string;
+    worstScore: string;
     bestRoundScore: string;
     worstRoundScore: string;
+    bonusPoints: string;
+
+    /** Metric captions that give a bare number its context. */
+    outOfGames: (count: number, games: number) => string;
+    /** "out of 4 players" (seats is already formatted) */
+    seatsCaption: (seats: string) => string;
+    perGame: string;
+    rivalsBeatenCaption: string;
+    perRound: string;
+    fromSpecialCards: string;
+    /** "1.8 tricks a round" (averageBid is already formatted) */
+    bidCaption: (averageBid: string) => string;
+
+    recentGames: string;
     unavailable: string;
     chartLabel: (leader: string, rounds: number) => string;
     playerSummary: (games: number, wins: number) => string;
     bidSummary: (successes: number, attempts: number) => string;
-    scoreRecordHolder: (name: string, score: number, date: string) => string;
-    roundRecordHolder: (
-      name: string,
-      score: number,
-      round: number,
-      date: string
-    ) => string;
-    rateRecordHolder: (
-      name: string,
-      rate: string,
-      successes: number,
-      attempts: number
-    ) => string;
-    /** "{name} · {streak} wins in a row" */
-    streakRecordHolder: (name: string, streak: number) => string;
-    /** "{name} · {averageBid} avg bid" (averageBid is already formatted) */
-    recklessRecordHolder: (name: string, averageBid: string) => string;
-    /** "{name} · {count}×" */
-    countRecordHolder: (name: string, count: number) => string;
     recentGame: (date: string, rank: number, score: number) => string;
   };
 

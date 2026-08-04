@@ -1,5 +1,8 @@
 import { Strings } from "./types";
 
+/** Ordinales españoles abreviados: 1.º, 2.º, 3.º… */
+const ordinal = (value: number) => `${value}.º`;
+
 export const es: Strings = {
   langLabel: "ES",
 
@@ -419,35 +422,97 @@ export const es: Strings = {
     emptyBody:
       "Termina una partida para empezar a crear el historial de tu tripulación.",
     leaderboard: "Clasificación",
-    records: "Récords",
     scoreEvolution: "Evolución de la puntuación",
-    gamesPlayed: "Partidas jugadas",
-    wins: "Victorias",
-    winRate: "Porcentaje de victorias",
-    exactBidRate: "Envites exactos",
-    zeroBidRate: "Éxito con envite cero",
-    averagePoints: "Media de puntos",
-    bestScore: "Mejor puntuación",
-    worstScore: "Peor puntuación",
-    winStreak: "Racha de victorias actual",
-    recentGames: "Partidas recientes",
-    bestFinalScore: "Mejor puntuación final",
-    worstFinalScore: "Peor puntuación final",
-    worstRound: "Peor ronda",
-    bestExactBid: "Mejor porcentaje de envites exactos",
+    hallOfFame: "Salón de la fama",
+    hallOfShame: "Sentina",
+
     totalGames: "Partidas",
     totalRounds: "Rondas",
     totalPlunder: "Botín",
+    totalPlayers: "Tripulantes",
+
+    bestFinalScore: "Mejor puntuación final",
+    bestFinalScoreHint:
+      "La puntuación más alta con la que alguien ha terminado una partida.",
     biggestRound: "Mayor ronda",
-    longestStreak: "Mejor racha",
-    mostReckless: "El más temerario",
-    krakenBait: "Cebo del kraken",
+    biggestRoundHint: "El mayor botín conseguido en una sola ronda.",
+    bestExactBid: "Envite más certero",
+    bestExactBidHint: (rounds) =>
+      `El mejor porcentaje de envites exactos, con al menos ${rounds} rondas jugadas.`,
     zeroBidMaster: "Maestro del cero",
-    longestWinStreak: "Mayor racha de victorias",
-    podiumRate: "Tasa de podio",
+    zeroBidMasterHint: (zeroBids) =>
+      `El mejor historial envidando cero y sin ganar bazas, con al menos ${zeroBids} envites a cero.`,
+    longestStreak: "Mejor racha",
+    longestStreakHint: "La racha más larga de partidas ganadas seguidas.",
+    biggestComeback: "Mayor remontada",
+    biggestComebackHint:
+      "Los puestos ganados entre la clasificación de mitad de partida y la final.",
+    biggestBonusHaul: "Botín más rico",
+    biggestBonusHaulHint:
+      "Los puntos de bonificación de cartas especiales conseguidos en una partida.",
+    worstFinalScore: "Peor puntuación final",
+    worstFinalScoreHint:
+      "La puntuación más baja con la que alguien ha terminado una partida.",
+    worstRound: "Peor ronda",
+    worstRoundHint: "El mayor agujero cavado en una sola ronda.",
+    mostLastPlaces: "Más últimos puestos",
+    mostLastPlacesHint:
+      "Ha terminado por detrás de toda la mesa más veces que nadie.",
+    boldestBidder: "Envite más audaz",
+    boldestBidderHint:
+      "Reclama la mayor parte de cada mano repartida: valentía o temeridad.",
+
+    recordUnclaimed: "Aún sin dueño",
+    unitPoints: "pts",
+    unitWins: (count) => (count === 1 ? "victoria" : "victorias"),
+    unitPlaces: (count) => (count === 1 ? "puesto" : "puestos"),
+    unitGames: (count) => (count === 1 ? "partida" : "partidas"),
+    roundMeta: (round, date) => `Ronda ${round} · ${date}`,
+    sampleMeta: (successes, attempts) =>
+      `${successes} de ${attempts} ${attempts === 1 ? "ronda" : "rondas"}`,
+    comebackMeta: (fromRank, toRank, date) =>
+      `${ordinal(fromRank)} → ${ordinal(toRank)} · ${date}`,
+    lastPlaceMeta: (rate, games) =>
+      `${rate} de ${games} ${games === 1 ? "partida" : "partidas"}`,
+    appetiteMeta: (averageBid, rounds) =>
+      `${averageBid} bazas por ronda · ${rounds} ${
+        rounds === 1 ? "ronda" : "rondas"
+      }`,
+
+    metricsResults: "Resultados",
+    metricsBidding: "Envites",
+    metricsScoring: "Puntos",
+
+    gamesPlayed: "Partidas jugadas",
+    roundsPlayed: "Rondas jugadas",
+    wins: "Victorias",
+    winRate: "Porcentaje de victorias",
+    rivalsBeaten: "Rivales superados",
     averageRank: "Puesto medio",
+    lastPlaces: "Últimos puestos",
+    winStreak: "Racha de victorias actual",
+    longestWinStreak: "Mayor racha de victorias",
+    exactBidRate: "Envites exactos",
+    zeroBidRate: "Éxito con envite cero",
+    bidAppetite: "Apetito de envite",
+    averagePoints: "Puntos por partida",
+    pointsPerRound: "Puntos por ronda",
+    bestScore: "Mejor puntuación",
+    worstScore: "Peor puntuación",
     bestRoundScore: "Mejor ronda",
     worstRoundScore: "Peor ronda",
+    bonusPoints: "Puntos de bonificación",
+
+    outOfGames: (count, games) =>
+      `${count} de ${games} ${games === 1 ? "partida" : "partidas"}`,
+    seatsCaption: (seats) => `de ${seats} jugadores`,
+    perGame: "Media de todas las partidas",
+    rivalsBeatenCaption: "Parte de los rivales que ha dejado atrás",
+    perRound: "Media de todas las rondas",
+    fromSpecialCards: "Ganados con cartas especiales",
+    bidCaption: (averageBid) => `${averageBid} bazas por ronda`,
+
+    recentGames: "Partidas recientes",
     unavailable: "No disponible",
     chartLabel: (leader, rounds) =>
       `Evolución de la puntuación tras ${rounds} ${rounds === 1 ? "ronda" : "rondas"}; ${leader} va en cabeza.`,
@@ -456,20 +521,8 @@ export const es: Strings = {
         wins === 1 ? "victoria" : "victorias"
       }`,
     bidSummary: (successes, attempts) => `${successes} de ${attempts}`,
-    scoreRecordHolder: (name, score, date) =>
-      `${name} · ${score} puntos · ${date}`,
-    roundRecordHolder: (name, score, round, date) =>
-      `${name} · ${score} puntos en la ronda ${round} · ${date}`,
-    rateRecordHolder: (name, rate, successes, attempts) =>
-      `${name} · ${rate} (${successes}/${attempts})`,
-    streakRecordHolder: (name, streak) =>
-      `${name} · ${streak} ${streak === 1 ? "victoria" : "victorias"} seguidas`,
-    recklessRecordHolder: (name, averageBid) =>
-      `${name} · ${averageBid} de envite medio`,
-    countRecordHolder: (name, count) =>
-      `${name} · ${count} ${count === 1 ? "vez" : "veces"}`,
     recentGame: (date, rank, score) =>
-      `${date} · puesto ${rank} · ${score} puntos`,
+      `${date} · ${ordinal(rank)} · ${score} puntos`,
   },
 
   share: {

@@ -1,5 +1,8 @@
 import { Strings } from "./types";
 
+/** Deutsche Ordnungszahlen werden mit einem Punkt geschrieben: 1., 2., 3. */
+const ordinal = (value: number) => `${value}.`;
+
 export const de: Strings = {
   langLabel: "DE",
 
@@ -412,35 +415,97 @@ export const de: Strings = {
     emptyBody:
       "Beendet ein Spiel, um die Geschichte eurer Crew zu schreiben.",
     leaderboard: "Rangliste",
-    records: "Rekorde",
     scoreEvolution: "Punkteverlauf",
-    gamesPlayed: "Gespielte Partien",
-    wins: "Siege",
-    winRate: "Siegquote",
-    exactBidRate: "Trefferquote der Ansagen",
-    zeroBidRate: "Erfolgreiche Nullansagen",
-    averagePoints: "Punktedurchschnitt",
-    bestScore: "Bestes Ergebnis",
-    worstScore: "Schlechtestes Ergebnis",
-    winStreak: "Aktuelle Siegesserie",
-    recentGames: "Letzte Partien",
-    bestFinalScore: "Bestes Endergebnis",
-    worstFinalScore: "Schlechtestes Endergebnis",
-    worstRound: "Schlechteste Runde",
-    bestExactBid: "Beste Ansagequote",
+    hallOfFame: "Ruhmeshalle",
+    hallOfShame: "Bilge",
+
     totalGames: "Partien",
     totalRounds: "Runden",
     totalPlunder: "Erbeutete Punkte",
+    totalPlayers: "Crewmitglieder",
+
+    bestFinalScore: "Bestes Endergebnis",
+    bestFinalScoreHint:
+      "Das höchste Endergebnis, mit dem je jemand eine Partie beendet hat.",
     biggestRound: "Beste Einzelrunde",
-    longestStreak: "Beste Serie",
-    mostReckless: "Am tollkühnsten",
-    krakenBait: "Kraken-Köder",
+    biggestRoundHint: "Die meisten Punkte in einer einzigen Runde.",
+    bestExactBid: "Treffsicherste Ansage",
+    bestExactBidHint: (rounds) =>
+      `Die beste Trefferquote der Ansagen, ab ${rounds} gespielten Runden.`,
     zeroBidMaster: "Meister der Null",
-    longestWinStreak: "Längste Siegesserie",
-    podiumRate: "Podestquote",
+    zeroBidMasterHint: (zeroBids) =>
+      `Die beste Bilanz bei gehaltenen Nullansagen, ab ${zeroBids} Nullansagen.`,
+    longestStreak: "Beste Serie",
+    longestStreakHint: "Die längste Folge von Partien, die am Stück gewonnen wurden.",
+    biggestComeback: "Größte Aufholjagd",
+    biggestComebackHint:
+      "Die meisten Plätze, die zwischen Halbzeitstand und Endstand gutgemacht wurden.",
+    biggestBonusHaul: "Reichste Beute",
+    biggestBonusHaulHint:
+      "Die meisten Bonuspunkte aus Sonderkarten in einer einzigen Partie.",
+    worstFinalScore: "Schlechtestes Endergebnis",
+    worstFinalScoreHint:
+      "Das niedrigste Endergebnis, mit dem je jemand eine Partie beendet hat.",
+    worstRound: "Schlechteste Runde",
+    worstRoundHint: "Das tiefste Loch, das in einer einzigen Runde gegraben wurde.",
+    mostLastPlaces: "Die meisten letzten Plätze",
+    mostLastPlacesHint:
+      "Landete öfter als alle anderen hinter dem gesamten Tisch.",
+    boldestBidder: "Kühnste Ansage",
+    boldestBidderHint:
+      "Beansprucht den größten Anteil jedes Blatts: mutig oder tollkühn.",
+
+    recordUnclaimed: "Noch nicht vergeben",
+    unitPoints: "Pkt.",
+    unitWins: (count) => (count === 1 ? "Sieg" : "Siege"),
+    unitPlaces: (count) => (count === 1 ? "Platz" : "Plätze"),
+    unitGames: (count) => (count === 1 ? "Partie" : "Partien"),
+    roundMeta: (round, date) => `Runde ${round} · ${date}`,
+    sampleMeta: (successes, attempts) =>
+      `${successes} von ${attempts} ${attempts === 1 ? "Runde" : "Runden"}`,
+    comebackMeta: (fromRank, toRank, date) =>
+      `${ordinal(fromRank)} → ${ordinal(toRank)} · ${date}`,
+    lastPlaceMeta: (rate, games) =>
+      `${rate} von ${games} ${games === 1 ? "Partie" : "Partien"}`,
+    appetiteMeta: (averageBid, rounds) =>
+      `${averageBid} Stiche pro Runde · ${rounds} ${
+        rounds === 1 ? "Runde" : "Runden"
+      }`,
+
+    metricsResults: "Ergebnisse",
+    metricsBidding: "Ansagen",
+    metricsScoring: "Punkte",
+
+    gamesPlayed: "Gespielte Partien",
+    roundsPlayed: "Gespielte Runden",
+    wins: "Siege",
+    winRate: "Siegquote",
+    rivalsBeaten: "Geschlagene Gegner",
     averageRank: "Durchschnittsplatz",
+    lastPlaces: "Letzte Plätze",
+    winStreak: "Aktuelle Siegesserie",
+    longestWinStreak: "Längste Siegesserie",
+    exactBidRate: "Trefferquote der Ansagen",
+    zeroBidRate: "Erfolgreiche Nullansagen",
+    bidAppetite: "Ansage-Appetit",
+    averagePoints: "Punkte pro Partie",
+    pointsPerRound: "Punkte pro Runde",
+    bestScore: "Bestes Ergebnis",
+    worstScore: "Schlechtestes Ergebnis",
     bestRoundScore: "Beste Runde",
     worstRoundScore: "Schlechteste Runde",
+    bonusPoints: "Bonuspunkte",
+
+    outOfGames: (count, games) =>
+      `${count} von ${games} ${games === 1 ? "Partie" : "Partien"}`,
+    seatsCaption: (seats) => `von ${seats} Mitspielenden`,
+    perGame: "Schnitt über alle Partien",
+    rivalsBeatenCaption: "Anteil der Gegner, die hinter dir landen",
+    perRound: "Schnitt über alle Runden",
+    fromSpecialCards: "Aus Sonderkarten gewonnen",
+    bidCaption: (averageBid) => `${averageBid} Stiche pro Runde`,
+
+    recentGames: "Letzte Partien",
     unavailable: "Nicht verfügbar",
     chartLabel: (leader, rounds) =>
       `Punkteverlauf nach ${rounds} ${
@@ -451,19 +516,8 @@ export const de: Strings = {
         wins === 1 ? "Sieg" : "Siege"
       }`,
     bidSummary: (successes, attempts) => `${successes} von ${attempts}`,
-    scoreRecordHolder: (name, score, date) =>
-      `${name} · ${score} Punkte · ${date}`,
-    roundRecordHolder: (name, score, round, date) =>
-      `${name} · ${score} Punkte in Runde ${round} · ${date}`,
-    rateRecordHolder: (name, rate, successes, attempts) =>
-      `${name} · ${rate} (${successes}/${attempts})`,
-    streakRecordHolder: (name, streak) =>
-      `${name} · ${streak} ${streak === 1 ? "Sieg" : "Siege"} in Folge`,
-    recklessRecordHolder: (name, averageBid) =>
-      `${name} · ${averageBid} Ansage im Schnitt`,
-    countRecordHolder: (name, count) => `${name} · ${count}-mal`,
     recentGame: (date, rank, score) =>
-      `${date} · Platz ${rank} · ${score} Punkte`,
+      `${date} · ${ordinal(rank)} · ${score} Punkte`,
   },
 
   share: {

@@ -1,5 +1,22 @@
-import { playerScoreHistory, standings } from "./scoring";
+import {
+  PlayerRoundScoreBreakdown,
+  playerScoreHistory,
+  standings,
+} from "./scoring";
 import { Game, Player } from "./types";
+
+/**
+ * Recorded rounds a player needs before a per-round record (exact-bid rate,
+ * bid appetite) names them. One classic ten-round game clears it, and it stops
+ * a single lucky round from outranking a whole season of play.
+ */
+export const MIN_RATED_ROUNDS = 10;
+
+/**
+ * Zero bids a player needs before the zero-bid record names them. Zero bids
+ * are far rarer than ordinary rounds, so the bar is lower.
+ */
+export const MIN_ZERO_BIDS = 3;
 
 export interface Rate {
   successes: number;
@@ -21,30 +38,47 @@ export interface PlayerStats {
   name: string;
   lastPlayedAt: number;
   gamesPlayed: number;
+  /** Recorded rounds actually played — the denominator of every round rate. */
+  roundsPlayed: number;
   wins: number;
   winRate: number;
   exactBids: Rate;
   zeroBids: Rate;
   averagePoints: number;
+  /** Mean points per recorded round, comparable across game lengths. */
+  pointsPerRound: number;
   bestFinalScore: number | null;
   /** Lowest final score this player has ever posted. */
   worstFinalScore: number | null;
   currentWinStreak: number;
   /** Longest run of consecutive wins ever, not just the current one. */
   longestWinStreak: number;
-  /** Top-three finishes and their share of games played. */
-  podiums: number;
-  podiumRate: number;
+  /**
+   * Mean share of opponents finished ahead of, 0-1. A podium rate says almost
+   * nothing at a three-seat table, where everybody is on it; this asks the
+   * same question in a way that compares across table sizes.
+   */
+  rivalsBeaten: number;
   /** Mean finishing position (1 = winner); lower is better. */
   averageRank: number;
-  /** Last-place finishes — the "kraken bait" counter. */
+  /** Mean seats at the tables played, so an average rank can be read. */
+  averageTableSize: number;
+  /** Games finished behind every opponent, and their share of games played. */
   lastPlaces: number;
+  lastPlaceRate: number;
   /** Highest single-round score this player has ever posted. */
   bestRound: number | null;
   /** Lowest single-round score this player has ever posted. */
   worstRound: number | null;
-  /** Mean tricks bid per recorded round — the recklessness gauge. */
+  /** Mean tricks bid per recorded round. */
   averageBid: number;
+  /**
+   * Mean share of the dealt hand bid for, 0-1. Unlike a raw bid average this
+   * compares fairly between a one-card round and a ten-card one.
+   */
+  bidAggression: number;
+  /** Net points won from special cards, i.e. every scoring line but the bid. */
+  bonusPoints: number;
   recentGames: RecentPlayerGame[];
 }
 
@@ -75,18 +109,37 @@ export interface StreakRecord {
   streak: number;
 }
 
-/** A holder plus their mean tricks bid per round. */
-export interface AverageBidRecord {
+/** A holder plus how much of every hand they claim when bidding. */
+export interface BidAppetiteRecord {
   identity: string;
   name: string;
+  /** Mean share of the dealt hand bid for, 0-1. */
+  aggression: number;
+  /** The same appetite expressed as raw tricks bid per round. */
   averageBid: number;
+  /** Rounds behind the average, so the card can show its sample. */
+  roundsPlayed: number;
 }
 
-/** A holder plus a simple tally (e.g. last-place finishes). */
+/** A holder plus a tally and the games that tally came out of. */
 export interface CountRecord {
   identity: string;
   name: string;
   count: number;
+  /** Games played, so a raw tally can be read as a share. */
+  outOf: number;
+}
+
+/** The biggest climb between the halfway standings and the final ones. */
+export interface ComebackRecord {
+  identity: string;
+  name: string;
+  placesGained: number;
+  /** Rank at the halfway point, and the rank it turned into. */
+  fromRank: number;
+  toRank: number;
+  gameId: string;
+  playedAt: number;
 }
 
 export interface GroupRecords {
@@ -94,16 +147,21 @@ export interface GroupRecords {
   /** Lowest score anyone has ever finished a game with. */
   worstFinalScore: FinalScoreRecord | null;
   worstRound: RoundScoreRecord | null;
+  /** Best exact-bid rate over at least MIN_RATED_ROUNDS rounds. */
   bestExactBidRate: ExactBidRecord | null;
   /** Highest single-round haul anyone has ever scored. */
   biggestRound: RoundScoreRecord | null;
   /** Longest historical winning streak across the crew. */
   longestStreak: StreakRecord | null;
-  /** Highest average bid — the boldest (or most foolhardy) captain. */
-  mostReckless: AverageBidRecord | null;
-  /** Most last-place finishes — served most often to the kraken. */
-  krakenBait: CountRecord | null;
-  /** Best zero-bid success rate with a meaningful sample. */
+  /** Most places climbed after the halfway point of one game. */
+  biggestComeback: ComebackRecord | null;
+  /** Most special-card points banked in one game; `score` is that haul. */
+  biggestBonusHaul: FinalScoreRecord | null;
+  /** Biggest share of the hand claimed, over at least MIN_RATED_ROUNDS. */
+  boldestBidder: BidAppetiteRecord | null;
+  /** Most games finished behind every opponent at the table. */
+  mostLastPlaces: CountRecord | null;
+  /** Best zero-bid success rate over at least MIN_ZERO_BIDS zero bids. */
   zeroBidMaster: ExactBidRecord | null;
 }
 
@@ -115,6 +173,8 @@ export interface StatsSummary {
   totalRounds: number;
   /** Sum of every player's final score across every finished game. */
   totalPlunder: number;
+  /** Distinct players who appear in at least one finished game. */
+  totalPlayers: number;
 }
 
 export interface StatsSnapshot {
@@ -160,20 +220,25 @@ interface PlayerBucket {
   name: string;
   lastPlayedAt: number;
   gamesPlayed: number;
+  roundsPlayed: number;
   wins: number;
   exactSuccesses: number;
   exactAttempts: number;
   zeroSuccesses: number;
   zeroAttempts: number;
   totalPoints: number;
+  bonusPoints: number;
   bestFinalScore: number | null;
   worstFinalScore: number | null;
-  podiums: number;
+  rivalShareSum: number;
+  rivalGames: number;
   rankSum: number;
+  seatSum: number;
   lastPlaces: number;
   bestRound: number | null;
   worstRound: number | null;
   bidSum: number;
+  aggressionSum: number;
   recentGames: RecentPlayerGame[];
 }
 
@@ -182,6 +247,10 @@ interface FinalRecordCandidate extends FinalScoreRecord {
 }
 
 interface RoundRecordCandidate extends RoundScoreRecord {
+  playerId: string;
+}
+
+interface ComebackCandidate extends ComebackRecord {
   playerId: string;
 }
 
@@ -411,6 +480,36 @@ const compareBiggestRound = (a: RoundRecordCandidate, b: RoundRecordCandidate) =
 const compareWorstRound = (a: RoundRecordCandidate, b: RoundRecordCandidate) =>
   a.score - b.score || compareRoundTiebreak(a, b);
 
+const compareComeback = (a: ComebackCandidate, b: ComebackCandidate) =>
+  b.placesGained - a.placesGained ||
+  b.playedAt - a.playedAt ||
+  compareText(a.identity, b.identity) ||
+  compareText(a.gameId, b.gameId) ||
+  compareText(a.playerId, b.playerId);
+
+/**
+ * Points a round won from special cards: every scoring line except the bid
+ * itself. Lines that were recorded but did not apply already carry 0 points,
+ * and a lost Rascal wager or a captured 7 legitimately counts against the
+ * haul, so a plain sum is the honest total.
+ */
+function roundBonusPoints(round: PlayerRoundScoreBreakdown): number {
+  return round.items.reduce(
+    (sum, item) => (item.key === "bid" ? sum : sum + item.points),
+    0
+  );
+}
+
+/**
+ * Share of the dealt hand a bid claims, 0-1. Rounds deal anywhere from one to
+ * ten cards, so only this ratio compares bidding appetite fairly. Clamped
+ * because a legacy save could hold a bid larger than the hand it was made on.
+ */
+function bidShare(round: PlayerRoundScoreBreakdown): number {
+  if (round.cardsDealt <= 0) return 0;
+  return Math.min(1, Math.max(0, round.bid / round.cardsDealt));
+}
+
 /**
  * Publish a record: drop the internal player id and show the display name the
  * leaderboard settled on, so one player never appears under two spellings.
@@ -506,18 +605,29 @@ export function aggregateStats(games: readonly Game[]): StatsSnapshot {
   const buckets = new Map<string, PlayerBucket>();
   const finalCandidates: FinalRecordCandidate[] = [];
   const roundCandidates: RoundRecordCandidate[] = [];
+  const bonusCandidates: FinalRecordCandidate[] = [];
+  const comebackCandidates: ComebackCandidate[] = [];
   let totalRounds = 0;
 
   for (const game of finishedGames) {
     const gamePlayedAt = playedAt(game);
     const finalRows = safeStandings(game);
     const standingById = new Map(finalRows.map((row) => [row.player.id, row]));
-    // Last place is the worst rank in a game with at least two ranked seats;
-    // ties for last share it. Used for the "kraken bait" tally.
-    const lastRank =
+    // Where everyone stood at the turn, so a climb can be measured against it.
+    const halfwayById = new Map(
+      safeStandings(game, Math.ceil(game.totalRounds / 2)).map((row) => [
+        row.player.id,
+        row,
+      ])
+    );
+    // Last place is the worst rank at a table of at least two; ties for last
+    // share it. An all-square finish has a single rank, and nobody trailed
+    // anybody, so that game leaves no last place behind.
+    const worstRank =
       finalRows.length >= 2
         ? Math.max(...finalRows.map((row) => row.rank))
         : null;
+    const lastRank = worstRank !== null && worstRank > 1 ? worstRank : null;
     let gameRoundsPlayed = 0;
 
     for (const player of game.players) {
@@ -537,20 +647,25 @@ export function aggregateStats(games: readonly Game[]): StatsSnapshot {
           name: player.name,
           lastPlayedAt: gamePlayedAt,
           gamesPlayed: 0,
+          roundsPlayed: 0,
           wins: 0,
           exactSuccesses: 0,
           exactAttempts: 0,
           zeroSuccesses: 0,
           zeroAttempts: 0,
           totalPoints: 0,
+          bonusPoints: 0,
           bestFinalScore: null,
           worstFinalScore: null,
-          podiums: 0,
+          rivalShareSum: 0,
+          rivalGames: 0,
           rankSum: 0,
+          seatSum: 0,
           lastPlaces: 0,
           bestRound: null,
           worstRound: null,
           bidSum: 0,
+          aggressionSum: 0,
           recentGames: [],
         };
         buckets.set(identity, bucket);
@@ -569,8 +684,16 @@ export function aggregateStats(games: readonly Game[]): StatsSnapshot {
         bucket.worstFinalScore === null
           ? finalStanding.total
           : Math.min(bucket.worstFinalScore, finalStanding.total);
-      bucket.podiums += finalStanding.rank <= 3 ? 1 : 0;
+      // Winning a four-seat table beats three rivals, second beats two, and so
+      // on. A solo seat has nobody to beat, so it stays out of the average
+      // rather than counting as a shut-out either way.
+      if (finalRows.length >= 2) {
+        bucket.rivalShareSum +=
+          (finalRows.length - finalStanding.rank) / (finalRows.length - 1);
+        bucket.rivalGames += 1;
+      }
       bucket.rankSum += finalStanding.rank;
+      bucket.seatSum += finalRows.length;
       if (lastRank !== null && finalStanding.rank === lastRank) {
         bucket.lastPlaces += 1;
       }
@@ -589,6 +712,16 @@ export function aggregateStats(games: readonly Game[]): StatsSnapshot {
           ? worstRoundThisGame
           : Math.min(bucket.worstRound, worstRoundThisGame);
       bucket.bidSum += history.reduce((sum, round) => sum + round.bid, 0);
+      bucket.aggressionSum += history.reduce(
+        (sum, round) => sum + bidShare(round),
+        0
+      );
+      const bonusThisGame = history.reduce(
+        (sum, round) => sum + roundBonusPoints(round),
+        0
+      );
+      bucket.bonusPoints += bonusThisGame;
+      bucket.roundsPlayed += history.length;
       bucket.exactAttempts += history.length;
       bucket.exactSuccesses += history.filter((round) => round.madeBid).length;
       gameRoundsPlayed = Math.max(gameRoundsPlayed, history.length);
@@ -613,6 +746,31 @@ export function aggregateStats(games: readonly Game[]): StatsSnapshot {
         playedAt: gamePlayedAt,
         playerId: player.id,
       });
+      // A table that never records special cards should leave the treasure
+      // record unclaimed rather than crown a zero-point "haul".
+      if (bonusThisGame > 0) {
+        bonusCandidates.push({
+          identity,
+          name: player.name,
+          score: bonusThisGame,
+          gameId: game.id,
+          playedAt: gamePlayedAt,
+          playerId: player.id,
+        });
+      }
+      const halfwayRank = halfwayById.get(player.id)?.rank ?? finalStanding.rank;
+      if (halfwayRank > finalStanding.rank) {
+        comebackCandidates.push({
+          identity,
+          name: player.name,
+          placesGained: halfwayRank - finalStanding.rank,
+          fromRank: halfwayRank,
+          toRank: finalStanding.rank,
+          gameId: game.id,
+          playedAt: gamePlayedAt,
+          playerId: player.id,
+        });
+      }
       for (const round of history) {
         roundCandidates.push({
           identity,
@@ -634,25 +792,35 @@ export function aggregateStats(games: readonly Game[]): StatsSnapshot {
       name: bucket.name,
       lastPlayedAt: bucket.lastPlayedAt,
       gamesPlayed: bucket.gamesPlayed,
+      roundsPlayed: bucket.roundsPlayed,
       wins: bucket.wins,
       winRate: bucket.gamesPlayed > 0 ? bucket.wins / bucket.gamesPlayed : 0,
       exactBids: toRate(bucket.exactSuccesses, bucket.exactAttempts),
       zeroBids: toRate(bucket.zeroSuccesses, bucket.zeroAttempts),
       averagePoints:
         bucket.gamesPlayed > 0 ? bucket.totalPoints / bucket.gamesPlayed : 0,
+      pointsPerRound:
+        bucket.roundsPlayed > 0 ? bucket.totalPoints / bucket.roundsPlayed : 0,
       bestFinalScore: bucket.bestFinalScore,
       worstFinalScore: bucket.worstFinalScore,
       currentWinStreak: currentStreak(bucket.recentGames),
       longestWinStreak: longestStreak(bucket.recentGames),
-      podiums: bucket.podiums,
-      podiumRate: bucket.gamesPlayed > 0 ? bucket.podiums / bucket.gamesPlayed : 0,
+      rivalsBeaten:
+        bucket.rivalGames > 0 ? bucket.rivalShareSum / bucket.rivalGames : 0,
       averageRank:
         bucket.gamesPlayed > 0 ? bucket.rankSum / bucket.gamesPlayed : 0,
+      averageTableSize:
+        bucket.gamesPlayed > 0 ? bucket.seatSum / bucket.gamesPlayed : 0,
       lastPlaces: bucket.lastPlaces,
+      lastPlaceRate:
+        bucket.gamesPlayed > 0 ? bucket.lastPlaces / bucket.gamesPlayed : 0,
       bestRound: bucket.bestRound,
       worstRound: bucket.worstRound,
       averageBid:
-        bucket.exactAttempts > 0 ? bucket.bidSum / bucket.exactAttempts : 0,
+        bucket.roundsPlayed > 0 ? bucket.bidSum / bucket.roundsPlayed : 0,
+      bidAggression:
+        bucket.roundsPlayed > 0 ? bucket.aggressionSum / bucket.roundsPlayed : 0,
+      bonusPoints: bucket.bonusPoints,
       recentGames: [...bucket.recentGames],
     }))
     .sort(compareLeaderboard);
@@ -664,9 +832,14 @@ export function aggregateStats(games: readonly Game[]): StatsSnapshot {
     0
   );
 
+  // Every rate record waits for a real sample, so one lucky round can never
+  // outrank a season of play. Below the bar the record stays unclaimed rather
+  // than crowning a holder the number does not support.
   const bestExactPlayer = topPlayer(
     players,
-    (player) => player.exactBids.rate !== null,
+    (player) =>
+      player.exactBids.rate !== null &&
+      player.exactBids.attempts >= MIN_RATED_ROUNDS,
     (player) => [player.exactBids.rate ?? -1, player.exactBids.attempts]
   );
   const streakLeader = topPlayer(
@@ -674,22 +847,25 @@ export function aggregateStats(games: readonly Game[]): StatsSnapshot {
     (player) => player.longestWinStreak >= 2,
     (player) => [player.longestWinStreak]
   );
-  const recklessLeader = topPlayer(
+  const boldestLeader = topPlayer(
     players,
-    (player) => player.exactBids.attempts >= 1 && player.averageBid > 0,
-    (player) => [player.averageBid, player.exactBids.attempts]
+    (player) =>
+      player.roundsPlayed >= MIN_RATED_ROUNDS && player.bidAggression > 0,
+    (player) => [player.bidAggression, player.roundsPlayed]
   );
-  const krakenBaitLeader = topPlayer(
+  const lastPlaceLeader = topPlayer(
     players,
     (player) => player.lastPlaces >= 1,
-    (player) => [player.lastPlaces]
+    (player) => [player.lastPlaces, player.lastPlaceRate]
   );
-  // A "master" needs a real sample, so a lone lucky zero bid never qualifies.
   const zeroMasterLeader = topPlayer(
     players,
-    (player) => player.zeroBids.rate !== null && player.zeroBids.attempts >= 3,
+    (player) =>
+      player.zeroBids.rate !== null &&
+      player.zeroBids.attempts >= MIN_ZERO_BIDS,
     (player) => [player.zeroBids.rate ?? -1, player.zeroBids.attempts]
   );
+  const comebackLeader = bestBy(comebackCandidates, compareComeback);
 
   return {
     players,
@@ -721,18 +897,38 @@ export function aggregateStats(games: readonly Game[]): StatsSnapshot {
             streak: streakLeader.longestWinStreak,
           }
         : null,
-      mostReckless: recklessLeader
+      biggestComeback: comebackLeader
         ? {
-            identity: recklessLeader.identity,
-            name: recklessLeader.name,
-            averageBid: recklessLeader.averageBid,
+            identity: comebackLeader.identity,
+            name:
+              displayNameByIdentity.get(comebackLeader.identity) ??
+              comebackLeader.name,
+            placesGained: comebackLeader.placesGained,
+            fromRank: comebackLeader.fromRank,
+            toRank: comebackLeader.toRank,
+            gameId: comebackLeader.gameId,
+            playedAt: comebackLeader.playedAt,
           }
         : null,
-      krakenBait: krakenBaitLeader
+      biggestBonusHaul: toFinalRecord(
+        bestBy(bonusCandidates, compareBestFinal),
+        displayNameByIdentity
+      ),
+      boldestBidder: boldestLeader
         ? {
-            identity: krakenBaitLeader.identity,
-            name: krakenBaitLeader.name,
-            count: krakenBaitLeader.lastPlaces,
+            identity: boldestLeader.identity,
+            name: boldestLeader.name,
+            aggression: boldestLeader.bidAggression,
+            averageBid: boldestLeader.averageBid,
+            roundsPlayed: boldestLeader.roundsPlayed,
+          }
+        : null,
+      mostLastPlaces: lastPlaceLeader
+        ? {
+            identity: lastPlaceLeader.identity,
+            name: lastPlaceLeader.name,
+            count: lastPlaceLeader.lastPlaces,
+            outOf: lastPlaceLeader.gamesPlayed,
           }
         : null,
       zeroBidMaster: toRateRecord(
@@ -744,6 +940,7 @@ export function aggregateStats(games: readonly Game[]): StatsSnapshot {
       totalGames: finishedGames.length,
       totalRounds,
       totalPlunder,
+      totalPlayers: players.length,
     },
   };
 }
