@@ -245,6 +245,18 @@ check(
     appSource.includes('if (screen !== "results")')
 );
 check(
+  "the quiet period starts when the ask appears, not when it is scheduled",
+  // An ask dropped because the results screen closed first was never made,
+  // so it must not spend the thirty days of silence that follow one.
+  (appSource.match(/markSupportPromptShown\(/g) ?? []).length === 1 &&
+    appSource.indexOf("markSupportPromptShown(") >
+      appSource.indexOf("setSupportPromptVisible(true)")
+);
+check(
+  "the decorative cup stays out of the modal's reading order",
+  /styles\.coin[\s\S]{0,200}aria-hidden/.test(supportModalSource)
+);
+check(
   "the support ask offers a way out that sticks",
   supportModalSource.includes("t.supportPrompt.later") &&
     supportModalSource.includes("t.supportPrompt.never") &&

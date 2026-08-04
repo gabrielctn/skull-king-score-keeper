@@ -41,7 +41,15 @@ export default function SupportModal({
           style={styles.dialog}
           accessibilityViewIsModal
         >
-          <Text style={styles.coin}>☕</Text>
+          <Text
+            style={styles.coin}
+            accessible={false}
+            accessibilityElementsHidden
+            importantForAccessibility="no-hide-descendants"
+            aria-hidden
+          >
+            ☕
+          </Text>
           <Text style={styles.title}>{t.supportPrompt.title}</Text>
           <Text style={styles.body}>{t.supportPrompt.body}</Text>
           <View style={styles.costCard}>

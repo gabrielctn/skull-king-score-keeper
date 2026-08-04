@@ -646,6 +646,12 @@ export default function App() {
     pushCloud(null, []);
   };
 
+  /** Persist a support-prompt transition, keeping the in-memory copy in step. */
+  const rememberSupportPrompt = (next: SupportPromptState): Promise<void> => {
+    supportPromptRef.current = next;
+    return saveSupportPrompt(next);
+  };
+
   /**
    * Count the game that just ended and, when it has earned the ask, invite the
    * crew to fund the App Store listing. Reviewing an old game from history
@@ -653,15 +659,10 @@ export default function App() {
    */
   const considerSupportPrompt = async () => {
     const counted = registerFinishedGame(await loadSupportPrompt());
-    if (!shouldShowSupportPrompt(counted, Date.now())) {
-      supportPromptRef.current = counted;
-      await saveSupportPrompt(counted);
-      return;
+    await rememberSupportPrompt(counted);
+    if (shouldShowSupportPrompt(counted, Date.now())) {
+      setSupportPromptPending(true);
     }
-    const shown = markSupportPromptShown(counted, Date.now());
-    supportPromptRef.current = shown;
-    await saveSupportPrompt(shown);
-    setSupportPromptPending(true);
   };
 
   /**
@@ -677,6 +678,13 @@ export default function App() {
     const timer = setTimeout(() => {
       setSupportPromptPending(false);
       setSupportPromptVisible(true);
+      // The quiet period starts when the ask is actually made, not when it
+      // was scheduled: an ask dropped on the way out is still owed, so the
+      // next finished game raises it again.
+      const current = supportPromptRef.current;
+      if (current) {
+        void rememberSupportPrompt(markSupportPromptShown(current, Date.now()));
+      }
     }, PROMPT_DELAY_MS);
     return () => clearTimeout(timer);
   }, [screen, supportPromptPending]);
@@ -690,10 +698,7 @@ export default function App() {
     setSupportPromptVisible(false);
     if (donate) void Linking.openURL(SUPPORT_URL).catch(() => undefined);
     const current = supportPromptRef.current;
-    if (current === null) return;
-    const answered = markSupportPromptAnswered(current);
-    supportPromptRef.current = answered;
-    void saveSupportPrompt(answered);
+    if (current) void rememberSupportPrompt(markSupportPromptAnswered(current));
   };
 
   const handleFinish = (g: Game) => {
