@@ -8,6 +8,8 @@ import {
   cumulativeScoreSeries,
   gameAwards,
   gameDuration,
+  MIN_RATED_ROUNDS,
+  MIN_ZERO_BIDS,
   normalizePlayerName,
   playerNameSuggestions,
 } from "../src/stats";
@@ -377,6 +379,50 @@ eq(
 eq("worst round number is retained", lootRecords.worstRound?.roundNumber, 1);
 eq("worst round holder", lootRecords.worstRound?.identity, "charlie");
 
+// Rate records only name a holder once the sample is big enough to mean
+// something. Each rated game runs the gate exactly: one seat bids the whole
+// hand and takes it, the other bids one trick and takes none.
+function ratedGame(id: string, updatedAt: number, rounds: number): Game {
+  return fixtureGame(
+    id,
+    updatedAt,
+    [
+      { id: `${id}_sharp`, name: "Sharp" },
+      { id: `${id}_blunt`, name: "Blunt" },
+    ],
+    Array.from({ length: rounds }, (_unused, index) => ({
+      [`${id}_sharp`]: E(index + 1, index + 1),
+      [`${id}_blunt`]: E(1, 0),
+    })),
+    { cardsDealt: Array.from({ length: rounds }, (_unused, i) => i + 1) }
+  );
+}
+
+const shortOfGate = aggregateStats([
+  ratedGame("gate_short", 1250, MIN_RATED_ROUNDS - 1),
+]).records;
+eq(
+  "one round short of the gate leaves the exact-bid record unclaimed",
+  shortOfGate.bestExactBidRate,
+  null
+);
+eq(
+  "one round short of the gate leaves the bid-appetite record unclaimed",
+  shortOfGate.boldestBidder,
+  null
+);
+
+const atGate = aggregateStats([
+  ratedGame("gate_full", 1260, MIN_RATED_ROUNDS),
+]).records;
+eq("the gate publishes the exact-bid record", atGate.bestExactBidRate?.identity, "sharp");
+eq("exact-rate record carries successes", atGate.bestExactBidRate?.successes, MIN_RATED_ROUNDS);
+eq("exact-rate record carries attempts", atGate.bestExactBidRate?.attempts, MIN_RATED_ROUNDS);
+eq("the gate publishes the bid-appetite record", atGate.boldestBidder?.identity, "sharp");
+approx("bidding the whole hand is total appetite", atGate.boldestBidder?.aggression ?? -1, 1);
+approx("bid appetite keeps its raw average", atGate.boldestBidder?.averageBid ?? -1, 5.5);
+eq("bid-appetite record carries its sample", atGate.boldestBidder?.roundsPlayed, MIN_RATED_ROUNDS);
+
 const exactMany = fixtureGame(
   "exact_many",
   1300,
@@ -384,10 +430,11 @@ const exactMany = fixtureGame(
     { id: "many", name: "Many" },
     { id: "many_foe", name: "Foe" },
   ],
-  [
-    { many: E(1, 1), many_foe: E(0, 1) },
-    { many: E(1, 1), many_foe: E(0, 1) },
-  ]
+  Array.from({ length: MIN_RATED_ROUNDS }, () => ({
+    many: E(1, 1),
+    many_foe: E(0, 1),
+  })),
+  { cardsDealt: Array.from({ length: MIN_RATED_ROUNDS }, () => 1) }
 );
 const exactOne = fixtureGame(
   "exact_one",
@@ -399,9 +446,8 @@ const exactOne = fixtureGame(
   [{ one: E(1, 1), one_foe: E(0, 1) }]
 );
 const exactRecord = aggregateStats([exactOne, exactMany]).records.bestExactBidRate;
-eq("equal exact rates prefer larger sample", exactRecord?.identity, "many");
-eq("exact-rate record carries successes", exactRecord?.successes, 2);
-eq("exact-rate record carries attempts", exactRecord?.attempts, 2);
+eq("a perfect single round never outranks a real sample", exactRecord?.identity, "many");
+eq("the surviving record carries its own successes", exactRecord?.successes, MIN_RATED_ROUNDS);
 
 section("Cumulative score series");
 const sparse = fixtureGame(
@@ -673,10 +719,14 @@ const cal = crewPlayer("cal");
 eq("summary counts finished games", crew.summary.totalGames, 3);
 eq("summary sums rounds played", crew.summary.totalRounds, 4);
 eq("summary sums every final score", crew.summary.totalPlunder, 110);
+eq("summary counts distinct players", crew.summary.totalPlayers, 3);
 
 eq("longest win streak spans games", anne?.longestWinStreak, 2);
-eq("podium finishes are counted", anne?.podiums, 3);
-approx("podium rate is a fraction", anne?.podiumRate ?? -1, 1);
+// Anne wins two three-seat tables outright and finishes last at the third, so
+// she is ahead of 4 of the 6 rivals she has faced. Cal trails both opponents
+// twice, then ties Bea for first while beating only Anne: 1 of 6.
+approx("rivals beaten normalises rank by table size", anne?.rivalsBeaten ?? -1, 2 / 3);
+approx("a shared win beats only the players actually behind", cal?.rivalsBeaten ?? -1, 1 / 6);
 approx("average rank averages positions", anne?.averageRank ?? -1, 5 / 3);
 eq("best single round is tracked", anne?.bestRound, 40);
 eq("worst single round is tracked", anne?.worstRound, -10);
@@ -685,8 +735,14 @@ eq("bea worst single round", bea?.worstRound, 10);
 eq("bea worst final score", bea?.worstFinalScore, 10);
 eq("cal worst single round", cal?.worstRound, -20);
 eq("cal worst final score", cal?.worstFinalScore, -30);
-approx("average bid gauges recklessness", anne?.averageBid ?? -1, 1);
-eq("last-place finishes feed kraken bait", cal?.lastPlaces, 2);
+approx("average bid stays available as raw tricks", anne?.averageBid ?? -1, 1);
+approx("bid appetite is a share of the hand", anne?.bidAggression ?? -1, 0.75);
+eq("rounds played are counted", anne?.roundsPlayed, 4);
+approx("points per round divides by rounds, not games", anne?.pointsPerRound ?? 0, 17.5);
+approx("average table size records the seats faced", anne?.averageTableSize ?? -1, 3);
+eq("last-place finishes are counted", cal?.lastPlaces, 2);
+approx("last-place rate is a fraction of games", cal?.lastPlaceRate ?? -1, 2 / 3);
+eq("a bonus-free crew banks no bonus points", anne?.bonusPoints, 0);
 eq("zero-bid attempts accumulate", bea?.zeroBids.attempts, 3);
 
 eq("worst final score holder", crew.records.worstFinalScore?.identity, "cal");
@@ -697,20 +753,105 @@ eq("biggest round score", crew.records.biggestRound?.score, 40);
 eq("biggest round retains its number", crew.records.biggestRound?.roundNumber, 2);
 eq("longest streak holder", crew.records.longestStreak?.identity, "anne");
 eq("longest streak length", crew.records.longestStreak?.streak, 2);
-eq("most reckless holder", crew.records.mostReckless?.identity, "anne");
-approx("most reckless average bid", crew.records.mostReckless?.averageBid ?? -1, 1);
-eq("kraken bait holder", crew.records.krakenBait?.identity, "cal");
-eq("kraken bait count", crew.records.krakenBait?.count, 2);
+eq("last-place record holder", crew.records.mostLastPlaces?.identity, "cal");
+eq("last-place record count", crew.records.mostLastPlaces?.count, 2);
+eq("last-place record shows the games behind it", crew.records.mostLastPlaces?.outOf, 3);
 eq("zero-bid master needs a real sample", crew.records.zeroBidMaster?.identity, "bea");
-eq("zero-bid master attempts", crew.records.zeroBidMaster?.attempts, 3);
+eq("zero-bid master attempts", crew.records.zeroBidMaster?.attempts, MIN_ZERO_BIDS);
+eq(
+  "a short crew history leaves rate records unclaimed",
+  crew.records.bestExactBidRate,
+  null
+);
+eq("a bonus-free crew leaves the haul unclaimed", crew.records.biggestBonusHaul, null);
+
+// A comeback is measured against the halfway standings, so the winner has to
+// have actually been behind at the turn.
+const comeback = fixtureGame(
+  "comeback",
+  1900,
+  [
+    { id: "come_a", name: "Ada" },
+    { id: "come_b", name: "Ben" },
+    { id: "come_c", name: "Cass" },
+  ],
+  [
+    { come_a: E(1, 1), come_b: E(0, 0), come_c: E(1, 0) },
+    { come_a: E(2, 2), come_b: E(0, 0), come_c: E(2, 0) },
+    { come_a: E(3, 0), come_b: E(0, 0), come_c: E(3, 3) },
+    { come_a: E(4, 0), come_b: E(0, 0), come_c: E(4, 4) },
+  ],
+  { cardsDealt: [1, 2, 3, 4] }
+);
+const comebackRecord = aggregateStats([comeback]).records.biggestComeback;
+eq("comeback holder climbed from the back", comebackRecord?.identity, "cass");
+eq("comeback counts places gained", comebackRecord?.placesGained, 2);
+eq("comeback keeps the halfway rank", comebackRecord?.fromRank, 3);
+eq("comeback keeps the final rank", comebackRecord?.toRank, 1);
+eq("comeback names its game", comebackRecord?.gameId, "comeback");
+eq(
+  "a game nobody climbed in leaves no comeback",
+  aggregateStats([crewTwo]).records.biggestComeback,
+  null
+);
+
+// Bonus points are every scoring line except the bid, so only special cards
+// move them.
+const treasure = fixtureGame(
+  "treasure",
+  2000,
+  [
+    { id: "gold_a", name: "Gilda" },
+    { id: "gold_b", name: "Hook" },
+  ],
+  [{ gold_a: E(1, 1, { black14: true, colored14: 2 }), gold_b: E(0, 0) }],
+  { cardsDealt: [1] }
+);
+const treasureStats = aggregateStats([treasure]);
+eq(
+  "bonus points collect every special-card line",
+  treasureStats.players.find((player) => player.identity === "gilda")?.bonusPoints,
+  40
+);
+eq("richest haul holder", treasureStats.records.biggestBonusHaul?.identity, "gilda");
+eq("richest haul counts only the bonus", treasureStats.records.biggestBonusHaul?.score, 40);
+eq("richest haul names its game", treasureStats.records.biggestBonusHaul?.gameId, "treasure");
+
+// Everyone level means everyone won; nobody trailed, so nobody finished last.
+const allSquare = fixtureGame(
+  "all_square",
+  2050,
+  [
+    { id: "square_a", name: "Even A" },
+    { id: "square_b", name: "Even B" },
+  ],
+  [{ square_a: E(0, 0), square_b: E(0, 0) }],
+  { cardsDealt: [1] }
+);
+const squareStats = aggregateStats([allSquare]);
+eq(
+  "a drawn game hands nobody a last place",
+  squareStats.players.every((player) => player.lastPlaces === 0),
+  true
+);
+eq(
+  "drawing with someone is not beating them",
+  squareStats.players.every((player) => player.rivalsBeaten === 0),
+  true
+);
+eq("a drawn game leaves the last-place record unclaimed", squareStats.records.mostLastPlaces, null);
 
 const emptyExtended = aggregateStats([]);
 eq("empty input has no summary games", emptyExtended.summary.totalGames, 0);
 eq("empty input has no plunder", emptyExtended.summary.totalPlunder, 0);
+eq("empty input has no players", emptyExtended.summary.totalPlayers, 0);
 eq("empty input has no biggest round", emptyExtended.records.biggestRound, null);
 eq("empty input has no worst final score", emptyExtended.records.worstFinalScore, null);
 eq("empty input has no streak record", emptyExtended.records.longestStreak, null);
-eq("empty input has no kraken bait", emptyExtended.records.krakenBait, null);
+eq("empty input has no last-place record", emptyExtended.records.mostLastPlaces, null);
+eq("empty input has no comeback", emptyExtended.records.biggestComeback, null);
+eq("empty input has no bonus haul", emptyExtended.records.biggestBonusHaul, null);
+eq("empty input has no boldest bidder", emptyExtended.records.boldestBidder, null);
 eq("empty input has no zero-bid master", emptyExtended.records.zeroBidMaster, null);
 
 section("Game duration");

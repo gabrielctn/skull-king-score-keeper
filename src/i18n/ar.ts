@@ -53,13 +53,26 @@ const winsText = (value: number) =>
     many: "فوزًا",
   });
 
-const timesText = (value: number) =>
+const roundsText = (value: number) =>
   counted(value, {
-    one: "مرة واحدة",
-    two: "مرتان",
-    few: "مرات",
-    many: "مرة",
+    one: "جولة واحدة",
+    two: "جولتان",
+    few: "جولات",
+    many: "جولة",
   });
+
+/** الترتيب العربي: الأول، الثاني… ثم رقم بعد العاشر. */
+const ordinal = (value: number) =>
+  [
+    "الأول",
+    "الثاني",
+    "الثالث",
+    "الرابع",
+    "الخامس",
+    "السادس",
+    "السابع",
+    "الثامن",
+  ][value - 1] ?? `المركز ${value}`;
 
 export const ar: Strings = {
   langLabel: "عربي",
@@ -478,35 +491,90 @@ export const ar: Strings = {
     emptyTitle: "لا حكايات بحرية بعد",
     emptyBody: "أكمل مباراة لبدء تدوين تاريخ طاقمك.",
     leaderboard: "لوحة الصدارة",
-    records: "الأرقام القياسية",
     scoreEvolution: "تطور النقاط",
-    gamesPlayed: "المباريات",
-    wins: "الانتصارات",
-    winRate: "نسبة الفوز",
-    exactBidRate: "نسبة المزايدات الدقيقة",
-    zeroBidRate: "نسبة نجاح مزايدة الصفر",
-    averagePoints: "متوسط النقاط",
-    bestScore: "أفضل نتيجة",
-    worstScore: "أسوأ نتيجة",
-    winStreak: "سلسلة الفوز الحالية",
-    recentGames: "المباريات الأخيرة",
-    bestFinalScore: "أفضل نتيجة نهائية",
-    worstFinalScore: "أسوأ نتيجة نهائية",
-    worstRound: "أسوأ جولة",
-    bestExactBid: "أفضل نسبة مزايدات دقيقة",
+    hallOfFame: "قاعة المجد",
+    hallOfShame: "قاع السفينة",
+
     totalGames: "المباريات",
     totalRounds: "الجولات",
     totalPlunder: "الغنيمة",
+    totalPlayers: "أفراد الطاقم",
+
+    bestFinalScore: "أفضل نتيجة نهائية",
+    bestFinalScoreHint: "أعلى مجموع أنهى به أحدهم مباراة على الإطلاق.",
     biggestRound: "أكبر جولة",
-    longestStreak: "أطول سلسلة",
-    mostReckless: "الأكثر تهوّرًا",
-    krakenBait: "طُعم الكراكن",
+    biggestRoundHint: "أكبر عدد نقاط جُمع في جولة واحدة.",
+    bestExactBid: "أدقّ مزايد",
+    bestExactBidHint: (rounds) =>
+      `أفضل نسبة مزايدات دقيقة، بعد ${roundsText(rounds)} على الأقل.`,
     zeroBidMaster: "سيّد الصفر",
-    longestWinStreak: "أطول سلسلة انتصارات",
-    podiumRate: "نسبة المنصّة",
+    zeroBidMasterHint: (zeroBids) =>
+      `أفضل سجل في مزايدة الصفر دون أخذ أي أكلة، بعد ${zeroBids} مزايدات صفر على الأقل.`,
+    longestStreak: "أطول سلسلة",
+    longestStreakHint: "أطول سلسلة مباريات فُزت تباعًا.",
+    biggestComeback: "أكبر عودة",
+    biggestComebackHint:
+      "أكبر عدد مراكز صعدها لاعب بين ترتيب منتصف المباراة والترتيب النهائي.",
+    biggestBonusHaul: "أثمن غنيمة",
+    biggestBonusHaulHint:
+      "أكبر عدد نقاط إضافية من البطاقات الخاصة في مباراة واحدة.",
+    worstFinalScore: "أسوأ نتيجة نهائية",
+    worstFinalScoreHint: "أدنى مجموع أنهى به أحدهم مباراة على الإطلاق.",
+    worstRound: "أسوأ جولة",
+    worstRoundHint: "أعمق حفرة حُفرت في جولة واحدة.",
+    mostLastPlaces: "الأكثر حلولًا في المركز الأخير",
+    mostLastPlacesHint: "أنهى المباراة خلف الجميع أكثر من أي لاعب آخر.",
+    boldestBidder: "أجرأ مزايد",
+    boldestBidderHint:
+      "يطالب بأكبر حصة من كل يد تُوزَّع: شجاعة أم تهوّر.",
+
+    recordUnclaimed: "لم يُحسم بعد",
+    unitPoints: "نقطة",
+    unitWins: (count) => (count === 1 ? "فوز" : "انتصارات"),
+    unitPlaces: (count) => (count === 1 ? "مركز" : "مراكز"),
+    unitGames: (count) => (count === 1 ? "مباراة" : "مباريات"),
+    roundMeta: (round, date) => `الجولة ${round} · ${date}`,
+    sampleMeta: (successes, attempts) =>
+      `${successes} من ${roundsText(attempts)}`,
+    comebackMeta: (fromRank, toRank, date) =>
+      `${ordinal(fromRank)} ← ${ordinal(toRank)} · ${date}`,
+    lastPlaceMeta: (rate, games) => `${rate} من ${gamesText(games)}`,
+    appetiteMeta: (averageBid, rounds) =>
+      `${averageBid} أكلة في الجولة · ${roundsText(rounds)}`,
+
+    metricsResults: "النتائج",
+    metricsBidding: "المزايدة",
+    metricsScoring: "النقاط",
+
+    gamesPlayed: "المباريات",
+    roundsPlayed: "الجولات",
+    wins: "الانتصارات",
+    winRate: "نسبة الفوز",
+    rivalsBeaten: "المنافسون المتقدَّم عليهم",
     averageRank: "متوسط المركز",
+    lastPlaces: "المراكز الأخيرة",
+    winStreak: "سلسلة الفوز الحالية",
+    longestWinStreak: "أطول سلسلة انتصارات",
+    exactBidRate: "نسبة المزايدات الدقيقة",
+    zeroBidRate: "نسبة نجاح مزايدة الصفر",
+    bidAppetite: "شهية المزايدة",
+    averagePoints: "النقاط لكل مباراة",
+    pointsPerRound: "النقاط لكل جولة",
+    bestScore: "أفضل نتيجة",
+    worstScore: "أسوأ نتيجة",
     bestRoundScore: "أفضل جولة",
     worstRoundScore: "أسوأ جولة",
+    bonusPoints: "النقاط الإضافية",
+
+    outOfGames: (count, games) => `${count} من ${gamesText(games)}`,
+    seatsCaption: (seats) => `من ${seats} لاعبين`,
+    perGame: "المتوسط عبر كل المباريات",
+    rivalsBeatenCaption: "نسبة المنافسين الذين أنهى المباراة أمامهم",
+    perRound: "المتوسط عبر كل الجولات",
+    fromSpecialCards: "من البطاقات الخاصة",
+    bidCaption: (averageBid) => `${averageBid} أكلة في الجولة`,
+
+    recentGames: "المباريات الأخيرة",
     unavailable: "غير متاح",
     chartLabel: (leader, rounds) =>
       `تطور النقاط بعد ${
@@ -520,18 +588,6 @@ export const ar: Strings = {
       `${gamesText(games)} · ${winsText(wins)}`,
     bidSummary: (successes, attempts) =>
       `${successes} ناجحة من أصل ${attempts}`,
-    scoreRecordHolder: (name, score, date) =>
-      `${name} · ${score} نقطة · ${date}`,
-    roundRecordHolder: (name, score, round, date) =>
-      `${name} · ${score} نقطة في الجولة ${round} · ${date}`,
-    rateRecordHolder: (name, rate, successes, attempts) =>
-      `${name} · ${rate} (${successes} من ${attempts})`,
-    streakRecordHolder: (name, streak) =>
-      `${name} · ${streak} ${streak === 1 ? "فوز" : "انتصارات"} متتالية`,
-    recklessRecordHolder: (name, averageBid) =>
-      `${name} · متوسط مزايدة ${averageBid}`,
-    countRecordHolder: (name, count) =>
-      `${name} · ${timesText(count)}`,
     recentGame: (date, rank, score) =>
       `${date} · المركز ${rank} · ${score} نقطة`,
   },
