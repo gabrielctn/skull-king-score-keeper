@@ -55,9 +55,22 @@ export const es: Strings = {
     support: "Apoya al desarrollador ☕",
     supportHint:
       "Contribución opcional · la aplicación seguirá siendo totalmente gratuita.",
+    supportCost: (amountEur) =>
+      `Publicar la aplicación en la App Store le cuesta ${amountEur} €/año al desarrollador. Las contribuciones se destinan primero a esa factura.`,
     disclaimer:
       "Creada por un jugador sin afiliación, aprobación ni patrocinio de Grandpa Beck’s Games, sus editores o distribuidores. «Skull King» y los elementos oficiales del juego pertenecen a sus respectivos titulares de derechos.",
     offline: "Funciona sin conexión · instálala desde tu navegador",
+  },
+
+  supportPrompt: {
+    title: "¿Te gusta la aplicación?",
+    body:
+      "Es gratuita, sin anuncios y sin cuentas, y así seguirá. No hay ninguna empresa detrás: solo un jugador que la desarrolla en su tiempo libre.",
+    cost: (amountEur) =>
+      `Mantenerla en la App Store le cuesta ${amountEur} €/año al desarrollador. Una pequeña aportación basta para cubrir esa factura.`,
+    donate: "Apoya al desarrollador ☕",
+    later: "Quizá más tarde",
+    never: "No volver a preguntar",
   },
 
   whatsNew: {

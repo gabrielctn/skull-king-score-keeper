@@ -5,6 +5,7 @@ import { de } from "../src/i18n/de";
 import { es } from "../src/i18n/es";
 import { ar } from "../src/i18n/ar";
 import { zh } from "../src/i18n/zh";
+import { APP_STORE_ANNUAL_COST_EUR } from "../src/support";
 
 let passed = 0;
 let failed = 0;
@@ -22,6 +23,7 @@ function check(label: string, condition: boolean, detail = "") {
 const appConfig = JSON.parse(readFileSync("app.json", "utf8")).expo;
 const manifest = JSON.parse(readFileSync("web/manifest.webmanifest", "utf8"));
 const homeSource = readFileSync("src/screens/HomeScreen.tsx", "utf8");
+const supportSource = readFileSync("src/support.ts", "utf8");
 const rulesSource = readFileSync("src/components/RulesModal.tsx", "utf8");
 const readme = readFileSync("README.md", "utf8");
 const buildPwa = readFileSync("scripts/build-pwa.mjs", "utf8");
@@ -87,8 +89,24 @@ check(
 );
 check(
   "home exposes the optional support destination",
-  homeSource.includes("https://buymeacoffee.com/gabrielctn")
+  supportSource.includes(
+    'export const SUPPORT_URL = "https://buymeacoffee.com/gabrielctn"'
+  ) && homeSource.includes("Linking.openURL(SUPPORT_URL)")
 );
+check(
+  "home discloses what the App Store listing costs every year",
+  homeSource.includes("t.home.supportCost(APP_STORE_ANNUAL_COST_EUR)") &&
+    supportSource.includes("export const APP_STORE_ANNUAL_COST_EUR = 100")
+);
+for (const [language, strings] of Object.entries({ en, fr, es, de, ar, zh })) {
+  const cost = APP_STORE_ANNUAL_COST_EUR;
+  check(
+    `${language} names the App Store and the yearly amount`,
+    [strings.home.supportCost(cost), strings.supportPrompt.cost(cost)].every(
+      (copy) => copy.includes("App Store") && copy.includes(String(cost))
+    )
+  );
+}
 check(
   "rules link to the publisher's official page",
   rulesSource.includes("https://www.grandpabecksgames.com/pages/skull-king")

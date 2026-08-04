@@ -23,8 +23,7 @@ import { loadSeenRelease, saveSeenRelease } from "../storage";
 import WhatsNewModal from "../components/WhatsNewModal";
 import DisclosureChevron from "../components/DisclosureChevron";
 import GlassSurface from "../components/GlassSurface";
-
-const SUPPORT_URL = "https://buymeacoffee.com/gabrielctn";
+import { APP_STORE_ANNUAL_COST_EUR, SUPPORT_URL } from "../support";
 
 /** Games listed before the "show all" toggle takes over. */
 const HISTORY_PREVIEW_COUNT = 3;
@@ -386,6 +385,9 @@ export default function HomeScreen({
                 <Text style={styles.supportText}>{t.home.support}</Text>
               </TouchableOpacity>
               <Text style={styles.supportHint}>{t.home.supportHint}</Text>
+              <Text style={styles.supportCost}>
+                {t.home.supportCost(APP_STORE_ANNUAL_COST_EUR)}
+              </Text>
               <Text style={styles.disclaimer}>{t.home.disclaimer}</Text>
             </View>
 
@@ -708,6 +710,13 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textAlign: "center",
     marginTop: spacing.sm,
+  },
+  supportCost: {
+    color: colors.textDim,
+    fontSize: 12,
+    lineHeight: 18,
+    textAlign: "center",
+    marginTop: spacing.xs,
   },
   disclaimer: {
     color: colors.textDim,

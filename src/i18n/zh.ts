@@ -49,9 +49,22 @@ export const zh: Strings = {
     leading: (name, total) => `领先：${name}（${total}）`,
     support: "支持开发者 ☕",
     supportHint: "自愿支持 · 本应用将始终完全免费。",
+    supportCost: (amountEur) =>
+      `将应用发布到 App Store 每年需要开发者支付 ${amountEur} 欧元。支持款项会优先用于这笔费用。`,
     disclaimer:
       "本应用由玩家制作，与 Grandpa Beck’s Games 及其出版商或经销商无任何隶属、认可或赞助关系。“Skull King”及官方游戏元素归各自权利人所有。",
     offline: "支持离线 · 可从浏览器安装",
+  },
+
+  supportPrompt: {
+    title: "喜欢这款应用吗？",
+    body:
+      "本应用免费、无广告、无需账号，并将一直如此。它的背后没有公司，只有一位利用业余时间开发它的玩家。",
+    cost: (amountEur) =>
+      `让它留在 App Store 上，开发者每年需要支付 ${amountEur} 欧元。一点点支持就足以覆盖这笔费用。`,
+    donate: "支持开发者 ☕",
+    later: "以后再说",
+    never: "不再询问",
   },
 
   whatsNew: {

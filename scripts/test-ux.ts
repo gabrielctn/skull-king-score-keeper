@@ -46,6 +46,10 @@ const scoreBreakdownSource = readFileSync(
   "utf8"
 );
 const podiumSource = readFileSync("src/components/Podium.tsx", "utf8");
+const supportModalSource = readFileSync(
+  "src/components/SupportModal.tsx",
+  "utf8"
+);
 const chartSource = readFileSync("src/components/ScoreChart.tsx", "utf8");
 const ltrViewSource = readFileSync("src/components/LtrView.tsx", "utf8");
 const lootTrackerSource = readFileSync("src/components/LootTracker.tsx", "utf8");
@@ -220,6 +224,37 @@ check(
   resultsSource.includes("style={styles.reviewBtn}") &&
     resultsSource.includes("style={styles.secondaryBtn}")
 );
+const finishHandler = appSource.slice(
+  appSource.indexOf("const handleFinish = "),
+  appSource.indexOf("const handleHome = ")
+);
+check(
+  "only a game that just ended raises the support ask",
+  finishHandler.includes("void considerSupportPrompt();") &&
+    (appSource.match(/considerSupportPrompt\(\)/g) ?? []).length === 1
+);
+check(
+  "the support ask is throttled rather than shown after every game",
+  appSource.includes("registerFinishedGame(") &&
+    appSource.includes("shouldShowSupportPrompt(") &&
+    appSource.includes("markSupportPromptShown(")
+);
+check(
+  "the support ask waits for the celebration and stays on the results screen",
+  appSource.includes("PROMPT_DELAY_MS") &&
+    appSource.includes('if (screen !== "results")')
+);
+check(
+  "the support ask offers a way out that sticks",
+  supportModalSource.includes("t.supportPrompt.later") &&
+    supportModalSource.includes("t.supportPrompt.never") &&
+    appSource.includes("onNever={() => answerSupportPrompt(false)}") &&
+    appSource.includes("markSupportPromptAnswered(")
+);
+check(
+  "the support ask states what the App Store listing costs",
+  supportModalSource.includes("t.supportPrompt.cost(APP_STORE_ANNUAL_COST_EUR)")
+);
 check(
   "new expansion is on by default for new games",
   /const \[newExpansion, setNewExpansion\] = useState\(true\)/.test(setupSource)
@@ -311,6 +346,7 @@ check(
 // Without this the podium renders bronze-gold-silver in a right-to-left locale.
 const rnStyleSources: [string, string][] = [
   ["src/components/Podium.tsx", podiumSource],
+  ["src/components/SupportModal.tsx", supportModalSource],
   ["src/components/ScoreChart.tsx", chartSource],
   ["src/screens/GameScreen.tsx", gameSource],
   ["src/screens/HomeScreen.tsx", homeSource],

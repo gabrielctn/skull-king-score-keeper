@@ -81,8 +81,28 @@ export interface Strings {
     leading: (name: string, total: number) => string;
     support: string;
     supportHint: string;
+    /**
+     * What the App Store listing costs the developer every year, so the ask
+     * above reads as covering a bill rather than as a profit.
+     */
+    supportCost: (amountEur: number) => string;
     disclaimer: string;
     offline: string;
+  };
+
+  /** End-of-game invitation to fund the App Store listing. */
+  supportPrompt: {
+    title: string;
+    /** Why the ask exists: the app is free and ad-free, publishing it is not. */
+    body: string;
+    /** "Publishing it on the App Store costs €{amount} a year." */
+    cost: (amountEur: number) => string;
+    /** Opens the donation page; the prompt never comes back afterwards. */
+    donate: string;
+    /** Closes the prompt; it may return after the quiet period. */
+    later: string;
+    /** Declines for good — the home screen keeps the support button. */
+    never: string;
   };
 
   whatsNew: {
