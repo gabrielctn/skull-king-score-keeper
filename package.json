@@ -14,6 +14,7 @@
     "test:scoring": "node --import tsx scripts/test-scoring.ts",
     "test:stats": "node --import tsx scripts/test-stats.ts",
     "test:app-store-screenshots": "node --import tsx scripts/test-app-store-screenshots.ts",
+    "screenshots:seed": "node --import tsx scripts/app-store-screenshots/seedSimulator.ts",
     "test:storage": "node --import tsx scripts/test-storage.ts",
     "test:backup": "node --import tsx scripts/test-backup.ts",
     "test:livesession": "node --import tsx scripts/test-livesession.ts",
