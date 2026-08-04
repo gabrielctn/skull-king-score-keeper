@@ -54,9 +54,22 @@ export const fr: Strings = {
     support: "Soutenir le développeur ☕",
     supportHint:
       "Contribution facultative · l’application reste entièrement gratuite.",
+    supportCost: (amountEur) =>
+      `Publier l’application sur l’App Store coûte ${amountEur} €/an au développeur. Vos dons servent d’abord à payer cette facture.`,
     disclaimer:
       "Application créée par un joueur, sans affiliation, approbation ni parrainage de Grandpa Beck’s Games, de ses éditeurs ou distributeurs. « Skull King » et les éléments officiels du jeu appartiennent à leurs ayants droit respectifs.",
     offline: "Fonctionne hors ligne · installable depuis le navigateur",
+  },
+
+  supportPrompt: {
+    title: "Vous aimez cette appli ?",
+    body:
+      "Elle est gratuite, sans publicité et sans compte, et elle le restera. Il n’y a personne derrière, à part un joueur qui la développe sur son temps libre.",
+    cost: (amountEur) =>
+      `La garder disponible sur l’App Store coûte ${amountEur} €/an à son développeur. Un petit coup de pouce suffit à couvrir cette facture.`,
+    donate: "Soutenir le développeur ☕",
+    later: "Plus tard",
+    never: "Ne plus me le proposer",
   },
 
   whatsNew: {
@@ -68,6 +81,7 @@ export const fr: Strings = {
     automaticUpdatesBody:
       "Les applications installées téléchargent désormais chaque nouvelle version automatiquement et l’activent dès que l’appareil est en ligne.",
     items: [
+      "L’application reste gratuite et sans publicité : l’accueil indique désormais ce que coûte sa présence sur l’App Store (100 €/an), et une partie terminée propose parfois de contribuer à cette facture.",
       "Le partage des scores utilise désormais uniquement des sessions QR en direct, afin que chaque joueur voie les mises à jour en temps réel.",
       "Inviter votre équipage et rejoindre une autre table sont désormais deux actions distinctes, directement visibles dans les paramètres.",
       "Tables de jeu partagées : donnez un nom à la table de votre équipage et invitez vos amis par lien ou QR code. Chaque membre peut tenir les scores, toutes les parties rejoignent l’historique et le classement partagés, et un même téléphone peut garder plusieurs tables, une par groupe d’amis.",

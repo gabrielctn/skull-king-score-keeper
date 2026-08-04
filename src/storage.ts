@@ -8,12 +8,18 @@ import {
 } from "./types";
 import { emptyBonus } from "./scoring";
 import { Lang, isLang } from "./i18n/types";
+import {
+  NEW_SUPPORT_PROMPT_STATE,
+  SupportPromptState,
+  normalizeSupportPrompt,
+} from "./support";
 
 const CURRENT_GAME_KEY = "skullking:currentGame";
 const GAME_HISTORY_KEY = "skullking:gameHistory";
 const LANG_KEY = "skullking:lang";
 const SEEN_RELEASE_KEY = "skullking:seenRelease";
 const SETTINGS_KEY = "skullking:settings";
+const SUPPORT_PROMPT_KEY = "skullking:supportPrompt";
 
 /** App-wide preferences, as opposed to the per-game options chosen at setup. */
 export interface AppSettings {
@@ -575,5 +581,26 @@ export async function saveSeenRelease(version: string): Promise<void> {
     await AsyncStorage.setItem(SEEN_RELEASE_KEY, version);
   } catch (e) {
     console.warn("Failed to save seen release", e);
+  }
+}
+
+/** How the end-of-game support ask has gone on this device so far. */
+export async function loadSupportPrompt(): Promise<SupportPromptState> {
+  try {
+    const stored = await AsyncStorage.getItem(SUPPORT_PROMPT_KEY);
+    return normalizeSupportPrompt(stored ? JSON.parse(stored) : null);
+  } catch (e) {
+    console.warn("Failed to load support prompt state", e);
+    return { ...NEW_SUPPORT_PROMPT_STATE };
+  }
+}
+
+export async function saveSupportPrompt(
+  state: SupportPromptState
+): Promise<void> {
+  try {
+    await AsyncStorage.setItem(SUPPORT_PROMPT_KEY, JSON.stringify(state));
+  } catch (e) {
+    console.warn("Failed to save support prompt state", e);
   }
 }

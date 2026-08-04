@@ -58,9 +58,22 @@ export const en: Strings = {
     leading: (name, total) => `Leading: ${name} (${total})`,
     support: "Support the developer ☕",
     supportHint: "Optional contribution · the app remains completely free.",
+    supportCost: (amountEur) =>
+      `Publishing the app on the App Store costs the developer €${amountEur} a year. Contributions go towards that bill first.`,
     disclaimer:
       "Made by a player with no affiliation, endorsement, or sponsorship from Grandpa Beck’s Games, its publishers, or distributors. “Skull King” and the official game elements belong to their respective rights holders.",
     offline: "Works offline · install from your browser",
+  },
+
+  supportPrompt: {
+    title: "Enjoying the app?",
+    body:
+      "It is free, ad-free and account-free, and it will stay that way. There is no company behind it, just a player building it in their spare time.",
+    cost: (amountEur) =>
+      `Keeping it on the App Store costs the developer €${amountEur} a year. A small contribution is enough to cover that bill.`,
+    donate: "Support the developer ☕",
+    later: "Maybe later",
+    never: "Don't ask again",
   },
 
   whatsNew: {
@@ -72,6 +85,7 @@ export const en: Strings = {
     automaticUpdatesBody:
       "Installed apps now download each new release automatically and switch to it as soon as the device is online.",
     items: [
+      "The app stays free and ad-free: the home screen now shows what its App Store listing costs (€100 a year), and a finished game occasionally invites you to help cover that bill.",
       "Score sharing now uses live QR sessions only, so every player sees updates in real time.",
       "Inviting your crew and joining another table are now separate actions, so each flow is immediately visible in Settings.",
       "Shared game tables: name your crew's table and invite friends with a link or QR code. Anyone who joins can keep score, every game lands in the shared history and leaderboard, and one phone can hold several tables, one per group of friends.",

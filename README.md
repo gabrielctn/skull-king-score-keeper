@@ -11,7 +11,13 @@ network — perfect for a table with no wifi.
 > sponsored by Grandpa Beck's Games, its publishers, or distributors. "Skull King"
 > and the official game elements belong to their respective rights holders.
 
-**Optional support:** https://buymeacoffee.com/gabrielctn — the app remains completely free.
+**Optional support:** https://buymeacoffee.com/gabrielctn — the app remains completely
+free, with no ads and no accounts. Keeping it published on the App Store costs the
+developer €100 a year (Apple Developer Program); contributions go towards that bill
+first. The home screen states this next to the support button, and a game that ends
+occasionally repeats the invitation — at most once every 30 days, never before the
+third finished game, and never again once it has been answered. The throttle lives in
+[`src/support.ts`](src/support.ts).
 
 ## What it does
 

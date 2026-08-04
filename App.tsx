@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Image,
+  Linking,
   Platform,
   StatusBar,
   StyleSheet,
@@ -20,14 +21,25 @@ import {
   loadGameHistory,
   loadLang,
   loadSettings,
+  loadSupportPrompt,
   loadTableMemberships,
   loadTableName,
   saveGame,
   saveGameHistory,
   saveSettings,
+  saveSupportPrompt,
   saveTableMemberships,
   saveTableName,
 } from "./src/storage";
+import {
+  PROMPT_DELAY_MS,
+  SUPPORT_URL,
+  SupportPromptState,
+  markSupportPromptAnswered,
+  markSupportPromptShown,
+  registerFinishedGame,
+  shouldShowSupportPrompt,
+} from "./src/support";
 import {
   findMembership,
   membershipOwner,
@@ -74,6 +86,7 @@ import {
 } from "./src/backup";
 import CookieConsentBanner from "./src/components/CookieConsentBanner";
 import JoinTableModal from "./src/components/JoinTableModal";
+import SupportModal from "./src/components/SupportModal";
 import {
   consumePendingAppIntentDestination,
   subscribeToAppIntentDestinations,
@@ -157,6 +170,9 @@ export default function App() {
   const [storageError, setStorageError] = useState(false);
   const [pendingAppIntentDestination, setPendingAppIntentDestination] =
     useState<AppIntentDestination | null>(null);
+  const [supportPromptPending, setSupportPromptPending] = useState(false);
+  const [supportPromptVisible, setSupportPromptVisible] = useState(false);
+  const supportPromptRef = useRef<SupportPromptState | null>(null);
   const historyRef = useRef<Game[]>([]);
   const gameRef = useRef<Game | null>(null);
   const tableNameRef = useRef<string | null>(null);
@@ -630,11 +646,67 @@ export default function App() {
     pushCloud(null, []);
   };
 
+  /** Persist a support-prompt transition, keeping the in-memory copy in step. */
+  const rememberSupportPrompt = (next: SupportPromptState): Promise<void> => {
+    supportPromptRef.current = next;
+    return saveSupportPrompt(next);
+  };
+
+  /**
+   * Count the game that just ended and, when it has earned the ask, invite the
+   * crew to fund the App Store listing. Reviewing an old game from history
+   * never triggers this — only a game finishing does.
+   */
+  const considerSupportPrompt = async () => {
+    const counted = registerFinishedGame(await loadSupportPrompt());
+    await rememberSupportPrompt(counted);
+    if (shouldShowSupportPrompt(counted, Date.now())) {
+      setSupportPromptPending(true);
+    }
+  };
+
+  /**
+   * The ask waits for the podium celebration and only ever lands on the
+   * results screen: leaving it before the delay elapses drops the prompt.
+   */
+  useEffect(() => {
+    if (!supportPromptPending) return;
+    if (screen !== "results") {
+      setSupportPromptPending(false);
+      return;
+    }
+    const timer = setTimeout(() => {
+      setSupportPromptPending(false);
+      setSupportPromptVisible(true);
+      // The quiet period starts when the ask is actually made, not when it
+      // was scheduled: an ask dropped on the way out is still owed, so the
+      // next finished game raises it again.
+      const current = supportPromptRef.current;
+      if (current) {
+        void rememberSupportPrompt(markSupportPromptShown(current, Date.now()));
+      }
+    }, PROMPT_DELAY_MS);
+    return () => clearTimeout(timer);
+  }, [screen, supportPromptPending]);
+
+  /**
+   * Both answers close the ask for good: someone who opened the donation page
+   * has done their part, and someone who declined has said so. The support
+   * button on the home screen stays available either way.
+   */
+  const answerSupportPrompt = (donate: boolean) => {
+    setSupportPromptVisible(false);
+    if (donate) void Linking.openURL(SUPPORT_URL).catch(() => undefined);
+    const current = supportPromptRef.current;
+    if (current) void rememberSupportPrompt(markSupportPromptAnswered(current));
+  };
+
   const handleFinish = (g: Game) => {
     // A finished game must reach history before the user can immediately
     // clear the current slot or launch a rematch from the results screen.
     persist(g, true);
     setScreen("results");
+    void considerSupportPrompt();
   };
 
   const handleHome = () => setScreen("home");
@@ -788,6 +860,12 @@ export default function App() {
             onReview={() => setScreen("game")}
           />
         )}
+        <SupportModal
+          visible={supportPromptVisible}
+          onDonate={() => answerSupportPrompt(true)}
+          onLater={() => setSupportPromptVisible(false)}
+          onNever={() => answerSupportPrompt(false)}
+        />
         <JoinTableModal
           code={pendingJoinCode}
           onClose={() => setPendingJoinCode(null)}

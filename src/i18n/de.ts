@@ -53,9 +53,22 @@ export const de: Strings = {
     leading: (name, total) => `In Führung: ${name} (${total})`,
     support: "Entwickler unterstützen ☕",
     supportHint: "Freiwilliger Beitrag · die App bleibt vollständig kostenlos.",
+    supportCost: (amountEur) =>
+      `Die App im App Store zu veröffentlichen kostet den Entwickler ${amountEur} €/Jahr. Beiträge decken zuerst diese Rechnung.`,
     disclaimer:
       "Von einem Spieler erstellt, ohne Verbindung zu, Unterstützung oder Sponsoring durch Grandpa Beck’s Games, dessen Verlage oder Händler. „Skull King“ und die offiziellen Spielelemente gehören den jeweiligen Rechteinhabern.",
     offline: "Funktioniert offline · über den Browser installieren",
+  },
+
+  supportPrompt: {
+    title: "Gefällt dir die App?",
+    body:
+      "Sie ist kostenlos, werbefrei und ohne Konto nutzbar, und das bleibt so. Dahinter steckt keine Firma, sondern ein Spieler, der sie in seiner Freizeit entwickelt.",
+    cost: (amountEur) =>
+      `Sie im App Store zu halten kostet den Entwickler ${amountEur} €/Jahr. Ein kleiner Beitrag genügt, um diese Rechnung zu decken.`,
+    donate: "Entwickler unterstützen ☕",
+    later: "Vielleicht später",
+    never: "Nicht mehr fragen",
   },
 
   whatsNew: {
@@ -67,6 +80,7 @@ export const de: Strings = {
     automaticUpdatesBody:
       "Installierte Apps laden jede neue Version automatisch und wechseln zu ihr, sobald das Gerät online ist.",
     items: [
+      "Die App bleibt kostenlos und werbefrei: Der Startbildschirm zeigt jetzt, was ihre Veröffentlichung im App Store kostet (100 €/Jahr), und nach einem beendeten Spiel folgt gelegentlich die Einladung, diese Rechnung mitzutragen.",
       "Die Punkte werden jetzt ausschließlich über Live-Sitzungen per QR-Code geteilt, damit alle Spieler Aktualisierungen in Echtzeit sehen.",
       "Die eigene Crew einzuladen und einem anderen Tisch beizutreten sind jetzt getrennte Aktionen, die in den Einstellungen direkt sichtbar sind.",
       "Gemeinsame Spieltische: Gib dem Tisch deiner Crew einen Namen und lade Freunde per Link oder QR-Code ein. Wer beitritt, kann die Punkte führen, jedes Spiel landet in der gemeinsamen Historie und Rangliste, und ein Handy kann mehrere Tische halten, einen pro Freundesgruppe.",
