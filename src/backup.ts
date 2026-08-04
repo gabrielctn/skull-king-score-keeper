@@ -1,3 +1,10 @@
+import {
+  GameDeletions,
+  deletionTimes,
+  mergeDeletions,
+  normalizeDeletions,
+  survivesDeletion,
+} from "./deletions";
 import { normalizeGame } from "./storage";
 import { BonusInput, Game, GAME_SCHEMA_VERSION, RoundEntry } from "./types";
 
@@ -26,6 +33,19 @@ export interface BackupData {
    * valid; absent means "no name chosen yet".
    */
   tableName?: string | null;
+  /**
+   * Games deleted at this table, as `game id -> deletion time`. Merges are a
+   * union, so without these a device that still holds a deleted game pushes it
+   * back and it reappears for everyone. Optional: absent means "nothing deleted
+   * that this payload knows about".
+   */
+  deletions?: GameDeletions;
+}
+
+/** Backup data after validation: the optional fields are settled. */
+interface NormalizedBackupData extends BackupData {
+  tableName: string | null;
+  deletions: GameDeletions;
 }
 
 /** Hard cap applied to table names at input and at import. */
@@ -502,7 +522,10 @@ export function deduplicateGames(games: readonly Game[]): Game[] {
   return [...byId.values()].sort(compareHistoryOrder);
 }
 
-function normalizeBackupData(data: BackupData, path: string): BackupData {
+function normalizeBackupData(
+  data: BackupData,
+  path: string
+): NormalizedBackupData {
   if (!isPlainObject(data)) {
     throw new BackupError("invalid_backup", `${path}: expected an object`);
   }
@@ -525,12 +548,25 @@ function normalizeBackupData(data: BackupData, path: string): BackupData {
     );
   }
 
-  const currentGame =
+  const parsedCurrent =
     data.currentGame === null
       ? null
       : normalizeBackupGame(data.currentGame, `${path}.currentGame`);
-  const rawHistory = data.history.map((game, index) =>
+  const parsedHistory = data.history.map((game, index) =>
     normalizeBackupGame(game, `${path}.history[${index}]`)
+  );
+
+  // Deleted games never make it back out, whichever door they came in through
+  // (a cloud pull, an imported file, or a snapshot on its way to the server),
+  // so one device's delete cannot be undone by another's stale copy.
+  const deletions = normalizeDeletions(data.deletions);
+  const deleted = deletionTimes(deletions);
+  const currentGame =
+    parsedCurrent && survivesDeletion(parsedCurrent, deleted)
+      ? parsedCurrent
+      : null;
+  const rawHistory = parsedHistory.filter((game) =>
+    survivesDeletion(game, deleted)
   );
 
   // If the current pointer is also present in history, both locations receive
@@ -545,6 +581,7 @@ function normalizeBackupData(data: BackupData, path: string): BackupData {
       rawHistory.map((game) => winnerById.get(game.id) ?? game)
     ),
     tableName: normalizeTableName(data.tableName),
+    deletions,
   };
 }
 
@@ -667,6 +704,7 @@ export function parseBackup(json: string): BackupPayloadV1 {
       currentGame: raw.currentGame as Game | null,
       history: raw.history as Game[],
       tableName: raw.tableName as string | null | undefined,
+      deletions: raw.deletions as GameDeletions | undefined,
     },
     "backup"
   );
@@ -694,6 +732,11 @@ function chooseCurrentGame(
 /**
  * Merge an imported backup into local data without losing either side. The
  * freshest revision wins per ID, and the freshest current pointer stays active.
+ *
+ * The union is what keeps two phones scoring at the same table from erasing
+ * each other, and it is also why deletions have to be carried explicitly:
+ * whichever side deleted a game, its tombstone applies to both, so the side
+ * that still had a copy no longer resurrects it.
  */
 export function mergeBackupData(
   local: BackupData,
@@ -701,16 +744,26 @@ export function mergeBackupData(
 ): BackupData {
   const normalizedLocal = normalizeBackupData(local, "local");
   const normalizedImported = normalizeBackupData(imported, "imported");
+  const deletions = mergeDeletions(
+    normalizedLocal.deletions,
+    normalizedImported.deletions
+  );
+  const deleted = deletionTimes(deletions);
+  // Each side survived its own tombstones already; the other side's may still
+  // remove its current game, in which case the pointer falls back to whatever
+  // the crew is actually still playing rather than to nothing.
+  const survivingCurrent = (game: Game | null): Game | null =>
+    game && survivesDeletion(game, deleted) ? game : null;
   const currentCandidate = chooseCurrentGame(
-    normalizedLocal.currentGame,
-    normalizedImported.currentGame
+    survivingCurrent(normalizedLocal.currentGame),
+    survivingCurrent(normalizedImported.currentGame)
   );
   const history = deduplicateGames([
     ...normalizedLocal.history,
     ...normalizedImported.history,
     ...(normalizedLocal.currentGame ? [normalizedLocal.currentGame] : []),
     ...(normalizedImported.currentGame ? [normalizedImported.currentGame] : []),
-  ]);
+  ]).filter((game) => survivesDeletion(game, deleted));
   if (history.length > MAX_BACKUP_GAMES) {
     throw new BackupError(
       "too_many_games",
@@ -726,6 +779,7 @@ export function mergeBackupData(
     // The shared table row is authoritative for the name, so a rename made by
     // any member propagates; a device that never named it adopts the table's.
     tableName: normalizedImported.tableName ?? normalizedLocal.tableName ?? null,
+    deletions,
   };
 }
 

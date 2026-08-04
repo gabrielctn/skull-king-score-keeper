@@ -351,6 +351,30 @@ check(
   appSource.includes("flushBeforeTableChange") &&
     appSource.includes("await cloudBackupManager().flushPending()")
 );
+// A merge is a union, so a deletion that leaves no trace is undone by the first
+// crew mate whose device still holds the game — it reappears in the history and
+// back in everyone's stats.
+check(
+  "deleting a game records a tombstone that travels with the table",
+  appSource.includes(
+    "applyDeletions(recordDeletions(deletionsRef.current, [gameId], Date.now()))"
+  ) && appSource.includes("deletions: deletionsRef.current")
+);
+check(
+  "clearing the whole history tombstones every game it removes",
+  appSource.includes("const handleDeleteAllGames") &&
+    appSource.includes("recordDeletions(deletionsRef.current, deletedIds")
+);
+check(
+  "a deletion reaches the cloud without waiting out the push debounce",
+  appSource.includes("const pushCloudNow") &&
+    appSource.includes("void cloudBackupManager().flushPending();") &&
+    appSource.includes("pushCloudNow(nextCurrent, next);")
+);
+check(
+  "tombstones are swapped with the table they belong to",
+  appSource.includes("applyDeletions(data.deletions ?? {})")
+);
 
 // React Native Web deletes `direction` from a StyleSheet and logs an error for
 // it, so a view that must not mirror under Arabic cannot ask for it that way —
@@ -437,7 +461,7 @@ for (const [language, strings] of Object.entries({ en, fr, es, de, ar, zh })) {
   );
   check(
     `${language} release notes describe this release`,
-    strings.whatsNew.items.length === 8
+    strings.whatsNew.items.length === 9
   );
 }
 

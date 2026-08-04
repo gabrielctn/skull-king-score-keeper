@@ -189,6 +189,9 @@ export function parseCloudState(state: unknown): BackupData | null {
       currentGame: payload.currentGame,
       history: payload.history,
       tableName: payload.tableName ?? null,
+      // Deletions made at this table travel with its games: without them the
+      // launch merge is a union and every deleted game comes back.
+      deletions: payload.deletions ?? {},
     };
   } catch {
     return null;

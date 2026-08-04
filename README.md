@@ -44,6 +44,10 @@ third finished game, and never again once it has been answered. The throttle liv
   round that still needs scoring.
 - Export every game to a versioned JSON backup and merge it back safely on this
   or another device.
+- Deleting a game deletes it for the whole crew: the shared table records the
+  deletion, so a crew mate's device cannot push its own copy back into the
+  history and the statistics. Restoring a backup file still brings its games
+  back — an explicit restore outranks an earlier deletion.
 - Start a rematch from the final standings with the same crew, options and card
   structure.
 - Complete English, French, German, Arabic (RTL), and Simplified Chinese UI,
@@ -281,6 +285,7 @@ Skull-King/
 │   ├── qr.ts                     # QR image (data URL) rendering
 │   ├── storage.ts                # AsyncStorage (→ localStorage on web)
 │   ├── backup.ts                 # Versioned, validated JSON import/export
+│   ├── deletions.ts              # Deletion tombstones (a delete survives a sync)
 │   ├── pwaInstall.ts             # Deferred install prompt + iOS guidance
 │   ├── registerServiceWorker.ts  # Registers the SW (web + prod only)
 │   ├── theme.ts                  # Colors + spacing tokens

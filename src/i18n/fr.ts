@@ -81,6 +81,7 @@ export const fr: Strings = {
     automaticUpdatesBody:
       "Les applications installées téléchargent désormais chaque nouvelle version automatiquement et l’activent dès que l’appareil est en ligne.",
     items: [
+      "Supprimer une partie la supprime désormais pour tout l’équipage : une partie retirée de l’historique ne réapparaît plus à la synchronisation suivante et quitte définitivement les statistiques.",
       "L’application reste gratuite et sans publicité : l’accueil indique désormais ce que coûte sa présence sur l’App Store (100 €/an), et une partie terminée propose parfois de contribuer à cette facture.",
       "Le partage des scores utilise désormais uniquement des sessions QR en direct, afin que chaque joueur voie les mises à jour en temps réel.",
       "Inviter votre équipage et rejoindre une autre table sont désormais deux actions distinctes, directement visibles dans les paramètres.",

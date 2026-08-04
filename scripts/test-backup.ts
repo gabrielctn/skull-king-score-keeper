@@ -5,6 +5,7 @@
 import {
   BACKUP_FORMAT,
   BACKUP_FORMAT_VERSION,
+  BackupData,
   BackupError,
   BackupErrorCode,
   MAX_BACKUP_BYTES,
@@ -15,6 +16,12 @@ import {
   parseBackup,
   serializeBackup,
 } from "../src/backup";
+import {
+  MAX_DELETIONS,
+  deletionTimes,
+  forgetDeletions,
+  mergeDeletions,
+} from "../src/deletions";
 import { createGame } from "../src/scoring";
 import { Game, GAME_SCHEMA_VERSION } from "../src/types";
 
@@ -456,6 +463,191 @@ expectBackupError(
       { currentGame: null, history: manyImportedGames }
     ),
   "too_many_games"
+);
+
+// --- deletions --------------------------------------------------------------
+//
+// The merge is a union, so a deleted game only stays deleted if the deletion
+// itself travels with the payload. Without these tombstones any device that
+// still had the game pushes it back on its next sync and the crew sees it
+// reappear in the history and the stats.
+
+const deletedRemotely = game("deleted-remotely", 100);
+const keptGame = game("kept", 120);
+const staleLocal: BackupData = {
+  currentGame: null,
+  history: [clone(deletedRemotely), keptGame],
+};
+const afterRemoteDelete: BackupData = {
+  currentGame: null,
+  history: [clone(keptGame)],
+  deletions: { "deleted-remotely": 110 },
+};
+const afterDeleteMerge = mergeBackupData(staleLocal, afterRemoteDelete);
+check(
+  "a deleted game is not resurrected by a device that still had it",
+  afterDeleteMerge.history.every((entry) => entry.id !== "deleted-remotely")
+);
+check(
+  "deleting one game leaves the others alone",
+  afterDeleteMerge.history.length === 1 &&
+    afterDeleteMerge.history[0].id === "kept"
+);
+check(
+  "the tombstone travels on so later syncs stay clean",
+  afterDeleteMerge.deletions?.["deleted-remotely"] === 110
+);
+check(
+  "the deletion also applies when it arrives from the other side",
+  mergeBackupData(afterRemoteDelete, staleLocal).history.length === 1
+);
+
+const playedOnAfterDelete = game("deleted-remotely", 130);
+check(
+  "a game played on after the deletion survives it",
+  mergeBackupData(
+    { currentGame: null, history: [playedOnAfterDelete] },
+    afterRemoteDelete
+  ).history.some((entry) => entry.id === "deleted-remotely")
+);
+check(
+  "the later of two deletions wins",
+  mergeBackupData(
+    { currentGame: null, history: [], deletions: { x: 10 } },
+    { currentGame: null, history: [], deletions: { x: 40 } }
+  ).deletions?.x === 40
+);
+
+const deletedCurrent = game("deleted-current", 100);
+const liveElsewhere = game("live-elsewhere", 90);
+const currentAfterDelete = mergeBackupData(
+  { currentGame: deletedCurrent, history: [clone(deletedCurrent)] },
+  {
+    currentGame: liveElsewhere,
+    history: [clone(liveElsewhere)],
+    deletions: { "deleted-current": 110 },
+  }
+);
+check(
+  "deleting the game in progress falls back to one the crew still plays",
+  currentAfterDelete.currentGame?.id === "live-elsewhere"
+);
+check(
+  "a deleted game cannot come back as the current pointer",
+  mergeBackupData(
+    { currentGame: deletedCurrent, history: [clone(deletedCurrent)] },
+    { currentGame: null, history: [], deletions: { "deleted-current": 110 } }
+  ).currentGame === null
+);
+
+const deletionRoundTrip = parseBackup(
+  serializeBackup({
+    currentGame: null,
+    history: [game("still-here", 100)],
+    deletions: { gone: 90 },
+  })
+);
+check(
+  "tombstones round-trip through the portable backup format",
+  deletionRoundTrip.deletions?.gone === 90
+);
+check(
+  "a payload never carries a game its own tombstones delete",
+  parseBackup(
+    JSON.stringify({
+      ...deletionRoundTrip,
+      history: [...deletionRoundTrip.history, game("gone", 80)],
+    })
+  ).history.every((entry) => entry.id !== "gone")
+);
+check(
+  "a pre-deletion backup parses with no tombstones",
+  Object.keys(
+    parseBackup(
+      serializeBackup({ currentGame: null, history: [game("old", 10)] })
+    ).deletions ?? {}
+  ).length === 0
+);
+
+const malformedDeletions = parseBackup(
+  JSON.stringify({
+    ...deletionRoundTrip,
+    deletions: { good: 5, negative: -1, text: "nope", "": 7 },
+  })
+);
+check(
+  "unusable tombstones are ignored instead of failing the import",
+  JSON.stringify(malformedDeletions.deletions) === JSON.stringify({ good: 5 })
+);
+check(
+  "a tombstone map of the wrong type is ignored",
+  Object.keys(
+    parseBackup(
+      JSON.stringify({ ...deletionRoundTrip, deletions: ["gone"] })
+    ).deletions ?? {}
+  ).length === 0
+);
+
+const tooManyDeletions: Record<string, number> = {};
+for (let index = 0; index < MAX_DELETIONS + 50; index++) {
+  tooManyDeletions[`game-${index}`] = index;
+}
+const cappedDeletions =
+  parseBackup(
+    JSON.stringify({ ...deletionRoundTrip, deletions: tooManyDeletions })
+  ).deletions ?? {};
+check(
+  "tombstones are capped so they cannot outgrow the payload",
+  Object.keys(cappedDeletions).length === MAX_DELETIONS
+);
+check(
+  "the cap keeps the most recent deletions",
+  cappedDeletions["game-0"] === undefined &&
+    cappedDeletions[`game-${MAX_DELETIONS + 49}`] === MAX_DELETIONS + 49
+);
+
+check(
+  "restoring a backup lifts the tombstones covering the games it brings back",
+  mergeBackupData(
+    {
+      currentGame: null,
+      history: [],
+      deletions: forgetDeletions({ restored: 200 }, ["restored"]),
+    },
+    { currentGame: null, history: [game("restored", 100)] }
+  ).history.some((entry) => entry.id === "restored")
+);
+check(
+  "restoring one game keeps the rest of the table's deletions",
+  forgetDeletions({ restored: 200, other: 300 }, ["restored"]).other === 300
+);
+
+// Game IDs arrive from other devices. On a plain object, an id of "__proto__"
+// would hit the inherited setter instead of becoming an entry, so the tombstone
+// would vanish and that game would come back. (Built through JSON, because an
+// object literal would set the prototype rather than create the key.)
+const protoDeletions = mergeDeletions(
+  { kept: 5 },
+  JSON.parse('{"__proto__": 120}')
+);
+check(
+  "a game id named __proto__ is kept as an ordinary tombstone",
+  deletionTimes(protoDeletions).get("__proto__") === 120 &&
+    deletionTimes(protoDeletions).get("kept") === 5
+);
+check(
+  "such a tombstone still deletes its game and survives serialization",
+  mergeBackupData(
+    { currentGame: null, history: [game("__proto__", 100)] },
+    { currentGame: null, history: [], deletions: protoDeletions }
+  ).history.length === 0 &&
+    parseBackup(
+      serializeBackup({
+        currentGame: null,
+        history: [],
+        deletions: protoDeletions,
+      })
+    ).deletions?.["__proto__"] === 120
 );
 
 console.log(`\n${passed} passed, ${failed} failed`);

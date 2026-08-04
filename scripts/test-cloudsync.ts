@@ -184,6 +184,26 @@ check("null cloud state parses to null", parseCloudState(null) === null);
 check("garbage cloud state parses to null", parseCloudState({ nope: true }) === null);
 check("empty object (fresh row) parses to null", parseCloudState({}) === null);
 
+// A pulled row has to bring the table's deletions back with its games: they are
+// what stops this device from re-uploading a game a crew mate deleted.
+const deletedPayload = createBackupPayload({
+  currentGame: null,
+  history: [finishedGame("kept", 1000)],
+  deletions: { removed: 900 },
+});
+check(
+  "a pulled row keeps the table's deletions",
+  parseCloudState(deletedPayload)?.deletions?.removed === 900
+);
+check(
+  "a pushed snapshot drops the games its deletions cover",
+  createBackupPayload({
+    currentGame: null,
+    history: [finishedGame("kept", 1000), finishedGame("removed", 800)],
+    deletions: { removed: 900 },
+  }).history.every((entry) => entry.id !== "removed")
+);
+
 // --- manager: create once, push, pull --------------------------------------
 
 async function run() {

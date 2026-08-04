@@ -18,6 +18,7 @@ import {
   clearGame,
   clearLiveSessionFor,
   loadGame,
+  loadGameDeletions,
   loadGameHistory,
   loadLang,
   loadSettings,
@@ -25,12 +26,18 @@ import {
   loadTableMemberships,
   loadTableName,
   saveGame,
+  saveGameDeletions,
   saveGameHistory,
   saveSettings,
   saveSupportPrompt,
   saveTableMemberships,
   saveTableName,
 } from "./src/storage";
+import {
+  GameDeletions,
+  forgetDeletions,
+  recordDeletions,
+} from "./src/deletions";
 import {
   PROMPT_DELAY_MS,
   SUPPORT_URL,
@@ -175,6 +182,7 @@ export default function App() {
   const supportPromptRef = useRef<SupportPromptState | null>(null);
   const historyRef = useRef<Game[]>([]);
   const gameRef = useRef<Game | null>(null);
+  const deletionsRef = useRef<GameDeletions>({});
   const tableNameRef = useRef<string | null>(null);
   const tablesRef = useRef<TableMembership[]>([]);
   const pendingCurrentSave = useRef<PendingCurrentGame>(undefined);
@@ -264,8 +272,25 @@ export default function App() {
         currentGame,
         history,
         tableName: tableNameRef.current,
+        deletions: deletionsRef.current,
       });
     }
+  };
+
+  /**
+   * Push a deletion without waiting out the debounce. A tombstone left in the
+   * queue when the tab closes means the cloud row still holds the game, and the
+   * next launch merges it straight back in.
+   */
+  const pushCloudNow = (currentGame: Game | null, history: Game[]) => {
+    pushCloud(currentGame, history);
+    if (cloudConfigured()) void cloudBackupManager().flushPending();
+  };
+
+  /** Persist the tombstones (ref + storage) alongside the games they remove. */
+  const applyDeletions = (next: GameDeletions) => {
+    deletionsRef.current = next;
+    void saveGameDeletions(next);
   };
 
   // Persist the membership list (state, ref, storage) in one place.
@@ -315,6 +340,9 @@ export default function App() {
     gameRef.current = data.currentGame;
     setGame(data.currentGame);
     queueCurrentSave(data.currentGame);
+    // Tombstones belong to the table, exactly like its games and its name, so
+    // switching tables swaps them instead of carrying them across.
+    applyDeletions(data.deletions ?? {});
     applyTableName(data.tableName ?? null);
   };
 
@@ -377,6 +405,7 @@ export default function App() {
       const [
         saved,
         history,
+        savedDeletions,
         savedLang,
         savedSettings,
         savedTableName,
@@ -384,11 +413,13 @@ export default function App() {
       ] = await Promise.all([
         loadGame(),
         loadGameHistory(),
+        loadGameDeletions(),
         loadLang(),
         loadSettings(),
         loadTableName(),
         loadTableMemberships(),
       ]);
+      deletionsRef.current = savedDeletions;
       tableNameRef.current = savedTableName;
       setTableName(savedTableName);
       tablesRef.current = savedTables;
@@ -430,6 +461,7 @@ export default function App() {
             currentGame: gameRef.current,
             history: historyRef.current,
             tableName: tableNameRef.current,
+            deletions: deletionsRef.current,
           };
           if (!remote) {
             cloud.push(localData);
@@ -495,6 +527,9 @@ export default function App() {
     historyRef.current = next;
     setGameHistory(next);
     queueHistorySave(next, true);
+    // Record the deletion before anything else: the tombstone is what makes it
+    // stick once another device at this table syncs its own copy of the game.
+    applyDeletions(recordDeletions(deletionsRef.current, [gameId], Date.now()));
     const current = gameRef.current;
     const nextCurrent = current?.id === gameId ? null : current;
     if (current?.id === gameId) {
@@ -508,7 +543,7 @@ export default function App() {
     } else {
       void clearLiveSessionFor(gameId);
     }
-    pushCloud(nextCurrent, next);
+    pushCloudNow(nextCurrent, next);
   };
 
   /**
@@ -600,6 +635,7 @@ export default function App() {
         currentGame: game,
         history: gameHistory,
         tableName: tableNameRef.current,
+        deletions: deletionsRef.current,
       })
     );
   };
@@ -609,10 +645,22 @@ export default function App() {
     if (json === null) return null;
 
     const imported = parseBackup(json);
+    // Restoring a file is an explicit "bring these games back", so it lifts any
+    // tombstone covering them. Everything else this table deleted stays deleted.
+    const restored = forgetDeletions(deletionsRef.current, [
+      ...imported.history.map((item) => item.id),
+      ...(imported.currentGame ? [imported.currentGame.id] : []),
+    ]);
     const merged = mergeBackupData(
-      { currentGame: game, history: gameHistory, tableName: tableNameRef.current },
+      {
+        currentGame: game,
+        history: gameHistory,
+        tableName: tableNameRef.current,
+        deletions: restored,
+      },
       imported
     );
+    applyDeletions(merged.deletions ?? {});
     applyTableName(merged.tableName ?? null);
     const failureCount = persistenceFailures.current;
     queueCurrentSave(merged.currentGame);
@@ -634,6 +682,10 @@ export default function App() {
 
   const handleDeleteAllGames = async () => {
     const failureCount = persistenceFailures.current;
+    const deletedIds = [
+      ...historyRef.current.map((item) => item.id),
+      ...(gameRef.current ? [gameRef.current.id] : []),
+    ];
     queueCurrentSave(null);
     queueHistorySave([], true);
     await Promise.all([flushCurrentSave(), flushHistorySave()]);
@@ -641,9 +693,11 @@ export default function App() {
       throw new Error("Stored games could not be cleared");
     }
     historyRef.current = [];
+    gameRef.current = null;
     setGame(null);
     setGameHistory([]);
-    pushCloud(null, []);
+    applyDeletions(recordDeletions(deletionsRef.current, deletedIds, Date.now()));
+    pushCloudNow(null, []);
   };
 
   /** Persist a support-prompt transition, keeping the in-memory copy in step. */
