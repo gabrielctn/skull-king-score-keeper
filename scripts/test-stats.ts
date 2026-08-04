@@ -723,10 +723,10 @@ eq("summary counts distinct players", crew.summary.totalPlayers, 3);
 
 eq("longest win streak spans games", anne?.longestWinStreak, 2);
 // Anne wins two three-seat tables outright and finishes last at the third, so
-// she is ahead of 4 of the 6 rivals she has faced. Cal is the mirror image:
-// last twice, then tied for first.
+// she is ahead of 4 of the 6 rivals she has faced. Cal trails both opponents
+// twice, then ties Bea for first while beating only Anne: 1 of 6.
 approx("rivals beaten normalises rank by table size", anne?.rivalsBeaten ?? -1, 2 / 3);
-approx("finishing last beats nobody at that table", cal?.rivalsBeaten ?? -1, 1 / 3);
+approx("a shared win beats only the players actually behind", cal?.rivalsBeaten ?? -1, 1 / 6);
 approx("average rank averages positions", anne?.averageRank ?? -1, 5 / 3);
 eq("best single round is tracked", anne?.bestRound, 40);
 eq("worst single round is tracked", anne?.worstRound, -10);
@@ -832,6 +832,11 @@ const squareStats = aggregateStats([allSquare]);
 eq(
   "a drawn game hands nobody a last place",
   squareStats.players.every((player) => player.lastPlaces === 0),
+  true
+);
+eq(
+  "drawing with someone is not beating them",
+  squareStats.players.every((player) => player.rivalsBeaten === 0),
   true
 );
 eq("a drawn game leaves the last-place record unclaimed", squareStats.records.mostLastPlaces, null);

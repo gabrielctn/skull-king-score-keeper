@@ -480,11 +480,14 @@ function RecordCard({
   const { t } = useI18n();
   const shame = tone === "shame";
   const { holder } = record;
+  // A record without a unit must not leave a gap before the full stop, which
+  // some screen readers voice as an extra pause.
+  const spokenValue = holder
+    ? [holder.value, holder.unit].filter(Boolean).join(" ")
+    : t.stats.recordUnclaimed;
   const spoken = holder
-    ? `${record.label}: ${holder.name}, ${holder.value} ${holder.unit ?? ""}. ${
-        record.hint
-      }`
-    : `${record.label}: ${t.stats.recordUnclaimed}. ${record.hint}`;
+    ? `${record.label}: ${holder.name}, ${spokenValue}. ${record.hint}`
+    : `${record.label}: ${spokenValue}. ${record.hint}`;
 
   return (
     <View

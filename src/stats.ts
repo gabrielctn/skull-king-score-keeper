@@ -684,12 +684,16 @@ export function aggregateStats(games: readonly Game[]): StatsSnapshot {
         bucket.worstFinalScore === null
           ? finalStanding.total
           : Math.min(bucket.worstFinalScore, finalStanding.total);
-      // Winning a four-seat table beats three rivals, second beats two, and so
-      // on. A solo seat has nobody to beat, so it stays out of the average
+      // "Ahead of" means strictly ahead, and tied players share one rank, so
+      // the rank number is not a position to subtract from: count the seats
+      // that actually finished behind. Drawing with someone beats nobody. A
+      // solo seat has no rivals at all and stays out of the average entirely,
       // rather than counting as a shut-out either way.
       if (finalRows.length >= 2) {
-        bucket.rivalShareSum +=
-          (finalRows.length - finalStanding.rank) / (finalRows.length - 1);
+        const beaten = finalRows.filter(
+          (row) => row.rank > finalStanding.rank
+        ).length;
+        bucket.rivalShareSum += beaten / (finalRows.length - 1);
         bucket.rivalGames += 1;
       }
       bucket.rankSum += finalStanding.rank;
