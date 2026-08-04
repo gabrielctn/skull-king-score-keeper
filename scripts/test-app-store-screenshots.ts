@@ -4,12 +4,17 @@
  */
 import {
   existsSync,
+  mkdirSync,
   mkdtempSync,
   readFileSync,
+  renameSync,
   rmSync,
+  unlinkSync,
+  writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
+import { deflateSync } from "node:zlib";
 import { parseBackup, serializeBackup } from "../src/backup";
 import { ghostTricks, isRoundComplete, standings } from "../src/scoring";
 import {
@@ -39,6 +44,8 @@ import {
   assertCaptureSimulatorName,
   buildSeedEntries,
 } from "./app-store-screenshots/seedSimulator";
+import { inspectPng } from "./app-store-screenshots/png";
+import { validateAppStoreScreenshotExports } from "./app-store-screenshots/validateExports";
 
 let passed = 0;
 let failed = 0;
@@ -90,6 +97,103 @@ function throws(label: string, action: () => void, message: RegExp) {
 
 function section(title: string) {
   console.log(`\n${title}`);
+}
+
+const PNG_SIGNATURE = Buffer.from([
+  0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a,
+]);
+const pngIdatCache = new Map<string, Buffer>();
+
+function fixtureCrc32(input: Buffer): number {
+  let crc = 0xffffffff;
+  for (const byte of input) {
+    crc ^= byte;
+    for (let bit = 0; bit < 8; bit++) {
+      crc = (crc >>> 1) ^ (crc & 1 ? 0xedb88320 : 0);
+    }
+  }
+  return (crc ^ 0xffffffff) >>> 0;
+}
+
+function fixturePngChunk(type: string, data: Buffer): Buffer {
+  const typeBuffer = Buffer.from(type, "ascii");
+  const length = Buffer.alloc(4);
+  length.writeUInt32BE(data.length);
+  const crc = Buffer.alloc(4);
+  crc.writeUInt32BE(fixtureCrc32(Buffer.concat([typeBuffer, data])));
+  return Buffer.concat([length, typeBuffer, data, crc]);
+}
+
+function pngFixture(
+  width: number,
+  height: number,
+  colorType: 2 | 6,
+  alpha = 255,
+  marker = "fixture"
+): Buffer {
+  const bytesPerPixel = colorType === 2 ? 3 : 4;
+  const cacheKey = `${width}x${height}:${colorType}:${alpha}`;
+  let compressed = pngIdatCache.get(cacheKey);
+  if (!compressed) {
+    const rowLength = width * bytesPerPixel;
+    const scanlines = Buffer.alloc((rowLength + 1) * height);
+    if (colorType === 6) {
+      for (let row = 0; row < height; row++) {
+        const rowStart = row * (rowLength + 1) + 1;
+        for (let pixel = 0; pixel < width; pixel++) {
+          scanlines[rowStart + pixel * bytesPerPixel + 3] = alpha;
+        }
+      }
+    }
+    compressed = deflateSync(scanlines);
+    pngIdatCache.set(cacheKey, compressed);
+  }
+
+  const ihdr = Buffer.alloc(13);
+  ihdr.writeUInt32BE(width, 0);
+  ihdr.writeUInt32BE(height, 4);
+  ihdr[8] = 8;
+  ihdr[9] = colorType;
+  ihdr[10] = 0;
+  ihdr[11] = 0;
+  ihdr[12] = 0;
+
+  return Buffer.concat([
+    PNG_SIGNATURE,
+    fixturePngChunk("IHDR", ihdr),
+    fixturePngChunk("tEXt", Buffer.from(`fixture\0${marker}`, "utf8")),
+    fixturePngChunk("IDAT", compressed),
+    fixturePngChunk("IEND", Buffer.alloc(0)),
+  ]);
+}
+
+function writeSyntheticScreenshotTree(root: string): void {
+  let marker = 0;
+  for (const locale of APP_STORE_SCREENSHOT_LOCALES) {
+    for (const [device, dimensions] of Object.entries(
+      APP_STORE_SCREENSHOT_DEVICES
+    )) {
+      for (const shot of APP_STORE_SCREENSHOT_SHOTS) {
+        const path = finalScreenshotPath(
+          root,
+          locale,
+          device as keyof typeof APP_STORE_SCREENSHOT_DEVICES,
+          shot.stem
+        );
+        mkdirSync(dirname(path), { recursive: true });
+        writeFileSync(
+          path,
+          pngFixture(
+            dimensions.width,
+            dimensions.height,
+            2,
+            255,
+            String(marker++)
+          )
+        );
+      }
+    }
+  }
 }
 
 section("Screenshot contract");
@@ -421,6 +525,114 @@ const seedFileNames: Record<string, string> = {
 };
 for (const [key, expectedFileName] of Object.entries(seedFileNames)) {
   eq(`${key} filename`, asyncStorageFileName(key), expectedFileName);
+}
+
+section("PNG inspection and export validation");
+throws(
+  "bad PNG signature is rejected",
+  () => inspectPng(Buffer.from("not a png", "utf8")),
+  /signature/i
+);
+deepEq("RGB PNG is opaque", inspectPng(pngFixture(3, 2, 2)), {
+  width: 3,
+  height: 2,
+  bitDepth: 8,
+  colorType: 2,
+  opaque: true,
+});
+check(
+  "fully opaque RGBA PNG is opaque",
+  inspectPng(pngFixture(2, 2, 6, 255)).opaque
+);
+check(
+  "RGBA PNG with alpha below 255 is transparent",
+  !inspectPng(pngFixture(2, 2, 6, 254)).opaque
+);
+
+const exportRoot = mkdtempSync(join(tmpdir(), "skull-king-exports-"));
+try {
+  throws(
+    "missing final files are rejected",
+    () => validateAppStoreScreenshotExports(exportRoot),
+    /missing/i
+  );
+
+  writeSyntheticScreenshotTree(exportRoot);
+  validateAppStoreScreenshotExports(exportRoot);
+  check("a complete synthetic thirty-two-file tree passes", true);
+
+  const target = finalScreenshotPath(
+    exportRoot,
+    "en",
+    "iphone-6.9",
+    APP_STORE_SCREENSHOT_SHOTS[0].stem
+  );
+  const secondTarget = finalScreenshotPath(
+    exportRoot,
+    "en",
+    "iphone-6.9",
+    APP_STORE_SCREENSHOT_SHOTS[1].stem
+  );
+  const originalTarget = readFileSync(target);
+  const originalSecondTarget = readFileSync(secondTarget);
+
+  writeFileSync(secondTarget, originalTarget);
+  throws(
+    "byte-for-byte duplicate exports are rejected",
+    () => validateAppStoreScreenshotExports(exportRoot),
+    /duplicate/i
+  );
+  writeFileSync(secondTarget, originalSecondTarget);
+
+  unlinkSync(target);
+  throws(
+    "one missing expected file is rejected",
+    () => validateAppStoreScreenshotExports(exportRoot),
+    /missing/i
+  );
+  writeFileSync(target, originalTarget);
+
+  const extra = join(exportRoot, "en-US", "iphone-6.9", "09-extra.png");
+  writeFileSync(extra, pngFixture(1320, 2868, 2, 255, "extra"));
+  throws(
+    "extra PNG files are rejected",
+    () => validateAppStoreScreenshotExports(exportRoot),
+    /unexpected/i
+  );
+  unlinkSync(extra);
+
+  const misnamed = join(
+    exportRoot,
+    "en-US",
+    "iphone-6.9",
+    "01-score-everything.png"
+  );
+  renameSync(target, misnamed);
+  throws(
+    "misnamed PNG files are rejected",
+    () => validateAppStoreScreenshotExports(exportRoot),
+    /missing.*unexpected|unexpected.*missing/is
+  );
+  renameSync(misnamed, target);
+
+  writeFileSync(target, pngFixture(10, 10, 2, 255, "wrong-size"));
+  throws(
+    "wrong export dimensions are rejected",
+    () => validateAppStoreScreenshotExports(exportRoot),
+    /1320.*2868/i
+  );
+
+  writeFileSync(
+    target,
+    pngFixture(1320, 2868, 6, 254, "transparent")
+  );
+  throws(
+    "transparent final PNGs are rejected",
+    () => validateAppStoreScreenshotExports(exportRoot),
+    /opaque/i
+  );
+} finally {
+  rmSync(exportRoot, { recursive: true, force: true });
 }
 
 console.log(`\n${passed} passed, ${failed} failed`);
