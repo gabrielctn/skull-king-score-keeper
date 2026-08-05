@@ -939,8 +939,13 @@ const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.bg },
   backgroundTexture: {
     ...StyleSheet.absoluteFillObject,
-    width: undefined,
-    height: undefined,
+    // Must be "100%", not undefined: react-native-web seeds an Image's style
+    // with the asset's intrinsic size and drops undefined values instead of
+    // treating them as "unset", so the texture rendered as a 640x640 square
+    // pinned top-left — and overflowed the layout viewport on phones, letting
+    // a pinch-zoom-out pan sideways into empty space.
+    width: "100%",
+    height: "100%",
     opacity: 0.075,
     pointerEvents: "none",
   },
