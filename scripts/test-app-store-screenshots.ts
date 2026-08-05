@@ -391,7 +391,7 @@ eq("Greybeard scenario points at ghost game", ghostSeed.currentGame.id, "app-sto
 eq("results scenario points at featured game", resultsSeed.currentGame.id, "app-store-finished-12");
 eq("seed history stays finished-only", activeSeed.history.length, 12);
 check("support prompt is suppressed", activeSeed.supportPrompt.optedOut);
-eq("seed release is current", activeSeed.seenRelease, "1.11.1");
+eq("seed release is current", activeSeed.seenRelease, "1.11.2");
 
 const parsed = parseBackup(serializeBackup(activeSeed, APP_STORE_FIXTURE_EPOCH));
 eq("backup current game survives", parsed.currentGame?.id, "app-store-active");

@@ -80,6 +80,7 @@ export const de: Strings = {
     automaticUpdatesBody:
       "Installierte Apps laden jede neue Version automatisch und wechseln zu ihr, sobald das Gerät online ist.",
     items: [
+      "Der Kartenhintergrund bedeckt jetzt den ganzen Bildschirm, statt in einem kleinen Quadrat in der Ecke zu sitzen, und beim Herauszoomen auf dem Handy rutscht die Seite nicht mehr seitlich weg.",
       "Ein gelöschtes Spiel bleibt jetzt für die ganze Crew gelöscht: Ein aus dem Verlauf entferntes Spiel taucht bei der nächsten Synchronisierung nicht wieder auf und verschwindet endgültig aus der Statistik.",
       "Die App bleibt kostenlos und werbefrei: Der Startbildschirm zeigt jetzt, was ihre Veröffentlichung im App Store kostet (100 €/Jahr), und nach einem beendeten Spiel folgt gelegentlich die Einladung, diese Rechnung mitzutragen.",
       "Die Punkte werden jetzt ausschließlich über Live-Sitzungen per QR-Code geteilt, damit alle Spieler Aktualisierungen in Echtzeit sehen.",

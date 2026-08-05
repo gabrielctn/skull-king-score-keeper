@@ -21,8 +21,8 @@ export interface SeedSimulatorOptions {
   destination: "home" | "continueGame" | "statistics" | "newGame";
 }
 
-const EXPECTED_VERSION = "1.11.1";
-const EXPECTED_BUILD = "7";
+const EXPECTED_VERSION = "1.11.2";
+const EXPECTED_BUILD = "8";
 const BUNDLE_ID = "com.gabrielcretin.skullking";
 const CAPTURE_SIMULATOR_PREFIX = "Skull King Capture ";
 const DESTINATION_KEY =

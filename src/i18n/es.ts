@@ -82,6 +82,7 @@ export const es: Strings = {
     automaticUpdatesBody:
       "Las aplicaciones instaladas ahora descargan automáticamente cada nueva versión y la activan en cuanto el dispositivo se conecta a internet.",
     items: [
+      "El fondo de mapa ahora cubre toda la pantalla en lugar de quedarse en un cuadrado pequeño en la esquina, y alejar el zoom en el móvil ya no desliza la página hacia los lados.",
       "Eliminar una partida ahora la elimina para toda la tripulación: una partida borrada del historial ya no reaparece en la siguiente sincronización y desaparece de las estadísticas para siempre.",
       "La aplicación sigue siendo gratuita y sin anuncios: la pantalla de inicio ya indica lo que cuesta su publicación en la App Store (100 €/año), y al terminar una partida se te invita de vez en cuando a ayudar con esa factura.",
       "Ahora los puntos se comparten únicamente mediante sesiones QR en directo, para que todos los jugadores vean las actualizaciones en tiempo real.",
