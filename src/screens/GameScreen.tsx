@@ -17,10 +17,12 @@ import {
   RoundEntries,
 } from "../types";
 import {
+  MAX_DISCARDED_TRICKS,
   RASCAL_POINTS_PER_CARD,
   activeLootUses,
   bonusCount,
   cardsForRound,
+  discardedTricksForRound,
   emptyEntry,
   entryHasInput,
   ghostTricks,
@@ -112,7 +114,7 @@ function roundHasInput(
 /** Everything a round's controls and its "can this be scored?" checks need. */
 interface RoundState {
   cards: number;
-  /** Tricks destroyed by a Kraken, clamped to what the round could hold. */
+  /** Tricks a Kraken or the White Whale left with no winner. */
   discardedTricks: number;
   tricksTotal: number;
   accountedTricks: number;
@@ -140,10 +142,7 @@ function deriveRoundState(
   roundNumber: number
 ): RoundState {
   const cards = cardsForRound(game, roundNumber);
-  const discardedTricks = Math.min(
-    cards,
-    Math.max(0, game.discardedTricks[roundNumber - 1] ?? 0)
-  );
+  const discardedTricks = discardedTricksForRound(game, roundNumber);
   const tricksTotal = game.players.reduce(
     (sum, player) => sum + (entries[player.id]?.tricks ?? 0),
     0
@@ -257,8 +256,8 @@ export default function GameScreen({
 
   /**
    * Persist an editable round immediately. Optional round-level changes are
-   * written in the same Game update so cards, Loot and Kraken state cannot get
-   * out of sync with the bid/trick/bonus draft.
+   * written in the same Game update so cards, Loot and discarded tricks cannot
+   * get out of sync with the bid/trick/bonus draft.
    */
   const persistDraft = (
     nextDraft: RoundEntries,
@@ -376,16 +375,23 @@ export default function GameScreen({
     });
   };
 
-  const toggleDiscardedTrick = () => {
+  /**
+   * Record how many of the round's tricks nobody won. Both leviathans can
+   * strike in the same round, so this is a count rather than a single flag.
+   */
+  const setDiscardedTricks = (value: number) => {
     const current = latestGame.current;
-    const nextCount =
-      deriveRoundState(current, latestDraft.current, displayRound)
-        .discardedTricks > 0
-        ? 0
-        : 1;
+    const capped = Math.max(
+      0,
+      Math.min(
+        value,
+        MAX_DISCARDED_TRICKS,
+        cardsForRound(current, displayRound)
+      )
+    );
     persistDraft(latestDraft.current, {
       discardedTricks: current.discardedTricks.map((count, index) =>
-        index === displayRound - 1 ? nextCount : count
+        index === displayRound - 1 ? capped : count
       ),
     });
   };
@@ -809,30 +815,32 @@ export default function GameScreen({
           );
         })}
 
-        <TouchableOpacity
+        <View
           style={[
-            styles.krakenButton,
+            styles.discardCard,
             layout.gameColumns === 2 && styles.fullWidth,
-            discardedTricks > 0 && styles.krakenButtonActive,
+            discardedTricks > 0 && styles.discardCardActive,
           ]}
-          onPress={toggleDiscardedTrick}
-          accessibilityRole="button"
-          accessibilityState={{ selected: discardedTricks > 0 }}
         >
-          <Text
-            style={[
-              styles.krakenButtonText,
-              discardedTricks > 0 && styles.krakenButtonTextActive,
-            ]}
-          >
-            {discardedTricks > 0
-              ? `✓ ${t.game.krakenRecorded}`
-              : t.game.krakenRecord}
-          </Text>
-          {discardedTricks > 0 ? (
-            <Text style={styles.krakenUndo}>{t.game.krakenUndo}</Text>
-          ) : null}
-        </TouchableOpacity>
+          <View style={styles.discardRow}>
+            <Text
+              style={[
+                styles.discardTitle,
+                discardedTricks > 0 && styles.discardTitleActive,
+              ]}
+            >
+              {t.game.discardedTitle}
+            </Text>
+            <Stepper
+              value={discardedTricks}
+              onChange={setDiscardedTricks}
+              max={Math.min(cards, MAX_DISCARDED_TRICKS)}
+              accessibilityLabel={t.game.discardedTitle}
+              compact
+            />
+          </View>
+          <Text style={styles.discardHint}>{t.game.discardedHint}</Text>
+        </View>
 
         <Text
           style={[
@@ -1206,30 +1214,38 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
   },
   fullWidth: { width: "100%" },
-  krakenButton: {
-    minHeight: 44,
+  discardCard: {
     borderWidth: 1,
     borderColor: colors.controlBorder,
     borderRadius: radius.sm,
     backgroundColor: colors.bgElevated,
     paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
     marginTop: spacing.xs,
     marginBottom: spacing.xs,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
   },
-  krakenButtonActive: {
+  discardCardActive: {
     borderColor: colors.positive,
     backgroundColor: colors.card,
   },
-  krakenButtonText: { color: colors.gold, fontSize: 13, fontWeight: "800" },
-  krakenButtonTextActive: { color: colors.positive },
-  krakenUndo: {
+  discardRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    columnGap: spacing.sm,
+  },
+  discardTitle: {
+    flexShrink: 1,
+    color: colors.gold,
+    fontSize: 13,
+    fontWeight: "800",
+  },
+  discardTitleActive: { color: colors.positive },
+  discardHint: {
     color: colors.textDim,
     fontSize: 11,
-    marginStart: spacing.sm,
-    textDecorationLine: "underline",
+    lineHeight: 15,
+    marginTop: spacing.xs,
   },
   hintOk: { color: colors.positive },
   hintWarn: { color: colors.textDim },

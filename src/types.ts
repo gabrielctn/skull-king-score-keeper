@@ -94,9 +94,10 @@ export interface Game {
   /** Loot cards used in each round, capped at the two cards in the deck. */
   lootUses: LootUse[][];
   /**
-   * Tricks destroyed by a Kraken (or otherwise discarded with no winner) in
-   * each round. Official play normally caps this at one, but a count keeps the
-   * saved data explicit and future-proof.
+   * Tricks that ended with no winner in each round: the Kraken destroys the
+   * trick it lands in, and the White Whale discards its own when only special
+   * cards were played. The deck holds one of each, so a round can lose up to
+   * two tricks this way (see MAX_DISCARDED_TRICKS).
    */
   discardedTricks: number[];
   /**

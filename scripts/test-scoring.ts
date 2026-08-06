@@ -10,8 +10,10 @@ import {
   bonusesOnMissEnabled,
   bonusesRequireBidForMode,
   bonusesRequireBidFromOnMiss,
+  MAX_DISCARDED_TRICKS,
   captureBonus,
   createGame,
+  discardedTricksForRound,
   emptyBonus,
   expansionColorBonus,
   ghostTricks,
@@ -822,6 +824,50 @@ eq(
   solo.discardedTricks.length,
   solo.totalRounds
 );
+
+console.log("\nDiscarded tricks: the Kraken and the White Whale");
+{
+  const leviathans = createGame(
+    [
+      { id: "a", name: "Anne" },
+      { id: "b", name: "Bonny" },
+      { id: "c", name: "Calico" },
+    ],
+    10
+  );
+  eq("a round with no leviathan discards nothing", discardedTricksForRound(leviathans, 5), 0);
+  // A Kraken trick and a White-Whale-over-specials trick in the same round.
+  leviathans.discardedTricks[4] = 2;
+  eq(
+    "both leviathans can discard a trick in the same round",
+    discardedTricksForRound(leviathans, 5),
+    2
+  );
+  // Only one Kraken and one White Whale exist, so three is not a real round.
+  leviathans.discardedTricks[6] = 3;
+  eq(
+    "discards stop at the deck's two leviathans",
+    discardedTricksForRound(leviathans, 7),
+    MAX_DISCARDED_TRICKS
+  );
+  // Round 1 deals a single card, so at most that one trick can be discarded.
+  leviathans.discardedTricks[0] = 2;
+  eq(
+    "a round cannot discard more tricks than it dealt",
+    discardedTricksForRound(leviathans, 1),
+    1
+  );
+  leviathans.discardedTricks[7] = -4;
+  eq("a negative count reads as no discard", discardedTricksForRound(leviathans, 8), 0);
+  // A whale trick leaves the round one trick short of the cards dealt: the
+  // players' tricks plus the discards are what must add up.
+  leviathans.rounds[4] = { a: E(2, 2), b: E(1, 1), c: E(0, 0) };
+  eq(
+    "a whale trick is scored like any other missing trick",
+    playerTotal(leviathans, "a", 5),
+    40
+  );
+}
 
 console.log("\nTurn order: dealer rotates clockwise, leader follows");
 const seat3 = createGame(

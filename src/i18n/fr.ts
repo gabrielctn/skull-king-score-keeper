@@ -85,10 +85,13 @@ export const fr: Strings = {
     title: "Nouveautés",
     version: (version, date) => `Version ${version} · ${date}`,
     items: [
-      "Rejoignez une table avec le code à 6 caractères que votre ami vous montre.",
+      "Enregistrez les plis remportés par personne, détruits par le Kraken ou défaussés par la Baleine blanche.",
     ],
     historyTitle: "Versions précédentes",
     history: {
+      "1.12.0": [
+        "Rejoignez une table avec le code à 6 caractères que votre ami vous montre.",
+      ],
       "1.11.2": [
         "Le fond de carte remplit à nouveau tout l’écran, et dézoomer ne fait plus glisser la page sur le côté.",
       ],
@@ -352,9 +355,9 @@ export const fr: Strings = {
     ghostTook: (n) =>
       `  ·  Barbe Grise 👻 a remporté ${n} ${n === 1 ? "pli" : "plis"}`,
     tricksWarnOver: "  (plus que les cartes distribuées ; vérifiez vos comptes)",
-    krakenRecord: "+ Pli défaussé par le Kraken",
-    krakenRecorded: "Pli du Kraken comptabilisé",
-    krakenUndo: "Annuler",
+    discardedTitle: "Plis remportés par personne",
+    discardedHint:
+      "Le Kraken détruit son pli. La Baleine blanche défausse le sien quand seules des cartes spéciales ont été jouées.",
     totalScoreTitle: "Score total",
     totalIncludesRound: "La manche affichée est incluse dans ces totaux.",
     totalExcludesRound:
@@ -868,11 +871,11 @@ export const fr: Strings = {
       },
       {
         title: "Kraken",
-        body: "Le pli est détruit : PERSONNE ne le remporte, les cartes sont mises de côté. Aucun pli ne compte et aucune capture n’a lieu. Le pli suivant est lancé par celui qui aurait dû gagner.",
+        body: "Le pli est détruit : PERSONNE ne le remporte, les cartes sont mises de côté. Aucun pli ne compte et aucune capture n’a lieu. Comptez-le dans « plis remportés par personne ». Le pli suivant est lancé par celui qui aurait dû gagner.",
       },
       {
         title: "Baleine blanche",
-        body: "Toutes les cartes spéciales sont annulées et perdent ; le NUMÉRO le plus élevé remporte le pli (atout compris). Si seules des spéciales ont été jouées, le pli est défaussé. Aucun bonus de capture dans un pli de baleine.",
+        body: "Toutes les cartes spéciales sont annulées et perdent ; le NUMÉRO le plus élevé remporte le pli (atout compris). Si seules des spéciales ont été jouées, personne ne remporte le pli : défaussez-le et comptez-le dans « plis remportés par personne ». Aucun bonus de capture dans un pli de baleine.",
       },
       {
         title: "Kraken vs Baleine blanche",

@@ -49,7 +49,8 @@ export function normalizeSettings(raw: unknown): AppSettings {
  * before schema v4 also stored Loot as a per-player count instead of binding
  * the two allied players, so keep those historical points in `legacyLoot`.
  * Schema v5 adds the new expansion fields and toggle; old games keep it off.
- * Schema v6 records tricks destroyed by a Kraken; older saves default to 0.
+ * Schema v6 records tricks that ended with no winner (a Kraken or White Whale
+ * trick); older saves default to 0.
  * Schema v7 adds Rascal scoring (mode, optional-rules flag and per-entry
  * declarations); older saves stay on classic scoring.
  * Schema v8 stamps `finishedAt` when a game completes; older saves keep null

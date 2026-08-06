@@ -502,6 +502,37 @@ export function cardsForRound(game: Game, roundNumber: number): number {
 }
 
 /**
+ * Tricks a single round can end with nobody winning them. The deck holds one
+ * Kraken and one White Whale, so at most two of a round's tricks are discarded.
+ */
+export const MAX_DISCARDED_TRICKS = 2;
+
+/**
+ * Tricks nobody won in a round.
+ *
+ * Two cards leave a trick with no winner: the Kraken destroys the trick it
+ * lands in, and the White Whale discards its own when only special cards were
+ * played (nullified specials all lose, so no number card is left to win it).
+ * Those tricks are never dealt to a player, which is why the round's recorded
+ * tricks are checked against the cards dealt minus this count.
+ *
+ * Clamped to what the round could actually hold, so a stale or hand-edited
+ * save can never turn an otherwise valid round into an impossible one.
+ */
+export function discardedTricksForRound(
+  game: Game,
+  roundNumber: number
+): number {
+  const stored = Math.floor(
+    Number(game.discardedTricks?.[roundNumber - 1]) || 0
+  );
+  return Math.max(
+    0,
+    Math.min(stored, MAX_DISCARDED_TRICKS, cardsForRound(game, roundNumber))
+  );
+}
+
+/**
  * Tricks captured by the non-scoring "Greybeard" ghost in the 2-player variant.
  *
  * Greybeard plays a third hand and wins some tricks without scoring, so the two

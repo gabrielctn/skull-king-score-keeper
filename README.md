@@ -126,10 +126,13 @@ Conditional extras (when "Loot & Rascal wager" is on):
 
 Special cards that affect *what you enter* (explained in the in-app "?" reference):
 
-- **Kraken:** the trick is destroyed — nobody wins it, no captures count. (So the
-  round's tricks can total fewer than the cards dealt.)
-- **White Whale:** specials are nullified and the highest *number* wins; no
-  special-card capture bonuses happen in a whale trick.
+- **Kraken:** the trick is destroyed — nobody wins it, no captures count.
+- **White Whale:** specials are nullified and the highest *number* wins; when
+  only specials were played the trick is discarded, and no special-card capture
+  bonuses happen in a whale trick either way.
+- Both leave tricks with no winner, so the round's tricks can total fewer than
+  the cards dealt. Count them under **"tricks nobody won"** and the round adds
+  up again; the deck holds one of each card, so a round can lose two tricks.
 - **0/14, wild 15, Mary Throne, Final Salvo, Walk the Plank and Spotted Ray:**
   their complete trick-play rules are included in the in-app reference.
 - **Davy Jones' Locker:** destroys all leviathans in its trick; the app records

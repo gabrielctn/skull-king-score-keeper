@@ -12,11 +12,12 @@
  * feature, no internals, no rationale. "Join a table with a 6-character code"
  * is a release note; "table_invites RPC with a 15-minute TTL" is not.
  */
-export const CURRENT_RELEASE = "1.12.0";
+export const CURRENT_RELEASE = "1.13.0";
 export const CURRENT_RELEASE_DATE = "2026-08-06";
 
 /** Shipped releases before this one, newest first. */
 export const PAST_RELEASES = [
+  { version: "1.12.0", date: "2026-08-06" },
   { version: "1.11.2", date: "2026-08-06" },
   { version: "1.11.1", date: "2026-08-04" },
   { version: "1.11.0", date: "2026-08-04" },

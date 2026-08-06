@@ -53,7 +53,7 @@ if (legacy) {
   check("missing round bindings become empty", legacy.lootUses.length === 2);
   check("first round has no invented pair", legacy.lootUses[0].length === 0);
   check(
-    "old saves default Kraken-discard counts to zero",
+    "old saves default discarded-trick counts to zero",
     legacy.discardedTricks.length === 2 &&
       legacy.discardedTricks.every((n) => n === 0)
   );
@@ -122,7 +122,7 @@ check(
     roundTripped.rounds[0].a.bonus.davyJonesLeviathans === 1
 );
 check(
-  "Kraken-discard count survives JSON persistence",
+  "discarded-trick count survives JSON persistence",
   roundTripped?.discardedTricks[0] === 1 &&
     roundTripped.discardedTricks[1] === 0
 );

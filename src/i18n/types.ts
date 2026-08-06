@@ -362,9 +362,10 @@ export interface Strings {
     /** "Greybeard 👻 took {n}" */
     ghostTook: (n: number) => string;
     tricksWarnOver: string;
-    krakenRecord: string;
-    krakenRecorded: string;
-    krakenUndo: string;
+    /** Heading of the counter for tricks that ended with no winner. */
+    discardedTitle: string;
+    /** Says which cards discard a trick: the Kraken and the White Whale. */
+    discardedHint: string;
     totalScoreTitle: string;
     totalIncludesRound: string;
     totalExcludesRound: string;

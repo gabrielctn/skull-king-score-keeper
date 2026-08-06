@@ -441,6 +441,16 @@ for (const [name, source] of rnStyleSources) {
     'react-native-web rejects it; wrap the view in LtrView instead'
   );
 }
+// A Kraken is not the only way a trick ends with no winner: the White Whale
+// discards its trick whenever it catches nothing but special cards. Counting
+// those tricks is what lets the round add up to the cards dealt.
+check(
+  "the round counts tricks nobody won, whichever leviathan took them",
+  gameSource.includes("t.game.discardedTitle") &&
+    gameSource.includes("t.game.discardedHint") &&
+    gameSource.includes("max={Math.min(cards, MAX_DISCARDED_TRICKS)}") &&
+    !gameSource.includes("kraken")
+);
 check(
   "the podium keeps its silver-gold-bronze shape in RTL",
   podiumSource.includes("<LtrView style={styles.podiumRow}>")
@@ -502,6 +512,12 @@ for (const [language, strings] of Object.entries({ en, fr, es, de, ar, zh })) {
   check(
     `${language} labels provisional scores`,
     strings.game.roundPointsPreview.trim().length > 0
+  );
+  check(
+    `${language} says which cards leave a trick with no winner`,
+    strings.game.discardedTitle.trim().length > 0 &&
+      strings.game.discardedHint.trim().length > 0 &&
+      strings.game.discardedHint.length <= 140
   );
   check(
     `${language} release notes describe only this release`,
