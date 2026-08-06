@@ -88,9 +88,6 @@ export const en: Strings = {
     badge: "New",
     title: "What's new",
     version: (version, date) => `Version ${version} · ${date}`,
-    automaticUpdatesTitle: "Always up to date",
-    automaticUpdatesBody:
-      "Installed apps now download each new release automatically and switch to it as soon as the device is online.",
     items: [
       "Join a table with the 6-character code your friend shows you.",
     ],

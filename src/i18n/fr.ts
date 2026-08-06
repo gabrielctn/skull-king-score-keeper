@@ -84,9 +84,6 @@ export const fr: Strings = {
     badge: "Nouveau",
     title: "Nouveautés",
     version: (version, date) => `Version ${version} · ${date}`,
-    automaticUpdatesTitle: "Toujours à jour",
-    automaticUpdatesBody:
-      "Les applications installées téléchargent désormais chaque nouvelle version automatiquement et l’activent dès que l’appareil est en ligne.",
     items: [
       "Rejoignez une table avec le code à 6 caractères que votre ami vous montre.",
     ],

@@ -154,9 +154,6 @@ export const ar: Strings = {
     badge: "جديد",
     title: "ما الجديد",
     version: (version, date) => `الإصدار ${version} · ${date}`,
-    automaticUpdatesTitle: "محدّث دائمًا",
-    automaticUpdatesBody:
-      "تنزّل التطبيقات المثبّتة كل إصدار جديد تلقائيًا وتنتقل إليه فور اتصال الجهاز بالإنترنت.",
     items: [
       "انضمّ إلى طاولة برمز من 6 أحرف يعرضه لك صديقك.",
     ],

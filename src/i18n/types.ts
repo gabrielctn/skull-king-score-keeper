@@ -116,8 +116,6 @@ export interface Strings {
     badge: string;
     title: string;
     version: (version: string, date: string) => string;
-    automaticUpdatesTitle: string;
-    automaticUpdatesBody: string;
     /**
      * What is new in THIS release, and nothing else: one short player-facing
      * sentence per feature. Older releases move to `history` on the next bump.

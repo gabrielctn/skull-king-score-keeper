@@ -75,17 +75,6 @@ export default function WhatsNewModal({
             style={styles.releaseScroll}
             contentContainerStyle={styles.releaseScrollContent}
           >
-            <View style={styles.updateNotice}>
-              <Text style={styles.updateNoticeIcon}>↻</Text>
-              <View style={styles.updateNoticeCopy}>
-                <Text style={styles.updateNoticeTitle}>
-                  {t.whatsNew.automaticUpdatesTitle}
-                </Text>
-                <Text style={styles.updateNoticeBody}>
-                  {t.whatsNew.automaticUpdatesBody}
-                </Text>
-              </View>
-            </View>
             {t.whatsNew.items.map((item, index) => (
               <View key={index} style={styles.releaseItem}>
                 <Text style={styles.releaseBullet}>✦</Text>
@@ -196,28 +185,6 @@ const styles = StyleSheet.create({
   },
   releaseScroll: { flexGrow: 0 },
   releaseScrollContent: { paddingBottom: spacing.sm },
-  updateNotice: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    backgroundColor: colors.bgElevated,
-    borderRadius: radius.md,
-    padding: spacing.md,
-    marginBottom: spacing.lg,
-  },
-  updateNoticeIcon: {
-    color: colors.positive,
-    fontSize: 24,
-    fontWeight: "700",
-    marginEnd: spacing.md,
-  },
-  updateNoticeCopy: { flex: 1 },
-  updateNoticeTitle: { color: colors.text, fontSize: 15, fontWeight: "800" },
-  updateNoticeBody: {
-    color: colors.textDim,
-    fontSize: 13,
-    lineHeight: 19,
-    marginTop: 3,
-  },
   releaseItem: {
     flexDirection: "row",
     alignItems: "flex-start",

@@ -83,9 +83,6 @@ export const de: Strings = {
     badge: "Neu",
     title: "Neuigkeiten",
     version: (version, date) => `Version ${version} · ${date}`,
-    automaticUpdatesTitle: "Immer aktuell",
-    automaticUpdatesBody:
-      "Installierte Apps laden jede neue Version automatisch und wechseln zu ihr, sobald das Gerät online ist.",
     items: [
       "Tritt einem Tisch mit dem 6-stelligen Code bei, den dir deine Freundin oder dein Freund zeigt.",
     ],

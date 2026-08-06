@@ -77,9 +77,6 @@ export const zh: Strings = {
     badge: "新",
     title: "更新内容",
     version: (version, date) => `版本 ${version} · ${date}`,
-    automaticUpdatesTitle: "始终保持最新",
-    automaticUpdatesBody:
-      "已安装的应用会自动下载每个新版本，并在设备联网后立即切换到新版本。",
     items: [
       "用朋友出示的 6 位代码加入牌桌。",
     ],
