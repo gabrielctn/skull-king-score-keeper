@@ -16,7 +16,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.gabrielcretin.skullking",
-      "buildNumber": "8",
+      "buildNumber": "9",
       "infoPlist": {
         "CFBundleDisplayName": "Skull King Crew Ledger",
         "CFBundleName": "Skull King Crew Ledger",

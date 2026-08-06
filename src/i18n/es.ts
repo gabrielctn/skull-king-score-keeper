@@ -90,6 +90,9 @@ export const es: Strings = {
     ],
     historyTitle: "Versiones anteriores",
     history: {
+      "1.11.2": [
+        "El fondo de mapa vuelve a llenar toda la pantalla y, al alejar el zoom, la página ya no se desliza hacia un lado.",
+      ],
       "1.11.1": [
         "Si borras una partida, se borra para toda la mesa.",
       ],

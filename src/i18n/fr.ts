@@ -89,6 +89,9 @@ export const fr: Strings = {
     ],
     historyTitle: "Versions précédentes",
     history: {
+      "1.11.2": [
+        "Le fond de carte remplit à nouveau tout l’écran, et dézoomer ne fait plus glisser la page sur le côté.",
+      ],
       "1.11.1": [
         "Supprimer une partie la supprime pour toute la table.",
       ],

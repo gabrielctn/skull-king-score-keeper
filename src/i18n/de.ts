@@ -88,6 +88,9 @@ export const de: Strings = {
     ],
     historyTitle: "Frühere Versionen",
     history: {
+      "1.11.2": [
+        "Der Kartenhintergrund füllt wieder den ganzen Bildschirm, und beim Herauszoomen rutscht die Seite nicht mehr zur Seite.",
+      ],
       "1.11.1": [
         "Löschst du ein Spiel, ist es für den ganzen Tisch weg.",
       ],

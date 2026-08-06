@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="%LANG_ISO_CODE%">
+  <head>
+    <meta charset="utf-8" />
+    <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>%WEB_TITLE%</title>
+    <!--
+      Expo's default template, plus one addition. Expo reads this file from the
+      public folder in preference to its bundled copy (see
+      @expo/cli src/start/server/webTemplate.js), so it applies to both
+      `expo start --web` and `expo export -p web`. Keep it in sync with Expo's
+      template on SDK upgrades.
+    -->
+    <!-- The `react-native-web` recommended style reset: https://necolas.github.io/react-native-web/docs/setup/#root-element -->
+    <style id="expo-reset">
+      /* These styles make the body full-height */
+      html,
+      body {
+        height: 100%;
+      }
+      /* These styles disable body scrolling if you are using <ScrollView> */
+      body {
+        overflow: hidden;
+      }
+      /* The addition: `body` alone does not contain the document, because the
+         viewport only inherits its overflow while `html` stays visible. Without
+         this, any child wider than the screen makes the document itself wider
+         than the layout viewport, and a pinch-zoom-out on a phone pans sideways
+         into empty space. The app scrolls inside <ScrollView>, never at the
+         document level, so clipping both axes here costs nothing. */
+      html {
+        overflow: hidden;
+      }
+      /* These styles make the root element full-height */
+      #root {
+        display: flex;
+        height: 100%;
+        flex: 1;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Use static rendering with Expo Router to support running without JavaScript. -->
+    <noscript>
+      You need to enable JavaScript to run this app.
+    </noscript>
+    <!-- The root element for your Expo app. -->
+    <div id="root"></div>
+  </body>
+</html>

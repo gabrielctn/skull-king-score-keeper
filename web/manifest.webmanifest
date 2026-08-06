@@ -7,6 +7,9 @@
   "scope": "/skull-king-crew-ledger/",
   "display": "standalone",
   "orientation": "portrait",
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
   "theme_color": "#0b1722",
   "background_color": "#0b1722",
   "icons": [

@@ -93,6 +93,9 @@ export const en: Strings = {
     ],
     historyTitle: "Previous versions",
     history: {
+      "1.11.2": [
+        "The map background fills the screen again, and zooming out no longer slides the page sideways.",
+      ],
       "1.11.1": [
         "Delete a game and it goes for everyone at the table.",
       ],

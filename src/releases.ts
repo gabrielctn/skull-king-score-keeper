@@ -17,6 +17,7 @@ export const CURRENT_RELEASE_DATE = "2026-08-06";
 
 /** Shipped releases before this one, newest first. */
 export const PAST_RELEASES = [
+  { version: "1.11.2", date: "2026-08-06" },
   { version: "1.11.1", date: "2026-08-04" },
   { version: "1.11.0", date: "2026-08-04" },
   { version: "1.10.2", date: "2026-08-04" },
