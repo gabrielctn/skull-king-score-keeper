@@ -6,6 +6,7 @@ import {
 } from "./supabaseClient";
 import { BackupData, createBackupPayload, parseBackup } from "./backup";
 import { generateWriterKey } from "./liveSession";
+import { INVITE_TTL_SECONDS, normalizeInviteCode } from "./tableInvites";
 import {
   CloudOwner,
   loadCloudOwner,
@@ -93,13 +94,14 @@ export function decodeSyncCode(code: string): CloudOwner | null {
 
 // --- join links (shared game table) -----------------------------------------
 
+/**
+ * Join links are read, never written. Invites are short codes now, because a
+ * link cannot reach an installed app; these helpers stay so that a link shared
+ * before that change still opens the table it names.
+ */
+
 /** URL-hash parameter carrying a table join code: `#join=<sync code>`. */
 export const JOIN_HASH_PARAM = "join";
-
-/** Full URL to share (link or QR) for joining this device's table. */
-export function buildJoinUrl(code: string, baseUrl: string): string {
-  return `${baseUrl}#${JOIN_HASH_PARAM}=${code}`;
-}
 
 /** Extract a well-formed join code from a location hash, or null. */
 export function extractJoinCode(hash: string | null | undefined): string | null {
@@ -112,9 +114,10 @@ export function extractJoinCode(hash: string | null | undefined): string | null 
 }
 
 /**
- * If the URL hash carries a table join code (the page was just opened from a
- * shared link or QR), consume it: strip the hash and return the code. One-shot
- * on purpose; joining a table must stay a deliberate, confirmed action.
+ * If the URL hash carries a table join code (the page was opened from a link
+ * shared back when links were the invite), consume it: strip the hash and
+ * return the code. One-shot on purpose; joining a table must stay a
+ * deliberate, confirmed action.
  */
 export function consumeScannedJoinCode(): string | null {
   if (typeof window === "undefined" || !window.location) return null;
@@ -130,6 +133,62 @@ export function consumeScannedJoinCode(): string | null {
   return code;
 }
 
+/**
+ * What the user typed (or pasted) into the join field. The six-character code
+ * read off a friend's screen is what anyone will have; a full `SKC1.` code or
+ * an old join link still resolve, so nothing shared before this flow existed
+ * stops working.
+ */
+export type JoinInput =
+  | { kind: "invite"; code: string }
+  | { kind: "sync"; code: string };
+
+export function classifyJoinInput(raw: string): JoinInput | null {
+  const trimmed = raw.trim();
+  if (!trimmed) return null;
+  const linked = extractJoinCode(
+    trimmed.includes("#") ? trimmed.slice(trimmed.indexOf("#")) : null
+  );
+  if (linked) return { kind: "sync", code: linked };
+  if (decodeSyncCode(trimmed)) return { kind: "sync", code: trimmed };
+  const invite = normalizeInviteCode(trimmed);
+  return invite ? { kind: "invite", code: invite } : null;
+}
+
+// --- table invites (short codes) --------------------------------------------
+
+/** A freshly minted invite: the code to show, and when it dies (epoch ms). */
+export interface TableInvite {
+  code: string;
+  expiresAt: number;
+}
+
+/** Why an invite code did not open a table. */
+export type InviteFailure =
+  | "unknown" // wrong, already expired, or never existed
+  | "throttled" // the backend's guessing ceiling was hit; retry shortly
+  | "unsupported" // backend without the invite functions deployed yet
+  | "offline";
+
+export class InviteError extends Error {
+  constructor(readonly reason: InviteFailure) {
+    super(`invite ${reason}`);
+  }
+}
+
+/**
+ * PostgREST answers a call to a function the project does not have with
+ * PGRST202. A deployed app can therefore run against a backend whose schema
+ * predates invites and say so plainly, instead of failing as if the network
+ * were down.
+ */
+function missingFunction(error: { code?: string; message?: string } | null) {
+  return (
+    error?.code === "PGRST202" ||
+    /could not find the function|does not exist/i.test(error?.message ?? "")
+  );
+}
+
 // --- transport --------------------------------------------------------------
 
 /** The backend calls cloud backup needs; swappable so tests can fake them. */
@@ -137,6 +196,10 @@ export interface CloudTransport {
   create(writerKey: string): Promise<string>;
   put(ownerId: string, writerKey: string, state: unknown): Promise<void>;
   get(ownerId: string, writerKey: string): Promise<unknown | null>;
+  /** Mint a short invite code for a table this device can write. */
+  createInvite(ownerId: string, writerKey: string): Promise<TableInvite>;
+  /** Trade a short code for the table's credentials; throws `InviteError`. */
+  redeemInvite(code: string): Promise<CloudOwner>;
 }
 
 /** Where this device's cloud identity is persisted (swappable for tests). */
@@ -176,6 +239,53 @@ export function supabaseCloudTransport(): CloudTransport {
       });
       if (error) throw rpcError("get_user_backup", error);
       return data ?? null;
+    },
+    async createInvite(ownerId, writerKey) {
+      const { data, error } = await getSupabaseClient().rpc(
+        "create_table_invite",
+        { owner_id: ownerId, writer_key: writerKey }
+      );
+      if (error) {
+        throw new InviteError(missingFunction(error) ? "unsupported" : "offline");
+      }
+      const payload = data as { code?: unknown; expires_in?: unknown } | null;
+      const code =
+        typeof payload?.code === "string"
+          ? normalizeInviteCode(payload.code)
+          : null;
+      if (!code) throw new InviteError("offline");
+      const ttl =
+        typeof payload?.expires_in === "number" && payload.expires_in > 0
+          ? payload.expires_in
+          : INVITE_TTL_SECONDS;
+      return { code, expiresAt: Date.now() + ttl * 1000 };
+    },
+    async redeemInvite(code) {
+      const { data, error } = await getSupabaseClient().rpc(
+        "redeem_table_invite",
+        { code }
+      );
+      if (error) {
+        throw new InviteError(missingFunction(error) ? "unsupported" : "offline");
+      }
+      const payload = data as {
+        owner_id?: unknown;
+        writer_key?: unknown;
+        throttled?: unknown;
+      } | null;
+      if (!payload) throw new InviteError("unknown");
+      if (payload.throttled) throw new InviteError("throttled");
+      // Same hardening as a pasted code: what comes back is untrusted input.
+      const ownerId =
+        typeof payload.owner_id === "string"
+          ? payload.owner_id.toLowerCase()
+          : "";
+      const writerKey =
+        typeof payload.writer_key === "string" ? payload.writer_key : "";
+      if (!UUID_PATTERN.test(ownerId) || !WRITER_KEY_PATTERN.test(writerKey)) {
+        throw new InviteError("unknown");
+      }
+      return { ownerId, writerKey };
     },
   };
 }
@@ -439,6 +549,36 @@ export class CloudBackupManager {
       throw new Error("unknown sync code");
     }
     return parseCloudState(state);
+  }
+
+  /**
+   * Mint a short invite code for the table currently open, so a friend sitting
+   * at the same table can type it into their own app. Throws `InviteError`
+   * with the reason the invite panel should show.
+   */
+  async createInvite(): Promise<TableInvite> {
+    const owner = await this.ensureOwner();
+    if (!owner) throw new InviteError("offline");
+    try {
+      return await this.transport.createInvite(owner.ownerId, owner.writerKey);
+    } catch (error) {
+      throw error instanceof InviteError ? error : new InviteError("offline");
+    }
+  }
+
+  /**
+   * Trade a short invite code for the table's own `SKC1.` code, which then
+   * takes the ordinary preview-and-confirm join path: a short code is a way to
+   * *carry* a table code across the table, not a second kind of membership.
+   */
+  async redeemInvite(code: string): Promise<string> {
+    const normalized = normalizeInviteCode(code);
+    if (!normalized) throw new InviteError("unknown");
+    try {
+      return encodeSyncCode(await this.transport.redeemInvite(normalized));
+    } catch (error) {
+      throw error instanceof InviteError ? error : new InviteError("offline");
+    }
   }
 
   /**

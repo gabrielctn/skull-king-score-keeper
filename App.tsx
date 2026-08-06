@@ -93,6 +93,8 @@ import {
 } from "./src/backup";
 import CookieConsentBanner from "./src/components/CookieConsentBanner";
 import JoinTableModal from "./src/components/JoinTableModal";
+import TableInviteModal from "./src/components/TableInviteModal";
+import JoinByCodeModal from "./src/components/JoinByCodeModal";
 import SupportModal from "./src/components/SupportModal";
 import {
   consumePendingAppIntentDestination,
@@ -163,6 +165,8 @@ export default function App() {
   const [spectator, setSpectator] = useState<SpectatorMode>(readSpectatorMode);
   // A scanned table invite (`#join=`) waits in this state for explicit
   // confirmation; joining swaps the cloud identity so it is never automatic.
+  const [inviteOpen, setInviteOpen] = useState(false);
+  const [joinByCodeOpen, setJoinByCodeOpen] = useState(false);
   const [pendingJoinCode, setPendingJoinCode] = useState<string | null>(
     consumeScannedJoinCode
   );
@@ -856,11 +860,15 @@ export default function App() {
           <HomeScreen
             gameHistory={gameHistory}
             currentGameId={game?.id ?? null}
+            tableName={tableName}
+            tableSharingAvailable={cloudConfigured()}
             onNewGame={handleNewGame}
             onOpenGame={handleOpenHistory}
             onDeleteGame={handleDeleteGame}
             onOpenStats={() => setScreen("stats")}
             onOpenSettings={() => setScreen("settings")}
+            onInviteToTable={() => setInviteOpen(true)}
+            onJoinTable={() => setJoinByCodeOpen(true)}
           />
         )}
         {!spectatorActive && screen === "stats" && (
@@ -882,7 +890,8 @@ export default function App() {
             onExportBackup={handleExportBackup}
             onImportBackup={handleImportBackup}
             onDeleteAllGames={handleDeleteAllGames}
-            onLinkDevice={handleJoinTable}
+            onInviteToTable={() => setInviteOpen(true)}
+            onJoinTable={() => setJoinByCodeOpen(true)}
             onRenameTable={handleRenameTable}
             onSwitchTable={handleSwitchTable}
             onCreateTable={handleCreateTable}
@@ -919,6 +928,19 @@ export default function App() {
           onDonate={() => answerSupportPrompt(true)}
           onLater={() => setSupportPromptVisible(false)}
           onNever={() => answerSupportPrompt(false)}
+        />
+        <TableInviteModal
+          visible={inviteOpen}
+          tableName={tableName}
+          onClose={() => setInviteOpen(false)}
+        />
+        <JoinByCodeModal
+          visible={joinByCodeOpen}
+          onClose={() => setJoinByCodeOpen(false)}
+          onResolved={(code) => {
+            setJoinByCodeOpen(false);
+            setPendingJoinCode(code);
+          }}
         />
         <JoinTableModal
           code={pendingJoinCode}

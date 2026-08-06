@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  Image,
   Linking,
   Modal,
   SafeAreaView,
@@ -30,26 +29,18 @@ import {
 import { CURRENT_RELEASE, CURRENT_RELEASE_DATE } from "../releases";
 import { isWakeLockSupported } from "../wakeLock";
 import {
-  buildJoinUrl,
   cloudBackupManager,
   cloudConfigured,
   CloudStatus,
 } from "../cloudSync";
 import { MAX_TABLE_NAME_LENGTH, normalizeTableName } from "../backup";
-import { webShareBaseUrl } from "../appUrl";
-import { qrCodeDataUrl } from "../qr";
 import ToggleSwitch from "../components/ToggleSwitch";
 import WhatsNewModal from "../components/WhatsNewModal";
 import InstallAppSection from "../components/InstallAppSection";
-import DisclosureChevron from "../components/DisclosureChevron";
 import GlassSurface from "../components/GlassSurface";
-import CopyButton from "../components/CopyButton";
-import { copyTextToClipboard } from "../clipboard";
 
 const FEEDBACK_EMAIL = "gabrielcretin@gmail.com";
 const HEADER_HEIGHT = 60;
-
-type CopyState = "idle" | "copying" | "copied" | "error";
 
 interface Props {
   settings: AppSettings;
@@ -66,8 +57,10 @@ interface Props {
   onExportBackup: () => void;
   onImportBackup: () => Promise<number | null>;
   onDeleteAllGames: () => Promise<void>;
-  /** Join the table carried by an invite code; returns its game count. */
-  onLinkDevice: (code: string) => Promise<number | null>;
+  /** Open the invite sheet (short code, plus link and QR for a newcomer). */
+  onInviteToTable: () => void;
+  /** Open the sheet where an invite code is typed in. */
+  onJoinTable: () => void;
   /** Persist (and sync) the active table's name; null clears it. */
   onRenameTable: (name: string | null) => void;
   /** Open another table this device already belongs to. */
@@ -89,7 +82,8 @@ export default function SettingsScreen({
   onExportBackup,
   onImportBackup,
   onDeleteAllGames,
-  onLinkDevice,
+  onInviteToTable,
+  onJoinTable,
   onRenameTable,
   onSwitchTable,
   onCreateTable,
@@ -109,24 +103,11 @@ export default function SettingsScreen({
   const [cloudStatus, setCloudStatus] = React.useState<CloudStatus>(() =>
     cloudBackupManager().getStatus()
   );
-  const [inviteOpen, setInviteOpen] = React.useState(false);
-  const [joinOpen, setJoinOpen] = React.useState(false);
-  const [syncCode, setSyncCode] = React.useState<string | null>(null);
-  const [codeCopyState, setCodeCopyState] =
-    React.useState<CopyState>("idle");
-  const [linkCopyState, setLinkCopyState] =
-    React.useState<CopyState>("idle");
   const [nameDraft, setNameDraft] = React.useState(tableName ?? "");
   const [tableBusy, setTableBusy] = React.useState(false);
   const [tableError, setTableError] = React.useState(false);
   const [removeTarget, setRemoveTarget] =
     React.useState<TableMembership | null>(null);
-  const [pasteCode, setPasteCode] = React.useState("");
-  const [linkBusy, setLinkBusy] = React.useState(false);
-  const [linkMessage, setLinkMessage] = React.useState<{
-    type: "success" | "error";
-    text: string;
-  } | null>(null);
 
   React.useEffect(() => {
     let active = true;
@@ -143,20 +124,6 @@ export default function SettingsScreen({
     setCloudStatus(cloud.getStatus());
     return cloud.subscribe(setCloudStatus);
   }, []);
-
-  // Fetch this device's sync code lazily, only once the invite panel is opened.
-  React.useEffect(() => {
-    if (!inviteOpen || syncCode || !cloudConfigured()) return;
-    let active = true;
-    void cloudBackupManager()
-      .syncCode()
-      .then((code) => {
-        if (active) setSyncCode(code);
-      });
-    return () => {
-      active = false;
-    };
-  }, [inviteOpen, syncCode]);
 
   // The name can also change under us when this device joins another table.
   React.useEffect(() => {
@@ -177,9 +144,6 @@ export default function SettingsScreen({
     setTableError(false);
     try {
       await action();
-      // The invite code belongs to the table that was active; drop it so the
-      // QR and code are re-fetched for whichever table is now open.
-      setSyncCode(null);
     } catch {
       setTableError(true);
     } finally {
@@ -189,58 +153,6 @@ export default function SettingsScreen({
 
   const tableLabel = (membership: TableMembership) =>
     membership.name ?? t.settings.cloud.tableUnnamed;
-
-  const joinUrl = syncCode ? buildJoinUrl(syncCode, webShareBaseUrl()) : null;
-  const joinQr = React.useMemo(
-    () => (joinUrl ? qrCodeDataUrl(joinUrl, 220) : null),
-    [joinUrl]
-  );
-
-  const copyText = (
-    value: string | null,
-    setState: React.Dispatch<React.SetStateAction<CopyState>>
-  ) => {
-    if (!value) return;
-    setState("copying");
-    void copyTextToClipboard(value)
-      .then((copied) => setState(copied ? "copied" : "error"))
-      .catch(() => setState("error"))
-      .finally(() => setTimeout(() => setState("idle"), 4000));
-  };
-
-  const copySyncCode = () => copyText(syncCode, setCodeCopyState);
-  const copyJoinLink = () => copyText(joinUrl, setLinkCopyState);
-
-  const copyLabel = (
-    state: CopyState,
-    idleLabel: string,
-    copiedLabel: string
-  ) =>
-    state === "copying"
-      ? t.settings.cloud.copying
-      : state === "copied"
-        ? copiedLabel
-        : state === "error"
-          ? t.settings.cloud.copyFailed
-          : idleLabel;
-
-  const linkDevice = async () => {
-    const code = pasteCode.trim();
-    if (!code || linkBusy) return;
-    setLinkBusy(true);
-    setLinkMessage(null);
-    try {
-      await onLinkDevice(code);
-      setPasteCode("");
-      // Adopting a code changes this device's identity, so its own code changes.
-      setSyncCode(null);
-      setLinkMessage({ type: "success", text: t.settings.cloud.linkSuccess });
-    } catch {
-      setLinkMessage({ type: "error", text: t.settings.cloud.linkError });
-    } finally {
-      setLinkBusy(false);
-    }
-  };
 
   const cloudStatusText: Record<CloudStatus, string> = {
     unavailable: t.settings.cloud.statusUnavailable,
@@ -552,158 +464,27 @@ export default function SettingsScreen({
               </Text>
             </View>
 
-            <TouchableOpacity
-              style={styles.linkToggle}
-              onPress={() => setInviteOpen((open) => !open)}
-              accessibilityRole="button"
-              accessibilityState={{ expanded: inviteOpen }}
-            >
-              <Text style={styles.linkToggleText}>
-                {t.settings.cloud.shareTitle}
-              </Text>
-              <DisclosureChevron expanded={inviteOpen} />
-            </TouchableOpacity>
-
-            {inviteOpen ? (
-              <View style={styles.linkPanel}>
-                <Text style={styles.linkHint}>
-                  {t.settings.cloud.shareHint}
+            <View style={styles.inviteBlock}>
+              <Text style={styles.linkHint}>{t.settings.cloud.shareHint}</Text>
+              <TouchableOpacity
+                style={styles.inviteButton}
+                onPress={onInviteToTable}
+                accessibilityRole="button"
+              >
+                <Text style={styles.inviteButtonText}>
+                  ⚓ {t.settings.cloud.shareTitle}
                 </Text>
-                {joinQr ? (
-                  <Image
-                    source={{ uri: joinQr }}
-                    style={styles.joinQr}
-                    resizeMode="contain"
-                    accessibilityLabel={t.settings.cloud.qrLabel}
-                  />
-                ) : null}
-                <CopyButton
-                  style={[
-                    styles.linkButton,
-                    !joinUrl && styles.linkButtonDisabled,
-                    linkCopyState === "error" && styles.copyButtonError,
-                  ]}
-                  onPress={copyJoinLink}
-                  disabled={!joinUrl}
-                  accessibilityLabel={copyLabel(
-                    linkCopyState,
-                    t.settings.cloud.copyLink,
-                    t.settings.cloud.linkCopied
-                  )}
-                >
-                  <Text
-                    style={styles.linkButtonText}
-                    accessibilityLiveRegion="polite"
-                  >
-                    {copyLabel(
-                      linkCopyState,
-                      t.settings.cloud.copyLink,
-                      t.settings.cloud.linkCopied
-                    )}
-                  </Text>
-                </CopyButton>
-
-                <View style={styles.linkDivider} />
-                <Text style={styles.fallbackTitle}>
-                  {t.settings.cloud.linkTitle}
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.joinButton}
+                onPress={onJoinTable}
+                accessibilityRole="button"
+              >
+                <Text style={styles.joinButtonText}>
+                  {t.settings.cloud.joinTitle}
                 </Text>
-                <Text style={styles.linkHint}>{t.settings.cloud.linkHint}</Text>
-
-                <Text style={styles.codeLabel}>{t.settings.cloud.codeLabel}</Text>
-                <View style={styles.codeRow}>
-                  <TextInput
-                    style={styles.codeValue}
-                    value={syncCode ?? "…"}
-                    editable={false}
-                    selectTextOnFocus
-                    multiline
-                  />
-                  <CopyButton
-                    style={[
-                      styles.codeCopy,
-                      codeCopyState === "error" && styles.copyButtonError,
-                    ]}
-                    onPress={copySyncCode}
-                    disabled={!syncCode}
-                    accessibilityLabel={copyLabel(
-                      codeCopyState,
-                      t.settings.cloud.copy,
-                      t.settings.cloud.copied
-                    )}
-                  >
-                    <Text
-                      style={styles.codeCopyText}
-                      accessibilityLiveRegion="polite"
-                    >
-                      {copyLabel(
-                        codeCopyState,
-                        t.settings.cloud.copy,
-                        t.settings.cloud.copied
-                      )}
-                    </Text>
-                  </CopyButton>
-                </View>
-              </View>
-            ) : null}
-
-            <TouchableOpacity
-              style={styles.linkToggle}
-              onPress={() => setJoinOpen((open) => !open)}
-              accessibilityRole="button"
-              accessibilityState={{ expanded: joinOpen }}
-            >
-              <Text style={styles.linkToggleText}>
-                {t.settings.cloud.joinTitle}
-              </Text>
-              <DisclosureChevron expanded={joinOpen} />
-            </TouchableOpacity>
-
-            {joinOpen ? (
-              <View style={styles.linkPanel}>
-                <Text style={styles.codeLabel}>
-                  {t.settings.cloud.pasteLabel}
-                </Text>
-                <TextInput
-                  style={styles.pasteInput}
-                  value={pasteCode}
-                  onChangeText={setPasteCode}
-                  placeholder="SKC1.…"
-                  placeholderTextColor={colors.textDim}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  multiline
-                />
-                <TouchableOpacity
-                  style={[
-                    styles.linkButton,
-                    (linkBusy || pasteCode.trim().length === 0) &&
-                      styles.linkButtonDisabled,
-                  ]}
-                  onPress={() => void linkDevice()}
-                  disabled={linkBusy || pasteCode.trim().length === 0}
-                  accessibilityRole="button"
-                >
-                  <Text style={styles.linkButtonText}>
-                    {linkBusy
-                      ? t.settings.cloud.linking
-                      : t.settings.cloud.linkButton}
-                  </Text>
-                </TouchableOpacity>
-                {linkMessage ? (
-                  <Text
-                    style={[
-                      styles.linkMessage,
-                      linkMessage.type === "success"
-                        ? styles.linkMessageSuccess
-                        : styles.linkMessageError,
-                    ]}
-                    accessibilityRole="alert"
-                  >
-                    {linkMessage.text}
-                  </Text>
-                ) : null}
-              </View>
-            ) : null}
+              </TouchableOpacity>
+            </View>
           </>
         ) : null}
         <View style={styles.dataActions}>
@@ -884,8 +665,10 @@ export default function SettingsScreen({
         </View>
       </Modal>
 
+      {/* Settings is where the older releases stay available. */}
       <WhatsNewModal
         visible={whatsNewOpen}
+        showHistory
         onClose={() => setWhatsNewOpen(false)}
       />
     </SafeAreaView>
@@ -989,18 +772,6 @@ const styles = StyleSheet.create({
     lineHeight: 17,
     marginTop: 2,
   },
-  linkToggle: {
-    minHeight: 44,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    borderColor: colors.cardBorder,
-    borderWidth: 1,
-    borderRadius: radius.md,
-    paddingHorizontal: spacing.md,
-    marginBottom: spacing.md,
-  },
-  linkToggleText: { color: colors.gold, fontSize: 14, fontWeight: "800" },
   tablesBlock: { marginBottom: spacing.md },
   tablesList: {
     backgroundColor: colors.bgElevated,
@@ -1065,31 +836,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: spacing.xs,
   },
-  joinQr: {
-    width: 220,
-    height: 220,
-    alignSelf: "center",
-    borderRadius: radius.sm,
-    marginBottom: spacing.md,
-  },
-  linkDivider: {
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: colors.cardBorder,
-    marginVertical: spacing.md,
-  },
-  fallbackTitle: {
-    color: colors.text,
-    fontSize: 14,
-    fontWeight: "800",
-    marginBottom: spacing.xs,
-  },
-  linkPanel: {
-    borderColor: colors.cardBorder,
-    borderWidth: 1,
-    borderRadius: radius.md,
-    padding: spacing.md,
-    marginBottom: spacing.md,
-  },
   linkHint: {
     color: colors.textDim,
     fontSize: 12,
@@ -1104,52 +850,27 @@ const styles = StyleSheet.create({
     letterSpacing: 0.6,
     marginBottom: spacing.xs,
   },
-  codeRow: { flexDirection: "row", alignItems: "stretch" },
-  codeValue: {
-    flex: 1,
-    color: colors.text,
-    fontSize: 12,
-    backgroundColor: colors.bg,
-    borderColor: colors.cardBorder,
-    borderWidth: 1,
-    borderRadius: radius.sm,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.sm,
-    marginEnd: spacing.sm,
-  },
-  codeCopy: {
-    minWidth: 72,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.gold,
-    borderRadius: radius.sm,
-    paddingHorizontal: spacing.sm,
-  },
-  codeCopyText: { color: colors.bg, fontSize: 13, fontWeight: "800" },
-  copyButtonError: { backgroundColor: colors.negative },
-  pasteInput: {
-    color: colors.text,
-    fontSize: 13,
-    backgroundColor: colors.bg,
-    borderColor: colors.cardBorder,
-    borderWidth: 1,
-    borderRadius: radius.sm,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.sm,
-    minHeight: 44,
-  },
-  linkButton: {
-    minHeight: 44,
+  inviteBlock: { marginBottom: spacing.md },
+  inviteButton: {
+    minHeight: 48,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: colors.gold,
     borderRadius: radius.md,
+    paddingHorizontal: spacing.md,
+  },
+  inviteButtonText: { color: colors.bg, fontSize: 15, fontWeight: "800" },
+  joinButton: {
+    minHeight: 48,
+    alignItems: "center",
+    justifyContent: "center",
+    borderColor: colors.controlBorder,
+    borderWidth: 1,
+    borderRadius: radius.md,
+    paddingHorizontal: spacing.md,
     marginTop: spacing.sm,
   },
-  linkButtonDisabled: { opacity: 0.5 },
-  linkButtonText: { color: colors.bg, fontSize: 14, fontWeight: "800" },
-  linkMessage: { fontSize: 12, marginTop: spacing.sm },
-  linkMessageSuccess: { color: colors.positive },
+  joinButtonText: { color: colors.text, fontSize: 15, fontWeight: "700" },
   linkMessageError: { color: colors.negative },
   dataActions: { flexDirection: "row" },
   dataButton: {

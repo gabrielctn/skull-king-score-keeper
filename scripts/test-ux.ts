@@ -67,6 +67,16 @@ const gameRulesSource = readFileSync(
 );
 const settingsSource = readFileSync("src/screens/SettingsScreen.tsx", "utf8");
 const statsSource = readFileSync("src/screens/StatsScreen.tsx", "utf8");
+const tableInviteSource = readFileSync(
+  "src/components/TableInviteModal.tsx",
+  "utf8"
+);
+const joinByCodeSource = readFileSync(
+  "src/components/JoinByCodeModal.tsx",
+  "utf8"
+);
+const cloudSyncSource = readFileSync("src/cloudSync.ts", "utf8");
+const whatsNewSource = readFileSync("src/components/WhatsNewModal.tsx", "utf8");
 const spectatorSource = readFileSync("src/screens/SpectatorScreen.tsx", "utf8");
 const playerFacingTextSources = [
   "src/i18n/en.ts",
@@ -143,18 +153,18 @@ check(
     gameSource.includes("layout.gameContentMaxWidth - layout.screenPadding * 2")
 );
 check(
-  "settings copy actions use the cross-platform clipboard with feedback",
+  "invite copy actions use the cross-platform clipboard with feedback",
   packageJson.dependencies?.["expo-clipboard"] &&
-    settingsSource.includes('from "../clipboard"') &&
-    settingsSource.includes("copyTextToClipboard") &&
-    settingsSource.includes("<CopyButton") &&
+    tableInviteSource.includes('from "../clipboard"') &&
+    tableInviteSource.includes("copyTextToClipboard") &&
+    tableInviteSource.includes("<CopyButton") &&
     copyButtonSource.includes('"button"') &&
     copyButtonSource.includes("onClick: onPress") &&
     clipboardNativeSource.includes("Clipboard.setStringAsync") &&
     clipboardWebSource.includes("navigator.clipboard.writeText") &&
     clipboardWebSource.includes('document.execCommand("copy")') &&
-    settingsSource.includes('copied ? "copied" : "error"') &&
-    settingsSource.includes("t.settings.cloud.copyFailed")
+    tableInviteSource.includes("setCodeCopied(copied)") &&
+    tableInviteSource.includes("t.tableInvite.codeCopied")
 );
 check(
   "active game is excluded from recent history",
@@ -306,19 +316,53 @@ check(
     appSource.includes("JoinTableModal")
 );
 check(
-  "settings share the table through a QR code and invite link",
-  settingsSource.includes("buildJoinUrl") &&
-    settingsSource.includes("qrCodeDataUrl") &&
-    settingsSource.includes("t.settings.cloud.copyLink")
+  "the host hands out a short code a guest can type into their own app",
+  tableInviteSource.includes("cloudBackupManager().createInvite()") &&
+    tableInviteSource.includes("formatInviteCode(invite.code)") &&
+    tableInviteSource.includes("t.tableInvite.expiresIn(") &&
+    tableInviteSource.includes("t.tableInvite.newCode")
+);
+check(
+  "the launch dialog shows this release only, Settings keeps the trail",
+  whatsNewSource.includes("showHistory") &&
+    settingsSource.includes("showHistory") &&
+    !homeSource.includes("showHistory") &&
+    whatsNewSource.includes("PAST_RELEASES.map")
+);
+check(
+  "the invite sheet offers the code and nothing else",
+  !tableInviteSource.includes("qrCodeDataUrl") &&
+    !tableInviteSource.includes("buildJoinUrl") &&
+    tableInviteSource.includes("t.tableInvite.copyCode")
+);
+check(
+  "join links are still understood, just never handed out",
+  !cloudSyncSource.includes("export function buildJoinUrl") &&
+    cloudSyncSource.includes("export function extractJoinCode") &&
+    appSource.includes("consumeScannedJoinCode")
+);
+check(
+  "the guest sheet resolves a code without joining anything by itself",
+  joinByCodeSource.includes("classifyJoinInput(draft)") &&
+    joinByCodeSource.includes("cloudBackupManager().redeemInvite(") &&
+    joinByCodeSource.includes("onResolved(") &&
+    appSource.includes("setPendingJoinCode(code)")
+);
+check(
+  "inviting and joining are one tap from the home screen",
+  homeSource.includes("t.home.tableInvite") &&
+    homeSource.includes("t.home.tableJoin") &&
+    homeSource.includes("onInviteToTable") &&
+    homeSource.includes("onJoinTable") &&
+    appSource.includes("<TableInviteModal") &&
+    appSource.includes("<JoinByCodeModal")
 );
 check(
   "settings expose invite and join as separate actions",
-  settingsSource.includes("const [inviteOpen, setInviteOpen]") &&
-    settingsSource.includes("const [joinOpen, setJoinOpen]") &&
+  settingsSource.includes("onPress={onInviteToTable}") &&
+    settingsSource.includes("onPress={onJoinTable}") &&
     settingsSource.includes("t.settings.cloud.shareTitle") &&
-    settingsSource.includes("t.settings.cloud.joinTitle") &&
-    settingsSource.includes("expanded: inviteOpen") &&
-    settingsSource.includes("expanded: joinOpen")
+    settingsSource.includes("t.settings.cloud.joinTitle")
 );
 check(
   "settings let the crew name their shared table",
@@ -460,8 +504,15 @@ for (const [language, strings] of Object.entries({ en, fr, es, de, ar, zh })) {
     strings.game.roundPointsPreview.trim().length > 0
   );
   check(
-    `${language} release notes describe this release`,
-    strings.whatsNew.items.length === 10
+    `${language} release notes describe only this release`,
+    strings.whatsNew.items.length > 0 && strings.whatsNew.items.length <= 5
+  );
+  check(
+    `${language} keeps release notes short enough to read`,
+    [
+      ...strings.whatsNew.items,
+      ...Object.values(strings.whatsNew.history).flat(),
+    ].every((item) => item.length <= 160)
   );
 }
 

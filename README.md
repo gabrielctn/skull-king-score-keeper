@@ -44,6 +44,15 @@ third finished game, and never again once it has been answered. The throttle liv
   round that still needs scoring.
 - Export every game to a versioned JSON backup and merge it back safely on this
   or another device.
+- Share a table in seconds: the host taps **Invite** and reads out a
+  six-character code (`K7M-4QP`, valid 15 minutes), the friend taps **Join** in
+  the app they already have and types it in. That is the whole flow, on purpose:
+  a scanned QR code (and the link behind it) can only ever land someone in a
+  browser, never in the app they already installed, so offering one beside the
+  code bought nothing but a fork in the road. Nobody is shut out by that: the
+  web build is the same app, so a friend with no install at all opens the site
+  and joins with the same code. Both entry points sit on the home screen and in
+  Settings.
 - Deleting a game deletes it for the whole crew: the shared table records the
   deletion, so a crew mate's device cannot push its own copy back into the
   history and the statistics. Restoring a backup file still brings its games
@@ -245,13 +254,20 @@ To enable live mode on a fork:
 1. Create a free **Supabase** project.
 2. In the dashboard, open **SQL Editor** and run [`supabase/schema.sql`](supabase/schema.sql)
    (idempotent). It creates the `live_games` session table, row-level security,
-   the writer-key-protected `create/update/end` functions, and the Realtime
-   publication.
+   the writer-key-protected `create/update/end` functions, the Realtime
+   publication, the private `user_backups` mirror, and the `table_invites` short
+   codes.
 3. Put the project URL and the **publishable / anon** key in
    [`src/liveConfig.ts`](src/liveConfig.ts) (both are public client values by
    design — the secret `service_role` key is never used).
 4. The [`supabase-keepalive`](.github/workflows/supabase-keepalive.yml) workflow
    pings the project weekly so the free tier is not paused for inactivity.
+
+Table invites are the one place where a table's credentials are stored in clear,
+because the guest has to walk away with them. No API role can read that table:
+`create_table_invite` (writer key required) mints a code, `redeem_table_invite`
+trades it back, rows die after 15 minutes, and a global per-minute ceiling on
+failed redemptions keeps six characters out of reach of guessing.
 
 Only the game master's device writes (it holds a per-session writer key whose
 hash lives server-side); spectators read their session by its unguessable id.
@@ -283,6 +299,7 @@ Skull-King/
 │   ├── liveSession.ts            # Live-follow sync (Supabase transport + manager)
 │   ├── liveConfig.ts             # Supabase URL + publishable key (public)
 │   ├── qr.ts                     # QR image (data URL) rendering
+│   ├── tableInvites.ts           # Short invite codes (alphabet, parsing, TTL)
 │   ├── storage.ts                # AsyncStorage (→ localStorage on web)
 │   ├── backup.ts                 # Versioned, validated JSON import/export
 │   ├── deletions.ts              # Deletion tombstones (a delete survives a sync)

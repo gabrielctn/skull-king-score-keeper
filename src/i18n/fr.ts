@@ -51,6 +51,13 @@ export const fr: Strings = {
     playersRound: (players, round, total) =>
       `${players} joueurs · manche ${round} sur ${total}`,
     leading: (name, total) => `En tête : ${name} (${total})`,
+    tableTitle: "Votre table",
+    tableHint: (name) =>
+      name
+        ? `Vos parties rejoignent la table « ${name} ».`
+        : "Vos parties rejoignent votre table partagée.",
+    tableInvite: "Inviter",
+    tableJoin: "Rejoindre",
     support: "Soutenir le développeur ☕",
     supportHint:
       "Contribution facultative · l’application reste entièrement gratuite.",
@@ -77,21 +84,34 @@ export const fr: Strings = {
     badge: "Nouveau",
     title: "Nouveautés",
     version: (version, date) => `Version ${version} · ${date}`,
-    automaticUpdatesTitle: "Toujours à jour",
-    automaticUpdatesBody:
-      "Les applications installées téléchargent désormais chaque nouvelle version automatiquement et l’activent dès que l’appareil est en ligne.",
     items: [
-      "Le fond de carte couvre désormais tout l’écran au lieu de tenir dans un petit carré dans le coin, et dézoomer sur un téléphone ne fait plus glisser la page sur les côtés.",
-      "Supprimer une partie la supprime désormais pour tout l’équipage : une partie retirée de l’historique ne réapparaît plus à la synchronisation suivante et quitte définitivement les statistiques.",
-      "L’application reste gratuite et sans publicité : l’accueil indique désormais ce que coûte sa présence sur l’App Store (100 €/an), et une partie terminée propose parfois de contribuer à cette facture.",
-      "Le partage des scores utilise désormais uniquement des sessions QR en direct, afin que chaque joueur voie les mises à jour en temps réel.",
-      "Inviter votre équipage et rejoindre une autre table sont désormais deux actions distinctes, directement visibles dans les paramètres.",
-      "Tables de jeu partagées : donnez un nom à la table de votre équipage et invitez vos amis par lien ou QR code. Chaque membre peut tenir les scores, toutes les parties rejoignent l’historique et le classement partagés, et un même téléphone peut garder plusieurs tables, une par groupe d’amis.",
-      "Les règles peuvent désormais être modifiées en cours de partie via le nouveau bouton ⚙ : activer l’extension, changer de décompte, etc. Les manches déjà comptées sont recalculées automatiquement.",
-      "L’extension est maintenant activée par défaut pour les nouvelles parties.",
-      "Le bouton de suivi en direct devient une pastille « Live » explicite, et l’ordre de jeu affiche des places numérotées avec la personne qui entame.",
-      "Les intitulés de bonus suivent tous la même forme : qui prend quoi.",
+      "Rejoignez une table avec le code à 6 caractères que votre ami vous montre.",
     ],
+    historyTitle: "Versions précédentes",
+    history: {
+      "1.11.2": [
+        "Le fond de carte remplit à nouveau tout l’écran, et dézoomer ne fait plus glisser la page sur le côté.",
+      ],
+      "1.11.1": [
+        "Supprimer une partie la supprime pour toute la table.",
+      ],
+      "1.11.0": [
+        "L’appli reste gratuite et sans publicité. Vous pouvez participer à sa facture App Store si vous le souhaitez.",
+      ],
+      "1.10.2": [
+        "Les scores suivis sur un autre téléphone se mettent à jour en direct.",
+      ],
+      "1.10.1": [
+        "Inviter et Rejoindre sont deux boutons distincts.",
+      ],
+      "1.10.0": [
+        "Tables partagées : les parties de votre équipage rejoignent un seul historique et un seul classement.",
+        "Modifiez les règles en cours de partie.",
+        "La nouvelle extension est activée par défaut.",
+        "Ordre de jeu plus clair, avec la personne qui entame.",
+        "Les intitulés de bonus suivent tous la même forme.",
+      ],
+    },
     close: "Compris",
   },
 
@@ -183,27 +203,51 @@ export const fr: Strings = {
       tableNamePlaceholder: "ex. La tablée du vendredi",
       tableNameHint:
         "Donnez un nom à la table de votre équipage. Tous ceux qui la rejoignent voient le même nom, le même historique et le même classement.",
-      shareTitle: "Invitez votre équipage",
+      shareTitle: "Inviter votre équipage",
       shareHint:
-        "Vos amis scannent ce QR code (ou ouvrent le lien) pour rejoindre votre table. Chaque membre peut tenir les scores ; toutes les parties rejoignent le même historique partagé. Partagez-le uniquement avec votre équipage.",
-      copyLink: "Copier le lien d’invitation",
-      copying: "Copie…",
-      linkCopied: "Lien copié !",
-      copyFailed: "Échec de la copie",
-      qrLabel: "QR code pour rejoindre cette table de jeu",
-      linkTitle: "Pas d’appareil photo ? Utilisez un code",
-      linkHint:
-        "Copiez le code de cette table, puis collez-le sur l’autre téléphone pour y rejoindre la même table. Conservez-le à l’abri : toute personne qui le possède peut voir et modifier vos parties.",
-      codeLabel: "Code de cette table",
-      copy: "Copier",
-      copied: "Copié",
+        "Montrez un code à six caractères à vos amis : ils le saisissent dans leur propre appli et rejoignent la table. Chaque membre peut tenir les scores ; toutes les parties rejoignent le même historique partagé. N’invitez que votre équipage : une invitation donne accès à toutes vos parties.",
       joinTitle: "Rejoindre une autre table",
-      pasteLabel: "Coller le code d’une autre table",
-      linkButton: "Rejoindre cette table",
-      linking: "Connexion…",
-      linkError: "Ce code n’a pas pu être lu.",
-      linkSuccess: "Terminé. Ce téléphone fait maintenant partie de la table partagée.",
     },
+  },
+
+  tableInvite: {
+    title: "Inviter à votre table",
+    subtitle: "Un code à dicter, rien à scanner",
+    subtitleNamed: (name) => `Rejoindre « ${name} »`,
+    steps:
+      "Votre ami ouvre son appli, touche « Rejoindre » et tape ce code.",
+    minting: "Création du code…",
+    codeLabel: (spelled) => `Code d’invitation : ${spelled}`,
+    expiresIn: (countdown) => `Valable encore ${countdown}`,
+    expired: "Code expiré",
+    newCode: "Nouveau code",
+    retry: "Réessayer",
+    warning:
+      "Toute personne qui saisit ce code voit et modifie les parties de la table. Ne le donnez qu’à votre équipage.",
+    offline:
+      "Le code n’a pas pu être créé. Vérifiez votre connexion et réessayez.",
+    unsupported:
+      "Les codes d’invitation ne sont pas encore disponibles sur ce serveur.",
+    throttled: "Trop de tentatives sur le serveur. Réessayez dans une minute.",
+    copyCode: "Copier le code",
+    codeCopied: "Code copié !",
+  },
+
+  joinByCode: {
+    title: "Rejoindre une table",
+    subtitle: "Tapez le code affiché sur l’autre téléphone",
+    placeholder: "K7M-4QP",
+    inputLabel: (length) => `Code d’invitation à ${length} caractères`,
+    submit: "Rejoindre la table",
+    hint: "Un code reste valable 15 minutes. Si le vôtre a expiré, demandez-en un nouveau à la personne qui tient la table.",
+    malformed:
+      "Ce n’est pas un code d’invitation. Saisissez les six caractères affichés sur l’autre téléphone.",
+    unknown:
+      "Ce code n’est plus valable. Les codes durent 15 minutes : demandez-en un nouveau à votre ami.",
+    throttled: "Trop de tentatives. Réessayez dans une minute.",
+    unsupported:
+      "Les codes d’invitation ne sont pas encore disponibles sur ce serveur.",
+    offline: "Serveur injoignable. Vérifiez votre connexion et réessayez.",
   },
 
   joinTable: {

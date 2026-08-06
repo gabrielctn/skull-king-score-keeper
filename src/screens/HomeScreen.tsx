@@ -31,11 +31,19 @@ const HISTORY_PREVIEW_COUNT = 3;
 interface Props {
   gameHistory: Game[];
   currentGameId: string | null;
+  /** Name of the shared table these games belong to, when it has one. */
+  tableName: string | null;
+  /** True once a cloud backend is configured; hides the table row otherwise. */
+  tableSharingAvailable: boolean;
   onNewGame: () => void;
   onOpenGame: (game: Game) => void;
   onDeleteGame: (gameId: string) => void;
   onOpenStats: () => void;
   onOpenSettings: () => void;
+  /** Show an invite code for this table (the host's side). */
+  onInviteToTable: () => void;
+  /** Type in the code showing on a friend's phone (the guest's side). */
+  onJoinTable: () => void;
 }
 
 type RemovalIntent = "delete" | "abandon";
@@ -43,11 +51,15 @@ type RemovalIntent = "delete" | "abandon";
 export default function HomeScreen({
   gameHistory,
   currentGameId,
+  tableName,
+  tableSharingAvailable,
   onNewGame,
   onOpenGame,
   onDeleteGame,
   onOpenStats,
   onOpenSettings,
+  onInviteToTable,
+  onJoinTable,
 }: Props) {
   const { t, lang } = useI18n();
   const { width } = useWindowDimensions();
@@ -287,6 +299,40 @@ export default function HomeScreen({
                 <Text style={styles.primaryBtnText}>{t.common.newGame}</Text>
               </TouchableOpacity>
             )}
+
+            {/*
+              Inviting and joining live one tap from the home screen: a friend
+              joining a table is standing right next to the phone that hosts
+              it, so the flow has to be reachable without a trip to Settings.
+            */}
+            {tableSharingAvailable ? (
+              <View style={styles.tableCard}>
+                <Text style={styles.tableTitle}>⚓ {t.home.tableTitle}</Text>
+                <Text style={styles.tableHint} numberOfLines={2}>
+                  {t.home.tableHint(tableName)}
+                </Text>
+                <View style={styles.tableActions}>
+                  <TouchableOpacity
+                    style={[styles.tableBtn, styles.tableBtnPrimary]}
+                    onPress={onInviteToTable}
+                    accessibilityRole="button"
+                  >
+                    <Text style={styles.tableBtnPrimaryText}>
+                      {t.home.tableInvite}
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.tableBtn, styles.tableBtnSecondary]}
+                    onPress={onJoinTable}
+                    accessibilityRole="button"
+                  >
+                    <Text style={styles.tableBtnSecondaryText}>
+                      {t.home.tableJoin}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            ) : null}
 
             {historyGames.length > 0 ? (
               <View style={styles.history}>
@@ -630,6 +676,37 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "800",
   },
+  tableCard: {
+    marginTop: spacing.lg,
+    backgroundColor: colors.bgElevated,
+    borderColor: colors.cardBorder,
+    borderWidth: 1,
+    borderRadius: radius.lg,
+    padding: spacing.md,
+  },
+  tableTitle: { color: colors.text, fontSize: 15, fontWeight: "800" },
+  tableHint: {
+    color: colors.textDim,
+    fontSize: 12,
+    lineHeight: 17,
+    marginTop: 2,
+  },
+  tableActions: { flexDirection: "row", marginTop: spacing.md },
+  tableBtn: {
+    flex: 1,
+    minHeight: 44,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: radius.md,
+    paddingHorizontal: spacing.sm,
+  },
+  tableBtnPrimary: { backgroundColor: colors.gold, marginEnd: spacing.sm },
+  tableBtnPrimaryText: { color: colors.bg, fontSize: 14, fontWeight: "800" },
+  tableBtnSecondary: {
+    borderColor: colors.controlBorder,
+    borderWidth: 1,
+  },
+  tableBtnSecondaryText: { color: colors.text, fontSize: 14, fontWeight: "700" },
   history: { marginTop: spacing.xl },
   historyTitle: { color: colors.text, fontSize: 19, fontWeight: "800" },
   historyHint: { color: colors.textDim, fontSize: 13, marginTop: spacing.xs },

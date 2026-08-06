@@ -16,6 +16,7 @@ import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { deflateSync } from "node:zlib";
 import { parseBackup, serializeBackup } from "../src/backup";
+import { CURRENT_RELEASE } from "../src/releases";
 import { ghostTricks, isRoundComplete, standings } from "../src/scoring";
 import {
   aggregateStats,
@@ -391,7 +392,9 @@ eq("Greybeard scenario points at ghost game", ghostSeed.currentGame.id, "app-sto
 eq("results scenario points at featured game", resultsSeed.currentGame.id, "app-store-finished-12");
 eq("seed history stays finished-only", activeSeed.history.length, 12);
 check("support prompt is suppressed", activeSeed.supportPrompt.optedOut);
-eq("seed release is current", activeSeed.seenRelease, "1.11.2");
+// Follows the release rather than pinning it: the point is that the seed marks
+// this release as seen, so no "What's new" dialog covers a screenshot.
+eq("seed release is current", activeSeed.seenRelease, CURRENT_RELEASE);
 
 const parsed = parseBackup(serializeBackup(activeSeed, APP_STORE_FIXTURE_EPOCH));
 eq("backup current game survives", parsed.currentGame?.id, "app-store-active");
