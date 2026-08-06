@@ -79,6 +79,12 @@ export interface Strings {
     playersRound: (players: number, round: number, total: number) => string;
     /** "Leading: {name} ({total})" */
     leading: (name: string, total: number) => string;
+    /** Header of the shared-table row (invite / join, one tap each). */
+    tableTitle: string;
+    /** Name of the table currently open, or the "no table yet" line. */
+    tableHint: (name: string | null) => string;
+    tableInvite: string;
+    tableJoin: string;
     support: string;
     supportHint: string;
     /**
@@ -200,29 +206,65 @@ export interface Strings {
       tableNamePlaceholder: string;
       /** Explains the name is shared with everyone on the table. */
       tableNameHint: string;
-      /** Header of the invite block (QR + link). */
+      /** Button opening the invite sheet (short code + link). */
       shareTitle: string;
-      /** Warns that anyone with the link can read and write the table. */
+      /** Warns that anyone holding an invite can read and write the table. */
       shareHint: string;
-      copyLink: string;
-      copying: string;
-      linkCopied: string;
-      copyFailed: string;
-      /** Accessibility description of the join QR code image. */
-      qrLabel: string;
-      linkTitle: string;
-      linkHint: string;
-      codeLabel: string;
-      copy: string;
-      copied: string;
-      /** Header of the separate flow for joining another table. */
+      /** Button opening the "type the code you were given" sheet. */
       joinTitle: string;
-      pasteLabel: string;
-      linkButton: string;
-      linking: string;
-      linkError: string;
-      linkSuccess: string;
     };
+  };
+
+  /**
+   * The host's invite sheet: the short code a friend types into the app they
+   * already have, since a scanned QR can never open an installed app.
+   */
+  tableInvite: {
+    title: string;
+    subtitle: string;
+    /** Subtitle once the table has a name. */
+    subtitleNamed: (name: string) => string;
+    /** What the friend has to do, above the code. */
+    steps: string;
+    minting: string;
+    /** Accessibility label reading the code out one character at a time. */
+    codeLabel: (spelled: string) => string;
+    /** "Expires in {m:ss}". */
+    expiresIn: (countdown: string) => string;
+    expired: string;
+    newCode: string;
+    retry: string;
+    /** Reminds the host that an invite grants full access to the table. */
+    warning: string;
+    offline: string;
+    /** The backend has no invite support deployed; link and QR still work. */
+    unsupported: string;
+    /** Too many wrong codes were tried against the backend just now. */
+    throttled: string;
+    /** Header of the QR/link block, for a friend without the app. */
+    noAppTitle: string;
+    noAppHint: string;
+    qrLabel: string;
+    copyLink: string;
+    linkCopied: string;
+  };
+
+  /** The guest's side: type the short code, or paste a code or link. */
+  joinByCode: {
+    title: string;
+    subtitle: string;
+    placeholder: string;
+    /** Accessibility label of the field, e.g. "6-character invite code". */
+    inputLabel: (length: number) => string;
+    submit: string;
+    hint: string;
+    /** Not a code at all (wrong length, or unusable characters). */
+    malformed: string;
+    /** Well-formed, but no live table answers to it. */
+    unknown: string;
+    throttled: string;
+    unsupported: string;
+    offline: string;
   };
 
   /** Confirmation sheet shown after opening a table join link or QR code. */

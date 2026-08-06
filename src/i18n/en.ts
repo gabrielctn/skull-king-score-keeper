@@ -56,6 +56,13 @@ export const en: Strings = {
     playersRound: (players, round, total) =>
       `${players} players · round ${round} of ${total}`,
     leading: (name, total) => `Leading: ${name} (${total})`,
+    tableTitle: "Your table",
+    tableHint: (name) =>
+      name
+        ? `Your games join the “${name}” table.`
+        : "Your games join your shared table.",
+    tableInvite: "Invite",
+    tableJoin: "Join",
     support: "Support the developer ☕",
     supportHint: "Optional contribution · the app remains completely free.",
     supportCost: (amountEur) =>
@@ -85,6 +92,7 @@ export const en: Strings = {
     automaticUpdatesBody:
       "Installed apps now download each new release automatically and switch to it as soon as the device is online.",
     items: [
+      "Joining a table is now a six-character code: the host shows it, everyone else types it into their own app. No camera, no browser detour, and it works the same on the installed app and on the web.",
       "Deleting a game now deletes it for the whole crew: a game removed from the history no longer comes back on the next sync, and it leaves the statistics for good.",
       "The app stays free and ad-free: the home screen now shows what its App Store listing costs (€100 a year), and a finished game occasionally invites you to help cover that bill.",
       "Score sharing now uses live QR sessions only, so every player sees updates in real time.",
@@ -187,25 +195,53 @@ export const en: Strings = {
         "Give your crew's table a name. Everyone who joins the table sees the same name, history and leaderboard.",
       shareTitle: "Invite your crew",
       shareHint:
-        "Friends scan this QR code (or open the link) to join your table. Anyone on the table can keep score; every game joins the same shared history. Share it only with your crew.",
-      copyLink: "Copy invite link",
-      copying: "Copying…",
-      linkCopied: "Link copied!",
-      copyFailed: "Copy failed",
-      qrLabel: "QR code to join this game table",
-      linkTitle: "No camera at hand? Use a code",
-      linkHint:
-        "Copy this table's code, then paste it on the other phone to join the same table there. Keep it private; anyone with it can see and edit your games.",
-      codeLabel: "This table's code",
-      copy: "Copy",
-      copied: "Copied",
+        "Show your friends a six-character code: they type it into their own app and land on your table. Anyone on the table can keep score; every game joins the same shared history. Only invite your crew, because an invite opens all of your games.",
       joinTitle: "Join another table",
-      pasteLabel: "Paste a code from another table",
-      linkButton: "Join that table",
-      linking: "Joining…",
-      linkError: "That code could not be read.",
-      linkSuccess: "Done. This phone is now on the shared table.",
     },
+  },
+
+  tableInvite: {
+    title: "Invite to your table",
+    subtitle: "A code to read out, nothing to scan",
+    subtitleNamed: (name) => `Joining “${name}”`,
+    steps: "Your friend opens their app, taps “Join”, and types this code.",
+    minting: "Creating the code…",
+    codeLabel: (spelled) => `Invite code: ${spelled}`,
+    expiresIn: (countdown) => `Valid for another ${countdown}`,
+    expired: "Code expired",
+    newCode: "New code",
+    retry: "Try again",
+    warning:
+      "Anyone who enters this code can see and edit the table's games. Hand it to your crew only.",
+    offline:
+      "The code could not be created. Check your connection and try again.",
+    unsupported:
+      "Invite codes are not available on this server yet. Use the QR code or link below.",
+    throttled: "Too many attempts on the server. Try again in a minute.",
+    noAppTitle: "Friend without the app yet?",
+    noAppHint:
+      "The QR code and link open the web version in a browser. Handy for a first look, but a scan can never open an app that is already installed. Once they have it, the code above is quicker.",
+    qrLabel: "QR code opening this table in a browser",
+    copyLink: "Copy invite link",
+    linkCopied: "Link copied!",
+  },
+
+  joinByCode: {
+    title: "Join a table",
+    subtitle: "Type the code showing on the other phone",
+    placeholder: "K7M-4QP",
+    inputLabel: (length) => `${length}-character invite code`,
+    submit: "Join the table",
+    hint: "You can also paste an invite link or a full table code.",
+    malformed:
+      "That is not an invite code. Enter the six characters showing on the other phone.",
+    unknown:
+      "That code is no longer valid. Codes last 15 minutes, so ask your friend for a fresh one.",
+    throttled: "Too many attempts. Try again in a minute.",
+    unsupported:
+      "Invite codes are not available on this server yet. Ask for the invite link instead.",
+    offline:
+      "The server could not be reached. Check your connection and try again.",
   },
 
   joinTable: {

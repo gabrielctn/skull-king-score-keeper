@@ -51,6 +51,13 @@ export const de: Strings = {
     playersRound: (players, round, total) =>
       `${players} Spieler · Runde ${round} von ${total}`,
     leading: (name, total) => `In Führung: ${name} (${total})`,
+    tableTitle: "Dein Tisch",
+    tableHint: (name) =>
+      name
+        ? `Deine Spiele landen am Tisch „${name}“.`
+        : "Deine Spiele landen an deinem gemeinsamen Tisch.",
+    tableInvite: "Einladen",
+    tableJoin: "Beitreten",
     support: "Entwickler unterstützen ☕",
     supportHint: "Freiwilliger Beitrag · die App bleibt vollständig kostenlos.",
     supportCost: (amountEur) =>
@@ -80,6 +87,7 @@ export const de: Strings = {
     automaticUpdatesBody:
       "Installierte Apps laden jede neue Version automatisch und wechseln zu ihr, sobald das Gerät online ist.",
     items: [
+      "Einem Tisch beizutreten läuft jetzt über einen sechsstelligen Code: Die gastgebende Person zeigt ihn, alle anderen tippen ihn in ihre eigene App. Ohne Kamera, ohne Umweg über den Browser, und in der installierten App genauso wie im Web.",
       "Ein gelöschtes Spiel bleibt jetzt für die ganze Crew gelöscht: Ein aus dem Verlauf entferntes Spiel taucht bei der nächsten Synchronisierung nicht wieder auf und verschwindet endgültig aus der Statistik.",
       "Die App bleibt kostenlos und werbefrei: Der Startbildschirm zeigt jetzt, was ihre Veröffentlichung im App Store kostet (100 €/Jahr), und nach einem beendeten Spiel folgt gelegentlich die Einladung, diese Rechnung mitzutragen.",
       "Die Punkte werden jetzt ausschließlich über Live-Sitzungen per QR-Code geteilt, damit alle Spieler Aktualisierungen in Echtzeit sehen.",
@@ -183,25 +191,55 @@ export const de: Strings = {
         "Gib dem Tisch deiner Crew einen Namen. Alle, die beitreten, sehen denselben Namen, dieselbe Historie und dieselbe Rangliste.",
       shareTitle: "Lade deine Crew ein",
       shareHint:
-        "Freunde scannen diesen QR-Code (oder öffnen den Link), um deinem Tisch beizutreten. Jedes Mitglied kann die Punkte führen; alle Spiele landen in derselben gemeinsamen Historie. Teile ihn nur mit deiner Crew.",
-      copyLink: "Einladungslink kopieren",
-      copying: "Wird kopiert…",
-      linkCopied: "Link kopiert!",
-      copyFailed: "Kopieren fehlgeschlagen",
-      qrLabel: "QR-Code zum Beitreten dieses Spieltisches",
-      linkTitle: "Keine Kamera zur Hand? Nutze einen Code",
-      linkHint:
-        "Kopiere den Code dieses Tisches und füge ihn auf dem anderen Handy ein, um dort demselben Tisch beizutreten. Halte ihn geheim, denn wer ihn hat, kann deine Spiele sehen und ändern.",
-      codeLabel: "Code dieses Tisches",
-      copy: "Kopieren",
-      copied: "Kopiert",
+        "Zeig deinen Freunden einen sechsstelligen Code: Sie tippen ihn in ihre eigene App und landen an deinem Tisch. Jedes Mitglied kann die Punkte führen; alle Spiele landen in derselben gemeinsamen Historie. Lade nur deine Crew ein, denn eine Einladung öffnet all deine Spiele.",
       joinTitle: "Einem anderen Tisch beitreten",
-      pasteLabel: "Code eines anderen Tisches einfügen",
-      linkButton: "Diesem Tisch beitreten",
-      linking: "Wird beigetreten…",
-      linkError: "Dieser Code konnte nicht gelesen werden.",
-      linkSuccess: "Fertig. Dieses Handy gehört jetzt zum gemeinsamen Tisch.",
     },
+  },
+
+  tableInvite: {
+    title: "An deinen Tisch einladen",
+    subtitle: "Ein Code zum Vorlesen, nichts zum Scannen",
+    subtitleNamed: (name) => `Beitritt zu „${name}“`,
+    steps:
+      "Deine Freundin oder dein Freund öffnet die App, tippt auf „Beitreten“ und gibt diesen Code ein.",
+    minting: "Code wird erstellt…",
+    codeLabel: (spelled) => `Einladungscode: ${spelled}`,
+    expiresIn: (countdown) => `Noch ${countdown} gültig`,
+    expired: "Code abgelaufen",
+    newCode: "Neuer Code",
+    retry: "Erneut versuchen",
+    warning:
+      "Wer diesen Code eingibt, kann die Spiele des Tisches sehen und ändern. Gib ihn nur an deine Crew weiter.",
+    offline:
+      "Der Code konnte nicht erstellt werden. Prüfe deine Verbindung und versuche es erneut.",
+    unsupported:
+      "Einladungscodes gibt es auf diesem Server noch nicht. Nutze den QR-Code oder den Link unten.",
+    throttled:
+      "Zu viele Versuche auf dem Server. Versuche es in einer Minute erneut.",
+    noAppTitle: "Noch ohne App?",
+    noAppHint:
+      "QR-Code und Link öffnen die Web-Version im Browser. Gut zum Ausprobieren, aber ein Scan kann eine bereits installierte App nie öffnen. Sobald sie installiert ist, geht der Code oben schneller.",
+    qrLabel: "QR-Code, der diesen Tisch im Browser öffnet",
+    copyLink: "Einladungslink kopieren",
+    linkCopied: "Link kopiert!",
+  },
+
+  joinByCode: {
+    title: "Einem Tisch beitreten",
+    subtitle: "Gib den Code ein, der auf dem anderen Handy steht",
+    placeholder: "K7M-4QP",
+    inputLabel: (length) => `Einladungscode mit ${length} Zeichen`,
+    submit: "Tisch beitreten",
+    hint: "Du kannst auch einen Einladungslink oder einen vollständigen Tisch-Code einfügen.",
+    malformed:
+      "Das ist kein Einladungscode. Gib die sechs Zeichen ein, die auf dem anderen Handy stehen.",
+    unknown:
+      "Dieser Code gilt nicht mehr. Codes laufen nach 15 Minuten ab. Lass dir einen neuen geben.",
+    throttled: "Zu viele Versuche. Versuche es in einer Minute erneut.",
+    unsupported:
+      "Einladungscodes gibt es auf diesem Server noch nicht. Lass dir stattdessen den Einladungslink schicken.",
+    offline:
+      "Der Server ist nicht erreichbar. Prüfe deine Verbindung und versuche es erneut.",
   },
 
   joinTable: {

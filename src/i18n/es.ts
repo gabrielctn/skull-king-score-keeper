@@ -52,6 +52,13 @@ export const es: Strings = {
     playersRound: (players, round, total) =>
       `${players} jugadores · ronda ${round} de ${total}`,
     leading: (name, total) => `En cabeza: ${name} (${total})`,
+    tableTitle: "Tu mesa",
+    tableHint: (name) =>
+      name
+        ? `Tus partidas van a la mesa «${name}».`
+        : "Tus partidas van a tu mesa compartida.",
+    tableInvite: "Invitar",
+    tableJoin: "Unirse",
     support: "Apoya al desarrollador ☕",
     supportHint:
       "Contribución opcional · la aplicación seguirá siendo totalmente gratuita.",
@@ -82,6 +89,7 @@ export const es: Strings = {
     automaticUpdatesBody:
       "Las aplicaciones instaladas ahora descargan automáticamente cada nueva versión y la activan en cuanto el dispositivo se conecta a internet.",
     items: [
+      "Unirse a una mesa ahora es un código de seis caracteres: el anfitrión lo muestra y los demás lo escriben en su propia app. Sin cámara ni rodeo por el navegador, e igual en la app instalada y en la web.",
       "Eliminar una partida ahora la elimina para toda la tripulación: una partida borrada del historial ya no reaparece en la siguiente sincronización y desaparece de las estadísticas para siempre.",
       "La aplicación sigue siendo gratuita y sin anuncios: la pantalla de inicio ya indica lo que cuesta su publicación en la App Store (100 €/año), y al terminar una partida se te invita de vez en cuando a ayudar con esa factura.",
       "Ahora los puntos se comparten únicamente mediante sesiones QR en directo, para que todos los jugadores vean las actualizaciones en tiempo real.",
@@ -187,25 +195,55 @@ export const es: Strings = {
         "Ponle nombre a la mesa de tu tripulación. Todos los que se unan verán el mismo nombre, historial y clasificación.",
       shareTitle: "Invita a tu tripulación",
       shareHint:
-        "Tus amigos escanean este código QR (o abren el enlace) para unirse a tu mesa. Cualquier miembro puede anotar los puntos; todas las partidas van al mismo historial compartido. Compártelo solo con tu tripulación.",
-      copyLink: "Copiar enlace de invitación",
-      copying: "Copiando…",
-      linkCopied: "¡Enlace copiado!",
-      copyFailed: "No se pudo copiar",
-      qrLabel: "Código QR para unirse a esta mesa de juego",
-      linkTitle: "¿Sin cámara a mano? Usa un código",
-      linkHint:
-        "Copia el código de esta mesa y pégalo en el otro teléfono para unirte allí a la misma mesa. Mantenlo privado: cualquiera que lo tenga puede ver y editar tus partidas.",
-      codeLabel: "Código de esta mesa",
-      copy: "Copiar",
-      copied: "Copiado",
+        "Muestra a tus amigos un código de seis caracteres: lo escriben en su propia app y entran en tu mesa. Cualquier miembro puede anotar los puntos; todas las partidas van al mismo historial compartido. Invita solo a tu tripulación: una invitación abre todas tus partidas.",
       joinTitle: "Unirse a otra mesa",
-      pasteLabel: "Pega el código de otra mesa",
-      linkButton: "Unirse a esa mesa",
-      linking: "Uniéndose…",
-      linkError: "No se pudo leer ese código.",
-      linkSuccess: "Listo. Este teléfono ya forma parte de la mesa compartida.",
     },
+  },
+
+  tableInvite: {
+    title: "Invitar a tu mesa",
+    subtitle: "Un código para dictar, nada que escanear",
+    subtitleNamed: (name) => `Unirse a «${name}»`,
+    steps:
+      "Tu amigo abre su app, toca «Unirse» y escribe este código.",
+    minting: "Creando el código…",
+    codeLabel: (spelled) => `Código de invitación: ${spelled}`,
+    expiresIn: (countdown) => `Válido ${countdown} más`,
+    expired: "Código caducado",
+    newCode: "Código nuevo",
+    retry: "Reintentar",
+    warning:
+      "Cualquiera que escriba este código puede ver y editar las partidas de la mesa. Dáselo solo a tu tripulación.",
+    offline:
+      "No se pudo crear el código. Comprueba tu conexión e inténtalo de nuevo.",
+    unsupported:
+      "Los códigos de invitación aún no están disponibles en este servidor. Usa el código QR o el enlace de abajo.",
+    throttled:
+      "Demasiados intentos en el servidor. Inténtalo dentro de un minuto.",
+    noAppTitle: "¿Tu amigo aún no tiene la app?",
+    noAppHint:
+      "El código QR y el enlace abren la versión web en el navegador. Es útil para descubrirla, pero un escaneo nunca puede abrir una app ya instalada. Cuando la tenga, el código de arriba es más rápido.",
+    qrLabel: "Código QR que abre esta mesa en un navegador",
+    copyLink: "Copiar enlace de invitación",
+    linkCopied: "¡Enlace copiado!",
+  },
+
+  joinByCode: {
+    title: "Unirse a una mesa",
+    subtitle: "Escribe el código que aparece en el otro teléfono",
+    placeholder: "K7M-4QP",
+    inputLabel: (length) => `Código de invitación de ${length} caracteres`,
+    submit: "Unirse a la mesa",
+    hint: "También puedes pegar un enlace de invitación o un código de mesa completo.",
+    malformed:
+      "Eso no es un código de invitación. Escribe los seis caracteres que aparecen en el otro teléfono.",
+    unknown:
+      "Ese código ya no vale. Los códigos duran 15 minutos: pídele uno nuevo a tu amigo.",
+    throttled: "Demasiados intentos. Inténtalo dentro de un minuto.",
+    unsupported:
+      "Los códigos de invitación aún no están disponibles en este servidor. Pide el enlace de invitación.",
+    offline:
+      "No se pudo contactar con el servidor. Comprueba tu conexión e inténtalo de nuevo.",
   },
 
   joinTable: {

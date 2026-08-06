@@ -67,6 +67,14 @@ const gameRulesSource = readFileSync(
 );
 const settingsSource = readFileSync("src/screens/SettingsScreen.tsx", "utf8");
 const statsSource = readFileSync("src/screens/StatsScreen.tsx", "utf8");
+const tableInviteSource = readFileSync(
+  "src/components/TableInviteModal.tsx",
+  "utf8"
+);
+const joinByCodeSource = readFileSync(
+  "src/components/JoinByCodeModal.tsx",
+  "utf8"
+);
 const spectatorSource = readFileSync("src/screens/SpectatorScreen.tsx", "utf8");
 const playerFacingTextSources = [
   "src/i18n/en.ts",
@@ -143,18 +151,18 @@ check(
     gameSource.includes("layout.gameContentMaxWidth - layout.screenPadding * 2")
 );
 check(
-  "settings copy actions use the cross-platform clipboard with feedback",
+  "invite copy actions use the cross-platform clipboard with feedback",
   packageJson.dependencies?.["expo-clipboard"] &&
-    settingsSource.includes('from "../clipboard"') &&
-    settingsSource.includes("copyTextToClipboard") &&
-    settingsSource.includes("<CopyButton") &&
+    tableInviteSource.includes('from "../clipboard"') &&
+    tableInviteSource.includes("copyTextToClipboard") &&
+    tableInviteSource.includes("<CopyButton") &&
     copyButtonSource.includes('"button"') &&
     copyButtonSource.includes("onClick: onPress") &&
     clipboardNativeSource.includes("Clipboard.setStringAsync") &&
     clipboardWebSource.includes("navigator.clipboard.writeText") &&
     clipboardWebSource.includes('document.execCommand("copy")') &&
-    settingsSource.includes('copied ? "copied" : "error"') &&
-    settingsSource.includes("t.settings.cloud.copyFailed")
+    tableInviteSource.includes("setLinkCopied(copied)") &&
+    tableInviteSource.includes("t.tableInvite.linkCopied")
 );
 check(
   "active game is excluded from recent history",
@@ -306,19 +314,41 @@ check(
     appSource.includes("JoinTableModal")
 );
 check(
-  "settings share the table through a QR code and invite link",
-  settingsSource.includes("buildJoinUrl") &&
-    settingsSource.includes("qrCodeDataUrl") &&
-    settingsSource.includes("t.settings.cloud.copyLink")
+  "the host hands out a short code a guest can type into their own app",
+  tableInviteSource.includes("cloudBackupManager().createInvite()") &&
+    tableInviteSource.includes("formatInviteCode(invite.code)") &&
+    tableInviteSource.includes("t.tableInvite.expiresIn(") &&
+    tableInviteSource.includes("t.tableInvite.newCode")
+);
+check(
+  "the QR code and link stay as the fallback for a friend without the app",
+  tableInviteSource.includes("buildJoinUrl") &&
+    tableInviteSource.includes("qrCodeDataUrl") &&
+    tableInviteSource.includes("t.tableInvite.noAppTitle") &&
+    tableInviteSource.includes("t.tableInvite.copyLink")
+);
+check(
+  "the guest sheet resolves a code without joining anything by itself",
+  joinByCodeSource.includes("classifyJoinInput(draft)") &&
+    joinByCodeSource.includes("cloudBackupManager().redeemInvite(") &&
+    joinByCodeSource.includes("onResolved(") &&
+    appSource.includes("setPendingJoinCode(code)")
+);
+check(
+  "inviting and joining are one tap from the home screen",
+  homeSource.includes("t.home.tableInvite") &&
+    homeSource.includes("t.home.tableJoin") &&
+    homeSource.includes("onInviteToTable") &&
+    homeSource.includes("onJoinTable") &&
+    appSource.includes("<TableInviteModal") &&
+    appSource.includes("<JoinByCodeModal")
 );
 check(
   "settings expose invite and join as separate actions",
-  settingsSource.includes("const [inviteOpen, setInviteOpen]") &&
-    settingsSource.includes("const [joinOpen, setJoinOpen]") &&
+  settingsSource.includes("onPress={onInviteToTable}") &&
+    settingsSource.includes("onPress={onJoinTable}") &&
     settingsSource.includes("t.settings.cloud.shareTitle") &&
-    settingsSource.includes("t.settings.cloud.joinTitle") &&
-    settingsSource.includes("expanded: inviteOpen") &&
-    settingsSource.includes("expanded: joinOpen")
+    settingsSource.includes("t.settings.cloud.joinTitle")
 );
 check(
   "settings let the crew name their shared table",
@@ -461,7 +491,7 @@ for (const [language, strings] of Object.entries({ en, fr, es, de, ar, zh })) {
   );
   check(
     `${language} release notes describe this release`,
-    strings.whatsNew.items.length === 9
+    strings.whatsNew.items.length === 10
   );
 }
 

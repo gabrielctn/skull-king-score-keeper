@@ -47,6 +47,11 @@ export const zh: Strings = {
     playersRound: (players, round, total) =>
       `${players} 名玩家 · 第 ${round}/${total} 回合`,
     leading: (name, total) => `领先：${name}（${total}）`,
+    tableTitle: "你的牌桌",
+    tableHint: (name) =>
+      name ? `你的对局会记入「${name}」牌桌。` : "你的对局会记入你的共享牌桌。",
+    tableInvite: "邀请",
+    tableJoin: "加入",
     support: "支持开发者 ☕",
     supportHint: "自愿支持 · 本应用将始终完全免费。",
     supportCost: (amountEur) =>
@@ -76,6 +81,7 @@ export const zh: Strings = {
     automaticUpdatesBody:
       "已安装的应用会自动下载每个新版本，并在设备联网后立即切换到新版本。",
     items: [
+      "加入牌桌现在只需一个六位代码：主持人出示，其他人在自己的应用里输入。无需相机，也不必绕道浏览器，已安装的应用和网页版体验完全一致。",
       "删除对局现在会为整桌牌友生效：从历史记录中删除的对局不会在下次同步时重新出现，也会彻底从统计中消失。",
       "本应用继续免费且无广告：主页现在会显示它在 App Store 上架的费用（每年 100 欧元），并且在一局结束后会偶尔邀请你分担这笔费用。",
       "比分分享现在仅使用实时二维码会话，让每位玩家都能实时看到更新。",
@@ -170,25 +176,46 @@ export const zh: Strings = {
       tableNameHint: "给你们的牌桌取个名字。加入牌桌的每个人都会看到同样的名称、历史和排行榜。",
       shareTitle: "邀请伙伴",
       shareHint:
-        "朋友扫描此二维码（或打开链接）即可加入你的牌桌。牌桌上的任何成员都可以计分；每场对局都会记入同一份共享历史。请只分享给你的伙伴。",
-      copyLink: "复制邀请链接",
-      copying: "正在复制…",
-      linkCopied: "链接已复制！",
-      copyFailed: "复制失败",
-      qrLabel: "加入此牌桌的二维码",
-      linkTitle: "没有相机？使用代码",
-      linkHint:
-        "复制此牌桌的代码，然后在另一部手机上粘贴，即可在那里加入同一张牌桌。请妥善保管，任何持有它的人都能查看并修改你的对局。",
-      codeLabel: "本牌桌代码",
-      copy: "复制",
-      copied: "已复制",
+        "向朋友出示一个六位代码：他们在自己的应用里输入即可加入你的牌桌。牌桌上的任何成员都可以计分；每场对局都会记入同一份共享历史。请只邀请你的伙伴：一次邀请就能打开你的全部对局。",
       joinTitle: "加入另一张牌桌",
-      pasteLabel: "粘贴另一张牌桌的代码",
-      linkButton: "加入该牌桌",
-      linking: "正在加入…",
-      linkError: "无法读取该代码。",
-      linkSuccess: "完成，本手机已加入共享牌桌。",
     },
+  },
+
+  tableInvite: {
+    title: "邀请加入你的牌桌",
+    subtitle: "念给对方听的代码，无需扫描",
+    subtitleNamed: (name) => `加入「${name}」`,
+    steps: "让朋友打开应用，点击「加入」，然后输入这个代码。",
+    minting: "正在生成代码…",
+    codeLabel: (spelled) => `邀请代码：${spelled}`,
+    expiresIn: (countdown) => `还可使用 ${countdown}`,
+    expired: "代码已过期",
+    newCode: "换一个代码",
+    retry: "重试",
+    warning: "输入此代码的人都能查看并修改牌桌上的对局，请只交给你的伙伴。",
+    offline: "代码生成失败。请检查网络连接后重试。",
+    unsupported: "此服务器尚不支持邀请代码。请改用下方的二维码或链接。",
+    throttled: "服务器上的尝试次数过多，请一分钟后再试。",
+    noAppTitle: "朋友还没装应用？",
+    noAppHint:
+      "二维码和链接会在浏览器里打开网页版，方便初次体验，但扫描永远无法打开已安装的应用。装好之后，上面的代码更快。",
+    qrLabel: "在浏览器中打开此牌桌的二维码",
+    copyLink: "复制邀请链接",
+    linkCopied: "链接已复制！",
+  },
+
+  joinByCode: {
+    title: "加入牌桌",
+    subtitle: "输入另一部手机上显示的代码",
+    placeholder: "K7M-4QP",
+    inputLabel: (length) => `${length} 位邀请代码`,
+    submit: "加入牌桌",
+    hint: "你也可以粘贴邀请链接或完整的牌桌代码。",
+    malformed: "这不是邀请代码。请输入另一部手机上显示的六位字符。",
+    unknown: "该代码已失效。代码有效期为 15 分钟，请向朋友要一个新的。",
+    throttled: "尝试次数过多，请一分钟后再试。",
+    unsupported: "此服务器尚不支持邀请代码。请改用邀请链接。",
+    offline: "无法连接服务器。请检查网络连接后重试。",
   },
 
   joinTable: {

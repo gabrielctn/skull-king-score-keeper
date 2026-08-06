@@ -10,12 +10,21 @@ import {
   CloudBackupManager,
   CloudOwnerStore,
   CloudTransport,
+  InviteError,
+  TableInvite,
   buildJoinUrl,
+  classifyJoinInput,
   decodeSyncCode,
   encodeSyncCode,
   extractJoinCode,
   parseCloudState,
 } from "../src/cloudSync";
+import {
+  formatCountdown,
+  formatInviteCode,
+  inviteSecondsLeft,
+  normalizeInviteCode,
+} from "../src/tableInvites";
 import { CloudOwner } from "../src/storage";
 import { Game, Player, RoundEntry } from "../src/types";
 
@@ -86,6 +95,8 @@ class FakeTransport implements CloudTransport {
   keys = new Map<string, string>();
   createCalls = 0;
   putCalls = 0;
+  inviteCalls = 0;
+  invites = new Map<string, CloudOwner>();
   offline = false;
   private counter = 0;
 
@@ -110,6 +121,22 @@ class FakeTransport implements CloudTransport {
     if (this.offline) throw new Error("offline");
     if (this.keys.get(ownerId) !== writerKey) return null;
     return this.states.get(ownerId) ?? null;
+  }
+
+  async createInvite(ownerId: string, writerKey: string): Promise<TableInvite> {
+    if (this.offline) throw new InviteError("offline");
+    if (this.keys.get(ownerId) !== writerKey) throw new InviteError("offline");
+    this.inviteCalls++;
+    const invite = `K7M4Q${this.inviteCalls}`;
+    this.invites.set(invite, { ownerId, writerKey });
+    return { code: invite, expiresAt: Date.now() + 900_000 };
+  }
+
+  async redeemInvite(code: string): Promise<CloudOwner> {
+    if (this.offline) throw new InviteError("offline");
+    const owner = this.invites.get(code);
+    if (!owner) throw new InviteError("unknown");
+    return owner;
   }
 
   // Test helper: seed a foreign owner (as if created on another device).
@@ -170,6 +197,42 @@ check("extract rejects an empty hash", extractJoinCode("") === null);
 check("extract rejects other hash params", extractJoinCode(`#live=${code}`) === null);
 check("extract rejects a malformed code", extractJoinCode("#join=SKC1.$$$$") === null);
 check("extract rejects a non-code payload", extractJoinCode("#join=hello") === null);
+
+// --- short invite codes -----------------------------------------------------
+
+section("Table invite codes");
+check("accepts a plain six-character code", normalizeInviteCode("K7M4QP") === "K7M4QP");
+check("ignores case", normalizeInviteCode("k7m4qp") === "K7M4QP");
+check("ignores the display separator", normalizeInviteCode("K7M-4QP") === "K7M4QP");
+check("ignores spaces around and inside", normalizeInviteCode(" K7M 4QP ") === "K7M4QP");
+// Crockford folding: a code read out loud must survive the ear and the keyboard.
+check("folds I and L to 1", normalizeInviteCode("IL34QP") === "1134QP");
+check("folds O to 0", normalizeInviteCode("O734QP") === "0734QP");
+check("rejects a short code", normalizeInviteCode("K7M4Q") === null);
+check("rejects a long code", normalizeInviteCode("K7M4QPZ") === null);
+check("rejects U, which the alphabet leaves out", normalizeInviteCode("K7M4QU") === null);
+check("rejects an empty string", normalizeInviteCode("") === null);
+check("groups a code for display", formatInviteCode("K7M4QP") === "K7M-4QP");
+eq("counts whole seconds left", inviteSecondsLeft(10_000, 4_500), 6);
+eq("never counts below zero", inviteSecondsLeft(1_000, 9_000), 0);
+eq("formats the countdown as m:ss", formatCountdown(605), "10:05");
+eq("pads the seconds", formatCountdown(61), "1:01");
+
+section("Join field input");
+check(
+  "a six-character code is read as an invite",
+  classifyJoinInput("k7m-4qp")?.kind === "invite"
+);
+check(
+  "a full table code is read as a sync code",
+  classifyJoinInput(code)?.kind === "sync"
+);
+check(
+  "a pasted join link yields the code it carries",
+  classifyJoinInput(buildJoinUrl(code, "https://example.com/app/"))?.code === code
+);
+check("empty input classifies as nothing", classifyJoinInput("   ") === null);
+check("prose classifies as nothing", classifyJoinInput("join my table") === null);
 
 // --- untrusted state hardening ---------------------------------------------
 
@@ -361,6 +424,46 @@ async function run() {
   check("flushing while offline reports failure", !flushedOffline);
   transport.offline = false;
   check("the unsent change stays queued for later", await manager.flushPending());
+
+  // A short code is a *carrier* for the table's own code: minting one never
+  // changes this device's identity, and redeeming one never joins anything by
+  // itself — it hands back a SKC1. code for the usual confirmation flow.
+  section("Manager: short invite codes");
+  const inviteOwner = manager.getOwner();
+  const invite = await manager.createInvite();
+  check("an invite is minted for the active table", invite.code.length === 6);
+  check("minting leaves the active table alone", manager.getOwner()?.ownerId === inviteOwner?.ownerId);
+  check("the invite expires in the future", invite.expiresAt > Date.now());
+
+  const redeemed = await manager.redeemInvite(invite.code);
+  check("redeeming yields a table code", decodeSyncCode(redeemed)?.ownerId === inviteOwner?.ownerId);
+  check(
+    "redeeming does not join the table on its own",
+    manager.getOwner()?.ownerId === inviteOwner?.ownerId
+  );
+  check(
+    "a code typed with separators and lowercase still redeems",
+    (await manager.redeemInvite(` ${formatInviteCode(invite.code).toLowerCase()} `)) === redeemed
+  );
+
+  const unknownReason = await manager
+    .redeemInvite("ZZZZZZ")
+    .then(() => null)
+    .catch((error) => (error instanceof InviteError ? error.reason : "other"));
+  eq("an unknown code reports itself as unknown", unknownReason, "unknown");
+  const malformedReason = await manager
+    .redeemInvite("nope")
+    .then(() => null)
+    .catch((error) => (error instanceof InviteError ? error.reason : "other"));
+  eq("a malformed code never reaches the backend", malformedReason, "unknown");
+
+  transport.offline = true;
+  const offlineReason = await manager
+    .createInvite()
+    .then(() => null)
+    .catch((error) => (error instanceof InviteError ? error.reason : "other"));
+  eq("minting offline reports itself as offline", offlineReason, "offline");
+  transport.offline = false;
 
   console.log(`\n${passed} passed, ${failed} failed`);
   if (failed > 0) process.exit(1);
