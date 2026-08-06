@@ -118,7 +118,15 @@ export interface Strings {
     version: (version: string, date: string) => string;
     automaticUpdatesTitle: string;
     automaticUpdatesBody: string;
+    /**
+     * What is new in THIS release, and nothing else: one short player-facing
+     * sentence per feature. Older releases move to `history` on the next bump.
+     */
     items: string[];
+    /** Toggle above the older releases, shown when opened from Settings. */
+    historyTitle: string;
+    /** Past releases keyed by version number (see PAST_RELEASES). */
+    history: Record<string, string[]>;
     close: string;
   };
 

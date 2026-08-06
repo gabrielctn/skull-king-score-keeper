@@ -76,6 +76,7 @@ const joinByCodeSource = readFileSync(
   "utf8"
 );
 const cloudSyncSource = readFileSync("src/cloudSync.ts", "utf8");
+const whatsNewSource = readFileSync("src/components/WhatsNewModal.tsx", "utf8");
 const spectatorSource = readFileSync("src/screens/SpectatorScreen.tsx", "utf8");
 const playerFacingTextSources = [
   "src/i18n/en.ts",
@@ -322,6 +323,13 @@ check(
     tableInviteSource.includes("t.tableInvite.newCode")
 );
 check(
+  "the launch dialog shows this release only, Settings keeps the trail",
+  whatsNewSource.includes("showHistory") &&
+    settingsSource.includes("showHistory") &&
+    !homeSource.includes("showHistory") &&
+    whatsNewSource.includes("PAST_RELEASES.map")
+);
+check(
   "the invite sheet offers the code and nothing else",
   !tableInviteSource.includes("qrCodeDataUrl") &&
     !tableInviteSource.includes("buildJoinUrl") &&
@@ -496,8 +504,15 @@ for (const [language, strings] of Object.entries({ en, fr, es, de, ar, zh })) {
     strings.game.roundPointsPreview.trim().length > 0
   );
   check(
-    `${language} release notes describe this release`,
-    strings.whatsNew.items.length === 10
+    `${language} release notes describe only this release`,
+    strings.whatsNew.items.length > 0 && strings.whatsNew.items.length <= 5
+  );
+  check(
+    `${language} keeps release notes short enough to read`,
+    [
+      ...strings.whatsNew.items,
+      ...Object.values(strings.whatsNew.history).flat(),
+    ].every((item) => item.length <= 160)
   );
 }
 

@@ -92,17 +92,30 @@ export const en: Strings = {
     automaticUpdatesBody:
       "Installed apps now download each new release automatically and switch to it as soon as the device is online.",
     items: [
-      "Joining a table is now a six-character code: the host shows it, everyone else types it into their own app. No camera, no browser detour, and it works the same on the installed app and on the web.",
-      "Deleting a game now deletes it for the whole crew: a game removed from the history no longer comes back on the next sync, and it leaves the statistics for good.",
-      "The app stays free and ad-free: the home screen now shows what its App Store listing costs (€100 a year), and a finished game occasionally invites you to help cover that bill.",
-      "Score sharing now uses live QR sessions only, so every player sees updates in real time.",
-      "Inviting your crew and joining another table are now separate actions, so each flow is immediately visible in Settings.",
-      "Shared game tables: name your crew's table and invite friends with a link or QR code. Anyone who joins can keep score, every game lands in the shared history and leaderboard, and one phone can hold several tables, one per group of friends.",
-      "Game rules can now be changed during a game from the new ⚙ button: enable the expansion mid-game, switch scoring, and more. Scored rounds recalculate automatically.",
-      "The new expansion is now on by default for new games.",
-      "The live-tracking button is now a clear “Live” pill, and the play order shows numbered seats with who leads the trick.",
-      "Bonus labels now all read the same way: who takes what.",
+      "Join a table with the 6-character code your friend shows you.",
     ],
+    historyTitle: "Previous versions",
+    history: {
+      "1.11.1": [
+        "Delete a game and it goes for everyone at the table.",
+      ],
+      "1.11.0": [
+        "The app stays free and ad-free. You can chip in for its App Store bill if you like.",
+      ],
+      "1.10.2": [
+        "Scores you follow on another phone now update live.",
+      ],
+      "1.10.1": [
+        "Invite and Join are two clear buttons.",
+      ],
+      "1.10.0": [
+        "Shared tables: your crew's games all land in one history and leaderboard.",
+        "Change the rules in the middle of a game.",
+        "The new expansion is on by default.",
+        "Clearer play order, with who leads the trick.",
+        "Bonus labels all read the same way.",
+      ],
+    },
     close: "Got it",
   },
 

@@ -88,17 +88,30 @@ export const fr: Strings = {
     automaticUpdatesBody:
       "Les applications installées téléchargent désormais chaque nouvelle version automatiquement et l’activent dès que l’appareil est en ligne.",
     items: [
-      "Rejoindre une table se fait désormais avec un code à six caractères : l’hôte l’affiche, les autres le saisissent dans leur propre appli. Sans appareil photo ni détour par le navigateur, et à l’identique sur l’appli installée et sur le web.",
-      "Supprimer une partie la supprime désormais pour tout l’équipage : une partie retirée de l’historique ne réapparaît plus à la synchronisation suivante et quitte définitivement les statistiques.",
-      "L’application reste gratuite et sans publicité : l’accueil indique désormais ce que coûte sa présence sur l’App Store (100 €/an), et une partie terminée propose parfois de contribuer à cette facture.",
-      "Le partage des scores utilise désormais uniquement des sessions QR en direct, afin que chaque joueur voie les mises à jour en temps réel.",
-      "Inviter votre équipage et rejoindre une autre table sont désormais deux actions distinctes, directement visibles dans les paramètres.",
-      "Tables de jeu partagées : donnez un nom à la table de votre équipage et invitez vos amis par lien ou QR code. Chaque membre peut tenir les scores, toutes les parties rejoignent l’historique et le classement partagés, et un même téléphone peut garder plusieurs tables, une par groupe d’amis.",
-      "Les règles peuvent désormais être modifiées en cours de partie via le nouveau bouton ⚙ : activer l’extension, changer de décompte, etc. Les manches déjà comptées sont recalculées automatiquement.",
-      "L’extension est maintenant activée par défaut pour les nouvelles parties.",
-      "Le bouton de suivi en direct devient une pastille « Live » explicite, et l’ordre de jeu affiche des places numérotées avec la personne qui entame.",
-      "Les intitulés de bonus suivent tous la même forme : qui prend quoi.",
+      "Rejoignez une table avec le code à 6 caractères que votre ami vous montre.",
     ],
+    historyTitle: "Versions précédentes",
+    history: {
+      "1.11.1": [
+        "Supprimer une partie la supprime pour toute la table.",
+      ],
+      "1.11.0": [
+        "L’appli reste gratuite et sans publicité. Vous pouvez participer à sa facture App Store si vous le souhaitez.",
+      ],
+      "1.10.2": [
+        "Les scores suivis sur un autre téléphone se mettent à jour en direct.",
+      ],
+      "1.10.1": [
+        "Inviter et Rejoindre sont deux boutons distincts.",
+      ],
+      "1.10.0": [
+        "Tables partagées : les parties de votre équipage rejoignent un seul historique et un seul classement.",
+        "Modifiez les règles en cours de partie.",
+        "La nouvelle extension est activée par défaut.",
+        "Ordre de jeu plus clair, avec la personne qui entame.",
+        "Les intitulés de bonus suivent tous la même forme.",
+      ],
+    },
     close: "Compris",
   },
 

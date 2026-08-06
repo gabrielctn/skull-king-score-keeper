@@ -89,17 +89,30 @@ export const es: Strings = {
     automaticUpdatesBody:
       "Las aplicaciones instaladas ahora descargan automáticamente cada nueva versión y la activan en cuanto el dispositivo se conecta a internet.",
     items: [
-      "Unirse a una mesa ahora es un código de seis caracteres: el anfitrión lo muestra y los demás lo escriben en su propia app. Sin cámara ni rodeo por el navegador, e igual en la app instalada y en la web.",
-      "Eliminar una partida ahora la elimina para toda la tripulación: una partida borrada del historial ya no reaparece en la siguiente sincronización y desaparece de las estadísticas para siempre.",
-      "La aplicación sigue siendo gratuita y sin anuncios: la pantalla de inicio ya indica lo que cuesta su publicación en la App Store (100 €/año), y al terminar una partida se te invita de vez en cuando a ayudar con esa factura.",
-      "Ahora los puntos se comparten únicamente mediante sesiones QR en directo, para que todos los jugadores vean las actualizaciones en tiempo real.",
-      "Invitar a tu tripulación y unirse a otra mesa son ahora acciones separadas y visibles directamente en los ajustes.",
-      "Mesas de juego compartidas: ponle nombre a la mesa de tu tripulación e invita a tus amigos con un enlace o código QR. Cualquiera que se una puede anotar los puntos, todas las partidas van al historial y la clasificación compartidos, y un mismo teléfono puede tener varias mesas, una por grupo de amigos.",
-      "Las reglas ahora pueden cambiarse durante la partida con el nuevo botón ⚙: activar la expansión, cambiar la puntuación y más. Las rondas ya anotadas se recalculan automáticamente.",
-      "La nueva expansión viene activada por defecto en las partidas nuevas.",
-      "El botón de seguimiento en directo ahora es una pastilla «Live» clara, y el orden de juego muestra asientos numerados con quién abre la baza.",
-      "Las etiquetas de bonificación siguen ahora la misma forma: quién captura qué.",
+      "Únete a una mesa con el código de 6 caracteres que te muestra tu amigo.",
     ],
+    historyTitle: "Versiones anteriores",
+    history: {
+      "1.11.1": [
+        "Si borras una partida, se borra para toda la mesa.",
+      ],
+      "1.11.0": [
+        "La app sigue siendo gratuita y sin anuncios. Puedes contribuir a su factura de la App Store si quieres.",
+      ],
+      "1.10.2": [
+        "Las puntuaciones que sigues en otro teléfono se actualizan en directo.",
+      ],
+      "1.10.1": [
+        "Invitar y Unirse son dos botones distintos.",
+      ],
+      "1.10.0": [
+        "Mesas compartidas: las partidas de tu tripulación van a un solo historial y clasificación.",
+        "Cambia las reglas en mitad de una partida.",
+        "La nueva expansión viene activada por defecto.",
+        "Orden de juego más claro, con quién sale primero.",
+        "Las etiquetas de bonus se leen todas igual.",
+      ],
+    },
     close: "Entendido",
   },
 

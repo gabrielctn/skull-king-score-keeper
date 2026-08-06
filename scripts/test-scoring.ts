@@ -30,6 +30,7 @@ import {
   RoundStructureId,
   structureCards,
 } from "../src/roundStructures";
+import { PAST_RELEASES } from "../src/releases";
 import { en } from "../src/i18n/en";
 import { fr } from "../src/i18n/fr";
 import { es } from "../src/i18n/es";
@@ -58,6 +59,16 @@ function eq(label: string, actual: number, expected: number) {
   } else {
     failed++;
     console.error(`  ✗ ${label}: expected ${expected}, got ${actual}`);
+  }
+}
+
+function ok(label: string, condition: boolean) {
+  if (condition) {
+    passed++;
+    console.log(`  ✓ ${label}`);
+  } else {
+    failed++;
+    console.error(`  ✗ ${label}`);
   }
 }
 
@@ -962,7 +973,21 @@ for (const [locale, strings] of Object.entries({ en, fr, es, de, ar, zh })) {
 }
 
 console.log("\ni18n: every locale's rules and release notes stay in sync");
-eq("English release-note entries", en.whatsNew.items.length, 10);
+// Only this release's news goes in `items`; everything older lives in
+// `history`, keyed by the versions PAST_RELEASES lists.
+ok("this release has release notes", en.whatsNew.items.length > 0);
+eq(
+  "history covers every past release",
+  PAST_RELEASES.filter(
+    (release) => (en.whatsNew.history[release.version] ?? []).length > 0
+  ).length,
+  PAST_RELEASES.length
+);
+eq(
+  "history carries no unknown versions",
+  Object.keys(en.whatsNew.history).length,
+  PAST_RELEASES.length
+);
 for (const [locale, strings] of Object.entries({ fr, es, de, ar, zh })) {
   eq(`${locale} scoring entries`, strings.rules.scoring.length, en.rules.scoring.length);
   eq(`${locale} rascal entries`, (strings.rules.rascal ?? []).length, en.rules.rascal?.length ?? -1);
@@ -971,6 +996,15 @@ for (const [locale, strings] of Object.entries({ fr, es, de, ar, zh })) {
   eq(`${locale} special entries`, strings.rules.special.length, en.rules.special.length);
   eq(`${locale} two-player entries`, strings.rules.twoPlayer.length, en.rules.twoPlayer.length);
   eq(`${locale} release-note entries`, strings.whatsNew.items.length, en.whatsNew.items.length);
+  eq(
+    `${locale} release history`,
+    PAST_RELEASES.filter(
+      (release) =>
+        (strings.whatsNew.history[release.version] ?? []).length ===
+        (en.whatsNew.history[release.version] ?? []).length
+    ).length,
+    PAST_RELEASES.length
+  );
 }
 
 console.log("\ni18n: device-language detection");

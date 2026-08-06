@@ -87,17 +87,30 @@ export const de: Strings = {
     automaticUpdatesBody:
       "Installierte Apps laden jede neue Version automatisch und wechseln zu ihr, sobald das Gerät online ist.",
     items: [
-      "Einem Tisch beizutreten läuft jetzt über einen sechsstelligen Code: Die gastgebende Person zeigt ihn, alle anderen tippen ihn in ihre eigene App. Ohne Kamera, ohne Umweg über den Browser, und in der installierten App genauso wie im Web.",
-      "Ein gelöschtes Spiel bleibt jetzt für die ganze Crew gelöscht: Ein aus dem Verlauf entferntes Spiel taucht bei der nächsten Synchronisierung nicht wieder auf und verschwindet endgültig aus der Statistik.",
-      "Die App bleibt kostenlos und werbefrei: Der Startbildschirm zeigt jetzt, was ihre Veröffentlichung im App Store kostet (100 €/Jahr), und nach einem beendeten Spiel folgt gelegentlich die Einladung, diese Rechnung mitzutragen.",
-      "Die Punkte werden jetzt ausschließlich über Live-Sitzungen per QR-Code geteilt, damit alle Spieler Aktualisierungen in Echtzeit sehen.",
-      "Die eigene Crew einzuladen und einem anderen Tisch beizutreten sind jetzt getrennte Aktionen, die in den Einstellungen direkt sichtbar sind.",
-      "Gemeinsame Spieltische: Gib dem Tisch deiner Crew einen Namen und lade Freunde per Link oder QR-Code ein. Wer beitritt, kann die Punkte führen, jedes Spiel landet in der gemeinsamen Historie und Rangliste, und ein Handy kann mehrere Tische halten, einen pro Freundesgruppe.",
-      "Die Regeln lassen sich jetzt während des Spiels über den neuen ⚙-Button ändern: Erweiterung aktivieren, Wertung wechseln und mehr. Bereits gewertete Runden werden automatisch neu berechnet.",
-      "Die neue Erweiterung ist bei neuen Spielen jetzt standardmäßig aktiviert.",
-      "Der Live-Button ist jetzt eine klare „Live“-Schaltfläche, und die Spielreihenfolge zeigt nummerierte Plätze mit dem Spieler, der den Stich eröffnet.",
-      "Alle Bonus-Bezeichnungen folgen jetzt derselben Form: Wer fängt wen.",
+      "Tritt einem Tisch mit dem 6-stelligen Code bei, den dir deine Freundin oder dein Freund zeigt.",
     ],
+    historyTitle: "Frühere Versionen",
+    history: {
+      "1.11.1": [
+        "Löschst du ein Spiel, ist es für den ganzen Tisch weg.",
+      ],
+      "1.11.0": [
+        "Die App bleibt kostenlos und werbefrei. Du kannst dich an der App-Store-Rechnung beteiligen, wenn du magst.",
+      ],
+      "1.10.2": [
+        "Punkte, die du auf einem anderen Handy verfolgst, aktualisieren sich live.",
+      ],
+      "1.10.1": [
+        "Einladen und Beitreten sind zwei klar getrennte Schaltflächen.",
+      ],
+      "1.10.0": [
+        "Gemeinsame Tische: Die Spiele deiner Crew landen in einer Historie und einer Rangliste.",
+        "Ändere die Regeln mitten im Spiel.",
+        "Die neue Erweiterung ist standardmäßig aktiv.",
+        "Klarere Spielreihenfolge, mit wer den Stich anspielt.",
+        "Bonus-Bezeichnungen lesen sich alle gleich.",
+      ],
+    },
     close: "Verstanden",
   },
 

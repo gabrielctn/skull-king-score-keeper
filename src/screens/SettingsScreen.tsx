@@ -665,8 +665,10 @@ export default function SettingsScreen({
         </View>
       </Modal>
 
+      {/* Settings is where the older releases stay available. */}
       <WhatsNewModal
         visible={whatsNewOpen}
+        showHistory
         onClose={() => setWhatsNewOpen(false)}
       />
     </SafeAreaView>
