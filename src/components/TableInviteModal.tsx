@@ -81,13 +81,17 @@ export default function TableInviteModal({ visible, tableName, onClose }: Props)
       setInvite(null);
       setFailure(null);
       setLinkCopied(false);
+      // The sync code belongs to whichever table was open. Dropping it on close
+      // means a sheet reopened after a table switch shows no QR until the new
+      // table's code arrives, rather than briefly offering the old table's.
+      setSyncCode(null);
       return;
     }
     void mint();
   }, [visible, mint]);
 
-  // The link fallback needs this table's own code; fetched only when the sheet
-  // is open, and re-fetched after a table switch (the code belongs to a table).
+  // The link fallback needs this table's own code, fetched while the sheet is
+  // open.
   React.useEffect(() => {
     if (!visible) return;
     let active = true;

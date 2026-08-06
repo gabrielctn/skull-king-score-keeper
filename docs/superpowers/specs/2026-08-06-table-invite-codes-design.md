@@ -69,6 +69,13 @@ Deliberate choices:
   alphabet is 1.1e9 codes; capped at 100 failed redemptions a minute, a guesser
   gets ~1500 tries per code lifetime. A real crew never approaches the ceiling,
   and if one ever did, the lockout lasts a minute.
+- **The counter is claimed with an upsert, not read with a SELECT.** Each RPC
+  call is its own transaction, so a plain read-then-act gate lets a burst of
+  parallel guesses all pass the same stale pre-check. `INSERT … ON CONFLICT DO
+  UPDATE … RETURNING` takes the row lock first, so redeems in one minute queue
+  behind each other and every one sees the misses already committed. Verified
+  against a local Postgres 16: with the lock, a second session blocks on the
+  first and is refused at exactly 100; without it, the same pair reaches 101.
 - **A code is reusable until it expires**, so a whole table joins from one code.
 
 ## Client

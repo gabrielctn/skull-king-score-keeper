@@ -449,9 +449,18 @@ begin
     return null;
   end if;
 
-  select f.failures into recent
-    from public.table_invite_failures f where f.minute = bucket;
-  if coalesce(recent, 0) >= max_failures then
+  -- Claim this minute's counter before reading it. The upsert takes the row
+  -- lock, so concurrent redeems queue behind each other and every one of them
+  -- sees the misses already committed; a plain SELECT would let a burst of
+  -- parallel guesses all pass the same stale pre-check and spend far more than
+  -- the ceiling. The lock is held for one indexed lookup, and redeems are rare.
+  insert into public.table_invite_failures (minute, failures)
+  values (bucket, 0)
+  on conflict (minute) do update
+    set failures = public.table_invite_failures.failures
+  returning failures into recent;
+
+  if recent >= max_failures then
     return jsonb_build_object('throttled', true);
   end if;
 
@@ -461,10 +470,10 @@ begin
      and i.expires_at > now();
 
   if found_owner is null then
-    insert into public.table_invite_failures (minute, failures)
-    values (bucket, 1)
-    on conflict (minute) do update
-      set failures = public.table_invite_failures.failures + 1;
+    -- The row exists: the gate above created it.
+    update public.table_invite_failures
+       set failures = failures + 1
+     where minute = bucket;
     return null;
   end if;
 
