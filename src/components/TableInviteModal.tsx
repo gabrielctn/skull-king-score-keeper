@@ -15,12 +15,9 @@ import {
   InviteError,
   InviteFailure,
   TableInvite,
-  buildJoinUrl,
   cloudBackupManager,
 } from "../cloudSync";
 import { formatCountdown, formatInviteCode, inviteSecondsLeft } from "../tableInvites";
-import { webShareBaseUrl } from "../appUrl";
-import { qrCodeDataUrl } from "../qr";
 import { illustrations } from "../assets/illustrations";
 import { useI18n } from "../i18n/context";
 import { getResponsiveLayout } from "../responsive";
@@ -35,15 +32,13 @@ interface Props {
   onClose: () => void;
 }
 
-const QR_MAX_SIZE = 200;
-
 /**
  * The host's side of an invite: a short code the guest types into the app they
  * already have.
  *
- * The QR code below it is deliberately the *second* option, for the friend who
- * has not installed anything yet — scanning cannot open an installed PWA or the
- * iOS app, so it can only ever land someone on the web version.
+ * One mechanism, deliberately. A QR code (and the link behind it) can only ever
+ * land someone in a browser, never in the app they already installed, so
+ * offering it beside the code bought nothing but a fork in the road.
  */
 export default function TableInviteModal({ visible, tableName, onClose }: Props) {
   const { t } = useI18n();
@@ -53,13 +48,7 @@ export default function TableInviteModal({ visible, tableName, onClose }: Props)
   const [busy, setBusy] = React.useState(false);
   const [failure, setFailure] = React.useState<InviteFailure | null>(null);
   const [now, setNow] = React.useState(() => Date.now());
-  const [syncCode, setSyncCode] = React.useState<string | null>(null);
-  const [linkCopied, setLinkCopied] = React.useState(false);
-
-  const qrSize = Math.max(
-    150,
-    Math.min(QR_MAX_SIZE, width - spacing.lg * 2 - spacing.md * 2)
-  );
+  const [codeCopied, setCodeCopied] = React.useState(false);
 
   const mint = React.useCallback(async () => {
     setBusy(true);
@@ -80,31 +69,11 @@ export default function TableInviteModal({ visible, tableName, onClose }: Props)
     if (!visible) {
       setInvite(null);
       setFailure(null);
-      setLinkCopied(false);
-      // The sync code belongs to whichever table was open. Dropping it on close
-      // means a sheet reopened after a table switch shows no QR until the new
-      // table's code arrives, rather than briefly offering the old table's.
-      setSyncCode(null);
+      setCodeCopied(false);
       return;
     }
     void mint();
   }, [visible, mint]);
-
-  // The link fallback needs this table's own code, fetched while the sheet is
-  // open.
-  React.useEffect(() => {
-    if (!visible) return;
-    let active = true;
-    void cloudBackupManager()
-      .syncCode()
-      .then((code) => {
-        if (active) setSyncCode(code);
-      })
-      .catch(() => undefined);
-    return () => {
-      active = false;
-    };
-  }, [visible]);
 
   // Tick the countdown while the sheet is open, and only then.
   React.useEffect(() => {
@@ -117,16 +86,12 @@ export default function TableInviteModal({ visible, tableName, onClose }: Props)
   const secondsLeft = invite ? inviteSecondsLeft(invite.expiresAt, now) : 0;
   const expired = invite !== null && secondsLeft === 0;
 
-  const joinUrl = syncCode ? buildJoinUrl(syncCode, webShareBaseUrl()) : null;
-  const joinQr = React.useMemo(
-    () => (joinUrl ? qrCodeDataUrl(joinUrl, qrSize) : null),
-    [joinUrl, qrSize]
-  );
-
-  const copyLink = () => {
-    if (!joinUrl) return;
-    void copyTextToClipboard(joinUrl)
-      .then((copied) => setLinkCopied(copied))
+  // Reading the code out is the normal way to pass it on; copying covers the
+  // friend who is not in the room tonight.
+  const copyCode = () => {
+    if (!invite) return;
+    void copyTextToClipboard(formatInviteCode(invite.code))
+      .then((copied) => setCodeCopied(copied))
       .catch(() => undefined);
   };
 
@@ -230,6 +195,25 @@ export default function TableInviteModal({ visible, tableName, onClose }: Props)
                 </Text>
               ) : null}
 
+              {invite && !busy ? (
+                <CopyButton
+                  style={styles.copyButton}
+                  onPress={copyCode}
+                  accessibilityLabel={
+                    codeCopied ? t.tableInvite.codeCopied : t.tableInvite.copyCode
+                  }
+                >
+                  <Text
+                    style={styles.copyButtonText}
+                    accessibilityLiveRegion="polite"
+                  >
+                    {codeCopied
+                      ? t.tableInvite.codeCopied
+                      : t.tableInvite.copyCode}
+                  </Text>
+                </CopyButton>
+              ) : null}
+
               {!busy ? (
                 <TouchableOpacity
                   style={styles.refreshButton}
@@ -244,36 +228,6 @@ export default function TableInviteModal({ visible, tableName, onClose }: Props)
             </View>
 
             <Text style={styles.warning}>{t.tableInvite.warning}</Text>
-
-            <View style={styles.divider} />
-
-            <Text style={styles.fallbackTitle}>{t.tableInvite.noAppTitle}</Text>
-            <Text style={styles.fallbackHint}>{t.tableInvite.noAppHint}</Text>
-            {joinQr ? (
-              <View style={styles.qrCard}>
-                <Image
-                  source={{ uri: joinQr }}
-                  style={{ width: qrSize, height: qrSize }}
-                  resizeMode="contain"
-                  accessible
-                  accessibilityRole="image"
-                  accessibilityLabel={t.tableInvite.qrLabel}
-                />
-              </View>
-            ) : null}
-            <CopyButton
-              style={[styles.linkButton, !joinUrl && styles.linkButtonDisabled]}
-              onPress={copyLink}
-              disabled={!joinUrl}
-              accessibilityLabel={
-                linkCopied ? t.tableInvite.linkCopied : t.tableInvite.copyLink
-              }
-            >
-              <Text style={styles.linkButtonText} accessibilityLiveRegion="polite">
-                🔗{" "}
-                {linkCopied ? t.tableInvite.linkCopied : t.tableInvite.copyLink}
-              </Text>
-            </CopyButton>
           </ScrollView>
         </View>
       </View>
@@ -400,29 +354,12 @@ const styles = StyleSheet.create({
     color: colors.textDim,
     fontSize: 12,
     lineHeight: 17,
-    marginTop: spacing.sm,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: colors.cardBorder,
-    marginVertical: spacing.md,
-  },
-  fallbackTitle: { color: colors.text, fontSize: 14, fontWeight: "800" },
-  fallbackHint: {
-    color: colors.textDim,
-    fontSize: 12,
-    lineHeight: 17,
-    marginTop: spacing.xs,
-  },
-  qrCard: {
-    alignSelf: "center",
-    backgroundColor: "#ffffff",
-    borderRadius: radius.md,
-    padding: spacing.sm,
     marginTop: spacing.md,
+    textAlign: "center",
   },
-  linkButton: {
+  copyButton: {
     minHeight: 44,
+    alignSelf: "stretch",
     alignItems: "center",
     justifyContent: "center",
     borderRadius: radius.md,
@@ -432,6 +369,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     marginTop: spacing.md,
   },
-  linkButtonDisabled: { opacity: 0.5 },
-  linkButtonText: { color: colors.text, fontSize: 14, fontWeight: "700" },
+  copyButtonText: { color: colors.text, fontSize: 14, fontWeight: "700" },
 });

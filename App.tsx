@@ -961,8 +961,11 @@ const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.bg },
   backgroundTexture: {
     ...StyleSheet.absoluteFillObject,
-    width: undefined,
-    height: undefined,
+    // Sized by the screen, never by the asset: clearing width/height instead
+    // let the 640px-wide JPEG define the box, which pushed the document wider
+    // than the viewport and left every screen scrolled sideways on a phone.
+    width: "100%",
+    height: "100%",
     opacity: 0.075,
     pointerEvents: "none",
   },

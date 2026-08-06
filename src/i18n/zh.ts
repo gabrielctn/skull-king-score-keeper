@@ -194,14 +194,10 @@ export const zh: Strings = {
     retry: "重试",
     warning: "输入此代码的人都能查看并修改牌桌上的对局，请只交给你的伙伴。",
     offline: "代码生成失败。请检查网络连接后重试。",
-    unsupported: "此服务器尚不支持邀请代码。请改用下方的二维码或链接。",
+    unsupported: "此服务器尚不支持邀请代码。",
     throttled: "服务器上的尝试次数过多，请一分钟后再试。",
-    noAppTitle: "朋友还没装应用？",
-    noAppHint:
-      "二维码和链接会在浏览器里打开网页版，方便初次体验，但扫描永远无法打开已安装的应用。装好之后，上面的代码更快。",
-    qrLabel: "在浏览器中打开此牌桌的二维码",
-    copyLink: "复制邀请链接",
-    linkCopied: "链接已复制！",
+    copyCode: "复制代码",
+    codeCopied: "代码已复制！",
   },
 
   joinByCode: {
@@ -210,11 +206,11 @@ export const zh: Strings = {
     placeholder: "K7M-4QP",
     inputLabel: (length) => `${length} 位邀请代码`,
     submit: "加入牌桌",
-    hint: "你也可以粘贴邀请链接或完整的牌桌代码。",
+    hint: "代码有效期为 15 分钟。若已过期，请向管理牌桌的人再要一个。",
     malformed: "这不是邀请代码。请输入另一部手机上显示的六位字符。",
     unknown: "该代码已失效。代码有效期为 15 分钟，请向朋友要一个新的。",
     throttled: "尝试次数过多，请一分钟后再试。",
-    unsupported: "此服务器尚不支持邀请代码。请改用邀请链接。",
+    unsupported: "此服务器尚不支持邀请代码。",
     offline: "无法连接服务器。请检查网络连接后重试。",
   },
 

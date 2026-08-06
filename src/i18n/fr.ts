@@ -214,14 +214,10 @@ export const fr: Strings = {
     offline:
       "Le code n’a pas pu être créé. Vérifiez votre connexion et réessayez.",
     unsupported:
-      "Les codes d’invitation ne sont pas encore disponibles sur ce serveur. Utilisez le QR code ou le lien ci-dessous.",
+      "Les codes d’invitation ne sont pas encore disponibles sur ce serveur.",
     throttled: "Trop de tentatives sur le serveur. Réessayez dans une minute.",
-    noAppTitle: "Votre ami n’a pas encore l’appli ?",
-    noAppHint:
-      "Le QR code et le lien ouvrent la version web dans le navigateur. Pratique pour découvrir l’appli, mais un scan ne peut jamais ouvrir une appli déjà installée. Une fois qu’il l’a, le code ci-dessus est plus rapide.",
-    qrLabel: "QR code ouvrant cette table dans un navigateur",
-    copyLink: "Copier le lien d’invitation",
-    linkCopied: "Lien copié !",
+    copyCode: "Copier le code",
+    codeCopied: "Code copié !",
   },
 
   joinByCode: {
@@ -230,14 +226,14 @@ export const fr: Strings = {
     placeholder: "K7M-4QP",
     inputLabel: (length) => `Code d’invitation à ${length} caractères`,
     submit: "Rejoindre la table",
-    hint: "Vous pouvez aussi coller un lien d’invitation ou un code de table complet.",
+    hint: "Un code reste valable 15 minutes. Si le vôtre a expiré, demandez-en un nouveau à la personne qui tient la table.",
     malformed:
       "Ce n’est pas un code d’invitation. Saisissez les six caractères affichés sur l’autre téléphone.",
     unknown:
       "Ce code n’est plus valable. Les codes durent 15 minutes : demandez-en un nouveau à votre ami.",
     throttled: "Trop de tentatives. Réessayez dans une minute.",
     unsupported:
-      "Les codes d’invitation ne sont pas encore disponibles sur ce serveur. Demandez le lien d’invitation.",
+      "Les codes d’invitation ne sont pas encore disponibles sur ce serveur.",
     offline: "Serveur injoignable. Vérifiez votre connexion et réessayez.",
   },
 

@@ -216,14 +216,10 @@ export const en: Strings = {
     offline:
       "The code could not be created. Check your connection and try again.",
     unsupported:
-      "Invite codes are not available on this server yet. Use the QR code or link below.",
+      "Invite codes are not available on this server yet.",
     throttled: "Too many attempts on the server. Try again in a minute.",
-    noAppTitle: "Friend without the app yet?",
-    noAppHint:
-      "The QR code and link open the web version in a browser. Handy for a first look, but a scan can never open an app that is already installed. Once they have it, the code above is quicker.",
-    qrLabel: "QR code opening this table in a browser",
-    copyLink: "Copy invite link",
-    linkCopied: "Link copied!",
+    copyCode: "Copy the code",
+    codeCopied: "Code copied!",
   },
 
   joinByCode: {
@@ -232,14 +228,14 @@ export const en: Strings = {
     placeholder: "K7M-4QP",
     inputLabel: (length) => `${length}-character invite code`,
     submit: "Join the table",
-    hint: "You can also paste an invite link or a full table code.",
+    hint: "A code lasts 15 minutes. If yours has expired, ask whoever is keeping the table for a new one.",
     malformed:
       "That is not an invite code. Enter the six characters showing on the other phone.",
     unknown:
       "That code is no longer valid. Codes last 15 minutes, so ask your friend for a fresh one.",
     throttled: "Too many attempts. Try again in a minute.",
     unsupported:
-      "Invite codes are not available on this server yet. Ask for the invite link instead.",
+      "Invite codes are not available on this server yet.",
     offline:
       "The server could not be reached. Check your connection and try again.",
   },

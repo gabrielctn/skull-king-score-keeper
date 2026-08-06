@@ -171,7 +171,7 @@ export interface Strings {
     };
     /**
      * Shared game table: the cloud-backed history one group of friends
-     * shares, plus the link/QR/code flows to bring other devices onto it.
+     * shares, plus the invite and join flows that bring other devices onto it.
      */
     cloud: {
       title: string;
@@ -206,7 +206,7 @@ export interface Strings {
       tableNamePlaceholder: string;
       /** Explains the name is shared with everyone on the table. */
       tableNameHint: string;
-      /** Button opening the invite sheet (short code + link). */
+      /** Button opening the invite sheet (the short code to read out). */
       shareTitle: string;
       /** Warns that anyone holding an invite can read and write the table. */
       shareHint: string;
@@ -237,16 +237,13 @@ export interface Strings {
     /** Reminds the host that an invite grants full access to the table. */
     warning: string;
     offline: string;
-    /** The backend has no invite support deployed; link and QR still work. */
+    /** The backend has no invite support deployed yet. */
     unsupported: string;
     /** Too many wrong codes were tried against the backend just now. */
     throttled: string;
-    /** Header of the QR/link block, for a friend without the app. */
-    noAppTitle: string;
-    noAppHint: string;
-    qrLabel: string;
-    copyLink: string;
-    linkCopied: string;
+    /** Puts the code on the clipboard, for a friend who is not in the room. */
+    copyCode: string;
+    codeCopied: string;
   };
 
   /** The guest's side: type the short code, or paste a code or link. */

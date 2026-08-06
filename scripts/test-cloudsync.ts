@@ -12,7 +12,6 @@ import {
   CloudTransport,
   InviteError,
   TableInvite,
-  buildJoinUrl,
   classifyJoinInput,
   decodeSyncCode,
   encodeSyncCode,
@@ -189,8 +188,7 @@ check("uppercases nothing it should not — trims input", decodeSyncCode(` ${cod
 // --- table join links -------------------------------------------------------
 
 section("Table join links");
-const joinUrl = buildJoinUrl(code, "https://example.com/app/");
-check("join URL carries the #join= hash", joinUrl === `https://example.com/app/#join=${code}`);
+const joinUrl = `https://example.com/app/#join=${code}`;
 check("extract round-trips the code from a full hash", extractJoinCode(`#join=${code}`) === code);
 check("extract accepts a hash without the # prefix", extractJoinCode(`join=${code}`) === code);
 check("extract rejects an empty hash", extractJoinCode("") === null);
@@ -229,7 +227,7 @@ check(
 );
 check(
   "a pasted join link yields the code it carries",
-  classifyJoinInput(buildJoinUrl(code, "https://example.com/app/"))?.code === code
+  classifyJoinInput(joinUrl)?.code === code
 );
 check("empty input classifies as nothing", classifyJoinInput("   ") === null);
 check("prose classifies as nothing", classifyJoinInput("join my table") === null);

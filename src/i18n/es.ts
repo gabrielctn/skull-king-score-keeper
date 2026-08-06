@@ -217,15 +217,11 @@ export const es: Strings = {
     offline:
       "No se pudo crear el código. Comprueba tu conexión e inténtalo de nuevo.",
     unsupported:
-      "Los códigos de invitación aún no están disponibles en este servidor. Usa el código QR o el enlace de abajo.",
+      "Los códigos de invitación aún no están disponibles en este servidor.",
     throttled:
       "Demasiados intentos en el servidor. Inténtalo dentro de un minuto.",
-    noAppTitle: "¿Tu amigo aún no tiene la app?",
-    noAppHint:
-      "El código QR y el enlace abren la versión web en el navegador. Es útil para descubrirla, pero un escaneo nunca puede abrir una app ya instalada. Cuando la tenga, el código de arriba es más rápido.",
-    qrLabel: "Código QR que abre esta mesa en un navegador",
-    copyLink: "Copiar enlace de invitación",
-    linkCopied: "¡Enlace copiado!",
+    copyCode: "Copiar el código",
+    codeCopied: "¡Código copiado!",
   },
 
   joinByCode: {
@@ -234,14 +230,14 @@ export const es: Strings = {
     placeholder: "K7M-4QP",
     inputLabel: (length) => `Código de invitación de ${length} caracteres`,
     submit: "Unirse a la mesa",
-    hint: "También puedes pegar un enlace de invitación o un código de mesa completo.",
+    hint: "Un código dura 15 minutos. Si el tuyo ha caducado, pide uno nuevo a quien lleve la mesa.",
     malformed:
       "Eso no es un código de invitación. Escribe los seis caracteres que aparecen en el otro teléfono.",
     unknown:
       "Ese código ya no vale. Los códigos duran 15 minutos: pídele uno nuevo a tu amigo.",
     throttled: "Demasiados intentos. Inténtalo dentro de un minuto.",
     unsupported:
-      "Los códigos de invitación aún no están disponibles en este servidor. Pide el enlace de invitación.",
+      "Los códigos de invitación aún no están disponibles en este servidor.",
     offline:
       "No se pudo contactar con el servidor. Comprueba tu conexión e inténtalo de nuevo.",
   },

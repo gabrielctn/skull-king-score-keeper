@@ -75,6 +75,7 @@ const joinByCodeSource = readFileSync(
   "src/components/JoinByCodeModal.tsx",
   "utf8"
 );
+const cloudSyncSource = readFileSync("src/cloudSync.ts", "utf8");
 const spectatorSource = readFileSync("src/screens/SpectatorScreen.tsx", "utf8");
 const playerFacingTextSources = [
   "src/i18n/en.ts",
@@ -161,8 +162,8 @@ check(
     clipboardNativeSource.includes("Clipboard.setStringAsync") &&
     clipboardWebSource.includes("navigator.clipboard.writeText") &&
     clipboardWebSource.includes('document.execCommand("copy")') &&
-    tableInviteSource.includes("setLinkCopied(copied)") &&
-    tableInviteSource.includes("t.tableInvite.linkCopied")
+    tableInviteSource.includes("setCodeCopied(copied)") &&
+    tableInviteSource.includes("t.tableInvite.codeCopied")
 );
 check(
   "active game is excluded from recent history",
@@ -321,11 +322,16 @@ check(
     tableInviteSource.includes("t.tableInvite.newCode")
 );
 check(
-  "the QR code and link stay as the fallback for a friend without the app",
-  tableInviteSource.includes("buildJoinUrl") &&
-    tableInviteSource.includes("qrCodeDataUrl") &&
-    tableInviteSource.includes("t.tableInvite.noAppTitle") &&
-    tableInviteSource.includes("t.tableInvite.copyLink")
+  "the invite sheet offers the code and nothing else",
+  !tableInviteSource.includes("qrCodeDataUrl") &&
+    !tableInviteSource.includes("buildJoinUrl") &&
+    tableInviteSource.includes("t.tableInvite.copyCode")
+);
+check(
+  "join links are still understood, just never handed out",
+  !cloudSyncSource.includes("export function buildJoinUrl") &&
+    cloudSyncSource.includes("export function extractJoinCode") &&
+    appSource.includes("consumeScannedJoinCode")
 );
 check(
   "the guest sheet resolves a code without joining anything by itself",

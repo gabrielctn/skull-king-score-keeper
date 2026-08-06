@@ -32,8 +32,20 @@ types it into their own app.
 That is deliberately the opposite trade-off from a link: it cannot onboard
 someone who has no app at all, but it works identically on the web, the
 installed PWA and the native iOS app, and needs neither a camera nor a browser.
-So the QR code and the link stay, one level down in the same sheet, labelled for
-what they are actually good at: a friend who has not installed anything yet.
+
+The first cut kept the QR code and link one level down in the same sheet, for a
+friend who has not installed anything yet. That did not survive contact: two
+mechanisms for one job is a fork in the road at the exact moment everyone is
+waiting to start playing, and the second one leads where nobody wants to go (a
+browser tab, not the app). The invite sheet now offers the code and nothing
+else, with a copy button for the friend who is not in the room. Someone without
+the app installs it first, the way they would install any app, and then joins
+like everyone else.
+
+Join links are still *read* — `extractJoinCode` and `consumeScannedJoinCode`
+stay, and the join field accepts a pasted link or a full `SKC1.` code — so
+anything shared before this change keeps working. Nothing builds them anymore,
+so `buildJoinUrl` is gone.
 
 Alternatives rejected:
 
@@ -101,5 +113,9 @@ Deliberate choices:
 
 Settings' two disclosure panels (QR + copy link; paste field) are gone: both
 flows now open the sheets, so there is one implementation of each. The raw
-`SKC1.` display disappeared with them — the copy-link button carries the same
-capability, and the join field still accepts a pasted code or link.
+`SKC1.` display disappeared with them; the join field still accepts one if
+someone kept a copy.
+
+The invite sheet is a code, a countdown, "copy", and "new code". `qr.ts` stays
+for live score sessions, where a QR is the right tool: the spectator wants a
+read-only web page, which is exactly what a scan can deliver.

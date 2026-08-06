@@ -213,15 +213,11 @@ export const de: Strings = {
     offline:
       "Der Code konnte nicht erstellt werden. Prüfe deine Verbindung und versuche es erneut.",
     unsupported:
-      "Einladungscodes gibt es auf diesem Server noch nicht. Nutze den QR-Code oder den Link unten.",
+      "Einladungscodes gibt es auf diesem Server noch nicht.",
     throttled:
       "Zu viele Versuche auf dem Server. Versuche es in einer Minute erneut.",
-    noAppTitle: "Noch ohne App?",
-    noAppHint:
-      "QR-Code und Link öffnen die Web-Version im Browser. Gut zum Ausprobieren, aber ein Scan kann eine bereits installierte App nie öffnen. Sobald sie installiert ist, geht der Code oben schneller.",
-    qrLabel: "QR-Code, der diesen Tisch im Browser öffnet",
-    copyLink: "Einladungslink kopieren",
-    linkCopied: "Link kopiert!",
+    copyCode: "Code kopieren",
+    codeCopied: "Code kopiert!",
   },
 
   joinByCode: {
@@ -230,14 +226,14 @@ export const de: Strings = {
     placeholder: "K7M-4QP",
     inputLabel: (length) => `Einladungscode mit ${length} Zeichen`,
     submit: "Tisch beitreten",
-    hint: "Du kannst auch einen Einladungslink oder einen vollständigen Tisch-Code einfügen.",
+    hint: "Ein Code gilt 15 Minuten. Ist deiner abgelaufen, lass dir von der Person, die den Tisch führt, einen neuen geben.",
     malformed:
       "Das ist kein Einladungscode. Gib die sechs Zeichen ein, die auf dem anderen Handy stehen.",
     unknown:
       "Dieser Code gilt nicht mehr. Codes laufen nach 15 Minuten ab. Lass dir einen neuen geben.",
     throttled: "Zu viele Versuche. Versuche es in einer Minute erneut.",
     unsupported:
-      "Einladungscodes gibt es auf diesem Server noch nicht. Lass dir stattdessen den Einladungslink schicken.",
+      "Einladungscodes gibt es auf diesem Server noch nicht.",
     offline:
       "Der Server ist nicht erreichbar. Prüfe deine Verbindung und versuche es erneut.",
   },

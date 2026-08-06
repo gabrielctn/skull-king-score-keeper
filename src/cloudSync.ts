@@ -94,13 +94,14 @@ export function decodeSyncCode(code: string): CloudOwner | null {
 
 // --- join links (shared game table) -----------------------------------------
 
+/**
+ * Join links are read, never written. Invites are short codes now, because a
+ * link cannot reach an installed app; these helpers stay so that a link shared
+ * before that change still opens the table it names.
+ */
+
 /** URL-hash parameter carrying a table join code: `#join=<sync code>`. */
 export const JOIN_HASH_PARAM = "join";
-
-/** Full URL to share (link or QR) for joining this device's table. */
-export function buildJoinUrl(code: string, baseUrl: string): string {
-  return `${baseUrl}#${JOIN_HASH_PARAM}=${code}`;
-}
 
 /** Extract a well-formed join code from a location hash, or null. */
 export function extractJoinCode(hash: string | null | undefined): string | null {
@@ -113,9 +114,10 @@ export function extractJoinCode(hash: string | null | undefined): string | null 
 }
 
 /**
- * If the URL hash carries a table join code (the page was just opened from a
- * shared link or QR), consume it: strip the hash and return the code. One-shot
- * on purpose; joining a table must stay a deliberate, confirmed action.
+ * If the URL hash carries a table join code (the page was opened from a link
+ * shared back when links were the invite), consume it: strip the hash and
+ * return the code. One-shot on purpose; joining a table must stay a
+ * deliberate, confirmed action.
  */
 export function consumeScannedJoinCode(): string | null {
   if (typeof window === "undefined" || !window.location) return null;
@@ -132,10 +134,10 @@ export function consumeScannedJoinCode(): string | null {
 }
 
 /**
- * What the user typed (or pasted) into the join field. One field accepts all
- * three shapes an invite can take, so nobody has to know which one they hold:
- * the six-character code read off a friend's screen, a full `SKC1.` table code,
- * or the whole join link.
+ * What the user typed (or pasted) into the join field. The six-character code
+ * read off a friend's screen is what anyone will have; a full `SKC1.` code or
+ * an old join link still resolve, so nothing shared before this flow existed
+ * stops working.
  */
 export type JoinInput =
   | { kind: "invite"; code: string }
@@ -177,8 +179,8 @@ export class InviteError extends Error {
 /**
  * PostgREST answers a call to a function the project does not have with
  * PGRST202. A deployed app can therefore run against a backend whose schema
- * predates invites: the short-code UI reports itself unavailable and the link
- * and QR keep working, instead of the whole panel failing.
+ * predates invites and say so plainly, instead of failing as if the network
+ * were down.
  */
 function missingFunction(error: { code?: string; message?: string } | null) {
   return (

@@ -46,10 +46,11 @@ third finished game, and never again once it has been answered. The throttle liv
   or another device.
 - Share a table in seconds: the host taps **Invite** and reads out a
   six-character code (`K7M-4QP`, valid 15 minutes), the friend taps **Join** in
-  the app they already have and types it in. A scanned QR code can never open an
-  installed PWA or the iOS app, so it stays available one level down, where it
-  belongs: for a friend who has not installed anything yet and lands on the web
-  version. Both entry points sit on the home screen and in Settings.
+  the app they already have and types it in. That is the whole flow, on purpose:
+  a scanned QR code (and the link behind it) can only ever land someone in a
+  browser, never in the app they already installed, so offering one beside the
+  code bought nothing but a fork in the road. Both entry points sit on the home
+  screen and in Settings.
 - Deleting a game deletes it for the whole crew: the shared table records the
   deletion, so a crew mate's device cannot push its own copy back into the
   history and the statistics. Restoring a backup file still brings its games
