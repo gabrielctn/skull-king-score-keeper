@@ -78,7 +78,7 @@ export const zh: Strings = {
     title: "更新内容",
     version: (version, date) => `版本 ${version} · ${date}`,
     items: [
-      "记录无人赢得的墩：无论是被克拉肯摧毁，还是被白鲸作废。",
+      "记录任何无人赢得的墩，不只是克拉肯的：白鲸和扩展也会留下没有赢家的墩。",
     ],
     historyTitle: "历史版本",
     history: {
@@ -325,7 +325,11 @@ export const zh: Strings = {
     ghostTook: (n) => `  ·  灰胡子 👻 赢了 ${n} 墩`,
     tricksWarnOver: "  （超过发牌数，请检查输入）",
     discardedTitle: "无人赢得的墩",
-    discardedHint: "克拉肯会摧毁所在的墩。若一墩中只有特殊牌，白鲸会让该墩作废。",
+    discardedOther: "其他作废的墩",
+    discardedHint: "若一墩中只有特殊牌，白鲸会让该墩作废。其他无人赢得的墩也记在这里。",
+    krakenRecord: "+ 克拉肯摧毁的墩",
+    krakenRecorded: "已记录克拉肯墩",
+    krakenUndo: "撤销",
     totalScoreTitle: "总分",
     totalIncludesRound: "所显示的回合已计入这些总分。",
     totalExcludesRound: "所显示的回合尚未计入这些总分。",

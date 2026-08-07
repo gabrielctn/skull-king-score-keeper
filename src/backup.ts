@@ -336,20 +336,19 @@ function validateRawGame(value: unknown, path: string): Record<string, unknown> 
     });
   }
 
-  if (value.discardedTricks !== undefined) {
-    if (
-      !Array.isArray(value.discardedTricks) ||
-      value.discardedTricks.length > roundCount
-    ) {
-      failGame(`${path}.discardedTricks`, "has too many rounds");
+  for (const field of ["discardedTricks", "krakenTricks"] as const) {
+    const counts = value[field];
+    if (counts === undefined) continue;
+    if (!Array.isArray(counts) || counts.length > roundCount) {
+      failGame(`${path}.${field}`, "has too many rounds");
     }
-    value.discardedTricks.forEach((count, index) => {
+    counts.forEach((count, index) => {
       if (
         typeof count !== "number" ||
         !Number.isFinite(count) ||
         Math.abs(count) > MAX_CARDS_PER_ROUND
       ) {
-        failGame(`${path}.discardedTricks[${index}]`, "invalid trick count");
+        failGame(`${path}.${field}[${index}]`, "invalid trick count");
       }
     });
   }
@@ -461,6 +460,7 @@ function normalizeBackupGame(value: unknown, path: string): Game {
       }))
     ),
     discardedTricks: [...normalized.discardedTricks],
+    krakenTricks: [...normalized.krakenTricks],
     cardsDealt: [...normalized.cardsDealt],
     scoringMode: normalized.scoringMode,
     rascalBets: normalized.rascalBets,

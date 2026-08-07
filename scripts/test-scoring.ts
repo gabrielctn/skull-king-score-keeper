@@ -10,10 +10,8 @@ import {
   bonusesOnMissEnabled,
   bonusesRequireBidForMode,
   bonusesRequireBidFromOnMiss,
-  MAX_DISCARDED_TRICKS,
   captureBonus,
   createGame,
-  discardedTricksForRound,
   emptyBonus,
   expansionColorBonus,
   ghostTricks,
@@ -22,6 +20,7 @@ import {
   madeBid,
   playerScoreHistory,
   playerTotal,
+  roundDiscards,
   scoreRound,
   scoreRoundBreakdown,
   standings,
@@ -825,9 +824,9 @@ eq(
   solo.totalRounds
 );
 
-console.log("\nDiscarded tricks: the Kraken and the White Whale");
+console.log("\nDiscarded tricks: the Kraken, the White Whale and the rest");
 {
-  const leviathans = createGame(
+  const discards = createGame(
     [
       { id: "a", name: "Anne" },
       { id: "b", name: "Bonny" },
@@ -835,36 +834,48 @@ console.log("\nDiscarded tricks: the Kraken and the White Whale");
     ],
     10
   );
-  eq("a round with no leviathan discards nothing", discardedTricksForRound(leviathans, 5), 0);
-  // A Kraken trick and a White-Whale-over-specials trick in the same round.
-  leviathans.discardedTricks[4] = 2;
-  eq(
-    "both leviathans can discard a trick in the same round",
-    discardedTricksForRound(leviathans, 5),
-    2
-  );
-  // Only one Kraken and one White Whale exist, so three is not a real round.
-  leviathans.discardedTricks[6] = 3;
-  eq(
-    "discards stop at the deck's two leviathans",
-    discardedTricksForRound(leviathans, 7),
-    MAX_DISCARDED_TRICKS
-  );
+  const round = (n: number) => roundDiscards(discards, n);
+  eq("a round with no leviathan discards nothing", round(5).total, 0);
+
+  // A Kraken trick plus a White-Whale-over-specials trick in the same round:
+  // the whale is not named, it is simply one more trick nobody won.
+  discards.discardedTricks[4] = 2;
+  discards.krakenTricks[4] = 1;
+  eq("the Kraken keeps its own count", round(5).kraken, 1);
+  eq("everything else is counted without naming it", round(5).other, 1);
+  eq("the trick check works from the total", round(5).total, 2);
+
+  // Nothing caps the unnamed discards at two: the expansion has more ways for
+  // a trick to end with no winner than the two leviathans.
+  discards.discardedTricks[6] = 4;
+  eq("a round can discard more than two tricks", round(7).total, 4);
+  eq("none of them are the Kraken's unless recorded", round(7).kraken, 0);
+
   // Round 1 deals a single card, so at most that one trick can be discarded.
-  leviathans.discardedTricks[0] = 2;
+  discards.discardedTricks[0] = 3;
+  discards.krakenTricks[0] = 1;
+  eq("a round cannot discard more tricks than it dealt", round(1).total, 1);
+  eq("the Kraken takes the only trick there was", round(1).kraken, 1);
+  eq("nothing is left for the unnamed discards", round(1).other, 0);
+
+  // Only one Kraken in the deck, and it cannot exceed the round's total.
+  discards.discardedTricks[7] = 1;
+  discards.krakenTricks[7] = 3;
+  eq("the Kraken never counts more than its single card", round(8).kraken, 1);
+  eq("a Kraken trick is part of the total, not extra", round(8).total, 1);
+  discards.discardedTricks[8] = 0;
+  discards.krakenTricks[8] = 1;
+  eq("a Kraken trick is always counted in the total", round(9).total, 1);
+
+  discards.discardedTricks[5] = -4;
+  eq("a negative count reads as no discard", round(6).total, 0);
+
+  // A discarded trick leaves the round short of the cards dealt: the players'
+  // tricks plus the discards are what must add up.
+  discards.rounds[4] = { a: E(2, 2), b: E(1, 1), c: E(0, 0) };
   eq(
-    "a round cannot discard more tricks than it dealt",
-    discardedTricksForRound(leviathans, 1),
-    1
-  );
-  leviathans.discardedTricks[7] = -4;
-  eq("a negative count reads as no discard", discardedTricksForRound(leviathans, 8), 0);
-  // A whale trick leaves the round one trick short of the cards dealt: the
-  // players' tricks plus the discards are what must add up.
-  leviathans.rounds[4] = { a: E(2, 2), b: E(1, 1), c: E(0, 0) };
-  eq(
-    "a whale trick is scored like any other missing trick",
-    playerTotal(leviathans, "a", 5),
+    "a discarded trick is scored like any other missing trick",
+    playerTotal(discards, "a", 5),
     40
   );
 }

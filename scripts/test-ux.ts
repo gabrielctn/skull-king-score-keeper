@@ -442,14 +442,22 @@ for (const [name, source] of rnStyleSources) {
   );
 }
 // A Kraken is not the only way a trick ends with no winner: the White Whale
-// discards its trick whenever it catches nothing but special cards. Counting
-// those tricks is what lets the round add up to the cards dealt.
+// discards its trick whenever it catches nothing but special cards, and the
+// expansion adds rarer standoffs. The Kraken keeps its one-tap button; every
+// other cause goes into a plain counter, and the round's trick check reads
+// the total of the two.
 check(
-  "the round counts tricks nobody won, whichever leviathan took them",
-  gameSource.includes("t.game.discardedTitle") &&
+  "the Kraken keeps its button next to a counter for every other discard",
+  gameSource.includes("t.game.krakenRecord") &&
+    gameSource.includes("t.game.discardedOther") &&
     gameSource.includes("t.game.discardedHint") &&
-    gameSource.includes("max={Math.min(cards, MAX_DISCARDED_TRICKS)}") &&
-    !gameSource.includes("kraken")
+    gameSource.includes("setDiscards({ kraken: discards.kraken > 0 ? 0 : 1 })") &&
+    gameSource.includes("onChange={(other) => setDiscards({ other })}")
+);
+check(
+  "the trick check counts every discarded trick, named or not",
+  gameSource.includes("tricksTotal + discards.total") &&
+    gameSource.includes("ghostTricks(game, tricksTotal, cards, discards.total)")
 );
 check(
   "the podium keeps its silver-gold-bronze shape in RTL",
@@ -514,10 +522,16 @@ for (const [language, strings] of Object.entries({ en, fr, es, de, ar, zh })) {
     strings.game.roundPointsPreview.trim().length > 0
   );
   check(
-    `${language} says which cards leave a trick with no winner`,
-    strings.game.discardedTitle.trim().length > 0 &&
-      strings.game.discardedHint.trim().length > 0 &&
-      strings.game.discardedHint.length <= 140
+    `${language} names both ways to record a trick with no winner`,
+    [
+      strings.game.discardedTitle,
+      strings.game.discardedOther,
+      strings.game.krakenRecord,
+      strings.game.krakenRecorded,
+      strings.game.krakenUndo,
+      strings.game.discardedHint,
+    ].every((label) => label.trim().length > 0) &&
+      strings.game.discardedHint.length <= 160
   );
   check(
     `${language} release notes describe only this release`,

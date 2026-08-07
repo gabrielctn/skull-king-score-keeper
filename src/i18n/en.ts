@@ -89,7 +89,7 @@ export const en: Strings = {
     title: "What's new",
     version: (version, date) => `Version ${version} · ${date}`,
     items: [
-      "Record the tricks nobody won, whether the Kraken destroyed one or the White Whale discarded one.",
+      "Record any trick nobody won, not just the Kraken's: the White Whale and the expansion leave tricks without a winner too.",
     ],
     historyTitle: "Previous versions",
     history: {
@@ -358,8 +358,12 @@ export const en: Strings = {
     ghostTook: (n) => `  ·  Greybeard 👻 took ${n}`,
     tricksWarnOver: "  (more than the cards dealt; check your counts)",
     discardedTitle: "Tricks nobody won",
+    discardedOther: "Other discarded tricks",
     discardedHint:
-      "The Kraken destroys its trick. The White Whale discards its own when only special cards were played.",
+      "The White Whale discards its trick when only special cards were played. Count any other trick nobody won here too.",
+    krakenRecord: "+ Trick discarded by Kraken",
+    krakenRecorded: "Kraken trick counted",
+    krakenUndo: "Undo",
     totalScoreTitle: "Total score",
     totalIncludesRound: "The displayed round is included in these totals.",
     totalExcludesRound:

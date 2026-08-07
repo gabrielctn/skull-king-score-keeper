@@ -82,7 +82,8 @@ current.rounds[0].a.bonus.black14 = true;
 current.lootUses[0] = [
   { id: "loot-1", playedById: "a", boundToId: "b" },
 ];
-current.discardedTricks[1] = 1;
+current.discardedTricks[1] = 2;
+current.krakenTricks[1] = 1;
 const finished = game("finished", 100);
 finished.status = "finished";
 finished.currentRound = 2;
@@ -106,7 +107,8 @@ check(
 check(
   "special-card state survives",
   parsed.currentGame?.lootUses[0][0]?.boundToId === "b" &&
-    parsed.currentGame.discardedTricks[1] === 1
+    parsed.currentGame.discardedTricks[1] === 2 &&
+    parsed.currentGame.krakenTricks[1] === 1
 );
 check(
   "finish timestamp survives",

@@ -85,7 +85,7 @@ export const fr: Strings = {
     title: "Nouveautés",
     version: (version, date) => `Version ${version} · ${date}`,
     items: [
-      "Enregistrez les plis remportés par personne, détruits par le Kraken ou défaussés par la Baleine blanche.",
+      "Enregistrez tout pli que personne ne remporte, pas seulement celui du Kraken : la Baleine blanche et l’extension en laissent aussi.",
     ],
     historyTitle: "Versions précédentes",
     history: {
@@ -356,8 +356,12 @@ export const fr: Strings = {
       `  ·  Barbe Grise 👻 a remporté ${n} ${n === 1 ? "pli" : "plis"}`,
     tricksWarnOver: "  (plus que les cartes distribuées ; vérifiez vos comptes)",
     discardedTitle: "Plis remportés par personne",
+    discardedOther: "Autres plis défaussés",
     discardedHint:
-      "Le Kraken détruit son pli. La Baleine blanche défausse le sien quand seules des cartes spéciales ont été jouées.",
+      "La Baleine blanche défausse son pli quand seules des cartes spéciales ont été jouées. Comptez ici tout autre pli que personne ne remporte.",
+    krakenRecord: "+ Pli défaussé par le Kraken",
+    krakenRecorded: "Pli du Kraken comptabilisé",
+    krakenUndo: "Annuler",
     totalScoreTitle: "Score total",
     totalIncludesRound: "La manche affichée est incluse dans ces totaux.",
     totalExcludesRound:

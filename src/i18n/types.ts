@@ -362,10 +362,15 @@ export interface Strings {
     /** "Greybeard 👻 took {n}" */
     ghostTook: (n: number) => string;
     tricksWarnOver: string;
-    /** Heading of the counter for tricks that ended with no winner. */
+    /** Heading of the group recording tricks that ended with no winner. */
     discardedTitle: string;
-    /** Says which cards discard a trick: the Kraken and the White Whale. */
+    /** Label of the counter for discards the table did not name. */
+    discardedOther: string;
+    /** Names the situations that leave a trick with no winner. */
     discardedHint: string;
+    krakenRecord: string;
+    krakenRecorded: string;
+    krakenUndo: string;
     totalScoreTitle: string;
     totalIncludesRound: string;
     totalExcludesRound: string;

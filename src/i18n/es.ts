@@ -86,7 +86,7 @@ export const es: Strings = {
     title: "Novedades",
     version: (version, date) => `Versión ${version} · ${date}`,
     items: [
-      "Registra las bazas que nadie gana, ya las destruya el Kraken o las descarte la Ballena Blanca.",
+      "Registra cualquier baza que nadie gane, no solo la del Kraken: la Ballena Blanca y la expansión también dejan bazas sin ganador.",
     ],
     historyTitle: "Versiones anteriores",
     history: {
@@ -361,8 +361,12 @@ export const es: Strings = {
     tricksWarnOver:
       "  (más que las cartas repartidas; comprueba los valores)",
     discardedTitle: "Bazas que nadie gana",
+    discardedOther: "Otras bazas descartadas",
     discardedHint:
-      "El Kraken destruye su baza. La Ballena Blanca descarta la suya cuando solo se jugaron cartas especiales.",
+      "La Ballena Blanca descarta su baza cuando solo se jugaron cartas especiales. Cuenta aquí cualquier otra baza que nadie gane.",
+    krakenRecord: "+ Baza descartada por el Kraken",
+    krakenRecorded: "Baza del Kraken registrada",
+    krakenUndo: "Deshacer",
     totalScoreTitle: "Puntuación total",
     totalIncludesRound: "La ronda mostrada está incluida en estos totales.",
     totalExcludesRound:

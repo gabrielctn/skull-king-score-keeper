@@ -84,7 +84,7 @@ export const de: Strings = {
     title: "Neuigkeiten",
     version: (version, date) => `Version ${version} · ${date}`,
     items: [
-      "Erfasse Stiche, die niemand gewinnt, ob vom Kraken zerstört oder vom Weißen Wal abgeworfen.",
+      "Erfasse jeden Stich ohne Gewinner, nicht nur den des Krakens: auch der Weiße Wal und die Erweiterung lassen welche zurück.",
     ],
     historyTitle: "Frühere Versionen",
     history: {
@@ -357,8 +357,12 @@ export const de: Strings = {
       `  ·  Graubart 👻 holte ${n} ${n === 1 ? "Stich" : "Stiche"}`,
     tricksWarnOver: "  (mehr als ausgeteilte Karten; Eingaben prüfen)",
     discardedTitle: "Stiche, die niemand gewinnt",
+    discardedOther: "Weitere verworfene Stiche",
     discardedHint:
-      "Der Kraken zerstört seinen Stich. Der Weiße Wal verwirft seinen, wenn nur Sonderkarten gespielt wurden.",
+      "Der Weiße Wal verwirft seinen Stich, wenn nur Sonderkarten gespielt wurden. Zähle hier auch jeden anderen Stich ohne Gewinner.",
+    krakenRecord: "+ Vom Kraken verworfener Stich",
+    krakenRecorded: "Kraken-Stich erfasst",
+    krakenUndo: "Rückgängig",
     totalScoreTitle: "Gesamtpunktzahl",
     totalIncludesRound: "Die angezeigte Runde ist in diesen Summen enthalten.",
     totalExcludesRound: "Die angezeigte Runde ist noch nicht enthalten.",
