@@ -94,11 +94,18 @@ export interface Game {
   /** Loot cards used in each round, capped at the two cards in the deck. */
   lootUses: LootUse[][];
   /**
-   * Tricks destroyed by a Kraken (or otherwise discarded with no winner) in
-   * each round. Official play normally caps this at one, but a count keeps the
-   * saved data explicit and future-proof.
+   * Tricks that ended with no winner in each round, whatever caused it: a
+   * Kraken, a White Whale that caught nothing but special cards, or one of the
+   * expansion's rarer standoffs. This is the total, so it is the number the
+   * round's trick check works from.
    */
   discardedTricks: number[];
+  /**
+   * How many of those tricks the Kraken destroyed (0 or 1, one card in the
+   * deck). Never above `discardedTricks`; the rest are the ones recorded
+   * without naming a cause.
+   */
+  krakenTricks: number[];
   /**
    * Cards dealt per round. cardsDealt[r - 1] defaults to r, but can be fewer
    * in late rounds for 7-8 players, or anything for custom round structures.
@@ -143,4 +150,4 @@ export interface Game {
 }
 
 /** Current persisted-game schema version (for save migrations). */
-export const GAME_SCHEMA_VERSION = 9;
+export const GAME_SCHEMA_VERSION = 10;

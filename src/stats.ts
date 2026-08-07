@@ -311,6 +311,7 @@ function defensiveGame(game: Game): Game {
     discardedTricks: Array.isArray(game.discardedTricks)
       ? game.discardedTricks
       : [],
+    krakenTricks: Array.isArray(game.krakenTricks) ? game.krakenTricks : [],
     cardsDealt: Array.isArray(game.cardsDealt) ? game.cardsDealt : [],
   };
 }

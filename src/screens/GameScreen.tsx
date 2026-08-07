@@ -16,6 +16,7 @@ import {
   RascalBet,
   RoundEntries,
 } from "../types";
+import type { RoundDiscards } from "../scoring";
 import {
   RASCAL_POINTS_PER_CARD,
   activeLootUses,
@@ -28,6 +29,7 @@ import {
   lootAvailable,
   lootBonusForPlayer,
   madeBid,
+  roundDiscards,
   scoreRound,
   standings,
 } from "../scoring";
@@ -112,8 +114,8 @@ function roundHasInput(
 /** Everything a round's controls and its "can this be scored?" checks need. */
 interface RoundState {
   cards: number;
-  /** Tricks destroyed by a Kraken, clamped to what the round could hold. */
-  discardedTricks: number;
+  /** Tricks nobody won, split into the Kraken's and everything else. */
+  discards: RoundDiscards;
   tricksTotal: number;
   accountedTricks: number;
   /** Tricks the Greybeard ghost took (0 outside the 2-player variant). */
@@ -140,23 +142,20 @@ function deriveRoundState(
   roundNumber: number
 ): RoundState {
   const cards = cardsForRound(game, roundNumber);
-  const discardedTricks = Math.min(
-    cards,
-    Math.max(0, game.discardedTricks[roundNumber - 1] ?? 0)
-  );
+  const discards = roundDiscards(game, roundNumber);
   const tricksTotal = game.players.reduce(
     (sum, player) => sum + (entries[player.id]?.tricks ?? 0),
     0
   );
-  const accountedTricks = tricksTotal + discardedTricks;
+  const accountedTricks = tricksTotal + discards.total;
   const lootUses = activeLootUses(game, roundNumber);
 
   return {
     cards,
-    discardedTricks,
+    discards,
     tricksTotal,
     accountedTricks,
-    ghost: ghostTricks(game, tricksTotal, cards, discardedTricks),
+    ghost: ghostTricks(game, tricksTotal, cards, discards.total),
     // In the 2-player variant the Greybeard ghost steals the leftover tricks,
     // so the players' total may be below the cards dealt; only an impossible
     // total above the cards dealt is a problem.
@@ -257,13 +256,16 @@ export default function GameScreen({
 
   /**
    * Persist an editable round immediately. Optional round-level changes are
-   * written in the same Game update so cards, Loot and Kraken state cannot get
-   * out of sync with the bid/trick/bonus draft.
+   * written in the same Game update so cards, Loot and discarded tricks cannot
+   * get out of sync with the bid/trick/bonus draft.
    */
   const persistDraft = (
     nextDraft: RoundEntries,
     updates: Partial<
-      Pick<Game, "cardsDealt" | "lootUses" | "discardedTricks">
+      Pick<
+        Game,
+        "cardsDealt" | "lootUses" | "discardedTricks" | "krakenTricks"
+      >
     > = {}
   ) => {
     const current = latestGame.current;
@@ -335,7 +337,7 @@ export default function GameScreen({
 
   const {
     cards,
-    discardedTricks,
+    discards,
     accountedTricks,
     ghost,
     tricksOk,
@@ -376,16 +378,27 @@ export default function GameScreen({
     });
   };
 
-  const toggleDiscardedTrick = () => {
+  /**
+   * Write a round's tricks-nobody-won counts. The Kraken has its own flag
+   * because the table can name that one; every other cause (a White Whale over
+   * nothing but specials, an expansion standoff) is counted without naming it.
+   * `discardedTricks` stays the total, which is what the trick check reads.
+   */
+  const setDiscards = (next: { kraken?: number; other?: number }) => {
     const current = latestGame.current;
-    const nextCount =
-      deriveRoundState(current, latestDraft.current, displayRound)
-        .discardedTricks > 0
-        ? 0
-        : 1;
+    const cards = cardsForRound(current, displayRound);
+    const discards = roundDiscards(current, displayRound);
+    const kraken = Math.max(0, Math.min(next.kraken ?? discards.kraken, 1));
+    const other = Math.max(
+      0,
+      Math.min(next.other ?? discards.other, cards - kraken)
+    );
     persistDraft(latestDraft.current, {
       discardedTricks: current.discardedTricks.map((count, index) =>
-        index === displayRound - 1 ? nextCount : count
+        index === displayRound - 1 ? kraken + other : count
+      ),
+      krakenTricks: current.krakenTricks.map((count, index) =>
+        index === displayRound - 1 ? kraken : count
       ),
     });
   };
@@ -809,30 +822,61 @@ export default function GameScreen({
           );
         })}
 
-        <TouchableOpacity
+        <View
           style={[
-            styles.krakenButton,
+            styles.discardCard,
             layout.gameColumns === 2 && styles.fullWidth,
-            discardedTricks > 0 && styles.krakenButtonActive,
+            discards.total > 0 && styles.discardCardActive,
           ]}
-          onPress={toggleDiscardedTrick}
-          accessibilityRole="button"
-          accessibilityState={{ selected: discardedTricks > 0 }}
         >
           <Text
             style={[
-              styles.krakenButtonText,
-              discardedTricks > 0 && styles.krakenButtonTextActive,
+              styles.discardTitle,
+              discards.total > 0 && styles.discardTitleActive,
             ]}
           >
-            {discardedTricks > 0
-              ? `✓ ${t.game.krakenRecorded}`
-              : t.game.krakenRecord}
+            {t.game.discardedTitle}
           </Text>
-          {discardedTricks > 0 ? (
-            <Text style={styles.krakenUndo}>{t.game.krakenUndo}</Text>
-          ) : null}
-        </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[
+              styles.krakenButton,
+              discards.kraken > 0 && styles.krakenButtonActive,
+            ]}
+            onPress={() =>
+              setDiscards({ kraken: discards.kraken > 0 ? 0 : 1 })
+            }
+            accessibilityRole="button"
+            accessibilityState={{ selected: discards.kraken > 0 }}
+          >
+            <Text
+              style={[
+                styles.krakenButtonText,
+                discards.kraken > 0 && styles.krakenButtonTextActive,
+              ]}
+            >
+              {discards.kraken > 0
+                ? `✓ ${t.game.krakenRecorded}`
+                : t.game.krakenRecord}
+            </Text>
+            {discards.kraken > 0 ? (
+              <Text style={styles.krakenUndo}>{t.game.krakenUndo}</Text>
+            ) : null}
+          </TouchableOpacity>
+
+          <View style={styles.discardRow}>
+            <Text style={styles.discardOtherLabel}>{t.game.discardedOther}</Text>
+            <Stepper
+              value={discards.other}
+              onChange={(other) => setDiscards({ other })}
+              max={cards - discards.kraken}
+              accessibilityLabel={t.game.discardedOther}
+              compact
+            />
+          </View>
+
+          <Text style={styles.discardHint}>{t.game.discardedHint}</Text>
+        </View>
 
         <Text
           style={[
@@ -1206,23 +1250,58 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
   },
   fullWidth: { width: "100%" },
-  krakenButton: {
-    minHeight: 44,
+  discardCard: {
     borderWidth: 1,
     borderColor: colors.controlBorder,
     borderRadius: radius.sm,
     backgroundColor: colors.bgElevated,
     paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
     marginTop: spacing.xs,
     marginBottom: spacing.xs,
+  },
+  discardCardActive: {
+    borderColor: colors.positive,
+    backgroundColor: colors.card,
+  },
+  discardRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    columnGap: spacing.sm,
+    marginTop: spacing.xs,
+  },
+  discardTitle: {
+    color: colors.gold,
+    fontSize: 13,
+    fontWeight: "800",
+    marginBottom: spacing.xs,
+  },
+  discardTitleActive: { color: colors.positive },
+  discardOtherLabel: {
+    flexShrink: 1,
+    color: colors.text,
+    fontSize: 13,
+    fontWeight: "600",
+  },
+  discardHint: {
+    color: colors.textDim,
+    fontSize: 11,
+    lineHeight: 15,
+    marginTop: spacing.xs,
+  },
+  krakenButton: {
+    minHeight: 44,
+    borderWidth: 1,
+    borderColor: colors.controlBorder,
+    borderRadius: radius.sm,
+    backgroundColor: colors.card,
+    paddingHorizontal: spacing.md,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
   },
-  krakenButtonActive: {
-    borderColor: colors.positive,
-    backgroundColor: colors.card,
-  },
+  krakenButtonActive: { borderColor: colors.positive },
   krakenButtonText: { color: colors.gold, fontSize: 13, fontWeight: "800" },
   krakenButtonTextActive: { color: colors.positive },
   krakenUndo: {

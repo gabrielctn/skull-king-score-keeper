@@ -49,7 +49,8 @@ export function normalizeSettings(raw: unknown): AppSettings {
  * before schema v4 also stored Loot as a per-player count instead of binding
  * the two allied players, so keep those historical points in `legacyLoot`.
  * Schema v5 adds the new expansion fields and toggle; old games keep it off.
- * Schema v6 records tricks destroyed by a Kraken; older saves default to 0.
+ * Schema v6 records tricks that ended with no winner (a Kraken or White Whale
+ * trick); older saves default to 0.
  * Schema v7 adds Rascal scoring (mode, optional-rules flag and per-entry
  * declarations); older saves stay on classic scoring.
  * Schema v8 stamps `finishedAt` when a game completes; older saves keep null
@@ -57,6 +58,9 @@ export function normalizeSettings(raw: unknown): AppSettings {
  * Schema v9 stores the classic capture-bonus condition explicitly. Older saves
  * normalize it to false so their recorded scores stay exactly as they were
  * played, even though new games now use the official exact-bid condition.
+ * Schema v10 splits the Kraken out of the discarded-trick count. Older saves
+ * could only record a discard through the Kraken button, so their first
+ * discard in a round reads back as the Kraken's.
  */
 export function normalizeGame(raw: any): Game | null {
   if (!raw || !Array.isArray(raw.players) || !Array.isArray(raw.rounds)) {
@@ -151,6 +155,18 @@ export function normalizeGame(raw: any): Game | null {
       Math.max(0, Math.floor(Number(raw.discardedTricks?.[roundIndex]) || 0))
   );
 
+  // One Kraken in the deck, and it can only account for a trick the round
+  // already counts as discarded. Saves predating this split had no other way
+  // to record a discard, so their first one per round was the Kraken's.
+  const krakenTricks: number[] = discardedTricks.map((discarded, roundIndex) => {
+    const stored = raw.krakenTricks?.[roundIndex];
+    const kraken =
+      stored === undefined
+        ? Math.min(1, discarded)
+        : Math.max(0, Math.floor(Number(stored) || 0));
+    return Math.min(kraken, 1, discarded);
+  });
+
   return {
     id: raw.id ?? `game_${Date.now()}`,
     players: raw.players,
@@ -159,6 +175,7 @@ export function normalizeGame(raw: any): Game | null {
     rounds,
     lootUses,
     discardedTricks,
+    krakenTricks,
     cardsDealt,
     scoringMode,
     rascalBets,

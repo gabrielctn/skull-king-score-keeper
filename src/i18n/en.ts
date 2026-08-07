@@ -89,10 +89,13 @@ export const en: Strings = {
     title: "What's new",
     version: (version, date) => `Version ${version} · ${date}`,
     items: [
-      "Join a table with the 6-character code your friend shows you.",
+      "Record any trick nobody won, not just the Kraken's: the White Whale and the expansion leave tricks without a winner too.",
     ],
     historyTitle: "Previous versions",
     history: {
+      "1.12.0": [
+        "Join a table with the 6-character code your friend shows you.",
+      ],
       "1.11.2": [
         "The map background fills the screen again, and zooming out no longer slides the page sideways.",
       ],
@@ -354,6 +357,10 @@ export const en: Strings = {
     tricksWarnNormal: "  (must equal cards dealt)",
     ghostTook: (n) => `  ·  Greybeard 👻 took ${n}`,
     tricksWarnOver: "  (more than the cards dealt; check your counts)",
+    discardedTitle: "Tricks nobody won",
+    discardedOther: "Other discarded tricks",
+    discardedHint:
+      "The White Whale discards its trick when only special cards were played. Count any other trick nobody won here too.",
     krakenRecord: "+ Trick discarded by Kraken",
     krakenRecorded: "Kraken trick counted",
     krakenUndo: "Undo",
@@ -860,11 +867,11 @@ export const en: Strings = {
       },
       {
         title: "Kraken",
-        body: "The trick is destroyed: NOBODY wins it, the cards are set aside. No trick counts and no captures happen for it. The next trick is led by whoever would have won.",
+        body: "The trick is destroyed: NOBODY wins it, the cards are set aside. No trick counts and no captures happen for it. Count it under \"tricks nobody won\". The next trick is led by whoever would have won.",
       },
       {
         title: "White Whale",
-        body: "All special cards are nullified and lose; the highest NUMBER wins the trick (trump included). If only specials were played, the trick is discarded. No special-card capture bonuses occur in a whale trick.",
+        body: "All special cards are nullified and lose; the highest NUMBER wins the trick (trump included). If only specials were played, nobody wins the trick: discard it and count it under \"tricks nobody won\". No special-card capture bonuses occur in a whale trick.",
       },
       {
         title: "Kraken vs White Whale",

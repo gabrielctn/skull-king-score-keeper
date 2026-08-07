@@ -441,6 +441,24 @@ for (const [name, source] of rnStyleSources) {
     'react-native-web rejects it; wrap the view in LtrView instead'
   );
 }
+// A Kraken is not the only way a trick ends with no winner: the White Whale
+// discards its trick whenever it catches nothing but special cards, and the
+// expansion adds rarer standoffs. The Kraken keeps its one-tap button; every
+// other cause goes into a plain counter, and the round's trick check reads
+// the total of the two.
+check(
+  "the Kraken keeps its button next to a counter for every other discard",
+  gameSource.includes("t.game.krakenRecord") &&
+    gameSource.includes("t.game.discardedOther") &&
+    gameSource.includes("t.game.discardedHint") &&
+    gameSource.includes("setDiscards({ kraken: discards.kraken > 0 ? 0 : 1 })") &&
+    gameSource.includes("onChange={(other) => setDiscards({ other })}")
+);
+check(
+  "the trick check counts every discarded trick, named or not",
+  gameSource.includes("tricksTotal + discards.total") &&
+    gameSource.includes("ghostTricks(game, tricksTotal, cards, discards.total)")
+);
 check(
   "the podium keeps its silver-gold-bronze shape in RTL",
   podiumSource.includes("<LtrView style={styles.podiumRow}>")
@@ -502,6 +520,18 @@ for (const [language, strings] of Object.entries({ en, fr, es, de, ar, zh })) {
   check(
     `${language} labels provisional scores`,
     strings.game.roundPointsPreview.trim().length > 0
+  );
+  check(
+    `${language} names both ways to record a trick with no winner`,
+    [
+      strings.game.discardedTitle,
+      strings.game.discardedOther,
+      strings.game.krakenRecord,
+      strings.game.krakenRecorded,
+      strings.game.krakenUndo,
+      strings.game.discardedHint,
+    ].every((label) => label.trim().length > 0) &&
+      strings.game.discardedHint.length <= 160
   );
   check(
     `${language} release notes describe only this release`,

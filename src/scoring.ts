@@ -501,6 +501,42 @@ export function cardsForRound(game: Game, roundNumber: number): number {
   return game.cardsDealt[roundNumber - 1] ?? roundNumber;
 }
 
+/** A round's tricks that ended with no winner, split by what the table named. */
+export interface RoundDiscards {
+  /** Destroyed by the Kraken: one card in the deck, so 0 or 1. */
+  kraken: number;
+  /** Discarded for any other reason, recorded without naming a cause. */
+  other: number;
+  /** Every trick nobody won, which is what the trick check works from. */
+  total: number;
+}
+
+/**
+ * Tricks nobody won in a round, and how many of them the Kraken took.
+ *
+ * Several situations leave a trick with no winner. The Kraken destroys the
+ * trick it lands in. The White Whale nullifies every special card in its own,
+ * so a trick holding nothing but specials has no card left that can win it.
+ * The expansion adds rarer standoffs, which is why everything other than the
+ * Kraken is simply counted rather than named. Those tricks are never dealt to
+ * a player, which is why the round's recorded tricks are checked against the
+ * cards dealt minus this total.
+ *
+ * Both numbers are clamped to what the round could actually hold, and the
+ * Kraken count can never exceed the total, so a stale or hand-edited save
+ * cannot describe an impossible round.
+ */
+export function roundDiscards(game: Game, roundNumber: number): RoundDiscards {
+  const cards = cardsForRound(game, roundNumber);
+  const count = (value: unknown) => Math.max(0, Math.floor(Number(value) || 0));
+  const kraken = Math.min(count(game.krakenTricks?.[roundNumber - 1]), 1, cards);
+  const total = Math.min(
+    Math.max(count(game.discardedTricks?.[roundNumber - 1]), kraken),
+    cards
+  );
+  return { kraken, other: total - kraken, total };
+}
+
 /**
  * Tricks captured by the non-scoring "Greybeard" ghost in the 2-player variant.
  *
@@ -665,6 +701,7 @@ export function createGame(
     rounds: Array.from({ length: roundCount }, () => emptyRound(players)),
     lootUses: Array.from({ length: roundCount }, () => []),
     discardedTricks: Array.from({ length: roundCount }, () => 0),
+    krakenTricks: Array.from({ length: roundCount }, () => 0),
     cardsDealt: structure
       ? [...structure]
       : Array.from({ length: roundCount }, (_, i) => i + 1),

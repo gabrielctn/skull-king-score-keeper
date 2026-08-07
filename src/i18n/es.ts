@@ -86,10 +86,13 @@ export const es: Strings = {
     title: "Novedades",
     version: (version, date) => `Versión ${version} · ${date}`,
     items: [
-      "Únete a una mesa con el código de 6 caracteres que te muestra tu amigo.",
+      "Registra cualquier baza que nadie gane, no solo la del Kraken: la Ballena Blanca y la expansión también dejan bazas sin ganador.",
     ],
     historyTitle: "Versiones anteriores",
     history: {
+      "1.12.0": [
+        "Únete a una mesa con el código de 6 caracteres que te muestra tu amigo.",
+      ],
       "1.11.2": [
         "El fondo de mapa vuelve a llenar toda la pantalla y, al alejar el zoom, la página ya no se desliza hacia un lado.",
       ],
@@ -357,6 +360,10 @@ export const es: Strings = {
     ghostTook: (n) => `  ·  Barbagris 👻 ganó ${n}`,
     tricksWarnOver:
       "  (más que las cartas repartidas; comprueba los valores)",
+    discardedTitle: "Bazas que nadie gana",
+    discardedOther: "Otras bazas descartadas",
+    discardedHint:
+      "La Ballena Blanca descarta su baza cuando solo se jugaron cartas especiales. Cuenta aquí cualquier otra baza que nadie gane.",
     krakenRecord: "+ Baza descartada por el Kraken",
     krakenRecorded: "Baza del Kraken registrada",
     krakenUndo: "Deshacer",
@@ -875,11 +882,11 @@ export const es: Strings = {
       },
       {
         title: "Kraken",
-        body: "La baza se destruye: NADIE la gana y las cartas se apartan. No se cuenta la baza ni se produce ninguna captura. Sale en la siguiente baza quien la habría ganado.",
+        body: "La baza se destruye: NADIE la gana y las cartas se apartan. No se cuenta la baza ni se produce ninguna captura. Cuéntala en «bazas que nadie gana». Sale en la siguiente baza quien la habría ganado.",
       },
       {
         title: "Ballena Blanca",
-        body: "Todas las cartas especiales quedan anuladas y pierden; la carta NUMERADA más alta gana la baza (incluido el triunfo). Si solo se jugaron cartas especiales, la baza se descarta. En una baza con la Ballena no se conceden bonificaciones por capturar cartas especiales.",
+        body: "Todas las cartas especiales quedan anuladas y pierden; la carta NUMERADA más alta gana la baza (incluido el triunfo). Si solo se jugaron cartas especiales, nadie gana la baza: descártala y cuéntala en «bazas que nadie gana». En una baza con la Ballena no se conceden bonificaciones por capturar cartas especiales.",
       },
       {
         title: "Kraken contra Ballena Blanca",

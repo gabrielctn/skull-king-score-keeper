@@ -84,10 +84,13 @@ export const de: Strings = {
     title: "Neuigkeiten",
     version: (version, date) => `Version ${version} · ${date}`,
     items: [
-      "Tritt einem Tisch mit dem 6-stelligen Code bei, den dir deine Freundin oder dein Freund zeigt.",
+      "Erfasse jeden Stich ohne Gewinner, nicht nur den des Krakens: auch der Weiße Wal und die Erweiterung lassen welche zurück.",
     ],
     historyTitle: "Frühere Versionen",
     history: {
+      "1.12.0": [
+        "Tritt einem Tisch mit dem 6-stelligen Code bei, den dir deine Freundin oder dein Freund zeigt.",
+      ],
       "1.11.2": [
         "Der Kartenhintergrund füllt wieder den ganzen Bildschirm, und beim Herauszoomen rutscht die Seite nicht mehr zur Seite.",
       ],
@@ -353,6 +356,10 @@ export const de: Strings = {
     ghostTook: (n) =>
       `  ·  Graubart 👻 holte ${n} ${n === 1 ? "Stich" : "Stiche"}`,
     tricksWarnOver: "  (mehr als ausgeteilte Karten; Eingaben prüfen)",
+    discardedTitle: "Stiche, die niemand gewinnt",
+    discardedOther: "Weitere verworfene Stiche",
+    discardedHint:
+      "Der Weiße Wal verwirft seinen Stich, wenn nur Sonderkarten gespielt wurden. Zähle hier auch jeden anderen Stich ohne Gewinner.",
     krakenRecord: "+ Vom Kraken verworfener Stich",
     krakenRecorded: "Kraken-Stich erfasst",
     krakenUndo: "Rückgängig",
@@ -770,8 +777,8 @@ export const de: Strings = {
       { title: "Pirat (x5) & Tigerin", body: "Schlagen alle Zahlenkarten. Die Tigerin kann als Pirat oder Flucht gespielt werden." },
       { title: "Skull King", body: "Schlägt alle Zahlen und Piraten (+30 pro gefangenem Piraten). Nur eine Meerjungfrau kann ihn schlagen." },
       { title: "Meerjungfrau (x2)", body: "Schlägt alle Zahlen und den Skull King (+40), verliert aber gegen Piraten. Sind Pirat, Skull King und Meerjungfrau in einem Stich, gewinnt immer die Meerjungfrau." },
-      { title: "Kraken", body: "Der Stich wird zerstört: NIEMAND gewinnt ihn, die Karten kommen beiseite. Er zählt nicht und es gibt keine Fänge. Den nächsten Stich beginnt, wer gewonnen hätte." },
-      { title: "Weißer Wal", body: "Alle Sonderkarten werden neutralisiert und verlieren; die höchste ZAHL gewinnt (einschließlich Trumpf). Wurden nur Sonderkarten gespielt, wird der Stich abgeworfen. In einem Wal-Stich gibt es keine Sonderkarten-Fangboni." },
+      { title: "Kraken", body: "Der Stich wird zerstört: NIEMAND gewinnt ihn, die Karten kommen beiseite. Er zählt nicht und es gibt keine Fänge. Zähle ihn unter „Stiche, die niemand gewinnt“. Den nächsten Stich beginnt, wer gewonnen hätte." },
+      { title: "Weißer Wal", body: "Alle Sonderkarten werden neutralisiert und verlieren; die höchste ZAHL gewinnt (einschließlich Trumpf). Wurden nur Sonderkarten gespielt, gewinnt niemand: wirf den Stich ab und zähle ihn unter „Stiche, die niemand gewinnt“. In einem Wal-Stich gibt es keine Sonderkarten-Fangboni." },
       { title: "Kraken gegen Weißen Wal", body: "Sind beide im selben Stich, gilt die zuletzt gespielte Karte; wende deren Regel an." },
       { title: "Beute  (+20 pro Verbündetem)", body: "Bildet eine Allianz zwischen der Person, die sie spielt, und dem Gewinner des Stichs. Erfasse beide; treffen BEIDE ihre Ansage exakt, vergibt die App je +20." },
       { title: "Rascal-Piratenwette (0/10/20)", body: "Eine Nebenwette: Bei getroffener Ansage gewinnst du den Einsatz, andernfalls verlierst du ihn." },

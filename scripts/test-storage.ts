@@ -53,9 +53,11 @@ if (legacy) {
   check("missing round bindings become empty", legacy.lootUses.length === 2);
   check("first round has no invented pair", legacy.lootUses[0].length === 0);
   check(
-    "old saves default Kraken-discard counts to zero",
+    "old saves default discarded-trick counts to zero",
     legacy.discardedTricks.length === 2 &&
-      legacy.discardedTricks.every((n) => n === 0)
+      legacy.discardedTricks.every((n) => n === 0) &&
+      legacy.krakenTricks.length === 2 &&
+      legacy.krakenTricks.every((n) => n === 0)
   );
   check("new expansion stays off for pre-v5 saves", !legacy.newExpansion);
   check(
@@ -109,6 +111,7 @@ current.newExpansion = true;
 current.rounds[0].a.bonus.expansion7 = 2;
 current.rounds[0].a.bonus.davyJonesLeviathans = 1;
 current.discardedTricks[0] = 1;
+current.krakenTricks[0] = 1;
 const roundTripped = normalizeGame(JSON.parse(JSON.stringify(current)));
 check(
   "bound player IDs survive JSON persistence",
@@ -122,10 +125,53 @@ check(
     roundTripped.rounds[0].a.bonus.davyJonesLeviathans === 1
 );
 check(
-  "Kraken-discard count survives JSON persistence",
+  "discarded-trick count survives JSON persistence",
   roundTripped?.discardedTricks[0] === 1 &&
-    roundTripped.discardedTricks[1] === 0
+    roundTripped.discardedTricks[1] === 0 &&
+    roundTripped.krakenTricks[0] === 1 &&
+    roundTripped.krakenTricks[1] === 0
 );
+
+console.log("Discarded-trick split (schema v10)");
+{
+  // Saves predating the split could only record a discard through the Kraken
+  // button, so their first discard per round reads back as the Kraken's.
+  const preSplit = normalizeGame({
+    id: "pre_split",
+    players,
+    totalRounds: 3,
+    rounds: [{}, {}, {}],
+    cardsDealt: [3, 4, 5],
+    discardedTricks: [1, 0, 2],
+  });
+  check(
+    "an old discard is attributed to the Kraken",
+    preSplit?.krakenTricks[0] === 1 && preSplit.discardedTricks[0] === 1
+  );
+  check("a round without discards keeps none", preSplit?.krakenTricks[1] === 0);
+  check(
+    "only one of several old discards is the Kraken's",
+    preSplit?.krakenTricks[2] === 1 && preSplit.discardedTricks[2] === 2
+  );
+
+  const clamped = normalizeGame({
+    id: "clamped",
+    players,
+    totalRounds: 2,
+    rounds: [{}, {}],
+    cardsDealt: [3, 4],
+    discardedTricks: [1, 0],
+    krakenTricks: [4, 2],
+  });
+  check(
+    "a stored Kraken count cannot exceed its single card",
+    clamped?.krakenTricks[0] === 1
+  );
+  check(
+    "a Kraken trick the round never discarded is dropped",
+    clamped?.krakenTricks[1] === 0
+  );
+}
 
 console.log("Rascal scoring migration (schema v7)");
 check(
